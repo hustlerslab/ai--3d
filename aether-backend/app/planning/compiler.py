@@ -193,6 +193,96 @@ def _relation_candidates(target: SceneObject, dims: tuple[float, float, float], 
     return out
 
 
+_FABRIC = {"sofa", "loveseat", "armchair", "ottoman", "chair", "bed", "pillows", "curtains", "rug", "bar_stool"}
+_WOOD = {"coffee_table", "side_table", "tv_unit", "dining_table", "wardrobe", "bedside_table", "dresser", "desk",
+         "bookshelf", "sideboard", "console", "kitchen_island", "kitchen_counter", "vanity"}
+
+
+def _object_color(item: ObjectPlanItem, decision, palette: list[str]) -> str:
+    """The moodboard decides the colour: the planner's hint first, then the
+    palette slot for the object's role (wall, floor, upholstery, accent, accent)."""
+    if item.semantic_type == "plant":
+        return decision.color  # foliage stays green whatever the palette says
+    if item.color_hint and item.color_hint.startswith("#") and len(item.color_hint) == 7:
+        return item.color_hint.upper()
+    if len(palette) >= 5:
+        if item.semantic_type in _FABRIC:
+            return palette[2]
+        if item.semantic_type in _WOOD:
+            return palette[1]
+        if item.semantic_type in ("floor_lamp", "pendant_lamp", "chandelier", "table_lamp", "mirror", "lantern"):
+            return palette[3]
+        if item.semantic_type in ("wall_art", "vase", "sculpture", "plant"):
+            return palette[4]
+    return decision.color
+
+
+def _window_points(scene: Scene, room: Room) -> list[Vec2]:
+    pts: list[Vec2] = []
+    wall_ids = set()
+    n = len(room.boundary)
+    for w in scene.walls:
+        for i in range(n):
+            a, b = room.boundary[i], room.boundary[(i + 1) % n]
+            if geo.distance(a, w.start) + geo.distance(w.end, b) < 1e-3 or geo.distance(a, w.end) + geo.distance(w.start, b) < 1e-3:
+                wall_ids.add(w.wall_id)
+            elif _on_segment(w.start, a, b) and _on_segment(w.end, a, b):
+                wall_ids.add(w.wall_id)
+    for o in scene.openings:
+        if o.type.value == "window" and o.wall_id in wall_ids:
+            w = scene.wall(o.wall_id)
+            if w is None:
+                continue
+            length = geo.distance(w.start, w.end) or 1.0
+            pts.append(geo.segment_lerp(w.start, w.end, min(1.0, o.position / length)))
+    return pts
+
+
+def _window_candidates(scene: Scene, room: Room, windows: list[Vec2], depth: float) -> list[tuple[Vec2, float]]:
+    """(position, yaw) flush against the wall at each window centre, facing inward."""
+    out: list[tuple[Vec2, float]] = []
+    centroid = geo.polygon_centroid(room.boundary)
+    n = len(room.boundary)
+    for w in windows:
+        for i in range(n):
+            a, b = room.boundary[i], room.boundary[(i + 1) % n]
+            if not _on_segment(w, a, b, tol=0.05):
+                continue
+            edge_len = geo.distance(a, b) or 1.0
+            dx, dz = (b[0] - a[0]) / edge_len, (b[1] - a[1]) / edge_len
+            nx, nz = -dz, dx
+            if (centroid[0] - w[0]) * nx + (centroid[1] - w[1]) * nz < 0:
+                nx, nz = -nx, -nz
+            inset = depth / 2 + 0.06
+            out.append(((w[0] + nx * inset, w[1] + nz * inset), math.atan2(-nx, -nz) + math.pi))
+    return out
+
+
+def _door_distance(scene: Scene, room: Room, p: Vec2) -> float:
+    best = 99.0
+    for o in scene.openings:
+        if o.type.value != "door":
+            continue
+        w = scene.wall(o.wall_id)
+        if w is None:
+            continue
+        length = geo.distance(w.start, w.end) or 1.0
+        c = geo.segment_lerp(w.start, w.end, min(1.0, o.position / length))
+        if _inside_or_near(room, c):
+            best = min(best, geo.distance(p, c))
+    return best
+
+
+def _on_segment(p: Vec2, a: Vec2, b: Vec2, tol: float = 1e-3) -> bool:
+    return abs(geo.distance(a, p) + geo.distance(p, b) - geo.distance(a, b)) < tol
+
+
+def _inside_or_near(room: Room, p: Vec2) -> bool:
+    xs = [q[0] for q in room.boundary]
+    zs = [q[1] for q in room.boundary]
+    return min(xs) - 0.2 <= p[0] <= max(xs) + 0.2 and min(zs) - 0.2 <= p[1] <= max(zs) + 0.2
+
+
 def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[list[AddObjectOp], list[str]]:
     working = scene.model_copy(deep=True)
     ops: list[AddObjectOp] = []
@@ -217,6 +307,8 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
             break
         pending = rest
 
+    palette = list(scene.style.palette) if scene.style else []
+
     for item in ordered:
         decision = assets.decision(item.object_key)
         if decision is None:
@@ -227,6 +319,7 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
             warnings.append(f"{item.object_key}: room {item.room_id} not in scene")
             continue
         dims = tuple(d * s for d, s in zip(decision.dimensions, decision.scale))
+        color = _object_color(item, decision, palette)
         for n in range(item.count):
             candidates: list[tuple[Vec2, float]] = []
             rel = item.relation
@@ -236,32 +329,54 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
             if item.semantic_type == "rug" and not candidates:
                 c = geo.polygon_centroid(room.boundary)
                 candidates.append((c, 0.0))
-            candidates += _wall_aligned_candidates(working, room, dims[0], dims[2])
+            wall_candidates = _wall_aligned_candidates(working, room, dims[0], dims[2])
+            if item.semantic_type == "curtains":
+                # curtains hang on the window: centred on it, flush to the wall, facing the room
+                windows = _window_points(working, room)
+                if windows:
+                    wall_candidates.sort(key=lambda c: min(geo.distance(c[0], w) for w in windows))
+                    wall_candidates = _window_candidates(working, room, windows, dims[2]) + wall_candidates
+            elif item.semantic_type == "kitchen_counter":
+                # counters run along the longest wall, away from the door
+                wall_candidates.sort(key=lambda c: _door_distance(working, room, c[0]), reverse=True)
+            candidates += wall_candidates
 
             placed: Optional[SceneObject] = None
-            for pos, rot in candidates:
-                y = room.floor_height if decision.mount == "floor" else (room.ceiling_height - decision.dimensions[1] if decision.mount == "ceiling" else 1.4)
-                candidate = SceneObject(
-                    semantic_type=item.semantic_type,
-                    asset_id=decision.asset_id,
-                    room_id=room.room_id,
-                    position=(round(pos[0], 3), round(y, 3), round(pos[1], 3)),
-                    rotation_y=round(rot % (2 * math.pi), 4),
-                    scale=decision.scale,
-                    dimensions=decision.dimensions,
-                    color=decision.color,
-                    source=ObjectSource.CATALOG,
-                    mount=decision.mount,
-                    confidence=Confidence(value=0.7, source=plan.provider),
-                    source_strategy=decision.strategy,
-                    material_overrides=decision.material_overrides,
-                    plan_key=item.object_key if n == 0 else f"{item.object_key}#{n + 1}",
-                )
-                working.objects.append(candidate)
-                if not validate_object(working, candidate):
-                    placed = candidate
+            # pieces that can shrink to fit (a counter run, a wardrobe) get smaller tries too
+            shrink_steps = (1.0, 0.8, 0.65) if item.semantic_type in ("kitchen_counter", "wardrobe", "curtains", "bookshelf", "sideboard") else (1.0,)
+            for shrink in shrink_steps:
+                if placed is not None:
                     break
-                working.objects.pop()
+                if shrink < 1.0:
+                    dims = (dims[0] * shrink, dims[1], dims[2])
+                    candidates = list(_wall_aligned_candidates(working, room, dims[0], dims[2]))
+                    if item.semantic_type == "curtains" and _window_points(working, room):
+                        wp = _window_points(working, room)
+                        candidates.sort(key=lambda c: min(geo.distance(c[0], w) for w in wp))
+                for pos, rot in candidates:
+                    y = room.floor_height if decision.mount == "floor" else (room.ceiling_height - decision.dimensions[1] if decision.mount == "ceiling" else 1.4)
+                    scale = decision.scale if shrink == 1.0 else (decision.scale[0] * shrink, decision.scale[1], decision.scale[2])
+                    candidate = SceneObject(
+                        semantic_type=item.semantic_type,
+                        asset_id=decision.asset_id,
+                        room_id=room.room_id,
+                        position=(round(pos[0], 3), round(y, 3), round(pos[1], 3)),
+                        rotation_y=round(rot % (2 * math.pi), 4),
+                        scale=scale,
+                        dimensions=decision.dimensions,
+                        color=color,
+                        source=ObjectSource.CATALOG,
+                        mount=decision.mount,
+                        confidence=Confidence(value=0.7, source=plan.provider),
+                        source_strategy=decision.strategy,
+                        material_overrides=decision.material_overrides,
+                        plan_key=item.object_key if n == 0 else f"{item.object_key}#{n + 1}",
+                    )
+                    working.objects.append(candidate)
+                    if not validate_object(working, candidate):
+                        placed = candidate
+                        break
+                    working.objects.pop()
             if placed is None:
                 warnings.append(f"{item.object_key}: no valid position in {room.name} (priority {item.priority})")
                 break

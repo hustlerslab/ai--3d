@@ -50,7 +50,7 @@ def _parent_all(parts, empty):
         p.parent = empty
 
 
-def build(shape: str, name: str, dims, collection, material, accent=None):
+def build(shape: str, name: str, dims, collection, material, accent=None, library=None):
     """Return an Empty (the object's pivot) with the parts parented to it."""
     w, d, h = dims
     empty = bpy.data.objects.new(name, None)
@@ -98,13 +98,45 @@ def build(shape: str, name: str, dims, collection, material, accent=None):
             n = max(2, int(h / 0.4))
             for i in range(1, n):
                 parts.append(make_box(f"{name}.line{i}", (w * 0.96, 0.01, 0.015), collection, accent, (0, d / 2, h * i / n)))
+    elif shape == "counter":
+        # base cabinets + stone worktop + backsplash + upper cabinets, back against the wall (-Y)
+        base_h, top_t, gap = 0.86, 0.04, 0.55
+        parts.append(make_box(f"{name}.base", (w, d, base_h), collection, material))
+        n_doors = max(2, int(w / 0.6))
+        for i in range(n_doors):
+            x = -w / 2 + (i + 0.5) * (w / n_doors)
+            parts.append(make_box(f"{name}.door{i}", (w / n_doors - 0.02, 0.015, base_h - 0.12), collection, accent, (x, d / 2, 0.08)))
+            parts.append(make_box(f"{name}.handle{i}", (0.12, 0.02, 0.02), collection, library.frame() if library else accent, (x, d / 2 + 0.02, base_h * 0.55)))
+        stone = library.color("#DDD8CF", roughness=0.25) if library else material
+        parts.append(make_box(f"{name}.top", (w + 0.02, d + 0.02, top_t), collection, stone, (0, 0.01, base_h)))
+        parts.append(make_box(f"{name}.splash", (w, 0.02, gap), collection, stone, (0, -d / 2 + 0.01, base_h + top_t)))
+        upper_h = max(0.5, h - base_h - top_t - gap)
+        parts.append(make_box(f"{name}.upper", (w, d * 0.55, upper_h), collection, material, (0, -d / 2 + d * 0.275, base_h + top_t + gap)))
+        for i in range(n_doors):
+            x = -w / 2 + (i + 0.5) * (w / n_doors)
+            parts.append(make_box(f"{name}.udoor{i}", (w / n_doors - 0.02, 0.015, upper_h - 0.04), collection, accent, (x, -d / 2 + d * 0.55, base_h + top_t + gap + 0.02)))
+    elif shape == "curtains":
+        # two pleated panels on a rod, hanging from near the ceiling
+        rod_z = h
+        rod = library.frame() if library else accent
+        parts.append(_cylinder(f"{name}.rod", 0.015, w + 0.2, collection, rod))
+        parts[-1].rotation_euler = (0.0, math.pi / 2, 0.0)
+        parts[-1].location = (-(w + 0.2) / 2, 0.0, rod_z - 0.05)
+        panel_w = w * 0.32
+        for side in (-1, 1):
+            x0 = side * (w / 2 - panel_w / 2)
+            folds = 6
+            for k in range(folds):
+                fx = x0 - panel_w / 2 + (k + 0.5) * panel_w / folds
+                depth = d * (0.6 if k % 2 == 0 else 1.0)
+                parts.append(make_box(f"{name}.fold{side}{k}", (panel_w / folds + 0.005, depth, h - 0.08), collection, material, (fx, 0.0, 0.02)))
     elif shape == "pendant":
         parts.append(_cylinder(f"{name}.cord", 0.005, h * 0.5, collection, accent, (0, 0, h * 0.5)))
         parts.append(_cylinder(f"{name}.shade", w / 2, h * 0.5, collection, material))
     elif shape == "panel":
         parts.append(make_box(f"{name}.panel", (w, d, h), collection, material))
         parts.append(make_box(f"{name}.frame", (w + 0.04, d * 0.6, h + 0.04), collection, accent, (0, -d * 0.2, -0.02)))
-    else:  # box: beds, tv units, bedside tables, rugs, generic
+    else:  # box / tv: beds, tv units, bedside tables, rugs, generic
         if h < 0.06:  # rug
             parts.append(make_box(f"{name}.rug", (w, d, h), collection, material))
         elif w > 1.2 and d > 1.6 and h < 0.7:  # bed
@@ -112,6 +144,10 @@ def build(shape: str, name: str, dims, collection, material, accent=None):
             parts.append(make_box(f"{name}.frame", (w, d, frame_h), collection, accent))
             parts.append(make_box(f"{name}.mattress", (w * 0.96, d * 0.92, h - frame_h), collection, material, (0, d * 0.02, frame_h)))
             parts.append(make_box(f"{name}.head", (w, 0.08, h + 0.45), collection, accent, (0, -d / 2 + 0.04, 0)))
+        elif shape == "tv":
+            parts.append(make_box(f"{name}.body", (w, d, h), collection, material))
+            screen = library.screen() if library else accent
+            parts.append(make_box(f"{name}.tv", (min(1.45, w * 0.8), 0.04, min(0.82, w * 0.45)), collection, screen, (0, 0, h + 0.05)))
         else:
             parts.append(make_box(f"{name}.body", (w, d, h), collection, material))
     _parent_all(parts, empty)

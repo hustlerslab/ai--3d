@@ -83,8 +83,13 @@ def _asset_entry(asset_id: Optional[str], semantic_type: str) -> dict[str, Any]:
             }
         item = get_item(asset_id)
         if item is not None and item.shape != "model":
-            return {"kind": "procedural", "asset_id": asset_id, "shape": item.shape, "name": item.name}
+            shape = _default_shape(semantic_type) if semantic_type in _SHAPE_BY_TYPE else item.shape
+            return {"kind": "procedural", "asset_id": asset_id, "shape": shape, "name": item.name}
     return {"kind": "procedural", "asset_id": asset_id, "shape": _default_shape(semantic_type), "name": semantic_type}
+
+
+# types whose procedural shape is richer than the catalog's generic primitive
+_SHAPE_BY_TYPE = {"tv_unit": "tv", "kitchen_counter": "counter", "curtains": "curtains"}
 
 
 def _default_shape(semantic_type: str) -> str:
@@ -92,7 +97,9 @@ def _default_shape(semantic_type: str) -> str:
         return "seat"
     if semantic_type in ("coffee_table", "dining_table", "side_table", "desk", "console", "kitchen_island"):
         return "table"
-    if semantic_type in ("wardrobe", "bookshelf", "floor_lamp", "plant", "mirror", "curtains"):
+    if semantic_type in _SHAPE_BY_TYPE:
+        return _SHAPE_BY_TYPE[semantic_type]
+    if semantic_type in ("wardrobe", "bookshelf", "floor_lamp", "plant", "mirror"):
         return "tall"
     if semantic_type in ("pendant_lamp", "chandelier"):
         return "pendant"

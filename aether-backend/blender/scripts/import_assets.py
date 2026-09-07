@@ -80,13 +80,14 @@ def build_objects(manifest: dict, cols: dict, materials, warnings: list[str]) ->
                 col.objects.link(o)
                 if o.parent is None:
                     o.parent = root
+            _apply_upholstery(children, spec, materials)
             kind = "glb"
         else:
             if asset["kind"] == "glb":
                 warnings.append(f"{name}: model file missing ({asset.get('path')}); using a procedural stand-in")
-            mat = materials.get(override, fallback_color=spec["color"]) if override else materials.color(spec["color"])
+            mat = materials.for_object(spec)
             accent = materials.accent(spec["color"])
-            root = procedural.build(asset.get("shape", "box"), name, dims, col, mat, accent)
+            root = procedural.build(asset.get("shape", "box"), name, dims, col, mat, accent, materials)
             kind = "procedural"
 
         root.location = spec["location"]
@@ -115,6 +116,36 @@ def build_objects(manifest: dict, cols: dict, materials, warnings: list[str]) ->
             }
         )
     return placed
+
+
+FABRIC_TYPES = {"sofa", "loveseat", "armchair", "ottoman", "chair", "bed", "bar_stool", "pillows", "rug", "curtains"}
+
+
+def _apply_upholstery(children, spec: dict, materials) -> None:
+    """Moodboard fidelity for real models: the largest mesh of a fabric piece
+    (the upholstery) takes the style fabric tinted with the planned colour,
+    so a black leather catalogue sofa becomes the client's linen sofa."""
+    if spec.get("semantic_type") not in FABRIC_TYPES:
+        return
+    override = (spec.get("material_overrides") or {}).get("primary")
+    if not override:
+        return
+    meshes = [o for o in children if o.type == "MESH" and o.data and len(o.data.polygons) > 0]
+    if not meshes:
+        return
+
+    def area(o):
+        return sum(p.area for p in o.data.polygons) * (o.matrix_world.to_scale().x ** 2)
+
+    meshes.sort(key=area, reverse=True)
+    total = sum(area(m) for m in meshes) or 1.0
+    mat = materials.get(override, tint=spec.get("color"), tint_strength=0.85)
+    for m in meshes:
+        if area(m) / total < 0.12 and m is not meshes[0]:
+            break  # legs, feet and trims keep their own look
+        m.data = m.data.copy()
+        m.data.materials.clear()
+        m.data.materials.append(mat)
 
 
 def _is_descendant(obj, root) -> bool:

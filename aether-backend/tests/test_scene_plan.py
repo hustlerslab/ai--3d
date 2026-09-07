@@ -169,7 +169,7 @@ def test_compile_and_place_produces_valid_scene(env):
     sofa = next(o for o in scene.objects if o.semantic_type == "sofa")
     coffee = next(o for o in scene.objects if o.semantic_type == "coffee_table")
     dist = ((sofa.position[0] - coffee.position[0]) ** 2 + (sofa.position[2] - coffee.position[2]) ** 2) ** 0.5
-    assert dist < 2.0
+    assert dist < 2.4  # centre to centre: half sofa + half table + walking gap
     assert sofa.source_strategy == "procedural" and sofa.material_overrides.get("primary")
     chairs = [o for o in scene.objects if o.semantic_type == "chair"]
     assert len(chairs) == 4

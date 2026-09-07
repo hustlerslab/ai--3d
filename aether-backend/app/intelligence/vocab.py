@@ -106,7 +106,7 @@ SEMANTIC_TYPES: list[str] = [
     "bedside_table", "dresser", "desk", "bookshelf", "sideboard", "console",
     "rug", "floor_lamp", "pendant_lamp", "chandelier", "table_lamp", "plant",
     "mirror", "wall_art", "curtains", "vase", "sculpture", "pillows", "lantern",
-    "kitchen_island", "bathtub", "vanity",
+    "kitchen_island", "kitchen_counter", "bathtub", "vanity",
 ]
 
 OBJECT_KEYWORDS: dict[str, list[str]] = {
@@ -138,6 +138,7 @@ OBJECT_KEYWORDS: dict[str, list[str]] = {
     "wall_art": ["wall art", "painting", "artwork", "art work", "frames"],
     "curtains": ["curtain", "drapes", "sheer"],
     "kitchen_island": ["island", "breakfast counter"],
+    "kitchen_counter": ["kitchen counter", "countertop", "modular kitchen", "cabinets"],
 }
 
 # where an object lives when the brief does not say
@@ -151,7 +152,7 @@ OBJECT_DEFAULT_ROOM: dict[str, str] = {
     "pendant_lamp": "dining_room", "chandelier": "dining_room",
     "bed": "bedroom", "wardrobe": "bedroom", "bedside_table": "bedroom",
     "dresser": "bedroom", "table_lamp": "bedroom", "curtains": "bedroom",
-    "kitchen_island": "kitchen", "bar_stool": "kitchen",
+    "kitchen_island": "kitchen", "bar_stool": "kitchen", "kitchen_counter": "kitchen",
 }
 
 # ── Lighting ─────────────────────────────────────────────────────────────

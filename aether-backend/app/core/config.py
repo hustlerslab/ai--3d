@@ -26,8 +26,9 @@ class Settings(BaseSettings):
 
     gemini_api_key: SecretStr = SecretStr("")
     # Google retires ids quickly; the fallback list is tried on 404/429/503.
-    gemini_model: str = "gemini-3.6-flash"
-    gemini_fallback_models: str = "gemini-3.5-flash,gemini-flash-lite-latest,gemini-2.5-flash"
+    # lite answers a vision stage in 2-6 s; the full flash models are the fallback for quality/outages
+    gemini_model: str = "gemini-3.5-flash-lite"
+    gemini_fallback_models: str = "gemini-3.6-flash,gemini-3.5-flash,gemini-flash-lite-latest,gemini-2.5-flash"
     gemini_timeout_seconds: int = 60
 
     anthropic_api_key: SecretStr = SecretStr("")

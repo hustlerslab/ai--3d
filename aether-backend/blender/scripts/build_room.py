@@ -140,14 +140,25 @@ def build_walls(manifest: dict, cols: dict, materials, warnings: list[str]) -> N
             continue
         d.normalize()
         rz = math.atan2(d.y, d.x)
-        mat = materials.get(wall["material"], fallback_color="#ECE5D8")
+        mat = materials.wall(wall["material"])
         t = wall["thickness"]
         for i, (a, b, z0, z1) in enumerate(_pieces(length, wall["height"], wall.get("openings", []))):
             centre = s + d * ((a + b) / 2)
             piece = make_box(f"{wall['id']}.{i}", (b - a, t, z1 - z0), col, mat, (centre.x, centre.y, z0), rz)
             piece["aether_role"] = "wall"
             piece["aether_wall"] = wall["id"]
+            if z0 < 0.01:
+                sk = make_box(f"{wall['id']}.{i}.skirting", (b - a, t + 0.03, 0.1), col, materials.skirting(), (centre.x, centre.y, 0.0), rz)
+                sk["aether_role"] = "skirting"
         for o in wall.get("openings", []):
+            if o["type"] == "door":
+                frame_mat = materials.frame()
+                for side in (-1, 1):
+                    fc = s + d * (o["position"] + side * (o["width"] / 2 + 0.03))
+                    make_box(f"{o['id']}.jamb{side}", (0.06, t + 0.04, o["height"]), col, frame_mat, (fc.x, fc.y, 0.0), rz)
+                hc = s + d * o["position"]
+                make_box(f"{o['id']}.head", (o["width"] + 0.12, t + 0.04, 0.06), col, frame_mat, (hc.x, hc.y, o["height"]), rz)
+                continue
             if o["type"] != "window":
                 continue
             centre = s + d * o["position"]
