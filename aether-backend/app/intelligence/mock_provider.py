@@ -161,7 +161,7 @@ ROOM_SETS: dict[str, list[tuple[str, int, int]]] = {
         ("curtains", 2, 1), ("dresser", 2, 1), ("armchair", 3, 1), ("plant", 3, 1),
     ],
     "kids_bedroom": [("bed", 1, 1), ("wardrobe", 1, 1), ("desk", 2, 1), ("chair", 2, 1), ("bookshelf", 3, 1), ("rug", 3, 1)],
-    "kitchen": [("kitchen_counter", 1, 1), ("kitchen_island", 3, 1), ("bar_stool", 3, 2)],
+    "kitchen": [("kitchen_counter", 1, 1), ("fridge", 1, 1), ("kitchen_island", 3, 1), ("bar_stool", 3, 2)],
     "dining_room": [("dining_table", 1, 1), ("chair", 1, 4), ("sideboard", 2, 1), ("pendant_lamp", 2, 1), ("plant", 3, 1)],
     "study": [("desk", 1, 1), ("chair", 1, 1), ("bookshelf", 2, 1), ("floor_lamp", 3, 1), ("plant", 3, 1)],
     "entry": [("console", 2, 1), ("mirror", 2, 1), ("plant", 3, 1)],
@@ -176,6 +176,7 @@ MATERIAL_HINTS: dict[str, str] = {
     "coffee_table": "wood", "side_table": "wood", "tv_unit": "wood", "dining_table": "wood",
     "wardrobe": "wood", "bedside_table": "wood", "dresser": "wood", "desk": "wood", "bookshelf": "wood",
     "sideboard": "wood", "console": "wood", "kitchen_island": "wood", "kitchen_counter": "wood", "vanity": "wood",
+    "fridge": "metal",
     "floor_lamp": "metal", "pendant_lamp": "metal", "chandelier": "metal", "table_lamp": "metal",
     "mirror": "metal", "lantern": "metal",
 }

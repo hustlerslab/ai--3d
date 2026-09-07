@@ -385,3 +385,18 @@ Total ≈ 25.5 working days, about five to six weeks. M2–M3 (AI lane) and M4�
 4. SQLite is introduced only for projects/inputs/jobs/events/outputs; scene and asset registries stay JSON.
 5. The primary deliverable is the in-browser walkthrough (360° panorama tour, then the baked real-time scene). The 1080p Eevee MP4 is a secondary export. No Cycles video.
 6. The `/cinematic` photo-to-film route stays optional and untouched.
+
+## 14. Moodboard fidelity and AI speed (added 2026-09-07 after the first user test)
+
+Two findings from the first hands-on run and what changed:
+
+**Speed.** The moodboard step was not slow: every analysis finished in under 100 ms on the mock provider, and the wait the user saw was a frontend polling bug (fixed). The configured Gemini model `gemini-2.0-flash` had also been retired by Google (404), so a live run would have fallen back to the mock silently. Now:
+- `GEMINI_MODEL=gemini-3.5-flash-lite` by default (analysis ≈ 3 s, style ≈ 2 s, object plan ≈ 6 s with photos), with `GEMINI_FALLBACK_MODELS` tried automatically on 404/429/503 (the overloaded 3.6 flash fell to 3.5 flash during testing).
+- `INTELLIGENCE_PROVIDER=auto|anthropic|gemini|mock`. A Claude provider (`app/intelligence/anthropic_provider.py`, Anthropic SDK, structured outputs, effort low) is selected when `ANTHROPIC_API_KEY` is set. Prompts and coercion are shared (`prompts.py`, `coerce.py`), so providers are interchangeable.
+- `/api/health` reports the active provider and model.
+
+**Fidelity.** The 3D used to be "the catalog in the right places": a black leather sofa whatever the moodboard said. The moodboard now drives the scene:
+- The style palette is ordered wall, floor, upholstery, accent, accent. Every object gets a colour: the planner's per-object hint first, else the palette slot for its role. Plants stay green.
+- Blender tints: walls take palette[0] over the plaster scan; fabric pieces get the style fabric recoloured to the planned tone (luminance × tint); real GLB models have their largest mesh (the upholstery) re-dressed the same way, so the catalogue sofa becomes the client's linen sofa. The web viewer applies the same wall tint and upholstery colour.
+- Missing things are built procedurally in Blender rather than skipped: kitchen counter runs with doors, worktop, backsplash and upper cabinets; pleated curtains centred on the window; TV screens on TV units; skirting boards; door jambs and heads; window frames. Pieces that must fit a wall (counters, wardrobes, curtains) shrink in steps instead of failing placement.
+- Known gaps: kitchens still have no appliances, decor beyond plants/art is thin, and a bespoke piece still needs the (disabled) generation path. The next fidelity step is style-specific furniture families (e.g. a japandi set vs a classic set) rather than one generic catalog.

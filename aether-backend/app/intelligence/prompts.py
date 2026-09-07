@@ -131,7 +131,7 @@ def analysis_prompt(bundle: InputBundle) -> str:
         f"ROOM DIMENSIONS SUPPLIED BY CLIENT (metres):\n{json.dumps(hints) if hints else '(none)'}\n\n"
         "Rules:\n"
         "- List every room the home needs. Use the supplied dimensions when present and set "
-        "estimated=false for those; otherwise estimate realistic Indian-apartment sizes and set estimated=true.\n"
+        "estimated=false for those; otherwise estimate generous, comfortable sizes for a modern apartment and set estimated=true. Typical: living room 5.5-6.5 m by 4.2-5.0 m (larger when it doubles as dining), master bedroom 4.5-5.0 by 4.0-4.5, other bedrooms 3.8-4.2 by 3.4-3.8, kitchen 3.6-4.2 by 2.8-3.2, dining room 4.0-4.5 by 3.4-3.8, study 3.4-3.8 by 3.0-3.4. Never go below the low end. Ceiling 3.0 m.\n"
         f"- room.type must be one of: {', '.join(vocab.ROOM_TYPES)}.\n"
         "- spotted_objects: furniture and decor visible in the photos or requested in the brief. "
         f"semantic_type must be one of: {', '.join(vocab.SEMANTIC_TYPES)}. Put photo observations "

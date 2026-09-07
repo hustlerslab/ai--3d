@@ -183,7 +183,7 @@ def mock_propose(scene: Scene, instruction: str) -> dict[str, Any]:
 # ── Spatial planner ─────────────────────────────────────────────────────
 
 
-def _wall_aligned_candidates(scene: Scene, room: Room, width: float, depth: float):
+def _wall_aligned_candidates(scene: Scene, room: Room, width: float, depth: float, inset_extra: float = 0.0):
     """Candidate (position, rotation) pairs: against each boundary edge,
     facing into the room, at several points along the edge; then centroid."""
     candidates = []
@@ -200,9 +200,10 @@ def _wall_aligned_candidates(scene: Scene, room: Room, width: float, depth: floa
         mid = geo.segment_lerp(a, b, 0.5)
         if (centroid[0] - mid[0]) * nx + (centroid[1] - mid[1]) * nz < 0:
             nx, nz = -nx, -nz
-        rotation = math.atan2(-nx, -nz) + math.pi  # face inward
-        inset = depth / 2.0 + 0.12
-        for t in (0.5, 0.3, 0.7, 0.2, 0.8):
+        # Face into the room: forward = (-sin r, -cos r) must equal the inward normal.
+        rotation = math.atan2(-nx, -nz)
+        inset = depth / 2.0 + 0.12 + inset_extra
+        for t in (0.5, 0.3, 0.7, 0.2, 0.8, 0.12, 0.88):
             edge_point = geo.segment_lerp(a, b, t)
             pos = (edge_point[0] + nx * inset, edge_point[1] + nz * inset)
             candidates.append((pos, rotation))

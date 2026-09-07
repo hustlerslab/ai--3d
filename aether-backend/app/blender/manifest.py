@@ -89,7 +89,7 @@ def _asset_entry(asset_id: Optional[str], semantic_type: str) -> dict[str, Any]:
 
 
 # types whose procedural shape is richer than the catalog's generic primitive
-_SHAPE_BY_TYPE = {"tv_unit": "tv", "kitchen_counter": "counter", "curtains": "curtains"}
+_SHAPE_BY_TYPE = {"tv_unit": "tv", "kitchen_counter": "counter", "curtains": "curtains", "fridge": "fridge"}
 
 
 def _default_shape(semantic_type: str) -> str:

@@ -98,6 +98,13 @@ def build(shape: str, name: str, dims, collection, material, accent=None, librar
             n = max(2, int(h / 0.4))
             for i in range(1, n):
                 parts.append(make_box(f"{name}.line{i}", (w * 0.96, 0.01, 0.015), collection, accent, (0, d / 2, h * i / n)))
+    elif shape == "fridge":
+        steel = library.color("#B8BCC0", roughness=0.35, metallic=0.85) if library else material
+        dark = library.color("#2A2C2E", roughness=0.5) if library else accent
+        parts.append(make_box(f"{name}.body", (w, d, h), collection, steel))
+        parts.append(make_box(f"{name}.split", (w * 0.98, 0.01, 0.012), collection, dark, (0, d / 2, h * 0.68)))
+        for z in (h * 0.4, h * 0.8):
+            parts.append(make_box(f"{name}.handle{int(z * 100)}", (0.025, 0.03, h * 0.22), collection, dark, (w * 0.32, d / 2 + 0.02, z - h * 0.11)))
     elif shape == "counter":
         # base cabinets + stone worktop + backsplash + upper cabinets, back against the wall (-Y)
         base_h, top_t, gap = 0.86, 0.04, 0.55
@@ -110,6 +117,13 @@ def build(shape: str, name: str, dims, collection, material, accent=None, librar
         stone = library.color("#DDD8CF", roughness=0.25) if library else material
         parts.append(make_box(f"{name}.top", (w + 0.02, d + 0.02, top_t), collection, stone, (0, 0.01, base_h)))
         parts.append(make_box(f"{name}.splash", (w, 0.02, gap), collection, stone, (0, -d / 2 + 0.01, base_h + top_t)))
+        dark = library.color("#1E1F21", roughness=0.3, metallic=0.4) if library else accent
+        steel = library.color("#C2C6C9", roughness=0.3, metallic=0.9) if library else accent
+        parts.append(make_box(f"{name}.hob", (0.58, 0.5, 0.012), collection, dark, (-w * 0.25, 0.0, base_h + top_t)))
+        for i, (hx, hy) in enumerate(((-0.14, -0.12), (0.14, -0.12), (-0.14, 0.12), (0.14, 0.12))):
+            parts.append(_cylinder(f"{name}.burner{i}", 0.07, 0.01, collection, steel, (-w * 0.25 + hx, hy, base_h + top_t + 0.012), segments=16))
+        parts.append(make_box(f"{name}.sink", (0.5, 0.42, 0.015), collection, steel, (w * 0.25, 0.0, base_h + top_t)))
+        parts.append(_cylinder(f"{name}.tap", 0.012, 0.28, collection, steel, (w * 0.25, -0.16, base_h + top_t)))
         upper_h = max(0.5, h - base_h - top_t - gap)
         parts.append(make_box(f"{name}.upper", (w, d * 0.55, upper_h), collection, material, (0, -d / 2 + d * 0.275, base_h + top_t + gap)))
         for i in range(n_doors):

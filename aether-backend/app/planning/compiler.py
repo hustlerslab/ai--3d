@@ -193,6 +193,15 @@ def _relation_candidates(target: SceneObject, dims: tuple[float, float, float], 
     return out
 
 
+# lower = placed earlier within the same priority
+ANCHOR_RANK: dict[str, int] = {
+    "sofa": 0, "bed": 0, "kitchen_counter": 0, "desk": 0,
+    "tv_unit": 1, "wardrobe": 1, "fridge": 1,
+    "coffee_table": 2, "bedside_table": 2, "rug": 3,
+    "dining_table": 10, "chair": 11, "sideboard": 12,
+    "armchair": 20, "floor_lamp": 21, "side_table": 22, "plant": 30, "wall_art": 31, "curtains": 40,
+}
+
 _FABRIC = {"sofa", "loveseat", "armchair", "ottoman", "chair", "bed", "pillows", "curtains", "rug", "bar_stool"}
 _WOOD = {"coffee_table", "side_table", "tv_unit", "dining_table", "wardrobe", "bedside_table", "dresser", "desk",
          "bookshelf", "sideboard", "console", "kitchen_island", "kitchen_counter", "vanity"}
@@ -289,8 +298,9 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
     warnings: list[str] = []
     placed_by_key: dict[str, SceneObject] = {}
 
-    # order: priority, then items whose relation target is already placed
-    pending = sorted(plan.items, key=lambda i: (i.priority, i.object_key))
+    # order: priority, then room anchors (the pieces everything else arranges
+    # around), then the rest; items whose relation target is not placed yet wait
+    pending = sorted(plan.items, key=lambda i: (i.priority, ANCHOR_RANK.get(i.semantic_type, 50), i.object_key))
     ordered: list[ObjectPlanItem] = []
     guard = 0
     while pending and guard < 10:
@@ -329,13 +339,19 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
             if item.semantic_type == "rug" and not candidates:
                 c = geo.polygon_centroid(room.boundary)
                 candidates.append((c, 0.0))
-            wall_candidates = _wall_aligned_candidates(working, room, dims[0], dims[2])
+            # a dining table for four or more stands off the wall so chairs fit behind it
+            inset_extra = 0.75 if item.semantic_type == "dining_table" else 0.0
+            wall_candidates = _wall_aligned_candidates(working, room, dims[0], dims[2], inset_extra=inset_extra)
             if item.semantic_type == "curtains":
                 # curtains hang on the window: centred on it, flush to the wall, facing the room
                 windows = _window_points(working, room)
                 if windows:
                     wall_candidates.sort(key=lambda c: min(geo.distance(c[0], w) for w in windows))
                     wall_candidates = _window_candidates(working, room, windows, dims[2]) + wall_candidates
+            elif item.semantic_type == "dining_table":
+                sofa = next((o for o in working.objects if o.room_id == room.room_id and o.semantic_type == "sofa"), None)
+                if sofa is not None:
+                    wall_candidates.sort(key=lambda c: -geo.distance(c[0], (sofa.position[0], sofa.position[2])))
             elif item.semantic_type == "kitchen_counter":
                 # counters run along the longest wall, away from the door
                 wall_candidates.sort(key=lambda c: _door_distance(working, room, c[0]), reverse=True)
@@ -354,7 +370,12 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
                         wp = _window_points(working, room)
                         candidates.sort(key=lambda c: min(geo.distance(c[0], w) for w in wp))
                 for pos, rot in candidates:
-                    y = room.floor_height if decision.mount == "floor" else (room.ceiling_height - decision.dimensions[1] if decision.mount == "ceiling" else 1.4)
+                    if decision.mount == "floor" or item.semantic_type == "curtains":
+                        y = room.floor_height
+                    elif decision.mount == "ceiling":
+                        y = room.ceiling_height - decision.dimensions[1]
+                    else:
+                        y = 1.4
                     scale = decision.scale if shrink == 1.0 else (decision.scale[0] * shrink, decision.scale[1], decision.scale[2])
                     candidate = SceneObject(
                         semantic_type=item.semantic_type,

@@ -23,7 +23,7 @@ def look_at(obj, target) -> None:
 def setup_camera(manifest: dict):
     shot = manifest.get("camera", {}).get("preview_shot")
     cam_data = bpy.data.cameras.new("PreviewCamera")
-    cam_data.lens = 24.0
+    cam_data.lens = 30.0
     cam_data.sensor_width = 36.0
     cam_data.clip_start = 0.05
     cam = bpy.data.objects.new("PreviewCamera", cam_data)

@@ -47,12 +47,12 @@ ROOM_TYPES: list[str] = [
 
 # default (width_m, length_m) when the user gave no dimensions
 ROOM_DEFAULT_DIMS: dict[str, tuple[float, float]] = {
-    "living_room": (5.0, 4.2),
+    "living_room": (6.0, 4.6),
     "bedroom": (4.0, 3.6),
-    "master_bedroom": (4.6, 4.0),
-    "kids_bedroom": (3.6, 3.2),
-    "kitchen": (3.6, 3.0),
-    "dining_room": (4.0, 3.4),
+    "master_bedroom": (4.8, 4.2),
+    "kids_bedroom": (3.8, 3.4),
+    "kitchen": (3.8, 3.0),
+    "dining_room": (4.2, 3.6),
     "bathroom": (2.4, 2.0),
     "study": (3.4, 3.0),
     "balcony": (3.0, 1.5),
@@ -106,7 +106,7 @@ SEMANTIC_TYPES: list[str] = [
     "bedside_table", "dresser", "desk", "bookshelf", "sideboard", "console",
     "rug", "floor_lamp", "pendant_lamp", "chandelier", "table_lamp", "plant",
     "mirror", "wall_art", "curtains", "vase", "sculpture", "pillows", "lantern",
-    "kitchen_island", "kitchen_counter", "bathtub", "vanity",
+    "kitchen_island", "kitchen_counter", "fridge", "bathtub", "vanity",
 ]
 
 OBJECT_KEYWORDS: dict[str, list[str]] = {
@@ -139,6 +139,7 @@ OBJECT_KEYWORDS: dict[str, list[str]] = {
     "curtains": ["curtain", "drapes", "sheer"],
     "kitchen_island": ["island", "breakfast counter"],
     "kitchen_counter": ["kitchen counter", "countertop", "modular kitchen", "cabinets"],
+    "fridge": ["fridge", "refrigerator"],
 }
 
 # where an object lives when the brief does not say
@@ -152,7 +153,7 @@ OBJECT_DEFAULT_ROOM: dict[str, str] = {
     "pendant_lamp": "dining_room", "chandelier": "dining_room",
     "bed": "bedroom", "wardrobe": "bedroom", "bedside_table": "bedroom",
     "dresser": "bedroom", "table_lamp": "bedroom", "curtains": "bedroom",
-    "kitchen_island": "kitchen", "bar_stool": "kitchen", "kitchen_counter": "kitchen",
+    "kitchen_island": "kitchen", "bar_stool": "kitchen", "kitchen_counter": "kitchen", "fridge": "kitchen",
 }
 
 # ── Lighting ─────────────────────────────────────────────────────────────

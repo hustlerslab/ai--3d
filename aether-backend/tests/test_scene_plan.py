@@ -275,3 +275,31 @@ def test_resolve_assets_upgrades_to_registry_model(client, tmp_path):
     sofa_after = next(o for o in after["objects"] if o["semantic_type"] == "sofa")
     assert sofa_after["asset_id"] != sofa_before["asset_id"]
     assert after["version"] == before["version"] + 1
+
+
+def test_wall_placed_furniture_faces_into_the_room(env):
+    """Audit B1: every wall-aligned piece must face the room centre, not the wall."""
+    import math
+
+    analysis = _analysis()
+    style = _style(analysis)
+    scene, _ = compile_scene("proj_x", analysis, style, name="facing")
+    plan = MockProvider().plan_objects(analysis, style, InputBundle(project_id="p", description=BRIEF))
+    ops, _ = place_objects(scene, plan, resolve_plan(plan, style))
+    scene.objects = [op.object for op in ops]
+    from app.spatial import geometry as geo
+
+    checked = 0
+    for o in scene.objects:
+        if o.semantic_type not in ("sofa", "bed", "wardrobe", "tv_unit", "kitchen_counter", "curtains", "dresser", "bookshelf"):
+            continue
+        room = scene.room(o.room_id)
+        cx, cz = geo.polygon_centroid(room.boundary)
+        fx, fz = -math.sin(o.rotation_y), -math.cos(o.rotation_y)
+        vx, vz = cx - o.position[0], cz - o.position[2]
+        d = math.hypot(vx, vz)
+        if d < 0.6:
+            continue  # sits at the centre: no meaningful direction
+        assert (fx * vx + fz * vz) / d > 0.2, f"{o.semantic_type} in {o.room_id} faces away from the room"
+        checked += 1
+    assert checked >= 5

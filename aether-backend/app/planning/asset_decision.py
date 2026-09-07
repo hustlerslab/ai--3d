@@ -33,6 +33,7 @@ DEFAULT_DIMS: dict[str, tuple[Vec3, str]] = {
     "console": ((1.2, 0.8, 0.35), "floor"),
     "kitchen_island": ((1.8, 0.9, 0.9), "floor"),
     "kitchen_counter": ((2.4, 2.2, 0.6), "floor"),
+    "fridge": ((0.7, 1.75, 0.7), "floor"),
     "bar_stool": ((0.4, 0.75, 0.4), "floor"),
     "vanity": ((1.0, 0.85, 0.5), "floor"),
     "bathtub": ((1.7, 0.6, 0.75), "floor"),
@@ -45,7 +46,7 @@ DEFAULT_DIMS: dict[str, tuple[Vec3, str]] = {
     "chandelier": ((0.9, 0.8, 0.9), "ceiling"),
     "mirror": ((0.8, 1.2, 0.05), "wall"),
     "wall_art": ((0.9, 0.7, 0.05), "wall"),
-    "curtains": ((2.0, 2.6, 0.12), "floor"),
+    "curtains": ((2.0, 2.6, 0.12), "wall"),
 }
 
 # object types that get the style's fabric / wood / metal / glass

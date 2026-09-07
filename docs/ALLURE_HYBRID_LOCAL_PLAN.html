@@ -122,6 +122,7 @@
       <li><a href="#s11">Tests</a></li>
       <li><a href="#s12">Risks</a></li>
       <li><a href="#s13">Assumptions</a></li>
+      <li><a href="#s14">Fidelity &amp; speed</a></li>
     </ol>
   </nav>
 
@@ -496,6 +497,24 @@ POST  /api/projects/{id}/film            ✓  -> film job {profile: preview|stan
         <li>The primary deliverable is the in-browser walkthrough: the 360° panorama tour first, then the baked real-time scene. The 1080p Eevee MP4 is a secondary export. No Cycles video.</li>
         <li>The cinematic photo-to-film route stays optional and untouched.</li>
       </ol>
+    </section>
+
+    <section id="s14">
+      <h2><span class="num">14</span>Moodboard fidelity and AI speed</h2>
+      <p>Added after the first hands-on run on 7 Sep 2026.</p>
+      <h3>Speed</h3>
+      <p>The moodboard step was never slow on the backend: every analysis finished in under 100 ms on the mock provider; the wait was a frontend polling bug, now fixed. The configured Gemini model had also been retired by Google, so a live run would have fallen back to the mock silently.</p>
+      <ul>
+        <li><code>gemini-3.5-flash-lite</code> is the default: analysis about 3 s, style 2 s, object plan 6 s with photos. A fallback list is tried automatically on 404, 429 or 503.</li>
+        <li><code>INTELLIGENCE_PROVIDER</code> selects Claude (Anthropic SDK, structured outputs), Gemini or the mock. Prompts and validation are shared, so providers are interchangeable and <code>/api/health</code> reports which one is live.</li>
+      </ul>
+      <h3>Fidelity</h3>
+      <ul>
+        <li>The palette is ordered wall, floor, upholstery, accent, accent. Every object gets a colour: the planner's hint first, else the palette slot for its role. Plants stay green.</li>
+        <li>Blender tints walls with the wall tone, recolours fabric pieces to the planned tone (grain kept), and re-dresses the upholstery mesh of real catalogue models the same way. The web viewer applies the same tints.</li>
+        <li>Missing things are built procedurally instead of skipped: kitchen counters with doors, worktop, backsplash and upper cabinets; pleated curtains on the window; TV screens; skirting; door jambs and heads. Pieces that must fit a wall shrink in steps instead of failing.</li>
+        <li>Still open: kitchen appliances, richer decor, bespoke pieces (generation path stays off), and style-specific furniture families instead of one generic catalog.</li>
+      </ul>
     </section>
 
     <footer>Source of truth for this plan: <code>Interior design/docs/ALLURE_HYBRID_LOCAL_PLAN.md</code>; this page is <code>docs/ALLURE_HYBRID_LOCAL_PLAN.html</code>. Reconciled from the Phase 1 backend diagram, the Hybrid Local Architecture DPR, and the aether-backend / aether-frontend code as of 6 Sep 2026. Blender verified and M0–M1 delivered 7 Sep 2026.</footer>
