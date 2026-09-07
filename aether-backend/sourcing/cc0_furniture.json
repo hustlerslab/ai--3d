@@ -1,0 +1,562 @@
+{
+  "_comment": "Curated CC0 furniture from Poly Haven (https://polyhaven.com/license). Every entry is public domain; provenance is recorded on ingest. yaw_offset rotates the model so its front faces -Z. expected_dimensions overrides unit detection when a model's authored scale is untrustworthy. Resolution 1k keeps the library light for the interactive viewer; the cinematic render path can re-source at 4k.",
+  "provider": "polyhaven",
+  "default_resolution": "1k",
+  "items": [
+    {
+      "source_id": "sofa_02",
+      "asset_id": "ph_sofa_02",
+      "name": "Leather & Fabric Sofa",
+      "semantic_type": "sofa",
+      "style_tags": [
+        "modern",
+        "luxury",
+        "mid_century"
+      ],
+      "material_tags": [
+        "leather",
+        "fabric",
+        "wood"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 68000,
+      "color": "#8a6a4b",
+      "yaw_offset": 3.14159265
+    },
+    {
+      "source_id": "sofa_03",
+      "asset_id": "ph_sofa_03",
+      "name": "Chesterfield Leather Sofa",
+      "semantic_type": "sofa",
+      "style_tags": [
+        "luxury",
+        "classic",
+        "victorian"
+      ],
+      "material_tags": [
+        "leather"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 125000,
+      "color": "#5a3a28"
+    },
+    {
+      "source_id": "mid_century_lounge_chair",
+      "asset_id": "ph_lounge_chair",
+      "name": "Mid-Century Lounge Chair",
+      "semantic_type": "armchair",
+      "style_tags": [
+        "mid_century",
+        "luxury",
+        "modern"
+      ],
+      "material_tags": [
+        "leather",
+        "wood"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 45000,
+      "color": "#4a3a2a"
+    },
+    {
+      "source_id": "modern_arm_chair_01",
+      "asset_id": "ph_modern_armchair",
+      "name": "Modern Leather Armchair",
+      "semantic_type": "armchair",
+      "style_tags": [
+        "modern",
+        "contemporary",
+        "luxury"
+      ],
+      "material_tags": [
+        "leather",
+        "wood"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 38000,
+      "color": "#6b5140"
+    },
+    {
+      "source_id": "Ottoman_01",
+      "asset_id": "ph_ottoman",
+      "name": "Leather Ottoman",
+      "semantic_type": "ottoman",
+      "style_tags": [
+        "modern",
+        "luxury"
+      ],
+      "material_tags": [
+        "leather",
+        "fabric"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 14000,
+      "color": "#7a5c44"
+    },
+    {
+      "source_id": "dining_chair_02",
+      "asset_id": "ph_dining_chair",
+      "name": "Leather Dining Chair",
+      "semantic_type": "chair",
+      "style_tags": [
+        "modern",
+        "luxury"
+      ],
+      "material_tags": [
+        "leather",
+        "metal"
+      ],
+      "room_types": [
+        "dining_room"
+      ],
+      "price_inr": 11000,
+      "color": "#3a3330"
+    },
+    {
+      "source_id": "coffee_table_round_01",
+      "asset_id": "ph_coffee_table_round",
+      "name": "Round Marble Coffee Table",
+      "semantic_type": "coffee_table",
+      "style_tags": [
+        "modern",
+        "luxury",
+        "contemporary"
+      ],
+      "material_tags": [
+        "marble",
+        "metal"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 32000,
+      "color": "#d9d2c8"
+    },
+    {
+      "source_id": "modern_coffee_table_01",
+      "asset_id": "ph_coffee_table_01",
+      "name": "Stone & Wood Coffee Table",
+      "semantic_type": "coffee_table",
+      "style_tags": [
+        "modern",
+        "contemporary",
+        "japandi"
+      ],
+      "material_tags": [
+        "stone",
+        "wood"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 26000,
+      "color": "#8c7a66",
+      "yaw_offset": 1.5707963
+    },
+    {
+      "source_id": "modern_coffee_table_02",
+      "asset_id": "ph_coffee_table_02",
+      "name": "Low Stone Coffee Table",
+      "semantic_type": "coffee_table",
+      "style_tags": [
+        "modern",
+        "minimal",
+        "japandi"
+      ],
+      "material_tags": [
+        "stone",
+        "wood"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 24000,
+      "color": "#9a8b78"
+    },
+    {
+      "source_id": "side_table_01",
+      "asset_id": "ph_side_table",
+      "name": "Minimal Side Table",
+      "semantic_type": "bedside_table",
+      "style_tags": [
+        "modern",
+        "minimal",
+        "japandi"
+      ],
+      "material_tags": [
+        "wood"
+      ],
+      "room_types": [
+        "bedroom",
+        "living_room"
+      ],
+      "price_inr": 9000,
+      "color": "#b08d68"
+    },
+    {
+      "source_id": "ClassicNightstand_01",
+      "asset_id": "ph_classic_nightstand",
+      "name": "Classic Nightstand",
+      "semantic_type": "bedside_table",
+      "style_tags": [
+        "classic",
+        "luxury"
+      ],
+      "material_tags": [
+        "wood"
+      ],
+      "room_types": [
+        "bedroom"
+      ],
+      "price_inr": 16000,
+      "color": "#5a3f2b"
+    },
+    {
+      "source_id": "modern_wooden_cabinet",
+      "asset_id": "ph_wooden_cabinet",
+      "name": "Modern Wooden Sideboard",
+      "semantic_type": "tv_unit",
+      "style_tags": [
+        "modern",
+        "minimal",
+        "japandi"
+      ],
+      "material_tags": [
+        "wood"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 42000,
+      "color": "#a67c52"
+    },
+    {
+      "source_id": "drawer_cabinet",
+      "asset_id": "ph_drawer_cabinet",
+      "name": "Drawer Cabinet",
+      "semantic_type": "sideboard",
+      "style_tags": [
+        "modern"
+      ],
+      "material_tags": [
+        "wood",
+        "metal"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 28000,
+      "color": "#8a6b4e"
+    },
+    {
+      "source_id": "steel_frame_shelves_03",
+      "asset_id": "ph_steel_shelves",
+      "name": "Steel Frame Display Shelves",
+      "semantic_type": "bookshelf",
+      "style_tags": [
+        "modern",
+        "contemporary",
+        "minimal"
+      ],
+      "material_tags": [
+        "metal",
+        "wood"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 24000,
+      "color": "#2b2b2b"
+    },
+    {
+      "source_id": "wooden_display_shelves_01",
+      "asset_id": "ph_display_shelves",
+      "name": "Wooden Display Shelves",
+      "semantic_type": "bookshelf",
+      "style_tags": [
+        "modern",
+        "scandinavian"
+      ],
+      "material_tags": [
+        "wood"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 18000,
+      "color": "#c9a578",
+      "yaw_offset": 1.5707963
+    },
+    {
+      "source_id": "round_wooden_table_02",
+      "asset_id": "ph_round_dining_table",
+      "name": "Round Dining Table",
+      "semantic_type": "dining_table",
+      "style_tags": [
+        "classic",
+        "luxury"
+      ],
+      "material_tags": [
+        "wood"
+      ],
+      "room_types": [
+        "dining_room"
+      ],
+      "price_inr": 48000,
+      "color": "#5d452e"
+    },
+    {
+      "source_id": "GothicBed_01",
+      "asset_id": "ph_classic_bed",
+      "name": "Carved Wooden Bed",
+      "semantic_type": "bed",
+      "style_tags": [
+        "classic",
+        "luxury",
+        "traditional"
+      ],
+      "material_tags": [
+        "wood",
+        "fabric"
+      ],
+      "room_types": [
+        "bedroom"
+      ],
+      "price_inr": 95000,
+      "color": "#4a3624"
+    },
+    {
+      "source_id": "ornate_mirror_01",
+      "asset_id": "ph_ornate_mirror",
+      "name": "Ornate Gold Mirror",
+      "semantic_type": "mirror",
+      "mount": "wall",
+      "style_tags": [
+        "luxury",
+        "classic"
+      ],
+      "material_tags": [
+        "metal",
+        "glass"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 22000,
+      "color": "#c8a04e"
+    },
+    {
+      "source_id": "modern_ceiling_lamp_01",
+      "asset_id": "ph_pendant_lamp",
+      "name": "Glass Pendant Lamp",
+      "semantic_type": "pendant_lamp",
+      "mount": "ceiling",
+      "style_tags": [
+        "modern",
+        "contemporary"
+      ],
+      "material_tags": [
+        "glass",
+        "metal"
+      ],
+      "room_types": [
+        "living_room",
+        "dining_room",
+        "bedroom"
+      ],
+      "price_inr": 12000,
+      "color": "#e8e2d8"
+    },
+    {
+      "source_id": "Chandelier_03",
+      "asset_id": "ph_chandelier",
+      "name": "Crystal Chandelier",
+      "semantic_type": "chandelier",
+      "mount": "ceiling",
+      "style_tags": [
+        "luxury",
+        "classic"
+      ],
+      "material_tags": [
+        "metal",
+        "glass"
+      ],
+      "room_types": [
+        "living_room",
+        "dining_room"
+      ],
+      "price_inr": 85000,
+      "color": "#d8c9a8"
+    },
+    {
+      "source_id": "brass_diya_lantern",
+      "asset_id": "ph_diya_lantern",
+      "name": "Brass Diya Lantern",
+      "semantic_type": "lantern",
+      "style_tags": [
+        "modern_indian",
+        "traditional",
+        "luxury"
+      ],
+      "material_tags": [
+        "brass"
+      ],
+      "room_types": [
+        "living_room",
+        "dining_room"
+      ],
+      "price_inr": 4500,
+      "color": "#c8a04e"
+    },
+    {
+      "source_id": "potted_plant_01",
+      "asset_id": "ph_plant_01",
+      "name": "Potted Plant, Terracotta",
+      "semantic_type": "plant",
+      "style_tags": [
+        "natural",
+        "modern"
+      ],
+      "material_tags": [
+        "ceramic"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom",
+        "dining_room"
+      ],
+      "price_inr": 3500,
+      "color": "#4d6b3f"
+    },
+    {
+      "source_id": "potted_plant_02",
+      "asset_id": "ph_plant_02",
+      "name": "Potted Plant, Tall",
+      "semantic_type": "plant",
+      "style_tags": [
+        "natural",
+        "modern"
+      ],
+      "material_tags": [
+        "ceramic"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 4200,
+      "color": "#4d6b3f"
+    },
+    {
+      "source_id": "ceramic_vase_01",
+      "asset_id": "ph_vase_01",
+      "name": "Tall Ceramic Vase",
+      "semantic_type": "vase",
+      "style_tags": [
+        "modern",
+        "minimal"
+      ],
+      "material_tags": [
+        "ceramic"
+      ],
+      "room_types": [
+        "living_room",
+        "dining_room"
+      ],
+      "price_inr": 2800,
+      "color": "#e6dccb"
+    },
+    {
+      "source_id": "carved_wooden_elephant",
+      "asset_id": "ph_wooden_elephant",
+      "name": "Carved Wooden Elephant",
+      "semantic_type": "sculpture",
+      "style_tags": [
+        "modern_indian",
+        "traditional"
+      ],
+      "material_tags": [
+        "wood"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 6500,
+      "color": "#6b4f35"
+    },
+    {
+      "source_id": "marble_bust_01",
+      "asset_id": "ph_marble_bust",
+      "name": "Marble Bust",
+      "semantic_type": "sculpture",
+      "style_tags": [
+        "luxury",
+        "classic"
+      ],
+      "material_tags": [
+        "marble"
+      ],
+      "room_types": [
+        "living_room"
+      ],
+      "price_inr": 18000,
+      "color": "#e9e4dc"
+    },
+    {
+      "source_id": "hanging_picture_frame_01",
+      "asset_id": "ph_art_frame_01",
+      "name": "Minimal Framed Art",
+      "semantic_type": "wall_art",
+      "mount": "wall",
+      "style_tags": [
+        "modern",
+        "minimal"
+      ],
+      "material_tags": [
+        "wood",
+        "paper"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 7500,
+      "color": "#f2ebdf"
+    },
+    {
+      "source_id": "throw_pillows_01",
+      "asset_id": "ph_throw_pillows",
+      "name": "Patterned Throw Pillows",
+      "semantic_type": "pillows",
+      "style_tags": [
+        "modern_indian",
+        "bohemian"
+      ],
+      "material_tags": [
+        "fabric"
+      ],
+      "room_types": [
+        "living_room",
+        "bedroom"
+      ],
+      "price_inr": 3200,
+      "color": "#b04a3a"
+    }
+  ]
+}

@@ -1,0 +1,503 @@
+<title>Allure Hybrid Local Pipeline</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #EFEEE9;
+    --surface: #F7F6F2;
+    --ink: #22252A;
+    --ink-2: #4A4F55;
+    --muted: #7C817E;
+    --rule: #D6D4CC;
+    --accent: #2C7A6B;
+    --accent-soft: #DCEAE5;
+    --brass: #A8843A;
+    --brass-soft: #F0E6CF;
+    --code-bg: #E7E6DF;
+    --display: "Fraunces", Georgia, "Times New Roman", serif;
+    --body: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1B1D1F; --surface: #232629; --ink: #E8E6DF; --ink-2: #C2C0B8; --muted: #8E938F;
+      --rule: #383C40; --accent: #5FB3A1; --accent-soft: #23423B; --brass: #D2AA5A; --brass-soft: #3E351F; --code-bg: #2A2D31;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1B1D1F; --surface: #232629; --ink: #E8E6DF; --ink-2: #C2C0B8; --muted: #8E938F;
+    --rule: #383C40; --accent: #5FB3A1; --accent-soft: #23423B; --brass: #D2AA5A; --brass-soft: #3E351F; --code-bg: #2A2D31;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; margin: 0; }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; max-width: 1180px; margin: 0 auto; padding: 40px 32px 96px; }
+  nav.toc { position: sticky; top: 24px; align-self: start; font-size: 13px; }
+  nav.toc .eyebrow { margin-bottom: 12px; }
+  nav.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; border-left: 1px solid var(--rule); }
+  nav.toc a { color: var(--ink-2); text-decoration: none; display: block; padding: 2px 0 2px 12px; margin-left: -1px; border-left: 1px solid transparent; }
+  nav.toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+  main { min-width: 0; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  header.top { border-bottom: 1px solid var(--rule); padding-bottom: 28px; margin-bottom: 40px; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1.08; margin: 10px 0 14px; text-wrap: balance; letter-spacing: -.01em; }
+  .lede { font-size: 18px; color: var(--ink-2); max-width: 62ch; margin: 0 0 18px; }
+  .verdict { border-left: 3px solid var(--accent); padding: 10px 16px; background: var(--surface); max-width: 68ch; }
+  .verdict strong { color: var(--accent); }
+  section { margin: 0 0 56px; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 6px; text-wrap: balance; }
+  h2 .num { font-family: var(--mono); font-weight: 400; font-size: 13px; color: var(--muted); margin-right: 10px; vertical-align: middle; }
+  h3 { font-size: 15px; font-weight: 600; margin: 26px 0 8px; letter-spacing: .01em; }
+  p, li { max-width: 68ch; }
+  p { margin: 0 0 12px; }
+  ul, ol { padding-left: 22px; margin: 0 0 14px; }
+  li { margin: 4px 0; }
+  code { font-family: var(--mono); font-size: .88em; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+  pre { font-family: var(--mono); font-size: 13px; line-height: 1.5; background: var(--code-bg); padding: 16px 18px; border-radius: 4px; overflow-x: auto; margin: 12px 0 18px; }
+  pre code { background: none; padding: 0; }
+  .tablewrap { overflow-x: auto; margin: 12px 0 20px; border: 1px solid var(--rule); border-radius: 4px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+  th { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--bg); }
+  tr:last-child td { border-bottom: 0; }
+  td.k { font-weight: 600; white-space: nowrap; }
+  td.dec { color: var(--ink); }
+  td.dec b { color: var(--accent); font-weight: 600; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; margin: 14px 0 18px; }
+  .fact { background: var(--surface); padding: 12px 14px; }
+  .fact .l { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-size: 17px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .fact .v.bad { color: var(--brass); }
+  .fact .v.ok { color: var(--accent); }
+  /* stage map */
+  .stages { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 10px; }
+  .stage { flex: 0 0 auto; width: 150px; border: 1px solid var(--rule); border-radius: 4px; background: var(--surface); padding: 10px 12px 12px; border-top-width: 3px; }
+  .stage.exists { border-top-color: var(--accent); }
+  .stage.extend { border-top-color: var(--brass); }
+  .stage.new { border-top-color: var(--ink); }
+  .stage .n { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .stage .t { font-weight: 600; font-size: 14px; line-height: 1.25; margin: 2px 0 6px; }
+  .stage .h { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+  .stage .lane { display: inline-block; margin-top: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; }
+  .lane.ai { background: var(--accent-soft); color: var(--accent); }
+  .lane.render { background: var(--brass-soft); color: var(--brass); }
+  .lane.req { background: var(--code-bg); color: var(--ink-2); }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin: 6px 0 4px; }
+  .legend span::before { content: ""; display: inline-block; width: 18px; height: 3px; margin-right: 8px; vertical-align: middle; background: var(--ink); }
+  .legend .e::before { background: var(--accent); } .legend .x::before { background: var(--brass); }
+  /* milestones */
+  .ms { display: grid; grid-template-columns: 44px minmax(0,1fr) 60px; gap: 0 14px; border-top: 1px solid var(--rule); }
+  .ms > div { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  .ms .id { font-family: var(--mono); font-weight: 500; }
+  .ms .id.ok { color: var(--accent); }
+  .ms .days { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  .ms .scope { font-weight: 600; }
+  .ms .done { font-size: 13.5px; color: var(--ink-2); margin-top: 3px; }
+  .ms .done::before { content: "done when · "; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .ms .done.ok::before { content: "done 7 sep · "; }
+  .bar { height: 6px; background: var(--rule); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--accent); }
+  .bar i.r { background: var(--brass); }
+  .total { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 13px; padding: 10px 0; color: var(--ink-2); }
+  footer { border-top: 1px solid var(--rule); padding-top: 18px; font-size: 13px; color: var(--muted); }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; gap: 24px; padding: 24px 18px 72px; } nav.toc { position: static; } h1 { font-size: 34px; } }
+  @media (prefers-reduced-motion: no-preference) { nav.toc a { transition: border-color .15s, color .15s; } }
+</style>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Sections">
+    <div class="eyebrow">Contents</div>
+    <ol>
+      <li><a href="#s1">Reconciling the inputs</a></li>
+      <li><a href="#s2">Hardware and toolchain</a></li>
+      <li><a href="#s3">Target architecture</a></li>
+      <li><a href="#s4">Data model</a></li>
+      <li><a href="#s5">Stages and jobs</a></li>
+      <li><a href="#s6">API additions</a></li>
+      <li><a href="#s7">Intelligence layer</a></li>
+      <li><a href="#s8">Blender automation</a></li>
+      <li><a href="#s8a">Web delivery</a></li>
+      <li><a href="#s9">Frontend wiring</a></li>
+      <li><a href="#s10">Milestones</a></li>
+      <li><a href="#s11">Tests</a></li>
+      <li><a href="#s12">Risks</a></li>
+      <li><a href="#s13">Assumptions</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="top">
+      <div class="eyebrow">Allure · implementation plan · updated 7 Sep 2026 · all milestones done except M6b</div>
+      <h1>Allure Hybrid Local Pipeline</h1>
+      <p class="lede">Reference images and a brief go in. A structured SceneSpec, an automatic Blender build, and a 3D walkthrough the client opens in the browser come out. All of it on one laptop, built on the scene engine that already runs.</p>
+      <div class="verdict"><strong>Verdict.</strong> Keep the DPR's local-first deployment and SceneSpec contract, adopt the Phase 1 diagram's eleven stages as the pipeline's stage names and state machine, and build on top of the existing patch-based scene engine rather than beside it.</div>
+    </header>
+
+    <section id="s1">
+      <h2><span class="num">01</span>Where the three inputs agree and disagree</h2>
+      <p>Three documents were reconciled: the Phase 1 backend diagram (cloud-shaped infrastructure), the Hybrid Local DPR (single laptop, Blender), and the code in <code>aether-backend</code> and <code>aether-frontend</code>.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Topic</th><th>Diagram</th><th>DPR</th><th>Existing code</th><th>Decision</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Deployment</td><td>API gateway, JWT, CDN, GPU workers</td><td>One laptop, no hosted backend</td><td>FastAPI :8000, Next :3001, local</td><td class="dec"><b>DPR.</b> Local now. The diagram is the later hosted shape. No auth in local mode.</td></tr>
+          <tr><td class="k">Queue</td><td>Redis / RabbitMQ</td><td>Local worker processes</td><td>None. Everything runs inside the request.</td><td class="dec"><b>SQLite job table + worker threads.</b> Same job and status API the diagram wants, no broker.</td></tr>
+          <tr><td class="k">Database</td><td>PostgreSQL</td><td>SQLite</td><td>JSON files</td><td class="dec"><b>SQLite for projects, inputs, jobs, events, outputs.</b> Scenes stay JSON: they are already versioned with undo and redo.</td></tr>
+          <tr><td class="k">Storage</td><td>Object storage + CDN</td><td><code>data/projects/{id}/…</code></td><td><code>data/assets</code>, <code>data/scenes</code></td><td class="dec"><b>DPR layout</b>, served by the existing <code>/files</code> mount.</td></tr>
+          <tr><td class="k">LLM</td><td>"GPT-6 Astra"</td><td>Provider-abstracted interface</td><td>Gemini adapter + deterministic mock</td><td class="dec"><b>Provider interface.</b> Gemini first, mock always available.</td></tr>
+          <tr><td class="k">3D generation</td><td>3D generation models</td><td>Custom path only for unique objects</td><td>Meshy configured, no adapter</td><td class="dec"><b>Off by default.</b> Procedural fallback so a build never waits on generation.</td></tr>
+          <tr><td class="k">Scene contract</td><td>Not specified</td><td>SceneSpec (Z-up, degrees)</td><td><code>Scene</code> (Y-up, radians, patch-mutated)</td><td class="dec"><b><code>Scene</code> is the SceneSpec.</b> Extend it; compile a Z-up build manifest for Blender.</td></tr>
+          <tr><td class="k">Renderer</td><td>Web app (Three.js)</td><td>Blender preview + final</td><td>R3F viewer, tour keyframes</td><td class="dec"><b>The client sees the walkthrough in the browser.</b> Web viewer is the interactive walkthrough for every tier. Blender quality flows back into the website as a 360° panorama tour and a baked scene GLB. Video is a secondary export.</td></tr>
+          <tr><td class="k">Render hardware</td><td>GPU worker pool</td><td>Local CPU/GPU</td><td>—</td><td class="dec"><b>This laptop.</b> RTX 3050 with 4 GB. Eevee for video, Cycles for hero stills only.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Diagram box → local home</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Diagram box</th><th>Lives in</th></tr></thead>
+        <tbody>
+          <tr><td class="k">1 User input layer</td><td>Studio "Upload &amp; Describe" step → <code>POST /projects/{id}/inputs</code></td></tr>
+          <tr><td class="k">2 API gateway</td><td>FastAPI itself. Rate limiting and auth deferred to the hosted phase.</td></tr>
+          <tr><td class="k">3 Core services</td><td><code>app/projects</code>, <code>app/jobs</code>. Notifications and analytics are the events feed.</td></tr>
+          <tr><td class="k">4 Job queue &amp; orchestrator</td><td><code>app/jobs</code>: SQLite table, worker threads, checkpoints, retry.</td></tr>
+          <tr><td class="k">5 Input analysis</td><td><code>app/intelligence/agents/input_analyzer.py</code>, <code>style_interpreter.py</code></td></tr>
+          <tr><td class="k">6 Reasoning &amp; scene planning</td><td><code>spatial_planner.py</code>, <code>furniture_planner.py</code></td></tr>
+          <tr><td class="k">7 Prompt optimization</td><td>Stage-specific prompt builders inside each agent. No separate service.</td></tr>
+          <tr><td class="k">8 Asset &amp; material generation</td><td><code>asset_decision.py</code> + existing <code>app/assets</code>, <code>app/materials</code>, <code>app/catalog</code></td></tr>
+          <tr><td class="k">9 Scene assembly</td><td><code>scene_compiler.py</code> → <code>Scene</code> via <code>commit_patch</code>; then <code>blender/scripts/*</code></td></tr>
+          <tr><td class="k">10 Validation &amp; refinement</td><td>Existing spatial validator + <code>quality_validator.py</code> + Blender scene validation</td></tr>
+          <tr><td class="k">11 Walkthrough generation</td><td>Existing tour service + <code>create_camera_path.py</code>, <code>render_*.py</code></td></tr>
+          <tr><td class="k">AI &amp; external services</td><td><code>app/providers</code> (gemini, polyhaven, meshy stub)</td></tr>
+          <tr><td class="k">Data &amp; storage</td><td><code>data/allure.db</code> + <code>data/projects/{id}</code></td></tr>
+          <tr><td class="k">GPU &amp; rendering workers</td><td>One Blender subprocess at a time on the local GPU</td></tr>
+          <tr><td class="k">Delivery</td><td>Next.js Studio; MP4, stills and package zip under <code>/files</code></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="s2">
+      <h2><span class="num">02</span>Hardware and toolchain facts that shape the plan</h2>
+      <p>Verified on the development laptop on 6 and 7 Sep 2026.</p>
+      <div class="facts">
+        <div class="fact"><div class="l">GPU</div><div class="v">RTX 3050 Laptop · 4 GB</div></div>
+        <div class="fact"><div class="l">RAM · CPU</div><div class="v">16 GB · Ryzen 5 5600H</div></div>
+        <div class="fact"><div class="l">Python</div><div class="v">3.13.7</div></div>
+        <div class="fact"><div class="l">Blender</div><div class="v ok">5.2.1 LTS · installed</div></div>
+        <div class="fact"><div class="l">FFmpeg</div><div class="v">9.0 (winget)</div></div>
+        <div class="fact"><div class="l">bpy in venv</div><div class="v">No, and keep it out</div></div>
+      </div>
+      <ul>
+        <li><strong>Blender 5.2.1 LTS is installed</strong> as a portable build at <code>D:\Blender\blender.exe</code>. Verified headless on 7 Sep 2026: OptiX and CUDA both see the RTX 3050, and Cycles and Eevee smoke renders complete in about 2.5 s at 640×360. <code>BLENDER_PATH</code> in the backend env points at it; pin the version, the Python API moves between releases. In Blender 5 the only Eevee engine id is <code>BLENDER_EEVEE</code>.</li>
+        <li>Drive Blender by subprocess, one process at a time, because there is one GPU:<br><code>blender -b base.blend --python build_scene.py -- --manifest &lt;path&gt;</code></li>
+        <li>Cycles video is out of scope on this hardware. Eevee carries the walkthrough.</li>
+      </ul>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Profile</th><th>Engine</th><th>Resolution</th><th>FPS</th><th>Samples</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td class="k">preview</td><td>Eevee</td><td>960×540</td><td>12</td><td>16</td><td>Validate path, exposure, clipping. Minutes.</td></tr>
+          <tr><td class="k">standard</td><td>Eevee</td><td>1920×1080</td><td>24</td><td>64</td><td>Client walkthrough video. 45 s ≈ 1080 frames ≈ 20–50 min.</td></tr>
+          <tr><td class="k">hero_still</td><td>Cycles (OptiX)</td><td>1920×1080</td><td>—</td><td>256 + denoise</td><td>3–6 marketing stills. Textures capped at 2K for 4 GB VRAM.</td></tr>
+          <tr><td class="k">panorama</td><td>Cycles (OptiX)</td><td>4096×2048 equirect</td><td>—</td><td>128 + denoise</td><td>One 360° node per tour keyframe, 8–12 per apartment, 2–4 min each. Feeds the in-browser tour.</td></tr>
+          <tr><td class="k">bake</td><td>Cycles (OptiX)</td><td>1K–2K lightmap per object</td><td>—</td><td>64 + denoise</td><td>Bakes lighting into a web GLB for the premium real-time viewer. 10–25 min per apartment.</td></tr>
+        </tbody>
+      </table></div>
+      <p>Cycles stills, panoramas and bakes are one frame each, so they fit this GPU. They are what the website shows.</p>
+    </section>
+
+    <section id="s3">
+      <h2><span class="num">03</span>Target architecture</h2>
+<pre><code>aether-frontend (Next 15, :3001)         aether-backend (FastAPI, :8000)
+  Studio wizard ---- polls ------>  /api/projects, /api/jobs, /api/projects/{id}/events
+  R3F viewer   ---- patches ----->  /api/scenes/*  (unchanged)
+                                       |
+                                       v
+                               app/jobs  (SQLite jobs + events, worker threads,
+                                          checkpoints, retry, resume)
+                                       |
+          +----------------------------+-----------------------------+
+          v                            v                             v
+  app/intelligence            app/scenespec                    app/blender
+  agents 5-8 (mock/Gemini)    Scene ext + validator +          runner, manifest, log capture
+  DesignAnalysis, StyleSpec,  build-manifest compiler          -> blender/scripts/*.py
+  ObjectPlan, AssetPlan       (Y-up -> Z-up)                      build_room, import_assets,
+          |                            |                            place_assets, apply_materials,
+          +------> existing: scene/patches, spatial, walkthrough,   setup_lighting, create_camera_path,
+                   assets, materials, catalog                       render_preview, render_final
+                                                                             |
+                                          data/projects/{id}/ <--------------+
+                                          input/ analysis/ planning/ assets/ blender/ previews/ renders/ logs/</code></pre>
+      <h3>Hard rules carried over from the DPR</h3>
+      <ol>
+        <li>No raw prompt ever reaches Blender. Blender reads <code>build_manifest.json</code> only.</li>
+        <li>The web <code>Scene</code> with its patch pipeline and validator stays the single system of record. Blender is a consumer.</li>
+        <li>Reuse a local asset before generating. Procedural before Meshy.</li>
+        <li>Every stage writes a checkpoint file. Resume finds the last complete checkpoint.</li>
+        <li>No API request blocks on analysis or rendering. Everything long is a job.</li>
+      </ol>
+    </section>
+
+    <section id="s4">
+      <h2><span class="num">04</span>Data model</h2>
+      <h3>SceneSpec = <code>Scene</code> plus four additions</h3>
+      <p>Keep the existing conventions: meters, +Y up, −Z forward, yaw in radians. Every addition is optional with a default so current scene files still load.</p>
+<pre><code>class StyleSpec(BaseModel):
+    name: str                      # "modern_warm_minimal"
+    tags: list[str]
+    palette: list[str]             # hex
+    materials: list[str]           # material_ids from app/materials
+    lighting_mood: Literal["warm_daylight","cool_daylight","evening","studio"]
+
+class LightingSpec(BaseModel):
+    mood: str
+    sun_azimuth_deg: float = 135
+    sun_elevation_deg: float = 40
+    exposure_ev: float = 0.0
+    interior_lights: list[InteriorLight] = []
+
+class CameraPlan(BaseModel):
+    type: Literal["walkthrough","orbit","stills"] = "walkthrough"
+    duration_seconds: int = 45
+    seconds_per_room: float = 8
+    keyframes: list[TourKeyframe] = []          # filled by walkthrough planner
+    hero_shots: list[SavedView] = []
+
+class Scene(...):                 # existing fields, plus:
+    spec_version: str = "1.0"
+    style: Optional[StyleSpec] = None
+    lighting: Optional[LightingSpec] = None
+    camera_plan: Optional[CameraPlan] = None
+
+class SceneObject(...):           # existing fields, plus:
+    source_strategy: Literal["local_asset","local_modified","procedural","generated"] = "procedural"
+    material_overrides: dict[str, str] = {}     # slot -> material_id</code></pre>
+      <p>The DPR's example SceneSpec, which is Z-up in degrees, is the shape of the <em>Blender manifest</em>, not the canonical scene. Conversion is one function: <code>(x, y, z) → (x, −z, y)</code> and <code>rotation_y</code> radians → <code>rotation_euler.z</code> degrees.</p>
+
+      <h3>Intelligence outputs</h3>
+      <ul>
+        <li><code>DesignAnalysis</code>: intent, rooms with dimensions or <code>estimated: true</code>, constraints, furniture spotted in photos, confidence.</li>
+        <li><code>StyleSpec</code>: as above.</li>
+        <li><code>ObjectPlan</code>: category, semantic type, room, priority, approximate dimensions, style notes, relation.</li>
+        <li><code>AssetPlan</code>: object id, strategy, asset id, material overrides, procedural params or generation prompt.</li>
+        <li><code>ValidationReport</code>: errors, warnings, readiness.</li>
+        <li><code>AgentInput</code> / <code>AgentOutput</code> envelopes exactly as DPR §8.</li>
+      </ul>
+
+      <h3>SQLite and project storage</h3>
+      <p><code>data/allure.db</code> holds <code>projects</code>, <code>inputs</code>, <code>analyses</code>, <code>scene_specs</code> (pointer rows to the JSON scene and version), <code>jobs</code>, <code>events</code>, <code>outputs</code>. Asset and material registries stay JSON. Project files follow the DPR §20 layout under <code>data/projects/{project_id}/</code>; a checkpoint is simply the presence of a stage's output file.</p>
+    </section>
+
+    <section id="s5">
+      <h2><span class="num">05</span>Stages and jobs</h2>
+      <p>Stage names take the diagram's numbering; statuses are the DPR's. Colour on each card says how much of it exists today.</p>
+      <div class="legend"><span class="e">Exists, reuse</span><span class="x">Exists, extend</span><span>New</span></div>
+      <div class="stages">
+        <div class="stage exists"><div class="n">—</div><div class="t">Inputs</div><div class="h">CREATED → INPUT_RECEIVED. Writes <code>input/</code>. Built in M1.</div><span class="lane req">request</span></div>
+        <div class="stage exists"><div class="n">5</div><div class="t">analyze</div><div class="h">ANALYZING → DESIGN_SPEC_READY. <code>design_analysis.json</code></div><span class="lane ai">ai lane</span></div>
+        <div class="stage exists"><div class="n">6–7</div><div class="t">scene_plan</div><div class="h">ASSET_PLANNING. <code>object_plan.json</code></div><span class="lane ai">ai lane</span></div>
+        <div class="stage exists"><div class="n">8</div><div class="t">resolve_assets</div><div class="h">→ ASSETS_READY. <code>asset_plan.json</code>, <code>assets/</code></div><span class="lane ai">ai lane</span></div>
+        <div class="stage exists"><div class="n">9</div><div class="t">compile_scene</div><div class="h">Scene committed through <code>commit_patch</code>.</div><span class="lane ai">ai lane</span></div>
+        <div class="stage exists"><div class="n">9</div><div class="t">build</div><div class="h">SCENE_BUILDING → SCENE_VALIDATING. <code>scene.blend</code></div><span class="lane render">render lane</span></div>
+        <div class="stage exists"><div class="n">10</div><div class="t">validate</div><div class="h">Spatial validator + Blender report.</div><span class="lane ai">ai lane</span></div>
+        <div class="stage exists"><div class="n">11</div><div class="t">camera_plan</div><div class="h">CAMERA_PLANNING. Reuses <code>generate_tour()</code>.</div><span class="lane ai">ai lane</span></div>
+        <div class="stage exists"><div class="n">11</div><div class="t">preview</div><div class="h">PREVIEW_RENDERING. <code>previews/</code></div><span class="lane render">render lane</span></div>
+        <div class="stage exists"><div class="n">11</div><div class="t">walkthrough</div><div class="h">FINAL_RENDERING → COMPLETED. <code>renders/</code>, outputs manifest.</div><span class="lane render">render lane</span></div>
+      </div>
+      <h3>Job mechanics (<code>app/jobs/</code>, built in M1)</h3>
+      <ul>
+        <li><code>Job{job_id, project_id, type, lane, status, attempt, max_attempts, checkpoint, error, params, result, log_path, …}</code> with status QUEUED, RUNNING, SUCCEEDED, FAILED or RETRYING.</li>
+        <li>Two worker lanes as thread pools started in the FastAPI lifespan: <strong>ai</strong> (2 threads, network-bound) and <strong>render</strong> (1 thread, owns the GPU). Blender runs as a subprocess from the render lane with output teed to <code>logs/</code>.</li>
+        <li>Failures retry from the last checkpoint and never rebuild earlier stages. A render failure re-runs at the preview profile first.</li>
+        <li>Every transition writes an event row. The UI polls <code>GET /projects/{id}/events?after=</code>.</li>
+        <li>On startup the runner resumes every job that was still in flight, logging a <code>resumed</code> event. Tested: retry-from-checkpoint and restart-resume both pass.</li>
+        <li>When hosting arrives, the same job rows can be claimed by a remote worker. Nothing in the API changes. This is the diagram's box 4 without a broker.</li>
+      </ul>
+    </section>
+
+    <section id="s6">
+      <h2><span class="num">06</span>API additions</h2>
+      <p>Existing <code>/api/scenes/*</code>, catalog, assets and materials routes stay untouched. New routes mirror DPR §17 and keep the same response envelope. Routes marked ✓ exist since M1.</p>
+<pre><code>POST  /api/projects                      ✓  name, description, room_hints
+GET   /api/projects/{id}                 ✓  project + inputs + jobs + checkpoints + outputs
+PATCH /api/projects/{id}                 ✓
+POST  /api/projects/{id}/inputs          ✓  multipart: description, dimensions json, references[]
+GET   /api/projects/{id}/inputs          ✓
+POST  /api/projects/{id}/jobs            ✓  generic {type, params} -> job (types: GET /api/jobs/types)
+GET   /api/projects/{id}/jobs            ✓
+GET   /api/projects/{id}/events?after=   ✓  progress feed
+GET   /api/projects/{id}/outputs         ✓
+GET   /api/jobs/{job_id}                 ✓  job + its events
+GET   /files/projects/{id}/{path}        ✓  project artifacts, confined to the project dir
+POST  /api/projects/{id}/analyze         ✓  -> analyze job {force}
+GET   /api/projects/{id}/analysis        ✓  analysis + style + moodboard + versions
+PATCH /api/projects/{id}/analysis        ✓  user corrections (rooms, constraints, style) -> new version
+POST  /api/projects/{id}/scene-plan      ✓  -> scene_plan job {force}
+GET   /api/projects/{id}/scene-spec      ✓  Scene + history + violations + object/asset plans
+POST  /api/projects/{id}/assets/resolve  ✓  -> resolve_assets job
+POST  /api/projects/{id}/build           ✓  -> build job {force, preview, preview_profile}
+GET   /api/projects/{id}/build           ✓  validation report + manifest summary + files
+POST  /api/projects/{id}/preview         ✓  -> preview job (camera plan + 2K panoramas + tour.json)
+POST  /api/projects/{id}/walkthrough     ✓  -> walkthrough job (4K panoramas + hero stills + package)
+GET   /api/projects/{id}/tour            ✓  read-only tour.json for the share page
+POST  /api/projects/{id}/film            ✓  -> film job {profile: preview|standard}</code></pre>
+    </section>
+
+    <section id="s7">
+      <h2><span class="num">07</span>Intelligence layer (<code>app/intelligence/</code>)</h2>
+<pre><code>class IntelligenceProvider(Protocol):
+    def analyze_input(self, bundle: InputBundle) -> DesignAnalysis: ...
+    def create_style_spec(self, analysis: DesignAnalysis) -> StyleSpec: ...
+    def plan_objects(self, analysis, style, catalog_summary) -> ObjectPlan: ...
+    def validate_scene(self, scene: Scene) -> ValidationReport: ...</code></pre>
+      <ul>
+        <li><strong>Mock provider</strong> is deterministic: keyword rules from the description, palette from image average colours, rooms from dimensions or defaults. Runs with zero API keys. Tests and the golden project use it.</li>
+        <li><strong>Gemini provider</strong> extends the existing adapter with inline image parts, a response schema, one stage-specific prompt per call, one JSON repair retry, then per-stage fallback to mock with a warning in the output envelope.</li>
+        <li><strong>Agents never emit coordinates.</strong> They produce zones, priorities and relations. The existing design planner turns those into positions and <code>commit_patch</code> validates. This is the DPR's "no raw text to Blender" rule applied one layer earlier.</li>
+      </ul>
+      <h3>Asset decision order, per object</h3>
+      <ol>
+        <li>Catalog search with a real model within ±15 % of planned dimensions → <code>local_asset</code>.</li>
+        <li>Same asset with scale within ±25 % or a material override → <code>local_modified</code>.</li>
+        <li>Semantic type in the procedural set (bed, rug, wardrobe, lamp, TV unit, shelf, table, seat, plant, box) → <code>procedural</code>. These are exactly today's web primitives, so both renderers agree.</li>
+        <li>Otherwise <code>generated</code>, only when a Meshy key is set and the object is flagged unique. The build proceeds with a procedural stand-in and swaps when the asset validates.</li>
+      </ol>
+    </section>
+
+    <section id="s8">
+      <h2><span class="num">08</span>Blender automation (<code>blender/</code>)</h2>
+<pre><code>blender/
+  templates/base.blend        world (Nishita sky), AgX colour management, unit=meters, collections
+  scripts/
+    _common.py     ✓          arg parsing after "--", GPU selection (OptiX → CUDA), ALLURE_RESULT
+    smoke.py       ✓          render the factory cube; proves the subprocess path
+    build_scene.py            orchestrator: parse --manifest, run stages, checkpoint after each
+    manifest.py               dataclasses mirroring build_manifest.json (Z-up, metres, degrees)
+    build_room.py             floor/ceiling from room polygons, walls with boolean openings
+    procedural.py             bmesh primitives for the procedural set, dims from manifest
+    import_assets.py          glTF import of normalized GLBs; verify bbox vs record
+    place_assets.py           location/rotation/scale from manifest; parent to room collection
+    apply_materials.py        MaterialRecord maps -> Principled BSDF; tile_size_m -> mapping scale
+    setup_lighting.py         sun from lighting spec, area lights at windows, per-room fill, exposure
+    create_camera_path.py     keyframes -> Catmull-Rom -> Bezier curve, Follow Path + Track To
+    validate_scene.py         object count, bbox overlaps, camera clip test, missing textures -> JSON
+    render_preview.py / render_final.py   profile -> engine settings, PNG sequence + H.264 MP4</code></pre>
+      <p>Scripts are pure functions of the manifest: no network, no business logic. Each stage saves <code>scene.blend</code> so a later failure resumes from the file. The runner in <code>app/blender/runner.py</code> (built in M0) builds the command, streams output to a per-job log, enforces a per-profile timeout, and parses the final <code>ALLURE_RESULT</code> line from stdout.</p>
+      <p>The camera path reuses the existing guided-tour keyframes (room order via doors, pans to the three largest objects). Blender only smooths and renders them, so the web tour, the panorama nodes and the video follow the same route.</p>
+      <p>Three more scripts serve web delivery: <code>render_panoramas.py</code> (equirect camera at each keyframe), <code>bake_lightmaps.py</code> (UV2 unwrap, Cycles bake per object, atlas per room) and <code>export_web_scene.py</code> (glTF export with KTX2 textures and Draco geometry, plus <code>tour.json</code>).</p>
+    </section>
+
+    <section id="s8a">
+      <h2><span class="num">08A</span>Web delivery: the walkthrough the client sees</h2>
+      <p>The client experiences the 3D walkthrough on the website, not as a downloaded video. Blender's job is therefore to raise the quality of what the browser shows. All modes are served from the project's <code>outputs/web/</code> folder and follow the same tour route.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Mode</th><th>Browser loads</th><th>Quality</th><th>Client cost</th><th>Tier</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Explore</td><td>Existing R3F viewer: normalized GLBs + PBR maps; orbit, first-person, guided tour</td><td>Good, real-time lit</td><td>Laptop-class GPU; phones struggle with 2K maps</td><td>Draft, Standard</td></tr>
+          <tr><td class="k">Tour</td><td>360° panorama per keyframe + <code>tour.json</code>; hotspots to neighbouring nodes, auto-play along the route</td><td>Cycles quality, path-traced light and reflections</td><td>Tiny. One texture at a time, runs on any phone</td><td>Standard (Eevee panos), Premium (Cycles panos)</td></tr>
+          <tr><td class="k">Explore Premium</td><td><code>scene_baked.glb</code>: Cycles lighting baked into lightmaps, loaded by the same viewer with unlit lightmapped materials</td><td>Near-Cycles look at real-time speed</td><td>Moderate. One GLB of 20–60 MB</td><td>Premium</td></tr>
+          <tr><td class="k">Film</td><td><code>walkthrough.mp4</code></td><td>Eevee</td><td>Streams anywhere</td><td>Optional export for social sharing</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Build order.</strong> Tour first: it is the fastest path from Blender quality to the browser, works on every device, and the keyframes already drive the web tour. Then Explore Premium (bake and export). Then Film.</p>
+      <h3>Web package contract, <code>outputs/web/tour.json</code></h3>
+<pre><code>{
+  "project_id": "proj_…", "scene_id": "scene_…", "scene_version": 12,
+  "modes": ["explore", "tour", "explore_premium"],
+  "explore": { "scene_url": "/api/scenes/scene_…" },
+  "explore_premium": { "glb_url": "/files/projects/proj_…/outputs/web/scene_baked.glb", "size_bytes": 41230000 },
+  "tour": {
+    "nodes": [
+      { "id": "n01", "room_id": "living_room", "label": "Entry",
+        "position": [1.2, 1.6, -0.8], "yaw_deg": 90,
+        "pano_url": "/files/projects/proj_…/outputs/web/panos/n01.jpg",
+        "links": ["n02"] }
+    ],
+    "route": ["n01", "n02", "n03"],
+    "autoplay_seconds_per_node": 6
+  },
+  "film": { "mp4_url": "…", "poster_url": "…" }
+}</code></pre>
+      <p>Frontend pieces: a <code>PanoramaTour</code> component (three.js sphere with an equirect texture, hotspot sprites, crossfade between nodes, gyroscope on mobile), a <code>BakedSceneView</code> that loads the baked GLB into the existing canvas with the existing camera rigs, and a public read-only route <code>/w/[projectId]</code> that renders the Experience view from <code>tour.json</code> alone, so the client's share link never touches editing APIs.</p>
+    </section>
+
+    <section id="s9">
+      <h2><span class="num">09</span>Frontend wiring (<code>aether-frontend</code>)</h2>
+      <p>The Studio's eight step ids stay. Mock modules are replaced one step at a time.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Studio step</th><th>Today</th><th>After</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Create Project</td><td>createProject</td><td>Same, plus description field</td></tr>
+          <tr><td class="k">Upload &amp; Describe</td><td>Staged previews only</td><td>Real upload with progress, reusing the XHR uploader from the cinematic feature</td></tr>
+          <tr><td class="k">Generate Moodboard</td><td>Mock moodboards</td><td>analyze job → Analysis Review: rooms, style tags, palette, materials, spotted furniture; user corrects dimensions</td></tr>
+          <tr><td class="k">Review &amp; Refine</td><td>Mock</td><td>scene-plan job → embedded R3F viewer as the instant preview; edits via existing patches and proposals</td></tr>
+          <tr><td class="k">Generate 3D Space (paid)</td><td>createScene + fake delay</td><td>build → preview jobs with a real progress panel</td></tr>
+          <tr><td class="k">View 3D Experience</td><td>R3F viewer</td><td>Mode switch: Explore (exists) · Tour (360° nodes) · Explore Premium (baked GLB) · Film (optional)</td></tr>
+          <tr><td class="k">Save / Share</td><td>Mock</td><td>Public link <code>/w/{projectId}</code> opening the same Experience view read-only; outputs: web package, stills, video, scene.blend, SceneSpec</td></tr>
+          <tr><td class="k">Connect with Designer</td><td>Mock</td><td>Unchanged for now</td></tr>
+        </tbody>
+      </table></div>
+      <p>New shared pieces: a <code>useJob</code> polling hook with backoff, a projects API client, and a job-progress component driven by the events feed.</p>
+    </section>
+
+    <section id="s10">
+      <h2><span class="num">10</span>Milestones</h2>
+      <p>Working days for one developer plus Claude. Green bars are the AI lane, brass bars the Blender lane. After M1 the two lanes can run in parallel.</p>
+      <div class="ms">
+        <div class="id ok">M0</div><div><div class="scope">Toolchain: Blender 5.2.1 LTS portable, BLENDER_PATH, Blender runner + smoke script, git baselines for both apps</div><div class="done ok">Cycles smoke render through the backend runner in 3.6 s on OptiX</div><div class="bar"><i class="r" style="width:2%"></i></div></div><div class="days">0.5</div>
+        <div class="id ok">M1</div><div><div class="scope">Projects, inputs, storage layout, SQLite, jobs skeleton with two lanes, events, retry, resume</div><div class="done ok">20 tests pass incl. retry-from-checkpoint and restart-resume; live: brief + 3 photos uploaded, Blender job rendered and served via /files/projects</div><div class="bar"><i style="width:9%"></i></div></div><div class="days">2</div>
+        <div class="id ok">M2</div><div><div class="scope">Intelligence layer: schemas, mock provider, Gemini vision provider, analyze job, GET/PATCH analysis for user corrections (Analysis Review screen moves to M7)</div><div class="done ok">31 tests pass; mock path needs no keys; Gemini path validated against a mocked transport, live key pending</div><div class="bar"><i style="width:14%"></i></div></div><div class="days">3</div>
+        <div class="id ok">M3</div><div><div class="scope">Scene planning: object plan → floor-plan layout → asset decision → Scene via patches; scene-plan and resolve-assets jobs; GET scene-spec (Refine-step UI moves to M7)</div><div class="done ok">41 tests pass; every object carries a strategy and a model or primitive; live run places 20+ objects with zero hard violations</div><div class="bar"><i style="width:14%"></i></div></div><div class="days">3</div>
+        <div class="id ok">M4</div><div><div class="scope">Blender build: manifest compiler, build_room, procedural, import + place, apply_materials, setup_lighting, validate_scene, render_preview, build job and routes</div><div class="done ok">live project builds in 11 s with 17 GLB and 11 procedural objects, validation clean, Eevee preview served via /files</div><div class="bar"><i class="r" style="width:14%"></i></div></div><div class="days">3</div>
+        <div class="id ok">M5</div><div><div class="scope">Materials and lighting in Blender from material records and LightingSpec: metric box-projected PBR textures, physical sky, sun, per-room area lights, exposure, exterior ground</div><div class="done ok">Cycles hero still at 1080p, 256 samples + denoise, renders in 53 s on the RTX 3050 with the warm oak / leather / plaster palette</div><div class="bar"><i class="r" style="width:9%"></i></div></div><div class="days">2</div>
+        <div class="id ok">M6</div><div><div class="scope">Web tour: panorama nodes (one per room, door-linked), Cycles equirect renders (2K preview ≈ 16 s per node, 4K final), preview and walkthrough jobs, tour.json, PanoramaTour with hotspots, minimap and autoplay, public /w/[projectId] page with a Tour / Explore switch</div><div class="done ok">six preview panoramas in 97 s; the share page walks the flat room by room and hotspots land on the doorways</div><div class="bar"><i class="r" style="width:12%"></i></div></div><div class="days">3</div>
+        <div class="id">M6b</div><div><div class="scope">Baked premium scene: lightmap bake, web GLB export with KTX2 and Draco, BakedSceneView in the existing viewer</div><div class="done">scene_baked.glb under 60 MB loads in the browser and walks with the existing first-person rig</div><div class="bar"><i class="r" style="width:12%"></i></div></div><div class="days">3</div>
+        <div class="id ok">M6c</div><div><div class="scope">Film export: film job with a keyframed camera along the tour route, Blender FFmpeg output (PNG + ffmpeg fallback), poster frame, Film tab in the Studio and on the share page</div><div class="done ok">27 s preview film, 327 frames in 148 s at 960×540; the standard profile is 1080p at 24 fps</div><div class="bar"><i class="r" style="width:4%"></i></div></div><div class="days">1</div>
+        <div class="id ok">M7</div><div><div class="scope">Studio wired to jobs: projects API client with upload progress, job polling and progress panel, Analysis Review with corrections, scene-plan preview, build + 360° preview on the paid step, Experience mode switch, /w share link, session resume</div><div class="done ok">the wizard runs end to end without mocks: create → describe → analyze → refine → plan → build → tour → share; only the designer step stays mock</div><div class="bar"><i style="width:12%"></i></div></div><div class="days">3</div>
+        <div class="id ok">M8</div><div><div class="scope">Stabilise: golden project fixture with a DPR §30 acceptance test, checkpoint-recovery and restart tests, route tests for every endpoint, Blender timeout-kill test, backend README</div><div class="done ok">51 tests pass with Blender; the golden project reaches COMPLETED with a tour, a package and preserved preview panoramas</div><div class="bar"><i style="width:8%"></i></div></div><div class="days">2</div>
+      </div>
+      <div class="total"><span>Total</span><span>25.5 days · 22.5 done · M6b (baked premium scene) is the one remaining, and deferrable</span></div>
+    </section>
+
+    <section id="s11">
+      <h2><span class="num">11</span>Tests</h2>
+      <ul>
+        <li>Unit: manifest conversion round-trip, asset decision ordering, state machine transitions, checkpoint resume selection.</li>
+        <li>Provider: mock provider golden outputs; Gemini behind a recorded-response fixture.</li>
+        <li>Blender: a <code>blender</code> pytest marker runs the build on the golden manifest headless and asserts object count, bounding boxes and a small preview frame. Skipped when <code>BLENDER_PATH</code> is unset. The smoke render already runs this way.</li>
+        <li>Route tests for every new endpoint. Projects, inputs, jobs and events routes are covered since M1.</li>
+        <li>Golden project: the seed apartment plus three reference photos and a description under <code>tests/fixtures/golden_project/</code>.</li>
+      </ul>
+    </section>
+
+    <section id="s12">
+      <h2><span class="num">12</span>Risks and mitigations</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td class="k">4 GB VRAM out of memory in Cycles</td><td>Cycles for stills only, 2K texture cap, preview profile always runs first</td></tr>
+          <tr><td class="k">Blender API drift</td><td>Pin 5.2.1 LTS; import-guarded scripts; smoke test in M0</td></tr>
+          <tr><td class="k">Gemini JSON drift or refusals</td><td>Response schema, Pydantic validation, one repair retry, per-stage mock fallback with warning</td></tr>
+          <tr><td class="k">Web viewer and Blender disagree on placement</td><td>One normalized GLB set and one conversion function; M4 exit check compares bounding boxes</td></tr>
+          <tr><td class="k">Long renders wedge the API</td><td>Render lane is one background thread; subprocess timeouts; API never awaits it</td></tr>
+          <tr><td class="k">Asset gaps: bed, rug, wardrobe, lamp, TV unit</td><td>Procedural in Blender, matching today's web primitives; licensed source later</td></tr>
+          <tr><td class="k">Baked GLB too heavy for phones</td><td>The panorama tour is the phone path; the baked GLB targets desktop, capped at 60 MB with KTX2 and Draco, 2K lightmap atlases per room</td></tr>
+          <tr><td class="k">Panorama nodes feel disconnected</td><td>Nodes are the tour keyframes, so hotspots follow the door-connected route; crossfade plus a floor-plan minimap showing the current node</td></tr>
+          <tr><td class="k">Scope creep toward the hosted diagram</td><td>Auth, Postgres, Redis and CDN are explicitly deferred; job rows are the migration seam</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="s13">
+      <h2><span class="num">13</span>Assumptions made</h2>
+      <p>Say so if any of these is wrong; each one changes a milestone.</p>
+      <ol>
+        <li>Blender 5.2.1 LTS is the target version: the build installed on this machine.</li>
+        <li>Gemini stays the first real provider. The diagram's "GPT-6 Astra" is covered by the provider interface.</li>
+        <li>Meshy generation stays off by default and is not needed for the first end-to-end demo.</li>
+        <li>SQLite is introduced only for projects, inputs, jobs, events and outputs. Scene and asset registries stay JSON.</li>
+        <li>The primary deliverable is the in-browser walkthrough: the 360° panorama tour first, then the baked real-time scene. The 1080p Eevee MP4 is a secondary export. No Cycles video.</li>
+        <li>The cinematic photo-to-film route stays optional and untouched.</li>
+      </ol>
+    </section>
+
+    <footer>Source of truth for this plan: <code>Interior design/docs/ALLURE_HYBRID_LOCAL_PLAN.md</code>; this page is <code>docs/ALLURE_HYBRID_LOCAL_PLAN.html</code>. Reconciled from the Phase 1 backend diagram, the Hybrid Local Architecture DPR, and the aether-backend / aether-frontend code as of 6 Sep 2026. Blender verified and M0–M1 delivered 7 Sep 2026.</footer>
+  </main>
+</div>

@@ -1,0 +1,22 @@
+{
+  "_comment": "CC0 PBR texture sets from Poly Haven mapped onto the built-in material ids (see app/materials/seed.py). Scenes reference the id; attaching maps upgrades every scene at once. tile_size_m = physical size of one texture repeat.",
+  "provider": "polyhaven",
+  "items": [
+    { "source_id": "herringbone_parquet", "material_id": "wood_oak_herringbone", "name": "Oak Herringbone", "category": "wood", "resolution": "2k", "tile_size_m": 1.5, "roughness": 0.55, "style_tags": ["luxury", "classic"], "applies_to": ["floor"] },
+    { "source_id": "laminate_floor_02", "material_id": "wood_oak", "name": "Oak Plank Floor", "category": "wood", "resolution": "2k", "tile_size_m": 2.0, "roughness": 0.6, "style_tags": ["modern", "warm_neutral"], "applies_to": ["floor"] },
+    { "source_id": "dark_wooden_planks", "material_id": "wood_dark", "name": "Dark Stained Planks", "category": "wood", "resolution": "2k", "tile_size_m": 2.0, "roughness": 0.55, "style_tags": ["luxury", "moody"], "applies_to": ["floor"] },
+    { "source_id": "plank_flooring_02", "material_id": "wood_walnut", "name": "Walnut Plank Floor", "category": "wood", "resolution": "2k", "tile_size_m": 2.0, "roughness": 0.6, "style_tags": ["luxury", "dark"], "applies_to": ["floor"] },
+    { "source_id": "floor_tiles_06", "material_id": "tile_ivory", "name": "Ivory Porcelain Tile", "category": "tile", "resolution": "2k", "tile_size_m": 1.2, "roughness": 0.35, "style_tags": ["modern"], "applies_to": ["floor", "wall"] },
+    { "source_id": "granite_tile", "material_id": "stone_granite", "name": "Granite Tile", "category": "stone", "resolution": "2k", "tile_size_m": 1.2, "roughness": 0.3, "style_tags": ["luxury"], "applies_to": ["floor"] },
+    { "source_id": "plastered_wall", "material_id": "paint_white", "name": "Warm White Plaster", "category": "plaster", "resolution": "2k", "tile_size_m": 2.0, "roughness": 0.92, "style_tags": ["modern", "minimal"], "applies_to": ["wall", "ceiling"] },
+    { "source_id": "beige_wall_001", "material_id": "plaster_lime", "name": "Lime Plaster", "category": "plaster", "resolution": "2k", "tile_size_m": 2.0, "roughness": 0.95, "style_tags": ["luxury", "mediterranean"], "applies_to": ["wall"] },
+    { "source_id": "patterned_plaster_wall", "material_id": "plaster_patterned", "name": "Patterned Plaster", "category": "plaster", "resolution": "2k", "tile_size_m": 1.5, "roughness": 0.9, "style_tags": ["luxury", "modern_indian"], "applies_to": ["wall"] },
+    { "source_id": "oak_veneer_01", "material_id": "veneer_oak", "name": "Oak Veneer", "category": "wood", "resolution": "1k", "tile_size_m": 0.6, "roughness": 0.5, "style_tags": ["modern", "japandi"], "applies_to": ["furniture"] },
+    { "source_id": "walnut_veneer", "material_id": "veneer_walnut", "name": "Walnut Veneer", "category": "wood", "resolution": "1k", "tile_size_m": 0.6, "roughness": 0.45, "style_tags": ["luxury", "mid_century"], "applies_to": ["furniture"] },
+    { "source_id": "velour_velvet", "material_id": "fabric_velvet", "name": "Velvet", "category": "fabric", "resolution": "1k", "tile_size_m": 0.4, "roughness": 0.85, "style_tags": ["luxury", "moody"], "applies_to": ["furniture"] },
+    { "source_id": "wool_boucle", "material_id": "fabric_boucle", "name": "Wool Bouclé", "category": "fabric", "resolution": "1k", "tile_size_m": 0.35, "roughness": 0.98, "style_tags": ["luxury", "modern"], "applies_to": ["furniture"] },
+    { "source_id": "rough_linen", "material_id": "fabric_linen", "name": "Linen", "category": "fabric", "resolution": "1k", "tile_size_m": 0.4, "roughness": 0.95, "style_tags": ["natural", "warm_neutral"], "applies_to": ["furniture"] },
+    { "source_id": "brown_leather", "material_id": "leather_tan", "name": "Tan Leather", "category": "leather", "resolution": "1k", "tile_size_m": 0.5, "roughness": 0.45, "style_tags": ["luxury", "mid_century"], "applies_to": ["furniture"] },
+    { "source_id": "leather_white", "material_id": "leather_white", "name": "Cream Leather", "category": "leather", "resolution": "1k", "tile_size_m": 0.5, "roughness": 0.45, "style_tags": ["luxury", "modern"], "applies_to": ["furniture"] }
+  ]
+}
