@@ -400,3 +400,33 @@ Two findings from the first hands-on run and what changed:
 - Blender tints: walls take palette[0] over the plaster scan; fabric pieces get the style fabric recoloured to the planned tone (luminance × tint); real GLB models have their largest mesh (the upholstery) re-dressed the same way, so the catalogue sofa becomes the client's linen sofa. The web viewer applies the same wall tint and upholstery colour.
 - Missing things are built procedurally in Blender rather than skipped: kitchen counter runs with doors, worktop, backsplash and upper cabinets; pleated curtains centred on the window; TV screens on TV units; skirting boards; door jambs and heads; window frames. Pieces that must fit a wall (counters, wardrobes, curtains) shrink in steps instead of failing placement.
 - Known gaps: kitchens still have no appliances, decor beyond plants/art is thin, and a bespoke piece still needs the (disabled) generation path. The next fidelity step is style-specific furniture families (e.g. a japandi set vs a classic set) rather than one generic catalog.
+
+## 15. Open scene reading, surfaces and the asset ladder (added 2026-09-07, schema 1.1)
+
+Goal: the plan going into Blender should contain what the client's photo contains, not only what the
+closed type list knew. Three layers, all committed and tested (`tests/test_open_reading.py`).
+
+**Open reading.** The analysis stage lists every item with a free `name`, a `family`
+(seating, table, storage, bed, lighting, plant, textile, art, ornament, appliance, architecture),
+`placement` (floor, wall, ceiling, on_surface) with the `support` it rests on, material, colour, size,
+and a bounding box in the photo. `vocab.canonical_type()` maps names to the closest canonical type; an
+unknown item survives as `other`, sized and shaped by its family. Architecture features (cornice,
+wainscot, panelled doors) are read too. Crops of every boxed item are written to `analysis/crops/`.
+The planner carries `spotted_index`, `support_key` and the crop; items it forgets are restored from
+the reading.
+
+**Surfaces.** The compiler places on-surface items on the top face of their support (planned one first,
+then the type's preferred hosts), tracked with `parent_id` and `mount = "surface"`. Wall-hung pieces go
+at eye line, above a matching anchor (art over the sofa, ornaments over the mantel), never over a
+window or a doorway, never overlapping another hung piece.
+
+**Asset ladder** (`planning/asset_decision.py`): library model by type or by name → photo-textured
+plane for flat items (art, rugs carry the crop as `texture_ref`) → parametric shapes (lamp, fireplace,
+books, vase, tray, sconce, wall bracket, pillow, mirror, framed photo) → image-to-3D for sculptural
+pieces with the crop as `reference_image` (recorded now, runs when a generation key is configured).
+
+Verified: live Gemini reading of a real photo (6 items, correct boxes, on-surface support resolved), a
+Blender build of a reading scene with 47 objects and zero validation errors, 61 backend tests.
+
+Next: the image-to-3D rung (Meshy or Tripo), a decor agent for "fill this wall", and editable plan
+slots in the viewer.
