@@ -47,6 +47,13 @@ from .envelope import error_response, ok  # noqa: E402  (shared envelope)
 # ── Error handlers are registered in main.py ────────────────────────────
 
 
+def _intelligence_status() -> dict:
+    from ..intelligence import get_provider
+
+    p = get_provider()
+    return {"provider": p.name, "mode": p.mode, "model": p.label, "fallback_to_mock": p.allow_fallback}
+
+
 @router.get("/health")
 def health() -> dict:
     settings = get_settings()
@@ -55,6 +62,7 @@ def health() -> dict:
         "service": "aether-walkthrough-backend",
         "version": "0.1.0",
         "providers": {
+            "intelligence": _intelligence_status(),
             "gemini": gemini.status(),
             "meshy": {
                 "provider": "meshy",

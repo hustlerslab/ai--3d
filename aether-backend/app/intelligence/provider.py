@@ -42,6 +42,11 @@ class ResilientProvider:
         return self.primary.name if self.primary else self.fallback.name
 
     @property
+    def label(self) -> str:
+        """Provider and model, e.g. 'gemini:gemini-3.6-flash' or 'mock'."""
+        return getattr(self.primary, "label", self.name) if self.primary else "mock"
+
+    @property
     def mode(self) -> str:
         return "live" if self.primary else "mock"
 
@@ -91,10 +96,19 @@ def get_provider() -> ResilientProvider:
         if _provider is None:
             settings = get_settings()
             primary: Optional[IntelligenceProvider] = None
-            if settings.gemini_configured:
+            choice = settings.intelligence_provider.lower().strip()
+            use_anthropic = choice == "anthropic" or (choice == "auto" and settings.anthropic_configured)
+            use_gemini = choice == "gemini" or (choice == "auto" and not use_anthropic and settings.gemini_configured)
+            if use_anthropic and settings.anthropic_configured:
+                from .anthropic_provider import AnthropicProvider
+
+                primary = AnthropicProvider(settings)
+            elif use_gemini and settings.gemini_configured:
                 from .gemini_provider import GeminiProvider
 
                 primary = GeminiProvider(settings)
+            elif choice not in ("auto", "mock"):
+                log.warning("INTELLIGENCE_PROVIDER=%s but its API key is missing; using the mock provider", choice)
             _provider = ResilientProvider(primary, MockProvider(), settings.provider_fallback_to_mock)
         return _provider
 

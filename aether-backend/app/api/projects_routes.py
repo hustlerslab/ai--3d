@@ -640,4 +640,4 @@ def _provider_status() -> dict:
     from ..intelligence import get_provider
 
     provider = get_provider()
-    return {"mode": provider.mode, "name": provider.name, "fallback_to_mock": provider.allow_fallback}
+    return {"mode": provider.mode, "name": provider.name, "model": provider.label, "fallback_to_mock": provider.allow_fallback}

@@ -132,7 +132,7 @@ def test_gemini_analysis_is_validated_and_coerced(env, monkeypatch, tmp_path):
     bundle = InputBundle(project_id="p", description=BRIEF, references=[ReferenceImage(path=str(img))])
     analysis = _provider(handler, monkeypatch).analyze_input(bundle)
 
-    assert analysis.provider == "gemini"
+    assert analysis.provider == "gemini:gemini-3.6-flash"
     assert [r.room_id for r in analysis.rooms] == ["living_room", "master_bedroom"]
     assert analysis.rooms[0].estimated is False
     assert [o.semantic_type for o in analysis.spotted_objects] == ["sofa"]

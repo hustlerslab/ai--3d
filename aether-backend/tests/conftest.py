@@ -30,6 +30,11 @@ def env(tmp_path, monkeypatch):
     """Fresh data dir + reset every singleton. Blender stays unconfigured
     unless the test opts in via BLENDER_PATH from the environment."""
     monkeypatch.setenv("AETHER_DATA_DIR", str(tmp_path / "data"))
+    # never let a developer's real keys in .env leak into the test run
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "")
+    monkeypatch.setenv("MESHY_API_KEY", "")
+    monkeypatch.setenv("INTELLIGENCE_PROVIDER", "auto")
     monkeypatch.setenv("JOBS_RETRY_DELAY_SECONDS", "0.05")
     monkeypatch.setenv("JOBS_AI_WORKERS", "2")
     monkeypatch.setenv("JOBS_RENDER_WORKERS", "1")

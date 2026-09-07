@@ -20,9 +20,19 @@ class Settings(BaseSettings):
     aether_cors_origins: str = "http://localhost:3000,http://localhost:3001"
     aether_data_dir: str = "./data"
 
+    # Which LLM drives the intelligence layer: auto | anthropic | gemini | mock.
+    # auto = Claude when ANTHROPIC_API_KEY is set, else Gemini when GEMINI_API_KEY is set, else mock.
+    intelligence_provider: str = "auto"
+
     gemini_api_key: SecretStr = SecretStr("")
-    gemini_model: str = "gemini-2.0-flash"
+    # Google retires ids quickly; the fallback list is tried on 404/429/503.
+    gemini_model: str = "gemini-3.6-flash"
+    gemini_fallback_models: str = "gemini-3.5-flash,gemini-flash-lite-latest,gemini-2.5-flash"
     gemini_timeout_seconds: int = 60
+
+    anthropic_api_key: SecretStr = SecretStr("")
+    anthropic_model: str = "claude-opus-5"
+    anthropic_timeout_seconds: int = 90
 
     meshy_api_key: SecretStr = SecretStr("")
     meshy_base_url: str = "https://api.meshy.ai"
@@ -82,6 +92,10 @@ class Settings(BaseSettings):
     @property
     def meshy_configured(self) -> bool:
         return bool(self.meshy_api_key.get_secret_value())
+
+    @property
+    def anthropic_configured(self) -> bool:
+        return bool(self.anthropic_api_key.get_secret_value())
 
 
 @lru_cache
