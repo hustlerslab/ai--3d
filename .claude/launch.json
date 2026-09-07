@@ -4,7 +4,7 @@
     {
       "name": "aether-backend",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "cd aether-backend && .venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload --reload-dir app"],
+      "runtimeArgs": ["/c", "cd aether-backend && .venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000"],
       "port": 8000
     },
     {
