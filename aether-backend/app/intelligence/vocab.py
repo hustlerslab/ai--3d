@@ -231,11 +231,15 @@ def canonical_type(name: str, given: str = "") -> str:
     if g in SEMANTIC_TYPES and g != "other":
         return g
     lower = (name or "").lower()
+
+    def has(phrase: str) -> bool:  # whole words only: "print" must not match "blueprints"
+        return re.search(r"(?<![a-z])" + re.escape(phrase) + r"(?![a-z])", lower) is not None
+
     for sem, phrases in OBJECT_KEYWORDS.items():
-        if any(p in lower for p in phrases):
+        if any(has(p) for p in phrases):
             return sem
     for phrase, sem in NAME_KEYWORDS:
-        if phrase in lower:
+        if has(phrase):
             return sem
     return "other"
 

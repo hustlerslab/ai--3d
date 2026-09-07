@@ -458,15 +458,22 @@ def _pick_support(working: Scene, room: Room, item: ObjectPlanItem, dims: tuple[
         return (pref, -(o.dimensions[0] * o.scale[0] * o.dimensions[2] * o.scale[2]))
 
     hosts.sort(key=rank)
-    if not prefs:
-        hosts = [h for h in hosts if h.semantic_type not in ("sofa", "loveseat", "armchair", "bed")]
+    # seats and beds only host what asks for them (cushions, throws), never a lamp or a model
+    hosts = [h for h in hosts if h.semantic_type in prefs or h.semantic_type not in ("sofa", "loveseat", "armchair", "bed")]
     return out + hosts
 
 
 def _ordered(plan: ObjectPlan) -> list[ObjectPlanItem]:
     """Priority, then room anchors, then the rest; items whose relation
     target or support is not placed yet wait for it."""
-    pending = sorted(plan.items, key=lambda i: (i.priority, ANCHOR_RANK.get(i.semantic_type, 50), i.object_key))
+    def footprint(i: ObjectPlanItem) -> float:  # big on-surface pieces claim their host first
+        d = i.approx_dimensions
+        return -(d[0] * d[2]) if (d and i.placement == "on_surface") else 0.0
+
+    def rank(i: ObjectPlanItem) -> int:  # everything on a surface competes by size, not by type
+        return 33 if i.placement == "on_surface" else ANCHOR_RANK.get(i.semantic_type, 50)
+
+    pending = sorted(plan.items, key=lambda i: (i.priority, rank(i), footprint(i), i.object_key))
     ordered: list[ObjectPlanItem] = []
     guard = 0
     while pending and guard < 10:
