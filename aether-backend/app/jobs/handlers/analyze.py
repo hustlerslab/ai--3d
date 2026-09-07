@@ -9,7 +9,9 @@ from __future__ import annotations
 import time
 
 from ...intelligence import DesignAnalysis, StyleSpec, build_input_bundle, get_provider
+from ...intelligence.crops import write_crops
 from ...intelligence.mock_provider import build_moodboard
+from ...projects.layout import project_dir
 from ...intelligence.schema import AgentInput, AgentOutput
 from ...projects.schema import ProjectStage
 from ..context import JobContext
@@ -64,6 +66,16 @@ def analyze(ctx: JobContext) -> dict:
             f"confidence {analysis.confidence:.2f} via {analysis.provider}",
         )
 
+    # ── crops of every item the reading located in a photo (deterministic) ─
+    before = [s.crop_ref for s in analysis.spotted_objects]
+    crop_warnings = write_crops(analysis, bundle, project_dir(ctx.project_id), force=force)
+    if [s.crop_ref for s in analysis.spotted_objects] != before:
+        ctx.write_json(ANALYSIS, analysis)
+    n_crops = sum(1 for s in analysis.spotted_objects if s.crop_ref)
+    if n_crops or crop_warnings:
+        ctx.emit("analyze.crops", f"{n_crops} item crop(s) written" + (f"; {len(crop_warnings)} warning(s)" if crop_warnings else ""))
+    analysis.warnings = list(dict.fromkeys(analysis.warnings + crop_warnings))
+
     # ── style ────────────────────────────────────────────────────────────
     if ctx.has_checkpoint(STYLE) and not force:
         style = StyleSpec.model_validate(ctx.read_json(STYLE))
@@ -95,6 +107,9 @@ def analyze(ctx: JobContext) -> dict:
         "analysis_provider": analysis.provider,
         "style_provider": style.provider,
         "rooms": [r.room_id for r in analysis.rooms],
+        "spotted_objects": len(analysis.spotted_objects),
+        "crops": sum(1 for s in analysis.spotted_objects if s.crop_ref),
+        "architecture": analysis.architecture,
         "style": style.name,
         "palette": style.palette,
         "warnings": warnings,

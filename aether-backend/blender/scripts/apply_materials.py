@@ -213,6 +213,49 @@ class MaterialLibrary:
     def frame(self):
         return self.color("#3A3632", roughness=0.4, metallic=0.2)
 
+    def mirror(self):
+        if "mirror" in self._cache:
+            return self._cache["mirror"]
+        mat = bpy.data.materials.new("mirror")
+        mat.use_nodes = True
+        bsdf = mat.node_tree.nodes.get("Principled BSDF")
+        bsdf.inputs["Base Color"].default_value = (0.95, 0.96, 0.97, 1.0)
+        bsdf.inputs["Roughness"].default_value = 0.02
+        bsdf.inputs["Metallic"].default_value = 1.0
+        self._cache["mirror"] = mat
+        return mat
+
+    def image(self, path: str, plane: str = "xz", fallback: str = "#D8D2C8"):
+        """A photo crop stretched over an object's face. Uses Generated
+        coordinates so meshes without UVs map the image across their bounds:
+        plane "xz" for vertical faces (art), "xy" for horizontal ones (rugs)."""
+        key = f"img_{os.path.basename(path)}_{plane}"
+        if key in self._cache:
+            return self._cache[key]
+        if not path or not os.path.exists(path):
+            return self.color(fallback)
+        mat = bpy.data.materials.new(key)
+        mat.use_nodes = True
+        nodes, links = mat.node_tree.nodes, mat.node_tree.links
+        bsdf = nodes.get("Principled BSDF")
+        bsdf.inputs["Roughness"].default_value = 0.7 if plane == "xy" else 0.45
+        coord = nodes.new("ShaderNodeTexCoord")
+        sep = nodes.new("ShaderNodeSeparateXYZ")
+        links.new(coord.outputs["Generated"], sep.inputs["Vector"])
+        comb = nodes.new("ShaderNodeCombineXYZ")
+        links.new(sep.outputs["X"], comb.inputs["X"])
+        links.new(sep.outputs["Z" if plane == "xz" else "Y"], comb.inputs["Y"])
+        tex = nodes.new("ShaderNodeTexImage")
+        try:
+            tex.image = _load_image(path, False)
+        except Exception:
+            return self.color(fallback)
+        tex.extension = "EXTEND"
+        links.new(comb.outputs["Vector"], tex.inputs["Vector"])
+        links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+        self._cache[key] = mat
+        return mat
+
     def screen(self):
         if "screen" in self._cache:
             return self._cache["screen"]

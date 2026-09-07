@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from ..projects.schema import RoomHint
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 
 LightingMood = Literal["warm_daylight", "cool_daylight", "evening", "studio"]
 
@@ -63,12 +63,34 @@ class RoomAnalysis(BaseModel):
         return self.room_id
 
 
+Placement = Literal["floor", "wall", "ceiling", "on_surface"]
+
+
 class SpottedObject(BaseModel):
+    """One item read from the photos or the brief (open vocabulary, schema 1.1).
+
+    `name` is free text ("mahogany secretary bookcase"); `semantic_type` is the
+    closest canonical type (or "other") and `family` the coarse class that
+    sizes and shapes unknown types. `bbox` is [x0, y0, x1, y1] as fractions
+    of the photo `image_index`, used to cut a crop for textures and
+    image-to-3D; `crop_ref` is the project-relative path of that crop.
+    """
+
     semantic_type: str
+    name: str = ""
+    family: str = "other"
+    placement: Placement = "floor"
+    support: str = ""              # name of the item it rests on (placement on_surface)
+    material: str = ""
+    color: str = ""                # hex when known
+    approx_dimensions: Optional[tuple[float, float, float]] = None  # w, h, d metres
     room_id: Optional[str] = None
     count: int = 1
     confidence: float = Field(default=0.5, ge=0, le=1)
     notes: str = ""                # colour, material, style seen in the photo
+    image_index: int = -1
+    bbox: Optional[tuple[float, float, float, float]] = None
+    crop_ref: str = ""
 
 
 class DesignAnalysis(BaseModel):
@@ -78,6 +100,7 @@ class DesignAnalysis(BaseModel):
     rooms: list[RoomAnalysis]
     constraints: list[str] = []
     spotted_objects: list[SpottedObject] = []
+    architecture: list[str] = []   # cornice, wainscot, panelled_doors, exposed_beams, arches
     keywords: list[str] = []
     confidence: float = Field(default=0.5, ge=0, le=1)
     provider: str = "mock"
@@ -171,6 +194,12 @@ class ObjectPlanItem(BaseModel):
     object_key: str                    # stable key: "<room_id>.<semantic_type>.<n>"
     semantic_type: str
     room_id: str
+    name: str = ""                     # open name from the reading ("brass floor lamp")
+    family: str = ""                   # vocab.FAMILIES
+    placement: Placement = "floor"
+    support_key: Optional[str] = None  # object_key of the piece this sits on (on_surface)
+    crop_ref: str = ""                 # project-relative crop of the item in the photo
+    spotted_index: int = -1
     priority: int = Field(default=2, ge=1, le=3)   # 1 essential · 2 recommended · 3 optional
     count: int = Field(default=1, ge=1, le=12)
     approx_dimensions: Optional[tuple[float, float, float]] = None  # w, h, d metres
@@ -214,7 +243,10 @@ class AssetDecision(BaseModel):
     color: str = "#8a7862"
     mount: str = "floor"
     material_overrides: dict[str, str] = {}
+    shape: str = ""                    # procedural shape hint (photo, lamp, fireplace, ...)
+    texture_ref: str = ""              # project-relative image used as the object's face
     generation_prompt: str = ""
+    reference_image: str = ""          # crop handed to image-to-3D when generation runs
     reason: str = ""
 
 

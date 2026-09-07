@@ -147,9 +147,75 @@ def build(shape: str, name: str, dims, collection, material, accent=None, librar
     elif shape == "pendant":
         parts.append(_cylinder(f"{name}.cord", 0.005, h * 0.5, collection, accent, (0, 0, h * 0.5)))
         parts.append(_cylinder(f"{name}.shade", w / 2, h * 0.5, collection, material))
-    elif shape == "panel":
-        parts.append(make_box(f"{name}.panel", (w, d, h), collection, material))
-        parts.append(make_box(f"{name}.frame", (w + 0.04, d * 0.6, h + 0.04), collection, accent, (0, -d * 0.2, -0.02)))
+    elif shape in ("panel", "photo", "mirror"):
+        # a framed face: the front (+Y) carries the image / mirror, a slim frame around it
+        fd = max(0.02, min(d, 0.05))
+        parts.append(make_box(f"{name}.face", (w - 0.06, fd * 0.6, h - 0.06), collection, material, (0, fd * 0.2, 0.03)))
+        frame = library.frame() if library else accent
+        for sx in (-1, 1):
+            parts.append(make_box(f"{name}.frame{sx}", (0.03, fd, h), collection, frame, (sx * (w / 2 - 0.015), 0, 0)))
+        parts.append(make_box(f"{name}.frameB", (w, fd, 0.03), collection, frame, (0, 0, 0)))
+        parts.append(make_box(f"{name}.frameT", (w, fd, 0.03), collection, frame, (0, 0, h - 0.03)))
+        parts.append(make_box(f"{name}.back", (w, fd * 0.4, h), collection, frame, (0, -fd * 0.3, 0)))
+    elif shape == "lamp":
+        # table lamp: weighted base, stem, drum shade
+        metal = library.color("#B08D57", roughness=0.35, metallic=0.9) if library else accent
+        base_h = min(0.06, h * 0.1)
+        parts.append(_cylinder(f"{name}.base", w * 0.28, base_h, collection, metal))
+        stem_h = h * 0.52
+        parts.append(_cylinder(f"{name}.stem", w * 0.09, stem_h, collection, metal, (0, 0, base_h)))
+        shade_h = h - base_h - stem_h
+        parts.append(_cylinder(f"{name}.shade", w / 2, shade_h, collection, material, (0, 0, base_h + stem_h)))
+    elif shape == "sconce":
+        metal = library.color("#B08D57", roughness=0.35, metallic=0.9) if library else accent
+        parts.append(make_box(f"{name}.plate", (w * 0.4, 0.02, h * 0.5), collection, metal, (0, -d / 2 + 0.01, h * 0.25)))
+        parts.append(_cylinder(f"{name}.arm", 0.01, d * 0.7, collection, metal, (0, -d / 2 + 0.02, h * 0.5)))
+        parts[-1].rotation_euler = (-math.pi / 2, 0.0, 0.0)
+        parts.append(_cylinder(f"{name}.shade", w / 2, h * 0.45, collection, material, (0, d * 0.15, h * 0.5)))
+    elif shape == "shelf":
+        # a wall bracket: shelf board on a scrolled support
+        parts.append(make_box(f"{name}.board", (w, d, 0.03), collection, material, (0, 0, h - 0.03)))
+        parts.append(make_box(f"{name}.support", (w * 0.25, d * 0.7, h - 0.03), collection, material, (0, -d * 0.15, 0)))
+    elif shape == "fireplace":
+        # surround + firebox recess + mantel shelf, back against the wall (-Y)
+        stone = library.color("#E9E4DA", roughness=0.6) if library else material
+        dark = library.color("#151412", roughness=0.9) if library else accent
+        leg_w = w * 0.18
+        for sx in (-1, 1):
+            parts.append(make_box(f"{name}.leg{sx}", (leg_w, d, h - 0.08), collection, stone, (sx * (w / 2 - leg_w / 2), 0, 0)))
+        parts.append(make_box(f"{name}.lintel", (w, d, h * 0.22), collection, stone, (0, 0, h - 0.08 - h * 0.22)))
+        parts.append(make_box(f"{name}.mantel", (w + 0.12, d + 0.08, 0.08), collection, stone, (0, 0.04, h - 0.08)))
+        parts.append(make_box(f"{name}.firebox", (w - 2 * leg_w, d * 0.5, h - 0.08 - h * 0.22), collection, dark, (0, -d * 0.25, 0)))
+        parts.append(make_box(f"{name}.hearth", (w + 0.2, d * 0.6, 0.02), collection, stone, (0, d / 2 + d * 0.3, 0)))
+    elif shape == "books":
+        # a short stack of books, each a slightly offset slab
+        n = max(2, min(5, int(h / 0.035)))
+        book_h = h / n
+        cols = [material, accent, material, accent, material]
+        for i in range(n):
+            off = (i % 2) * 0.02 - 0.01
+            parts.append(make_box(f"{name}.book{i}", (w * (0.9 + 0.1 * (i % 2)), d, book_h - 0.003), collection, cols[i % len(cols)], (off, 0, i * book_h)))
+    elif shape == "vase":
+        parts.append(_cylinder(f"{name}.body", w / 2, h * 0.75, collection, material, segments=20))
+        parts.append(_cylinder(f"{name}.neck", w * 0.28, h * 0.25, collection, material, (0, 0, h * 0.75), segments=16))
+    elif shape == "candle":
+        parts.append(_cylinder(f"{name}.holder", w / 2, h * 0.3, collection, accent, segments=16))
+        parts.append(_cylinder(f"{name}.wax", w * 0.32, h * 0.7, collection, material, (0, 0, h * 0.3), segments=16))
+    elif shape == "tray":
+        parts.append(make_box(f"{name}.base", (w, d, max(0.008, h * 0.3)), collection, material))
+        for sx in (-1, 1):
+            parts.append(make_box(f"{name}.rim{sx}", (0.015, d, h), collection, accent, (sx * (w / 2 - 0.0075), 0, 0)))
+        for sy in (-1, 1):
+            parts.append(make_box(f"{name}.rimy{sy}", (w, 0.015, h), collection, accent, (0, sy * (d / 2 - 0.0075), 0)))
+    elif shape == "pillow":
+        # a cushion leaning back: a soft slab tilted against the seat back
+        slab = make_box(f"{name}.cushion", (w, d, h), collection, material, (0, 0, 0))
+        slab.rotation_euler = (math.radians(-12), 0.0, 0.0)
+        parts.append(slab)
+    elif shape == "clock":
+        parts.append(_cylinder(f"{name}.face", w / 2, d, collection, material, (0, 0, h / 2), segments=32))
+        parts[-1].rotation_euler = (math.pi / 2, 0.0, 0.0)
+        parts[-1].location = (0, d / 2, h / 2)
     else:  # box / tv: beds, tv units, bedside tables, rugs, generic
         if h < 0.06:  # rug
             parts.append(make_box(f"{name}.rug", (w, d, h), collection, material))

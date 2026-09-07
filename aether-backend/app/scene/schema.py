@@ -81,6 +81,8 @@ class Room(BaseModel):
     ceiling_height: float = 2.8
     floor_material: str = "wood_oak"
     confidence: Confidence = Confidence()
+    # architecture read from the photos: cornice, wainscot, panelled_doors, ...
+    features: list[str] = []
 
 
 SourceStrategy = Literal["local_asset", "local_modified", "procedural", "generated"]
@@ -101,7 +103,7 @@ class SceneObject(BaseModel):
     color: str = "#8a7862"
     source: ObjectSource = ObjectSource.CATALOG
     locked: bool = False
-    # floor | ceiling | wall — ceiling/wall items are not floor obstacles.
+    # floor | ceiling | wall | surface — only floor items are floor obstacles.
     mount: str = "floor"
     confidence: Confidence = Confidence()
     # Hybrid asset pipeline (plan §4.1 / DPR §9): how this object's model is sourced.
@@ -110,6 +112,14 @@ class SceneObject(BaseModel):
     material_overrides: dict[str, str] = {}
     # planner bookkeeping: object_plan key this object was created from
     plan_key: Optional[str] = None
+    # surfaces (spec 1.1): the object this one rests on (mount "surface")
+    parent_id: Optional[str] = None
+    # project-relative image that textures the object's face (art, rugs)
+    texture_ref: Optional[str] = None
+    # procedural shape hint for renderers (photo, lamp, fireplace, ...)
+    shape: Optional[str] = None
+    # open name from the reading, for the inspector
+    name: str = ""
 
 
 # ── SceneSpec extensions (plan §4.1) ────────────────────────────────────

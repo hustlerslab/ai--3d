@@ -127,9 +127,17 @@ def _pieces(length: float, height: float, openings: list[dict]) -> list[tuple[fl
     return pieces
 
 
+def _features(manifest: dict) -> set[str]:
+    out: set[str] = set()
+    for room in manifest["rooms"]:
+        out.update(room.get("features") or [])
+    return out
+
+
 def build_walls(manifest: dict, cols: dict, materials, warnings: list[str]) -> None:
     col = cols["Architecture"]
     glass = materials.glass()
+    features = _features(manifest)
     for wall in manifest["walls"]:
         s = Vector((wall["start"][0], wall["start"][1], 0.0))
         e = Vector((wall["end"][0], wall["end"][1], 0.0))
@@ -150,6 +158,14 @@ def build_walls(manifest: dict, cols: dict, materials, warnings: list[str]) -> N
             if z0 < 0.01:
                 sk = make_box(f"{wall['id']}.{i}.skirting", (b - a, t + 0.03, 0.1), col, materials.skirting(), (centre.x, centre.y, 0.0), rz)
                 sk["aether_role"] = "skirting"
+                if "wainscot" in features:
+                    ws = make_box(f"{wall['id']}.{i}.wainscot", (b - a, t + 0.02, 0.95), col, materials.skirting(), (centre.x, centre.y, 0.0), rz)
+                    ws["aether_role"] = "wainscot"
+                    rail = make_box(f"{wall['id']}.{i}.rail", (b - a, t + 0.035, 0.04), col, materials.skirting(), (centre.x, centre.y, 0.93), rz)
+                    rail["aether_role"] = "wainscot"
+            if z1 >= wall["height"] - 0.01 and "cornice" in features:
+                cn = make_box(f"{wall['id']}.{i}.cornice", (b - a, t + 0.08, 0.09), col, materials.ceiling(), (centre.x, centre.y, wall["height"] - 0.09), rz)
+                cn["aether_role"] = "cornice"
         for o in wall.get("openings", []):
             if o["type"] == "door":
                 frame_mat = materials.frame()

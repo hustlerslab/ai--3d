@@ -20,7 +20,7 @@ from ..materials.registry import get_material_registry
 from ..scene.schema import Scene, Vec2, Vec3
 from ..walkthrough import service as walkthrough_service
 
-MANIFEST_VERSION = "1.0"
+MANIFEST_VERSION = "1.1"
 
 
 def to_blender_xyz(p: Vec3) -> list[float]:
@@ -70,8 +70,14 @@ def _material_entry(material_id: str) -> Optional[dict[str, Any]]:
     }
 
 
-def _asset_entry(asset_id: Optional[str], semantic_type: str) -> dict[str, Any]:
-    if asset_id:
+def _asset_entry(asset_id: Optional[str], semantic_type: str, *, shape_hint: Optional[str] = None,
+                 texture_ref: Optional[str] = None, project_root: Optional[Path] = None) -> dict[str, Any]:
+    texture = ""
+    if texture_ref and project_root is not None:
+        candidate = project_root / texture_ref
+        if candidate.exists():
+            texture = str(candidate)
+    if asset_id and not texture:
         record = get_registry().get(asset_id) if hasattr(get_registry(), "get") else None
         glb = get_registry().root / "normalized" / f"{asset_id}.glb"
         if glb.exists():
@@ -83,13 +89,23 @@ def _asset_entry(asset_id: Optional[str], semantic_type: str) -> dict[str, Any]:
             }
         item = get_item(asset_id)
         if item is not None and item.shape != "model":
-            shape = _default_shape(semantic_type) if semantic_type in _SHAPE_BY_TYPE else item.shape
+            shape = shape_hint or (_default_shape(semantic_type) if semantic_type in _SHAPE_BY_TYPE else item.shape)
             return {"kind": "procedural", "asset_id": asset_id, "shape": shape, "name": item.name}
-    return {"kind": "procedural", "asset_id": asset_id, "shape": _default_shape(semantic_type), "name": semantic_type}
+    entry: dict[str, Any] = {
+        "kind": "procedural", "asset_id": asset_id, "shape": shape_hint or _default_shape(semantic_type), "name": semantic_type,
+    }
+    if texture:
+        entry["texture"] = texture
+    return entry
 
 
 # types whose procedural shape is richer than the catalog's generic primitive
-_SHAPE_BY_TYPE = {"tv_unit": "tv", "kitchen_counter": "counter", "curtains": "curtains", "fridge": "fridge"}
+_SHAPE_BY_TYPE = {
+    "tv_unit": "tv", "kitchen_counter": "counter", "curtains": "curtains", "fridge": "fridge",
+    "wall_art": "photo", "mirror": "mirror", "table_lamp": "lamp", "fireplace": "fireplace", "books": "books",
+    "vase": "vase", "tray": "tray", "sconce": "sconce", "wall_shelf": "shelf", "pillows": "pillow",
+    "candle": "candle", "wall_clock": "clock", "stool": "seat", "lantern": "vase", "basket": "vase",
+}
 
 
 def _default_shape(semantic_type: str) -> str:
@@ -104,7 +120,7 @@ def _default_shape(semantic_type: str) -> str:
     if semantic_type in ("pendant_lamp", "chandelier"):
         return "pendant"
     if semantic_type in ("wall_art",):
-        return "panel"
+        return "photo"
     return "box"
 
 
@@ -118,7 +134,7 @@ def preview_shot(scene: Scene) -> tuple[Vec3, Vec3]:
     room = max(scene.rooms, key=lambda r: geo.polygon_area(r.boundary))
     cx, cz = geo.polygon_centroid(room.boundary)
     objects = [o for o in scene.objects if o.room_id == room.room_id and o.mount == "floor"]
-    anchor = max(objects, key=lambda o: o.dimensions[0] * o.dimensions[2], default=None)
+    anchor = max(objects, key=lambda o: o.dimensions[0] * o.scale[0] * o.dimensions[2] * o.scale[2], default=None)
     ax, az = (anchor.position[0], anchor.position[2]) if anchor else (cx, cz)
     corner = max(room.boundary, key=lambda p: (p[0] - ax) ** 2 + (p[1] - az) ** 2)
     inset = 0.55
@@ -151,6 +167,7 @@ def build_manifest(
                 "floor_height": r.floor_height,
                 "ceiling_height": r.ceiling_height,
                 "floor_material": r.floor_material,
+                "features": list(r.features),
             }
         )
 
@@ -189,13 +206,16 @@ def build_manifest(
                 "semantic_type": o.semantic_type,
                 "room_id": o.room_id,
                 "strategy": o.source_strategy,
-                "asset": _asset_entry(o.asset_id, o.semantic_type),
+                "name": o.name,
+                "asset": _asset_entry(o.asset_id, o.semantic_type, shape_hint=o.shape, texture_ref=o.texture_ref,
+                                      project_root=project_root),
                 "location": to_blender_xyz(o.position),
                 "rotation_rad": [0.0, 0.0, yaw_to_blender_rz(o.rotation_y)],
                 "scale": [o.scale[0], o.scale[2], o.scale[1]],
                 "dimensions": [o.dimensions[0], o.dimensions[2], o.dimensions[1]],  # w, d, h
                 "color": o.color,
                 "mount": o.mount,
+                "parent": o.parent_id,
                 "material_overrides": dict(o.material_overrides),
                 "locked": o.locked,
             }

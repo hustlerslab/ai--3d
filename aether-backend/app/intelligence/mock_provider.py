@@ -106,33 +106,75 @@ class MockProvider:
 
         for room in analysis.rooms:
             area = room.area_m2
+            counts: dict[str, int] = {}
+            # ── items read from the photos / brief come first, with everything the reading knows
+            spotted_here = [(i, s) for i, s in enumerate(analysis.spotted_objects) if s.room_id == room.room_id]
+            key_by_index: dict[int, str] = {}
+            for idx, s in spotted_here:
+                sem = s.semantic_type
+                counts[sem] = counts.get(sem, 0) + 1
+                key = f"{room.room_id}.{sem}.{counts[sem]}"
+                key_by_index[idx] = key
+                items.append(
+                    ObjectPlanItem(
+                        object_key=key,
+                        semantic_type=sem,
+                        room_id=room.room_id,
+                        name=s.name or sem.replace("_", " "),
+                        family=s.family or vocab.family_for(sem),
+                        placement=s.placement,
+                        crop_ref=s.crop_ref,
+                        spotted_index=idx,
+                        priority=1,
+                        count=s.count,
+                        approx_dimensions=s.approx_dimensions,
+                        relation=_relation_for(sem, room.room_id, items) if s.placement == "floor" else ObjectRelation(type="against_wall"),
+                        material_hint=s.material or MATERIAL_HINTS.get(sem, ""),
+                        color_hint=s.color,
+                        from_photo=True,
+                        style_notes=", ".join(style.tags[:2]),
+                    )
+                )
+            # resolve "rests on <name>" to the supporting item's key
+            for idx, s in spotted_here:
+                if s.placement != "on_surface" or not s.support:
+                    continue
+                want = s.support.lower()
+                match = next(
+                    (j for j, t in spotted_here if j != idx and (t.name.lower() == want or want in t.name.lower() or t.name.lower() in want)),
+                    None,
+                )
+                if match is not None:
+                    item = next(i for i in items if i.object_key == key_by_index[idx])
+                    item.support_key = key_by_index[match]
+            # ── then what the room type needs, minus what was already seen
             wanted = list(ROOM_SETS.get(room.type, ROOM_SETS["other"]))
             if room.type == "living_room" and not has_dining_room and area >= 16:
                 wanted += [("dining_table", 2, 1), ("chair", 2, 4)]
-            # objects the client mentioned or that were seen in photos come first
-            for sem in sorted(spotted_by_room.get(room.id_for_plan, set())):
-                if sem in vocab.SEMANTIC_TYPES and not any(w[0] == sem for w in wanted):
-                    wanted.insert(0, (sem, 1, 1))
-            counts: dict[str, int] = {}
+            seen_types = spotted_by_room.get(room.id_for_plan, set())
             for sem, priority, count in wanted:
-                if sem in spotted_by_room.get(room.id_for_plan, set()):
-                    priority = 1
+                if sem in seen_types:
+                    continue
                 if area < 8 and priority >= 2:
                     continue
                 if area < 11 and priority == 3:
                     continue
                 counts[sem] = counts.get(sem, 0) + 1
                 key = f"{room.room_id}.{sem}.{counts[sem]}"
+                placement = vocab.placement_for(sem)
                 items.append(
                     ObjectPlanItem(
                         object_key=key,
                         semantic_type=sem,
                         room_id=room.room_id,
+                        name=sem.replace("_", " "),
+                        family=vocab.family_for(sem),
+                        placement=placement,
                         priority=priority,
                         count=count,
-                        relation=_relation_for(sem, room.room_id, items),
+                        relation=_relation_for(sem, room.room_id, items) if placement == "floor" else ObjectRelation(type="against_wall"),
                         material_hint=MATERIAL_HINTS.get(sem, ""),
-                        from_photo=sem in spotted_by_room.get(room.id_for_plan, set()),
+                        from_photo=False,
                         style_notes=", ".join(style.tags[:2]),
                     )
                 )
@@ -153,12 +195,12 @@ ROOM_SETS: dict[str, list[tuple[str, int, int]]] = {
     "living_room": [
         ("sofa", 1, 1), ("coffee_table", 1, 1), ("tv_unit", 1, 1), ("rug", 2, 1),
         ("armchair", 2, 1), ("floor_lamp", 2, 1), ("plant", 2, 1), ("curtains", 2, 1),
-        ("side_table", 3, 1), ("wall_art", 3, 1),
+        ("side_table", 3, 1), ("wall_art", 3, 1), ("books", 3, 1), ("pillows", 3, 2),
     ],
-    "bedroom": [("bed", 1, 1), ("wardrobe", 1, 1), ("bedside_table", 1, 2), ("rug", 2, 1), ("curtains", 2, 1), ("plant", 3, 1)],
+    "bedroom": [("bed", 1, 1), ("wardrobe", 1, 1), ("bedside_table", 1, 2), ("table_lamp", 2, 2), ("rug", 2, 1), ("curtains", 2, 1), ("plant", 3, 1)],
     "master_bedroom": [
-        ("bed", 1, 1), ("wardrobe", 1, 1), ("bedside_table", 1, 2), ("rug", 2, 1),
-        ("curtains", 2, 1), ("dresser", 2, 1), ("armchair", 3, 1), ("plant", 3, 1),
+        ("bed", 1, 1), ("wardrobe", 1, 1), ("bedside_table", 1, 2), ("table_lamp", 2, 2), ("rug", 2, 1),
+        ("curtains", 2, 1), ("dresser", 2, 1), ("wall_art", 3, 1), ("armchair", 3, 1), ("plant", 3, 1),
     ],
     "kids_bedroom": [("bed", 1, 1), ("wardrobe", 1, 1), ("desk", 2, 1), ("chair", 2, 1), ("bookshelf", 3, 1), ("rug", 3, 1)],
     "kitchen": [("kitchen_counter", 1, 1), ("fridge", 1, 1), ("kitchen_island", 3, 1), ("bar_stool", 3, 2)],
@@ -314,11 +356,17 @@ def _spotted_objects(lower: str, rooms: list[RoomAnalysis]) -> list[SpottedObjec
             room_by_type.setdefault("bedroom", r.room_id)
     out: list[SpottedObject] = []
     for sem, phrases in vocab.OBJECT_KEYWORDS.items():
-        if not any(p in lower for p in phrases):
+        hit = next((p for p in phrases if p in lower), None)
+        if hit is None:
             continue
         default_room = vocab.OBJECT_DEFAULT_ROOM.get(sem, "living_room")
         room_id = room_by_type.get(default_room) or (rooms[0].room_id if rooms else None)
-        out.append(SpottedObject(semantic_type=sem, room_id=room_id, confidence=0.6, notes="mentioned in brief"))
+        out.append(
+            SpottedObject(
+                semantic_type=sem, name=hit, family=vocab.family_for(sem), placement=vocab.placement_for(sem),
+                room_id=room_id, confidence=0.6, notes="mentioned in brief",
+            )
+        )
     return out
 
 

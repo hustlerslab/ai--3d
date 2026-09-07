@@ -85,9 +85,16 @@ def build_objects(manifest: dict, cols: dict, materials, warnings: list[str]) ->
         else:
             if asset["kind"] == "glb":
                 warnings.append(f"{name}: model file missing ({asset.get('path')}); using a procedural stand-in")
-            mat = materials.for_object(spec)
-            accent = materials.accent(spec["color"])
-            root = procedural.build(asset.get("shape", "box"), name, dims, col, mat, accent, materials)
+            shape = asset.get("shape", "box")
+            texture = asset.get("texture")
+            if texture:
+                mat = materials.image(texture, plane="xy" if dims[2] < 0.08 else "xz", fallback=spec["color"])
+            elif spec.get("semantic_type") == "mirror" or shape == "mirror":
+                mat = materials.mirror()
+            else:
+                mat = materials.for_object(spec)
+            accent = materials.accent(spec["color"]) if not texture else materials.frame()
+            root = procedural.build(shape, name, dims, col, mat, accent, materials)
             kind = "procedural"
 
         root.location = spec["location"]
@@ -98,6 +105,9 @@ def build_objects(manifest: dict, cols: dict, materials, warnings: list[str]) ->
         root["aether_room"] = spec["room_id"]
         root["aether_strategy"] = spec["strategy"]
         root["aether_kind"] = kind
+        root["aether_mount"] = spec.get("mount", "floor")
+        if spec.get("parent"):
+            root["aether_parent"] = spec["parent"]
 
         bpy.context.view_layer.update()
         descendants = [o for o in bpy.data.objects if _is_descendant(o, root)]
