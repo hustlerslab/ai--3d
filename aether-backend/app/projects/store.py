@@ -9,11 +9,21 @@ from typing import Optional
 
 from ..db import Database, get_db
 from .layout import ensure_layout
-from .schema import InputKind, InputRecord, ProjectRecord, ProjectStage, RoomHint
+from .schema import InputKind, InputRecord, ProjectRecord, ProjectStage, RoomHint, Vertical
 
 
 class ProjectNotFound(Exception):
     pass
+
+
+class VerticalLocked(Exception):
+    """A vertical change was refused: the project has left CREATED. Carries
+    the stage and vertical actually on the row when the write was attempted."""
+
+    def __init__(self, stage: ProjectStage, vertical: Vertical):
+        self.stage = stage
+        self.vertical = vertical
+        super().__init__(f"vertical is locked at '{vertical.value}' in stage {stage.value}")
 
 
 def _now() -> str:
@@ -28,6 +38,7 @@ def _row_to_project(row) -> ProjectRecord:
         stage=ProjectStage(row["stage"]),
         scene_ids=json.loads(row["scene_ids"]),
         room_hints=[RoomHint.model_validate(h) for h in json.loads(row["room_hints"])],
+        vertical=Vertical(row["vertical"]),
         created_at=row["created_at"],
         updated_at=row["updated_at"],
     )
@@ -60,6 +71,7 @@ class ProjectStore:
         project_id: Optional[str] = None,
         scene_ids: Optional[list[str]] = None,
         created_at: Optional[str] = None,
+        vertical: Vertical = Vertical.RESIDENTIAL,
     ) -> ProjectRecord:
         now = _now()
         project = ProjectRecord(
@@ -67,14 +79,15 @@ class ProjectStore:
             description=description,
             room_hints=room_hints or [],
             scene_ids=scene_ids or [],
+            vertical=vertical,
             created_at=created_at or now,
             updated_at=now,
             **({"project_id": project_id} if project_id else {}),
         )
         self._db.execute(
             """INSERT INTO projects(project_id, name, description, stage, scene_ids,
-                                    room_hints, created_at, updated_at)
-               VALUES (?,?,?,?,?,?,?,?)""",
+                                    room_hints, vertical, created_at, updated_at)
+               VALUES (?,?,?,?,?,?,?,?,?)""",
             (
                 project.project_id,
                 project.name,
@@ -82,6 +95,7 @@ class ProjectStore:
                 project.stage.value,
                 json.dumps(project.scene_ids),
                 json.dumps([h.model_dump() for h in project.room_hints]),
+                project.vertical.value,
                 project.created_at,
                 project.updated_at,
             ),
@@ -119,21 +133,38 @@ class ProjectStore:
         name: Optional[str] = None,
         description: Optional[str] = None,
         room_hints: Optional[list[RoomHint]] = None,
+        vertical: Optional[Vertical] = None,
     ) -> ProjectRecord:
-        current = self.get(project_id)
-        self._db.execute(
-            """UPDATE projects SET name = ?, description = ?, room_hints = ?, updated_at = ?
-               WHERE project_id = ?""",
-            (
+        """Partial update; unset fields keep their current value.
+
+        `vertical` may only change while the project is still CREATED — later
+        stages were analysed under the old one. Read and write happen in one
+        transaction and the stage rides on the UPDATE's WHERE clause, so a
+        transition landing mid-call loses the row instead of being missed."""
+        with self._db.tx() as c:
+            row = c.execute("SELECT * FROM projects WHERE project_id = ?", (project_id,)).fetchone()
+            if row is None:
+                raise ProjectNotFound(project_id)
+            current = _row_to_project(row)
+            gated = vertical is not None and vertical != current.vertical
+            sql = """UPDATE projects SET name = ?, description = ?, room_hints = ?, vertical = ?,
+                                         updated_at = ?
+                     WHERE project_id = ?"""
+            params = [
                 name if name is not None else current.name,
                 description if description is not None else current.description,
                 json.dumps(
                     [h.model_dump() for h in (room_hints if room_hints is not None else current.room_hints)]
                 ),
+                (vertical or current.vertical).value,
                 _now(),
                 project_id,
-            ),
-        )
+            ]
+            if gated:
+                sql += " AND stage = ?"
+                params.append(ProjectStage.CREATED.value)
+            if c.execute(sql, tuple(params)).rowcount == 0 and gated:
+                raise VerticalLocked(current.stage, current.vertical)
         return self.get(project_id)
 
     def attach_scene(self, project_id: str, scene_id: str) -> ProjectRecord:

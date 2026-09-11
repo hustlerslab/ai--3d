@@ -33,6 +33,7 @@ def build_input_bundle(project_id: str) -> InputBundle:
         project_id=project_id,
         project_name=project.name,
         description=description,
+        vertical=project.vertical,
         room_hints=list(project.room_hints),
         references=references,
     )

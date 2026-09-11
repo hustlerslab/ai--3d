@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
+from ..projects.schema import Vertical
 from . import vocab
 from .schema import (
     DesignAnalysis,
@@ -71,16 +72,21 @@ def _bbox(value: Any) -> Optional[tuple[float, float, float, float]]:
 
 
 def coerce_analysis(raw: dict[str, Any], bundle: InputBundle, warnings: list[str], provider: str) -> DesignAnalysis:
+    # the bundle carries the vertical, so the room and tag vocabularies used
+    # to validate the model's answer are the same ones its schema offered
+    vertical = bundle.vertical
+    room_types = vocab.room_types(vertical)
+    default_dims = vocab.room_default_dims(vertical)
     rooms: list[RoomAnalysis] = []
     seen: dict[str, int] = {}
     name_to_id: dict[str, str] = {}
     for item in raw.get("rooms") or []:
-        rtype = item.get("type") if item.get("type") in vocab.ROOM_TYPES else "other"
+        rtype = item.get("type") if item.get("type") in room_types else "other"
         name = str(item.get("name") or vocab.ROOM_LABELS.get(rtype, "Room")).strip()
         base = vocab.slug(name)
         seen[base] = seen.get(base, 0) + 1
         room_id = base if seen[base] == 1 else f"{base}_{seen[base]}"
-        dw, dl = vocab.ROOM_DEFAULT_DIMS.get(rtype, vocab.ROOM_DEFAULT_DIMS["other"])
+        dw, dl = default_dims.get(rtype, default_dims["other"])
         try:
             rooms.append(
                 RoomAnalysis(
@@ -101,7 +107,7 @@ def coerce_analysis(raw: dict[str, Any], bundle: InputBundle, warnings: list[str
         warnings.append("model returned no rooms; using defaults")
         from .mock_provider import _default_rooms
 
-        rooms = _default_rooms()
+        rooms = _default_rooms(vertical)
 
     spotted: list[SpottedObject] = []
     n_refs = len(bundle.references)
@@ -150,7 +156,7 @@ def coerce_analysis(raw: dict[str, Any], bundle: InputBundle, warnings: list[str
         )
 
     architecture = [a for a in (raw.get("architecture") or []) if a in vocab.ARCHITECTURE_FEATURES]
-    keywords = [k for k in (raw.get("keywords") or []) if k in vocab.STYLE_TAGS]
+    keywords = [k for k in (raw.get("keywords") or []) if k in vocab.style_tags(vertical)]
     return DesignAnalysis(
         intent=str(raw.get("intent") or bundle.description[:200] or "Interior design brief"),
         rooms=rooms,
@@ -164,8 +170,14 @@ def coerce_analysis(raw: dict[str, Any], bundle: InputBundle, warnings: list[str
     )
 
 
-def coerce_style(raw: dict[str, Any], valid_materials: set[str], warnings: list[str], provider: str) -> StyleSpec:
-    tags = [t for t in (raw.get("tags") or []) if t in vocab.STYLE_TAGS]
+def coerce_style(
+    raw: dict[str, Any],
+    valid_materials: set[str],
+    warnings: list[str],
+    provider: str,
+    vertical: Vertical | str = Vertical.RESIDENTIAL,
+) -> StyleSpec:
+    tags = [t for t in (raw.get("tags") or []) if t in vocab.style_tags(vertical)]
     materials = []
     for m in raw.get("materials") or []:
         if m in valid_materials:

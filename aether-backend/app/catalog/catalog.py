@@ -81,6 +81,37 @@ BUILTIN: list[CatalogItem] = [
     CatalogItem(asset_id="cat_plant", semantic_type="plant", name="Potted Plant",
                 dimensions=(0.45, 1.2, 0.45), color="#5f7a4f", style_tags=["natural"],
                 room_types=["living_room", "bedroom", "dining_room"], price_inr=2500, shape="tall"),
+
+    # ── hospitality ──────────────────────────────────────────────────────
+    CatalogItem(asset_id="cat_restaurant_table", semantic_type="restaurant_table", name="Restaurant Table for Four",
+                dimensions=(0.9, 0.75, 0.9), color="#5d452e", style_tags=["wood", "brasserie"],
+                room_types=["restaurant_floor", "cafe_floor", "bar", "banquet_hall"], price_inr=16000, shape="table"),
+    CatalogItem(asset_id="cat_banquette", semantic_type="banquette", name="Wall Banquette (2 m run)",
+                dimensions=(2.0, 1.1, 0.65), color="#7d4b42", style_tags=["brasserie", "warm"],
+                room_types=["restaurant_floor", "cafe_floor", "bar"], price_inr=52000, shape="seat"),
+    CatalogItem(asset_id="cat_booth", semantic_type="booth_seating", name="Dining Booth",
+                dimensions=(1.6, 1.25, 1.8), color="#6b4a3a", style_tags=["brasserie", "moody"],
+                room_types=["restaurant_floor", "bar"], price_inr=78000, shape="seat"),
+    CatalogItem(asset_id="cat_bar_counter", semantic_type="bar_counter", name="Bar Counter (3 m run)",
+                dimensions=(3.0, 1.1, 0.7), color="#3f342c", style_tags=["moody", "boutique_hotel"],
+                room_types=["bar", "cafe_floor", "hotel_lobby"], price_inr=145000, shape="counter"),
+    CatalogItem(asset_id="cat_lounge_sofa", semantic_type="lounge_sofa", name="Lobby Lounge Sofa",
+                dimensions=(2.4, 0.78, 0.95), color="#8a7a63", style_tags=["boutique_hotel", "luxury"],
+                room_types=["hotel_lobby", "suite", "breakout", "reception"], price_inr=96000, shape="seat"),
+    CatalogItem(asset_id="cat_reception_desk", semantic_type="reception_desk", name="Reception Desk",
+                dimensions=(2.6, 1.1, 0.8), color="#4a3826", style_tags=["boutique_hotel", "modern"],
+                room_types=["reception", "hotel_lobby"], price_inr=120000, shape="counter"),
+
+    # ── industrial (loft-style offices) ──────────────────────────────────
+    CatalogItem(asset_id="cat_workstation", semantic_type="workstation", name="Bench Workstation",
+                dimensions=(1.6, 0.74, 0.8), color="#6b6560", style_tags=["industrial", "modern"],
+                room_types=["open_plan_office", "private_office"], price_inr=24000, shape="table"),
+    CatalogItem(asset_id="cat_office_chair", semantic_type="office_chair", name="Task Chair",
+                dimensions=(0.65, 1.05, 0.65), color="#3d3a37", style_tags=["industrial", "modern"],
+                room_types=["open_plan_office", "private_office", "meeting_room", "reception"], price_inr=18000, shape="seat"),
+    CatalogItem(asset_id="cat_meeting_table", semantic_type="meeting_table", name="Meeting Table for Eight",
+                dimensions=(2.4, 0.75, 1.1), color="#5a4632", style_tags=["industrial", "wood"],
+                room_types=["meeting_room", "private_office"], price_inr=68000, shape="table"),
 ]
 
 # Kept for callers that only need the built-in vocabulary.

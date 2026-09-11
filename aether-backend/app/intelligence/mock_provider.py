@@ -9,6 +9,7 @@ import re
 from typing import Optional
 
 from ..materials.registry import get_material_registry
+from ..projects.schema import Vertical
 from . import vocab
 from .images import palette_from_images
 from .schema import (
@@ -34,14 +35,15 @@ class MockProvider:
     def analyze_input(self, bundle: InputBundle) -> DesignAnalysis:
         text = bundle.description.strip()
         lower = text.lower()
+        vertical = vocab._v(bundle.vertical)
         warnings: list[str] = []
 
-        rooms = _rooms_from_hints(bundle) or _rooms_from_text(lower)
+        rooms = _rooms_from_hints(bundle) or _rooms_from_text(lower, vertical)
         if not rooms:
-            rooms = _default_rooms()
-            warnings.append("no rooms described; assumed a living room and a bedroom with estimated sizes")
+            rooms = _default_rooms(vertical)
+            warnings.append(_NO_ROOMS[vertical])
 
-        keywords = _keywords(lower)
+        keywords = _keywords(lower, vertical)
         spotted = _spotted_objects(lower, rooms)
         constraints = _constraints(text)
         intent = _intent(text, rooms)
@@ -68,7 +70,7 @@ class MockProvider:
     # ── stage 5/6: style ─────────────────────────────────────────────────
     def create_style_spec(self, analysis: DesignAnalysis, bundle: InputBundle) -> StyleSpec:
         lower = bundle.description.lower()
-        tags = _style_tags(lower, analysis.keywords)
+        tags = _style_tags(lower, analysis.keywords, bundle.vertical)
         warnings: list[str] = []
 
         palette = palette_from_images([r.path for r in bundle.references], count=5)
@@ -209,6 +211,56 @@ ROOM_SETS: dict[str, list[tuple[str, int, int]]] = {
     "entry": [("console", 2, 1), ("mirror", 2, 1), ("plant", 3, 1)],
     "balcony": [("chair", 2, 2), ("plant", 2, 2), ("side_table", 3, 1)],
     "bathroom": [],
+    # hospitality
+    "hotel_lobby": [
+        ("lounge_sofa", 1, 2), ("armchair", 1, 4), ("coffee_table", 2, 2), ("rug", 2, 2),
+        ("reception_desk", 2, 1), ("plant", 2, 3), ("floor_lamp", 3, 2), ("wall_art", 3, 2),
+    ],
+    "guest_room": [
+        ("bed", 1, 1), ("bedside_table", 1, 2), ("wardrobe", 1, 1), ("desk", 2, 1), ("chair", 2, 1),
+        ("table_lamp", 2, 2), ("curtains", 2, 1), ("armchair", 3, 1), ("rug", 3, 1), ("wall_art", 3, 1),
+    ],
+    "suite": [
+        ("bed", 1, 1), ("bedside_table", 1, 2), ("wardrobe", 1, 1), ("lounge_sofa", 1, 1),
+        ("coffee_table", 2, 1), ("armchair", 2, 2), ("desk", 2, 1), ("chair", 2, 1),
+        ("curtains", 2, 1), ("table_lamp", 2, 2), ("rug", 3, 1), ("wall_art", 3, 2),
+    ],
+    "restaurant_floor": [
+        ("restaurant_table", 1, 8), ("chair", 1, 12), ("banquette", 1, 2), ("booth_seating", 2, 2),
+        ("pendant_lamp", 2, 4), ("plant", 3, 2), ("wall_art", 3, 2),
+    ],
+    "cafe_floor": [
+        ("restaurant_table", 1, 6), ("chair", 1, 12), ("bar_counter", 1, 1), ("bar_stool", 2, 4),
+        ("pendant_lamp", 2, 3), ("plant", 3, 2),
+    ],
+    "bar": [
+        ("bar_counter", 1, 1), ("bar_stool", 1, 8), ("booth_seating", 2, 2), ("restaurant_table", 2, 3),
+        ("pendant_lamp", 2, 3), ("wall_art", 3, 2),
+    ],
+    "reception": [
+        ("reception_desk", 1, 1), ("office_chair", 1, 2), ("lounge_sofa", 2, 1), ("plant", 2, 1),
+        ("wall_art", 3, 1),
+    ],
+    "banquet_hall": [
+        ("restaurant_table", 1, 10), ("chair", 1, 12), ("chandelier", 2, 3), ("curtains", 2, 2),
+        ("plant", 3, 2),
+    ],
+    "corridor": [("console", 2, 1), ("wall_art", 2, 3), ("sconce", 2, 4), ("rug", 3, 1)],
+    # industrial (loft-style offices)
+    "open_plan_office": [
+        ("workstation", 1, 12), ("office_chair", 1, 12), ("bookshelf", 2, 1), ("pendant_lamp", 2, 4),
+        ("plant", 2, 3), ("wall_art", 3, 2),
+    ],
+    "private_office": [("desk", 1, 1), ("office_chair", 1, 1), ("bookshelf", 2, 1), ("plant", 3, 1), ("wall_art", 3, 1)],
+    "meeting_room": [
+        ("meeting_table", 1, 1), ("office_chair", 1, 8), ("pendant_lamp", 2, 1), ("wall_art", 3, 1),
+        ("plant", 3, 1),
+    ],
+    "breakout": [
+        ("lounge_sofa", 1, 2), ("coffee_table", 2, 1), ("armchair", 2, 2), ("plant", 2, 2),
+        ("rug", 3, 1), ("wall_art", 3, 1),
+    ],
+    "pantry": [("kitchen_counter", 1, 1), ("fridge", 1, 1), ("kitchen_island", 2, 1), ("bar_stool", 2, 4)],
     "other": [("armchair", 2, 1), ("side_table", 3, 1), ("plant", 3, 1)],
 }
 
@@ -221,6 +273,9 @@ MATERIAL_HINTS: dict[str, str] = {
     "fridge": "metal",
     "floor_lamp": "metal", "pendant_lamp": "metal", "chandelier": "metal", "table_lamp": "metal",
     "mirror": "metal", "lantern": "metal",
+    "banquette": "fabric", "booth_seating": "fabric", "lounge_sofa": "fabric", "office_chair": "fabric",
+    "restaurant_table": "wood", "meeting_table": "wood", "workstation": "wood",
+    "reception_desk": "wood", "bar_counter": "wood",
 }
 
 # how an object relates to something already planned in the same room
@@ -235,6 +290,8 @@ _RELATION_RULES: dict[str, tuple[str, str]] = {
     "chair": ("around", "dining_table"),
     "bar_stool": ("beside", "kitchen_island"),
     "pendant_lamp": ("under", "dining_table"),
+    "office_chair": ("around", "meeting_table"),
+    "booth_seating": ("beside", "restaurant_table"),
 }
 _BED_RUG = ("under", "bed")
 
@@ -244,7 +301,10 @@ def _relation_for(sem: str, room_id: str, planned: list[ObjectPlanItem]) -> Opti
     if sem == "rug" and not any(i.room_id == room_id and i.semantic_type == "sofa" for i in planned):
         rule = _BED_RUG
     if sem == "chair" and not any(i.room_id == room_id and i.semantic_type == "dining_table" for i in planned):
-        rule = ("in_front_of", "desk")
+        in_room = {i.semantic_type for i in planned if i.room_id == room_id}
+        rule = ("around", "restaurant_table") if "restaurant_table" in in_room else ("in_front_of", "desk")
+    if sem == "bar_stool" and not any(i.room_id == room_id and i.semantic_type == "kitchen_island" for i in planned):
+        rule = ("beside", "bar_counter")
     if rule is None:
         return ObjectRelation(type="against_wall")
     rel_type, target_sem = rule
@@ -275,10 +335,13 @@ def build_moodboard(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBun
 def _rooms_from_hints(bundle: InputBundle) -> list[RoomAnalysis]:
     rooms: list[RoomAnalysis] = []
     counts: dict[str, int] = {}
+    room_types = vocab.room_types(bundle.vertical)
+    keywords = vocab.room_keywords(bundle.vertical)
+    default_dims = vocab.room_default_dims(bundle.vertical)
     for hint in bundle.room_hints:
-        rtype = hint.type if hint.type in vocab.ROOM_TYPES else vocab.ROOM_KEYWORDS.get(hint.type.lower(), "other")
+        rtype = hint.type if hint.type in room_types else keywords.get(hint.type.lower(), "other")
         counts[rtype] = counts.get(rtype, 0) + 1
-        dw, dl = vocab.ROOM_DEFAULT_DIMS.get(rtype, vocab.ROOM_DEFAULT_DIMS["other"])
+        dw, dl = default_dims.get(rtype, default_dims["other"])
         estimated = hint.width_m is None or hint.length_m is None or hint.estimated
         base = vocab.slug(hint.name) if hint.name else rtype
         room_id = base if base not in {r.room_id for r in rooms} else f"{base}_{counts[rtype]}"
@@ -296,31 +359,65 @@ def _rooms_from_hints(bundle: InputBundle) -> list[RoomAnalysis]:
     return rooms
 
 
-def _rooms_from_text(lower: str) -> list[RoomAnalysis]:
+def _rooms_from_text(lower: str, vertical: Vertical | str = Vertical.RESIDENTIAL) -> list[RoomAnalysis]:
     types: list[str] = []
-    beds = vocab.bedroom_count(lower)
-    has_master = "master bedroom" in lower or "primary bedroom" in lower
+    counted = vocab.brief_counts(lower, vertical)
+    beds = counted.get("bedrooms")
     if beds:
+        has_master = "master bedroom" in lower or "primary bedroom" in lower
         types += ["living_room", "kitchen"]
         if has_master:
             types += ["master_bedroom"] + ["bedroom"] * (beds - 1)
         else:
             types += ["bedroom"] * beds
-    for phrase, rtype in vocab.ROOM_KEYWORDS.items():
+    for phrase, rtype in vocab.room_keywords(vertical).items():
         if phrase in lower and rtype not in types:
             if beds and rtype in ("bedroom", "master_bedroom"):
                 continue  # already counted from the BHK / bedroom count
             types.append(rtype)
-    return _make_rooms(types)
+    rooms = _make_rooms(types, vertical)
+    _note_counts(rooms, counted)
+    return rooms
 
 
-def _default_rooms() -> list[RoomAnalysis]:
-    return _make_rooms(["living_room", "bedroom"])
+# what the brief's own unit says about a room, kept as a note: 40 keys is one
+# guest room repeated down a corridor, not forty rooms on one floor plate.
+_COUNT_NOTES: dict[str, tuple[str, tuple[str, ...]]] = {
+    "keys": ("{n} keys in the property", ("guest_room", "suite")),
+    "covers": ("{n} covers on this floor", ("restaurant_floor", "cafe_floor", "banquet_hall")),
+    "desks": ("{n} desks in the workplace", ("open_plan_office",)),
+}
 
 
-def _make_rooms(types: list[str]) -> list[RoomAnalysis]:
+def _note_counts(rooms: list[RoomAnalysis], counted: dict[str, int]) -> None:
+    for unit, value in counted.items():
+        template, room_types = _COUNT_NOTES.get(unit, ("", ()))
+        for room in rooms:
+            if room.type in room_types and not room.notes:
+                room.notes = template.format(n=value)
+
+
+_DEFAULT_ROOMS: dict[Vertical, list[str]] = {
+    Vertical.RESIDENTIAL: ["living_room", "bedroom"],
+    Vertical.HOSPITALITY: ["hotel_lobby", "guest_room"],
+    Vertical.INDUSTRIAL: ["open_plan_office", "meeting_room"],
+}
+
+_NO_ROOMS: dict[Vertical, str] = {
+    Vertical.RESIDENTIAL: "no rooms described; assumed a living room and a bedroom with estimated sizes",
+    Vertical.HOSPITALITY: "no rooms described; assumed a lobby and a guest room with estimated sizes",
+    Vertical.INDUSTRIAL: "no rooms described; assumed an open plan floor and a meeting room with estimated sizes",
+}
+
+
+def _default_rooms(vertical: Vertical | str = Vertical.RESIDENTIAL) -> list[RoomAnalysis]:
+    return _make_rooms(_DEFAULT_ROOMS[vocab._v(vertical)], vertical)
+
+
+def _make_rooms(types: list[str], vertical: Vertical | str = Vertical.RESIDENTIAL) -> list[RoomAnalysis]:
     rooms: list[RoomAnalysis] = []
     seen: dict[str, int] = {}
+    default_dims = vocab.room_default_dims(vertical)
     for rtype in types:
         seen[rtype] = seen.get(rtype, 0) + 1
         n = seen[rtype]
@@ -328,16 +425,21 @@ def _make_rooms(types: list[str]) -> list[RoomAnalysis]:
         room_id = rtype if total == 1 else f"{rtype}_{n}"
         label = vocab.ROOM_LABELS.get(rtype, "Room")
         name = label if total == 1 else f"{label} {n}"
-        w, l = vocab.ROOM_DEFAULT_DIMS.get(rtype, vocab.ROOM_DEFAULT_DIMS["other"])
+        w, l = default_dims.get(rtype, default_dims["other"])
         rooms.append(RoomAnalysis(room_id=room_id, name=name, type=rtype, width_m=w, length_m=l, estimated=True))
     return rooms
 
 
-def _keywords(lower: str) -> list[str]:
+def _keywords(lower: str, vertical: Vertical | str = Vertical.RESIDENTIAL) -> list[str]:
     """Style tags in the order they appear in the brief (the first one leads
-    the style name and palette), then mentioned object types."""
+    the style name and palette), then mentioned object types. Tags outside
+    the vertical's vocabulary are ignored, so "boutique" reads as a style
+    only on a hospitality project."""
+    allowed = vocab.style_tags(vertical)
     positions: dict[str, int] = {}
     for phrase, tag in vocab.STYLE_KEYWORDS.items():
+        if tag not in allowed:
+            continue
         pos = lower.find(phrase)
         if pos >= 0 and (tag not in positions or pos < positions[tag]):
             positions[tag] = pos
@@ -387,8 +489,8 @@ def _intent(text: str, rooms: list[RoomAnalysis]) -> str:
     return f"Design {names}"
 
 
-def _style_tags(lower: str, keywords: list[str]) -> list[str]:
-    tags = [k for k in keywords if k in vocab.STYLE_TAGS]
+def _style_tags(lower: str, keywords: list[str], vertical: Vertical | str = Vertical.RESIDENTIAL) -> list[str]:
+    tags = [k for k in keywords if k in vocab.style_tags(vertical)]
     if not tags:
         tags = ["modern", "warm", "minimal"]
     # a leading tag drives the palette; keep at most six

@@ -24,13 +24,13 @@ from . import vocab
 from .coerce import coerce_analysis, coerce_object_plan, coerce_style
 from .images import encode_for_gemini
 from .prompts import (
-    ANALYSIS_SCHEMA,
     OBJECT_PLAN_SCHEMA,
-    STYLE_SCHEMA,
     analysis_prompt,
+    analysis_schema,
     gemini_schema,
     objects_prompt,
     style_prompt,
+    style_schema,
 )
 from .schema import DesignAnalysis, InputBundle, ObjectPlan, StyleSpec
 
@@ -143,7 +143,7 @@ class GeminiProvider:
         parts = [{"text": analysis_prompt(bundle)}, *images]
         if images:
             parts.append({"text": f"{len(images)} reference photo(s) attached above."})
-        raw = self._generate(parts, ANALYSIS_SCHEMA, "analyze_input")
+        raw = self._generate(parts, analysis_schema(bundle.vertical), "analyze_input")
         return coerce_analysis(raw, bundle, warnings, provider=self.label)
 
     def create_style_spec(self, analysis: DesignAnalysis, bundle: InputBundle) -> StyleSpec:
@@ -153,8 +153,12 @@ class GeminiProvider:
             for m in materials
         ]
         images, warnings = self._image_parts(bundle)
-        raw = self._generate([{"text": style_prompt(analysis, bundle, catalog)}, *images], STYLE_SCHEMA, "create_style_spec")
-        return coerce_style(raw, {m.material_id for m in materials}, warnings, provider=self.label)
+        raw = self._generate(
+            [{"text": style_prompt(analysis, bundle, catalog)}, *images],
+            style_schema(bundle.vertical),
+            "create_style_spec",
+        )
+        return coerce_style(raw, {m.material_id for m in materials}, warnings, provider=self.label, vertical=bundle.vertical)
 
     def plan_objects(self, analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle) -> ObjectPlan:
         raw = self._generate([{"text": objects_prompt(analysis, style, bundle)}], OBJECT_PLAN_SCHEMA, "plan_objects")

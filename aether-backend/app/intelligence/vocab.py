@@ -3,18 +3,48 @@
 Keeping these in one place means both providers emit the same tags, room
 types and semantic types, so downstream planners never special-case the
 provider.
+
+The room, style and object vocabularies are keyed by `Vertical`: a hotel
+brief must never be offered `bedroom`, and an office brief must never be
+offered `banquet_hall`. Reach them through the accessors — `room_types`,
+`room_default_dims`, `room_keywords`, `style_tags`, `semantic_types`. An
+unknown vertical raises instead of quietly falling back to residential.
 """
 from __future__ import annotations
 
 import re
 
+from ..projects.schema import Vertical
+
+
+def _v(vertical: Vertical | str) -> Vertical:
+    """The enum for a vertical; anything else is a bug, not a default."""
+    try:
+        return Vertical(vertical)
+    except (ValueError, TypeError) as exc:
+        known = ", ".join(v.value for v in Vertical)
+        raise ValueError(f"unknown vertical {vertical!r}; expected one of: {known}") from exc
+
+
 # ── Style tags ───────────────────────────────────────────────────────────
-STYLE_TAGS: list[str] = [
+_RESIDENTIAL_STYLE_TAGS: list[str] = [
     "modern", "contemporary", "minimal", "warm", "scandinavian", "japandi",
     "industrial", "luxury", "classic", "traditional", "bohemian", "coastal",
     "mid_century", "moody", "dark", "light", "natural", "rustic", "art_deco",
     "indian_contemporary", "warm_neutral", "mediterranean",
 ]
+
+# hospitality adds two house styles; industrial reuses `industrial` (loft,
+# exposed brick), which the residential list already carries.
+_STYLE_TAGS: dict[Vertical, list[str]] = {
+    Vertical.RESIDENTIAL: _RESIDENTIAL_STYLE_TAGS,
+    Vertical.HOSPITALITY: _RESIDENTIAL_STYLE_TAGS + ["boutique_hotel", "brasserie"],
+    Vertical.INDUSTRIAL: _RESIDENTIAL_STYLE_TAGS,
+}
+
+
+def style_tags(vertical: Vertical | str) -> list[str]:
+    return _STYLE_TAGS[_v(vertical)]
 
 # keyword/phrase → tag (lower-case substring match on the brief)
 STYLE_KEYWORDS: dict[str, str] = {
@@ -37,57 +67,152 @@ STYLE_KEYWORDS: dict[str, str] = {
     "indian": "indian_contemporary", "ethnic": "indian_contemporary",
     "neutral": "warm_neutral", "beige": "warm_neutral", "taupe": "warm_neutral",
     "mediterranean": "mediterranean", "terracotta": "mediterranean",
+    # hospitality-only tags; style_tags() filters them out for the others
+    "boutique": "boutique_hotel", "boutique hotel": "boutique_hotel",
+    "brasserie": "brasserie", "bistro": "brasserie",
 }
 
 # ── Rooms ────────────────────────────────────────────────────────────────
-ROOM_TYPES: list[str] = [
-    "living_room", "bedroom", "master_bedroom", "kids_bedroom", "kitchen",
-    "dining_room", "bathroom", "study", "balcony", "entry", "other",
-]
+_ROOM_TYPES: dict[Vertical, list[str]] = {
+    Vertical.RESIDENTIAL: [
+        "living_room", "bedroom", "master_bedroom", "kids_bedroom", "kitchen",
+        "dining_room", "bathroom", "study", "balcony", "entry", "other",
+    ],
+    # a hotel / restaurant floor plate: the public rooms are commercial-scale
+    Vertical.HOSPITALITY: [
+        "hotel_lobby", "guest_room", "suite", "restaurant_floor", "cafe_floor",
+        "bar", "reception", "banquet_hall", "corridor", "other",
+    ],
+    # loft and exposed-brick OFFICES — no plant, warehouse or machine floor
+    Vertical.INDUSTRIAL: [
+        "open_plan_office", "private_office", "meeting_room", "reception",
+        "breakout", "pantry", "other",
+    ],
+}
+
+
+def room_types(vertical: Vertical | str) -> list[str]:
+    return _ROOM_TYPES[_v(vertical)]
+
 
 # default (width_m, length_m) when the user gave no dimensions
-ROOM_DEFAULT_DIMS: dict[str, tuple[float, float]] = {
-    "living_room": (6.0, 4.6),
-    "bedroom": (4.0, 3.6),
-    "master_bedroom": (4.8, 4.2),
-    "kids_bedroom": (3.8, 3.4),
-    "kitchen": (3.8, 3.0),
-    "dining_room": (4.2, 3.6),
-    "bathroom": (2.4, 2.0),
-    "study": (3.4, 3.0),
-    "balcony": (3.0, 1.5),
-    "entry": (2.4, 2.0),
-    "other": (3.5, 3.5),
+_ROOM_DEFAULT_DIMS: dict[Vertical, dict[str, tuple[float, float]]] = {
+    Vertical.RESIDENTIAL: {
+        "living_room": (6.0, 4.6),
+        "bedroom": (4.0, 3.6),
+        "master_bedroom": (4.8, 4.2),
+        "kids_bedroom": (3.8, 3.4),
+        "kitchen": (3.8, 3.0),
+        "dining_room": (4.2, 3.6),
+        "bathroom": (2.4, 2.0),
+        "study": (3.4, 3.0),
+        "balcony": (3.0, 1.5),
+        "entry": (2.4, 2.0),
+        "other": (3.5, 3.5),
+    },
+    # sized for covers and circulation, not for a family
+    Vertical.HOSPITALITY: {
+        "hotel_lobby": (12.0, 9.0),        # seating clusters either side of a walk-through route
+        "guest_room": (4.5, 6.0),          # ~27 m2 key: bed, desk, luggage bench, ensuite wall
+        "suite": (7.0, 8.0),               # a key plus its own living area
+        "restaurant_floor": (14.0, 10.0),  # ~80 covers at ~1.7 m2 each with service aisles
+        "cafe_floor": (9.0, 7.0),          # ~30 covers plus the counter
+        "bar": (8.0, 6.0),                 # back bar, counter run and standing room
+        "reception": (6.0, 4.0),           # front desk plus a queue
+        "banquet_hall": (20.0, 14.0),      # ~200 seated at rounds
+        "corridor": (2.4, 18.0),           # a guest-floor circulation run
+        "other": (6.0, 5.0),
+    },
+    # office-scale: ~8 m2 per desk including circulation
+    Vertical.INDUSTRIAL: {
+        "open_plan_office": (16.0, 10.0),  # ~20 desks with aisles
+        "private_office": (4.0, 3.6),
+        "meeting_room": (6.0, 4.2),        # a table for eight
+        "reception": (6.0, 4.0),
+        "breakout": (7.0, 5.0),
+        "pantry": (4.0, 3.0),
+        "other": (6.0, 5.0),
+    },
 }
 
-ROOM_KEYWORDS: dict[str, str] = {
-    "living room": "living_room", "living": "living_room", "lounge": "living_room",
-    "drawing room": "living_room", "hall": "living_room", "family room": "living_room",
-    "master bedroom": "master_bedroom", "primary bedroom": "master_bedroom",
-    "kids room": "kids_bedroom", "kids bedroom": "kids_bedroom", "children": "kids_bedroom",
-    "bedroom": "bedroom", "guest room": "bedroom",
-    "kitchen": "kitchen", "dining room": "dining_room", "dining area": "dining_room",
-    "dining space": "dining_room", "bathroom": "bathroom",
-    "washroom": "bathroom", "toilet": "bathroom", "study room": "study",
-    "study area": "study", "home office": "study", "office": "study",
-    "workspace": "study", "balcony": "balcony",
-    "terrace": "balcony", "entry": "entry", "foyer": "entry", "entrance": "entry",
+
+def room_default_dims(vertical: Vertical | str) -> dict[str, tuple[float, float]]:
+    return _ROOM_DEFAULT_DIMS[_v(vertical)]
+
+
+_ROOM_KEYWORDS: dict[Vertical, dict[str, str]] = {
+    Vertical.RESIDENTIAL: {
+        "living room": "living_room", "living": "living_room", "lounge": "living_room",
+        "drawing room": "living_room", "hall": "living_room", "family room": "living_room",
+        "master bedroom": "master_bedroom", "primary bedroom": "master_bedroom",
+        "kids room": "kids_bedroom", "kids bedroom": "kids_bedroom", "children": "kids_bedroom",
+        "bedroom": "bedroom", "guest room": "bedroom",
+        "kitchen": "kitchen", "dining room": "dining_room", "dining area": "dining_room",
+        "dining space": "dining_room", "bathroom": "bathroom",
+        "washroom": "bathroom", "toilet": "bathroom", "study room": "study",
+        "study area": "study", "home office": "study", "office": "study",
+        "workspace": "study", "balcony": "balcony",
+        "terrace": "balcony", "entry": "entry", "foyer": "entry", "entrance": "entry",
+    },
+    Vertical.HOSPITALITY: {
+        "hotel lobby": "hotel_lobby", "lobby": "hotel_lobby", "atrium": "hotel_lobby",
+        "hotel": "hotel_lobby",
+        "guest room": "guest_room", "guestroom": "guest_room", "bedroom": "guest_room",
+        "suite": "suite", "penthouse": "suite",
+        "restaurant": "restaurant_floor", "dining hall": "restaurant_floor",
+        "fine dining": "restaurant_floor", "brasserie": "restaurant_floor",
+        "cafe": "cafe_floor", "café": "cafe_floor", "coffee shop": "cafe_floor",
+        "bistro": "cafe_floor",
+        "bar": "bar", "cocktail": "bar", "speakeasy": "bar",
+        "reception": "reception", "front desk": "reception", "check-in": "reception",
+        "banquet": "banquet_hall", "ballroom": "banquet_hall", "function hall": "banquet_hall",
+        "event hall": "banquet_hall",
+        "corridor": "corridor", "hallway": "corridor", "guest floor": "corridor",
+    },
+    Vertical.INDUSTRIAL: {
+        "open plan": "open_plan_office", "open-plan": "open_plan_office",
+        "workstation": "open_plan_office", "desks": "open_plan_office",
+        "office floor": "open_plan_office", "studio floor": "open_plan_office",
+        "private office": "private_office", "cabin": "private_office",
+        "executive office": "private_office",
+        "meeting room": "meeting_room", "conference room": "meeting_room",
+        "boardroom": "meeting_room", "huddle": "meeting_room",
+        "reception": "reception", "front desk": "reception", "lobby": "reception",
+        "breakout": "breakout", "break out": "breakout", "lounge": "breakout",
+        "pantry": "pantry", "kitchenette": "pantry", "tea point": "pantry",
+    },
 }
+
+
+def room_keywords(vertical: Vertical | str) -> dict[str, str]:
+    return _ROOM_KEYWORDS[_v(vertical)]
+
 
 ROOM_LABELS: dict[str, str] = {
     "living_room": "Living Room", "bedroom": "Bedroom", "master_bedroom": "Master Bedroom",
     "kids_bedroom": "Kids Bedroom", "kitchen": "Kitchen", "dining_room": "Dining Room",
     "bathroom": "Bathroom", "study": "Study", "balcony": "Balcony", "entry": "Entry",
+    "hotel_lobby": "Hotel Lobby", "guest_room": "Guest Room", "suite": "Suite",
+    "restaurant_floor": "Restaurant Floor", "cafe_floor": "Cafe Floor", "bar": "Bar",
+    "reception": "Reception", "banquet_hall": "Banquet Hall", "corridor": "Corridor",
+    "open_plan_office": "Open Plan Office", "private_office": "Private Office",
+    "meeting_room": "Meeting Room", "breakout": "Breakout", "pantry": "Pantry",
     "other": "Room",
 }
 
+# ── Counting the brief ───────────────────────────────────────────────────
+# Every vertical is sold in a different unit. The BHK / bedroom regexes are
+# residential-only: "40-key hotel" must never read as 40 bedrooms.
 _BHK = re.compile(r"(\d)\s*-?\s*bhk", re.IGNORECASE)
 _BED = re.compile(r"(\d|one|two|three|four)\s*-?\s*(?:bed(?:room)?s?)\b", re.IGNORECASE)
+_KEYS = re.compile(r"(\d{1,4})\s*-?\s*(?:keys?\b|guest\s*rooms?\b)", re.IGNORECASE)
+_COVERS = re.compile(r"(\d{1,4})\s*-?\s*(?:covers?|seats?)\b", re.IGNORECASE)
+_DESKS = re.compile(r"(\d{1,4})\s*-?\s*(?:desks?|workstations?|people|staff|seats?)\b", re.IGNORECASE)
 _WORDS = {"one": 1, "two": 2, "three": 3, "four": 4}
 
 
 def bedroom_count(text: str) -> int | None:
-    """'2BHK', '3 bhk', 'two bedroom' → number of bedrooms."""
+    """'2BHK', '3 bhk', 'two bedroom' → number of bedrooms (residential only)."""
     m = _BHK.search(text)
     if m:
         return int(m.group(1))
@@ -98,9 +223,34 @@ def bedroom_count(text: str) -> int | None:
     return None
 
 
+def brief_counts(text: str, vertical: Vertical | str) -> dict[str, int]:
+    """What the brief counts, in the unit its vertical is sold in: bedrooms
+    (residential), keys and covers (hospitality), desks (industrial). Used for
+    room notes and sizing — never expanded into one room per key."""
+    v = _v(vertical)
+    out: dict[str, int] = {}
+    if v is Vertical.RESIDENTIAL:
+        beds = bedroom_count(text)
+        if beds:
+            out["bedrooms"] = beds
+        return out
+    if v is Vertical.HOSPITALITY:
+        keys = _KEYS.search(text)
+        if keys:
+            out["keys"] = int(keys.group(1))
+        covers = _COVERS.search(text)
+        if covers:
+            out["covers"] = int(covers.group(1))
+        return out
+    desks = _DESKS.search(text)
+    if desks:
+        out["desks"] = int(desks.group(1))
+    return out
+
+
 # ── Objects ──────────────────────────────────────────────────────────────
 # semantic types the catalog and asset registry understand
-SEMANTIC_TYPES: list[str] = [
+_RESIDENTIAL_SEMANTIC_TYPES: list[str] = [
     "sofa", "loveseat", "armchair", "ottoman", "coffee_table", "side_table",
     "tv_unit", "dining_table", "chair", "bar_stool", "bed", "wardrobe",
     "bedside_table", "dresser", "desk", "bookshelf", "sideboard", "console",
@@ -111,6 +261,33 @@ SEMANTIC_TYPES: list[str] = [
     "fireplace", "stool", "pedestal", "books", "tray", "sconce", "wall_shelf",
     "wall_clock", "throw", "candle", "basket", "other",
 ]
+
+# contract pieces the two commercial verticals need on top of the domestic
+# list (bar_stool is already there). Kept before "other" so the prompts'
+# "everything except other" slice still reads naturally.
+_CONTRACT_SEMANTIC_TYPES: list[str] = [
+    "banquette", "booth_seating", "restaurant_table", "bar_counter",
+    "reception_desk", "workstation", "office_chair", "meeting_table",
+    "lounge_sofa",
+]
+
+
+def _with_contract(base: list[str]) -> list[str]:
+    return base[:-1] + _CONTRACT_SEMANTIC_TYPES + base[-1:]   # keep "other" last
+
+
+_SEMANTIC_TYPES: dict[Vertical, list[str]] = {
+    Vertical.RESIDENTIAL: _RESIDENTIAL_SEMANTIC_TYPES,
+    Vertical.HOSPITALITY: _with_contract(_RESIDENTIAL_SEMANTIC_TYPES),
+    Vertical.INDUSTRIAL: _with_contract(_RESIDENTIAL_SEMANTIC_TYPES),
+}
+
+# the union, for code that maps a name to a type without knowing the project
+ALL_SEMANTIC_TYPES: list[str] = _SEMANTIC_TYPES[Vertical.HOSPITALITY]
+
+
+def semantic_types(vertical: Vertical | str) -> list[str]:
+    return _SEMANTIC_TYPES[_v(vertical)]
 
 # ── Open scene reading ──────────────────────────────────────────────────
 # Every spotted item carries an open `name` plus a coarse family, so pieces
@@ -139,6 +316,12 @@ FAMILY_BY_TYPE: dict[str, str] = {
     "vase": "ornament", "sculpture": "ornament", "books": "ornament", "tray": "ornament",
     "fridge": "appliance", "bathtub": "appliance",
     "fireplace": "architecture",
+    # contract pieces (hospitality + office)
+    "banquette": "seating", "booth_seating": "seating", "office_chair": "seating",
+    "lounge_sofa": "seating",
+    "restaurant_table": "table", "reception_desk": "table", "workstation": "table",
+    "meeting_table": "table",
+    "bar_counter": "storage",
 }
 
 # where a type sits when the reader does not say
@@ -149,6 +332,10 @@ PLACEMENT_BY_TYPE: dict[str, str] = {
     "table_lamp": "on_surface", "vase": "on_surface", "books": "on_surface", "tray": "on_surface",
     "sculpture": "on_surface", "lantern": "on_surface", "pillows": "on_surface", "throw": "on_surface",
     "candle": "on_surface",
+    # contract pieces all stand on the floor; spelled out rather than implied
+    "banquette": "floor", "booth_seating": "floor", "restaurant_table": "floor",
+    "bar_counter": "floor", "reception_desk": "floor", "workstation": "floor",
+    "office_chair": "floor", "meeting_table": "floor", "lounge_sofa": "floor",
 }
 
 # (w, h, d) metres, mount, procedural shape: when a type has no built-in and
@@ -175,6 +362,8 @@ SURFACE_HEIGHT: dict[str, float | None] = {
     "bedside_table": None, "sideboard": None, "dresser": None, "tv_unit": None, "kitchen_island": None,
     "bookshelf": None, "pedestal": None, "fireplace": None, "wall_shelf": None, "ottoman": None, "stool": None,
     "kitchen_counter": 0.90, "sofa": 0.45, "loveseat": 0.45, "armchair": 0.45, "bed": None,
+    "restaurant_table": None, "meeting_table": None, "workstation": None, "reception_desk": None,
+    "bar_counter": 1.05, "banquette": 0.45, "booth_seating": 0.45, "lounge_sofa": 0.45,
 }
 
 # which supports each on-surface type prefers, best first
@@ -228,7 +417,7 @@ NAME_KEYWORDS: list[tuple[str, str]] = [
 def canonical_type(name: str, given: str = "") -> str:
     """Closest canonical type for an open item name; `given` wins when valid."""
     g = (given or "").strip().lower().replace(" ", "_")
-    if g in SEMANTIC_TYPES and g != "other":
+    if g in ALL_SEMANTIC_TYPES and g != "other":
         return g
     lower = (name or "").lower()
 
@@ -258,6 +447,18 @@ def placement_for(semantic_type: str, given: str = "") -> str:
     return PLACEMENT_BY_TYPE.get(semantic_type, "floor")
 
 OBJECT_KEYWORDS: dict[str, list[str]] = {
+    # contract pieces first: "reception desk" must beat "desk" and "lounge
+    # sofa" must beat "sofa". None of these phrases occur in a domestic
+    # brief, so the residential reading order is untouched.
+    "reception_desk": ["reception desk", "front desk"],
+    "lounge_sofa": ["lounge sofa", "lobby sofa"],
+    "banquette": ["banquette"],
+    "booth_seating": ["booth seating", "booth"],
+    "restaurant_table": ["restaurant table", "cafe table", "bistro table"],
+    "bar_counter": ["bar counter", "back bar", "drinks counter"],
+    "workstation": ["workstation", "work station", "bench desk"],
+    "office_chair": ["office chair", "task chair", "desk chair"],
+    "meeting_table": ["meeting table", "conference table", "boardroom table"],
     "sofa": ["sofa", "couch", "sectional"],
     "loveseat": ["loveseat", "two seater", "2 seater", "two-seater"],
     "armchair": ["armchair", "accent chair", "lounge chair"],
@@ -306,6 +507,13 @@ OBJECT_DEFAULT_ROOM: dict[str, str] = {
     "bed": "bedroom", "wardrobe": "bedroom", "bedside_table": "bedroom",
     "dresser": "bedroom", "table_lamp": "bedroom", "curtains": "bedroom",
     "kitchen_island": "kitchen", "bar_stool": "kitchen", "kitchen_counter": "kitchen", "fridge": "kitchen",
+    # contract pieces (the room type only exists in their own vertical, so a
+    # residential project never resolves to one of these)
+    "banquette": "restaurant_floor", "booth_seating": "restaurant_floor",
+    "restaurant_table": "restaurant_floor", "bar_counter": "bar",
+    "lounge_sofa": "hotel_lobby", "reception_desk": "reception",
+    "workstation": "open_plan_office", "office_chair": "open_plan_office",
+    "meeting_table": "meeting_room",
 }
 
 # ── Lighting ─────────────────────────────────────────────────────────────
@@ -336,6 +544,9 @@ STYLE_PALETTES: dict[str, list[str]] = {
     "bohemian": ["#F4E8D6", "#D9A77A", "#B2714F", "#7E8B6C", "#4A3B34"],
     "indian_contemporary": ["#F5E9D8", "#D9A05B", "#B2533E", "#5F7A61", "#3B2E2A"],
     "mediterranean": ["#F6EEE2", "#E0C4A0", "#C4784F", "#7C9C8B", "#3E4A55"],
+    # hospitality
+    "boutique_hotel": ["#EDE6DB", "#C8B49B", "#7E6A57", "#2F3A3A", "#B8894C"],
+    "brasserie": ["#F2E7D5", "#D6B77E", "#8E4A3C", "#2C3A34", "#1C1A18"],
 }
 DEFAULT_PALETTE = STYLE_PALETTES["modern"]
 

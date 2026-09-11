@@ -11,11 +11,11 @@ import sqlite3
 import threading
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterator, Optional
+from typing import Any, Callable, Iterator, Optional
 
 from ..core.config import get_settings
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 SCHEMA = [
     """
@@ -31,6 +31,7 @@ SCHEMA = [
         stage       TEXT NOT NULL DEFAULT 'CREATED',
         scene_ids   TEXT NOT NULL DEFAULT '[]',
         room_hints  TEXT NOT NULL DEFAULT '[]',
+        vertical    TEXT NOT NULL DEFAULT 'residential',
         created_at  TEXT NOT NULL,
         updated_at  TEXT NOT NULL
     )""",
@@ -112,6 +113,32 @@ SCHEMA = [
 ]
 
 
+# ── migrations ───────────────────────────────────────────────────────────
+# The CREATE statements above only ever build a *fresh* database; anything
+# that changes an existing one goes here. Each step takes the open
+# connection, must be safe to run twice, and is appended as (version, fn)
+# with version == the SCHEMA_VERSION that introduced it.
+
+
+def _add_column(c: sqlite3.Connection, table: str, column: str, decl: str) -> None:
+    """ALTER TABLE ... ADD COLUMN, skipped when the column already exists."""
+    existing = {row["name"] for row in c.execute(f"PRAGMA table_info({table})")}
+    if column not in existing:
+        c.execute(f"ALTER TABLE {table} ADD COLUMN {column} {decl}")
+
+
+def _v2_project_vertical(c: sqlite3.Connection) -> None:
+    """projects.vertical — the market a project is designed for. The NOT NULL
+    DEFAULT backfills existing rows to 'residential' as SQLite adds it."""
+    _add_column(c, "projects", "vertical", "TEXT NOT NULL DEFAULT 'residential'")
+    c.execute("UPDATE projects SET vertical = 'residential' WHERE COALESCE(vertical, '') = ''")
+
+
+MIGRATIONS: list[tuple[int, Callable[[sqlite3.Connection], None]]] = [
+    (2, _v2_project_vertical),
+]
+
+
 class Database:
     def __init__(self, path: Path):
         self.path = Path(path)
@@ -131,10 +158,24 @@ class Database:
         with self.tx() as c:
             for stmt in SCHEMA:
                 c.execute(stmt)
+            current = self._recorded_version(c)
+            for version, step in MIGRATIONS:
+                if current < version:
+                    step(c)
             c.execute(
                 "INSERT OR REPLACE INTO meta(key, value) VALUES ('schema_version', ?)",
                 (str(SCHEMA_VERSION),),
             )
+
+    @staticmethod
+    def _recorded_version(c: sqlite3.Connection) -> int:
+        """Schema version stamped in meta. An absent or unreadable marker
+        means 0, which replays every step — they are all idempotent."""
+        row = c.execute("SELECT value FROM meta WHERE key = 'schema_version'").fetchone()
+        try:
+            return int(row["value"]) if row is not None else 0
+        except (TypeError, ValueError):
+            return 0
 
     # ── access ───────────────────────────────────────────────────
     @contextmanager

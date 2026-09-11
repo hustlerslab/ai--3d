@@ -133,3 +133,150 @@ def test_blender_smoke_without_blender_fails_cleanly(client, monkeypatch):
     polled = client.get(f"/api/jobs/{job['job_id']}").json()["data"]["job"]
     assert polled["status"] == "FAILED"
     assert "BLENDER_PATH" in polled["error"]
+
+
+# ── vertical + scope guard ──────────────────────────────────────────────
+
+
+def test_vertical_defaults_to_residential_and_round_trips(client):
+    default = client.post("/api/projects", json={"name": "Flat"}).json()["project"]
+    assert default["vertical"] == "residential"
+
+    r = client.post("/api/projects", json={"name": "Boutique hotel", "vertical": "hospitality"})
+    assert r.status_code == 200, r.text
+    pid = r.json()["project"]["project_id"]
+    assert client.get(f"/api/projects/{pid}").json()["data"]["project"]["vertical"] == "hospitality"
+    listed = {p["project_id"]: p["vertical"] for p in client.get("/api/projects").json()["data"]}
+    assert listed[pid] == "hospitality"
+
+
+def test_unknown_vertical_is_rejected(client):
+    for bad in ("factory", "manufacturing", "nonsense"):
+        r = client.post("/api/projects", json={"name": "Nope", "vertical": bad})
+        assert r.status_code == 422, f"{bad} -> {r.status_code}"
+
+
+def test_vertical_editable_only_while_created(client):
+    pid = client.post("/api/projects", json={"name": "Flat"}).json()["project"]["project_id"]
+    r = client.patch(f"/api/projects/{pid}", json={"vertical": "industrial"})
+    assert r.status_code == 200, r.text
+    assert r.json()["project"]["vertical"] == "industrial"
+
+    # a name-only patch must still work once the project has moved on
+    from app.projects import ProjectStage, get_project_store
+
+    get_project_store().set_stage(pid, ProjectStage.INPUT_RECEIVED)
+    assert client.patch(f"/api/projects/{pid}", json={"name": "Renamed"}).status_code == 200
+    # re-sending the unchanged vertical is a no-op, not a conflict
+    assert client.patch(f"/api/projects/{pid}", json={"vertical": "industrial"}).status_code == 200
+
+    r = client.patch(f"/api/projects/{pid}", json={"vertical": "residential"})
+    assert r.status_code == 409, r.text
+    assert r.json()["error"]["code"] == "VERTICAL_LOCKED"
+    assert client.get(f"/api/projects/{pid}").json()["data"]["project"]["vertical"] == "industrial"
+
+
+OUT_OF_SCOPE_BRIEFS = [
+    "Design the layout of our manufacturing plant in Pune",
+    "We need the factory floor re-planned around the new line",
+    "Check the load bearing capacity of the mezzanine",
+    "Is this a load-bearing wall we can remove?",
+    "Specify machine guarding for the press area",
+    "Make sure the exits meet the fire code",
+    "Compliance with the Factories Act, 1948 is required",
+    "Needs to satisfy the OSH Code",
+    "Calculate the structural load of the new partition",
+]
+
+IN_SCOPE_BRIEFS = [
+    "Industrial loft with exposed brick and black steel",
+    "A warehouse aesthetic for the living room, lots of wood",
+    "Industrial-style cafe, concrete floors, pendant lighting",
+    "Warm minimal two-bedroom flat",
+]
+
+
+def test_scope_guard_refuses_facility_briefs(client):
+    for brief in OUT_OF_SCOPE_BRIEFS:
+        r = client.post("/api/projects", json={"name": "Plant", "description": brief})
+        assert r.status_code == 422, f"{brief!r} -> {r.status_code}"
+        assert r.json()["error"]["code"] == "OUT_OF_SCOPE"
+    # nothing was created for any of them
+    assert [p for p in client.get("/api/projects").json()["data"] if p["name"] == "Plant"] == []
+
+    pid = client.post("/api/projects", json={"name": "Flat"}).json()["project"]["project_id"]
+    for brief in OUT_OF_SCOPE_BRIEFS:
+        assert client.patch(f"/api/projects/{pid}", json={"description": brief}).status_code == 422
+        r = client.post(f"/api/projects/{pid}/inputs", data={"description": brief})
+        assert r.status_code == 422, f"{brief!r} -> {r.status_code}"
+        assert r.json()["error"]["code"] == "OUT_OF_SCOPE"
+    detail = client.get(f"/api/projects/{pid}").json()["data"]
+    assert detail["inputs"] == [] and detail["project"]["description"] == ""
+
+
+def test_scope_guard_passes_aesthetic_briefs(client):
+    for brief in IN_SCOPE_BRIEFS:
+        r = client.post("/api/projects", json={"name": "Flat", "description": brief})
+        assert r.status_code == 200, f"{brief!r} -> {r.text}"
+        pid = r.json()["project"]["project_id"]
+        assert client.patch(f"/api/projects/{pid}", json={"description": brief}).status_code == 200
+        inputs = client.post(f"/api/projects/{pid}/inputs", data={"description": brief})
+        assert inputs.status_code == 200, f"{brief!r} -> {inputs.text}"
+        assert project_dir(pid).joinpath("input", "description.txt").read_text(
+            encoding="utf-8"
+        ).strip() == brief
+
+
+# ── schema migration ────────────────────────────────────────────────────
+
+# The v1 projects DDL, i.e. an existing allure.db that predates `vertical`.
+V1_PROJECTS_DDL = """
+    CREATE TABLE projects (
+        project_id  TEXT PRIMARY KEY,
+        name        TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        stage       TEXT NOT NULL DEFAULT 'CREATED',
+        scene_ids   TEXT NOT NULL DEFAULT '[]',
+        room_hints  TEXT NOT NULL DEFAULT '[]',
+        created_at  TEXT NOT NULL,
+        updated_at  TEXT NOT NULL
+    )"""
+
+
+def test_migration_adds_vertical_to_an_existing_db(tmp_path):
+    import sqlite3
+
+    from app.db.sqlite import SCHEMA_VERSION, Database
+
+    path = tmp_path / "allure.db"
+    legacy = sqlite3.connect(str(path))
+    legacy.execute("CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)")
+    legacy.execute("INSERT INTO meta(key, value) VALUES ('schema_version', '1')")
+    legacy.execute(V1_PROJECTS_DDL)
+    legacy.execute(
+        "INSERT INTO projects(project_id, name, created_at, updated_at) VALUES (?,?,?,?)",
+        ("proj_old", "Pre-migration flat", "2026-01-01T00:00:00+00:00", "2026-01-01T00:00:00+00:00"),
+    )
+    legacy.commit()
+    legacy.close()
+
+    for _ in range(2):  # running it twice must be a no-op the second time
+        db = Database(path)
+        assert db.scalar("SELECT vertical FROM projects WHERE project_id = 'proj_old'") == "residential"
+        assert db.scalar("SELECT value FROM meta WHERE key = 'schema_version'") == str(SCHEMA_VERSION)
+        assert [r["name"] for r in db.query("PRAGMA table_info(projects)")].count("vertical") == 1
+        db.close()
+
+
+def test_fresh_db_has_vertical_and_reads_back(tmp_path):
+    from app.db.sqlite import Database
+    from app.projects.store import _row_to_project
+
+    db = Database(tmp_path / "fresh.db")
+    db.execute(
+        """INSERT INTO projects(project_id, name, created_at, updated_at)
+           VALUES ('proj_new', 'Fresh', '2026-01-01T00:00:00+00:00', '2026-01-01T00:00:00+00:00')"""
+    )
+    row = db.one("SELECT * FROM projects WHERE project_id = 'proj_new'")
+    assert _row_to_project(row).vertical.value == "residential"
+    db.close()

@@ -17,12 +17,12 @@ from ..materials.registry import get_material_registry
 from .coerce import coerce_analysis, coerce_object_plan, coerce_style
 from .images import encode_for_gemini
 from .prompts import (
-    ANALYSIS_SCHEMA,
     OBJECT_PLAN_SCHEMA,
-    STYLE_SCHEMA,
     analysis_prompt,
+    analysis_schema,
     objects_prompt,
     style_prompt,
+    style_schema,
 )
 from .schema import DesignAnalysis, InputBundle, ObjectPlan, StyleSpec
 
@@ -100,7 +100,7 @@ class AnthropicProvider:
     def analyze_input(self, bundle: InputBundle) -> DesignAnalysis:
         images, warnings = self._image_blocks(bundle)
         content = [*images, {"type": "text", "text": analysis_prompt(bundle)}]
-        raw = self._generate(content, ANALYSIS_SCHEMA, "analyze_input")
+        raw = self._generate(content, analysis_schema(bundle.vertical), "analyze_input")
         return coerce_analysis(raw, bundle, warnings, provider=self.label)
 
     def create_style_spec(self, analysis: DesignAnalysis, bundle: InputBundle) -> StyleSpec:
@@ -111,8 +111,8 @@ class AnthropicProvider:
         ]
         images, warnings = self._image_blocks(bundle)
         content = [*images, {"type": "text", "text": style_prompt(analysis, bundle, catalog)}]
-        raw = self._generate(content, STYLE_SCHEMA, "create_style_spec")
-        return coerce_style(raw, {m.material_id for m in materials}, warnings, provider=self.label)
+        raw = self._generate(content, style_schema(bundle.vertical), "create_style_spec")
+        return coerce_style(raw, {m.material_id for m in materials}, warnings, provider=self.label, vertical=bundle.vertical)
 
     def plan_objects(self, analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle) -> ObjectPlan:
         raw = self._generate([{"type": "text", "text": objects_prompt(analysis, style, bundle)}], OBJECT_PLAN_SCHEMA, "plan_objects")

@@ -10,7 +10,8 @@ import pytest
 from app.intelligence import InputBundle, get_provider, reset_provider
 from app.intelligence.anthropic_provider import AnthropicProvider
 from app.intelligence.gemini_provider import GeminiError, GeminiProvider
-from app.intelligence.prompts import ANALYSIS_SCHEMA, gemini_schema
+from app.intelligence.prompts import analysis_schema, gemini_schema
+from app.projects import Vertical
 from tests.test_intelligence import ANALYSIS_OK, BRIEF, _gemini_payload
 
 
@@ -24,7 +25,7 @@ def _settings(monkeypatch, **env):
 
 
 def test_gemini_schema_conversion():
-    g = gemini_schema(ANALYSIS_SCHEMA)
+    g = gemini_schema(analysis_schema(Vertical.RESIDENTIAL))
     assert g["type"] == "OBJECT" and "additionalProperties" not in g
     assert g["properties"]["rooms"]["type"] == "ARRAY"
     assert g["properties"]["rooms"]["items"]["properties"]["type"]["enum"]

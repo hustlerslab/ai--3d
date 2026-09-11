@@ -42,6 +42,16 @@ STAGE_ORDER: list[ProjectStage] = [
 ]
 
 
+class Vertical(str, Enum):
+    """The market a project is designed for. Deliberately three members:
+    this product designs interiors, so there is no factory/manufacturing
+    vertical — see the scope guard in app/api/projects_routes.py."""
+
+    RESIDENTIAL = "residential"
+    HOSPITALITY = "hospitality"
+    INDUSTRIAL = "industrial"
+
+
 class InputKind(str, Enum):
     description = "description"
     reference = "reference"
@@ -69,6 +79,7 @@ class ProjectRecord(BaseModel):
     stage: ProjectStage = ProjectStage.CREATED
     scene_ids: list[str] = []
     room_hints: list[RoomHint] = []
+    vertical: Vertical = Vertical.RESIDENTIAL
     created_at: str
     updated_at: str
 

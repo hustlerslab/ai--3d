@@ -69,7 +69,11 @@ def scene_plan(ctx: JobContext) -> dict[str, Any]:
         ctx.write_json(OBJECT_PLAN, plan)
         ctx.projects.add_analysis(ctx.project_id, "object_plan", OBJECT_PLAN, plan.version)
         ctx.mark_checkpoint("object_plan")
-        ctx.emit("plan.objects", f"{len(plan.items)} item(s) across {len(plan.rooms)} room(s) via {plan.provider}")
+        ctx.emit(
+            "plan.objects",
+            f"{len(plan.items)} item(s) across {len(plan.rooms)} room(s) via {plan.provider} "
+            f"[vertical={ctx.project.vertical.value}]",
+        )
     warnings += plan.warnings
 
     # ── asset plan ───────────────────────────────────────────────────────

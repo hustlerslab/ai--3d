@@ -6,7 +6,7 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from ..projects.schema import RoomHint
+from ..projects.schema import RoomHint, Vertical
 
 SCHEMA_VERSION = "1.1"
 
@@ -32,6 +32,10 @@ class InputBundle(BaseModel):
     project_id: str
     project_name: str = ""
     description: str = ""
+    # the project's market: picks the room, style and object vocabulary and
+    # the JSON-schema enums the provider is constrained to. Carried here so
+    # the IntelligenceProvider protocol never has to grow a parameter.
+    vertical: Vertical = Vertical.RESIDENTIAL
     room_hints: list[RoomHint] = []
     references: list[ReferenceImage] = []
 

@@ -21,9 +21,11 @@ from ..projects import (
     InputRecord,
     ProjectStage,
     RoomHint,
+    Vertical,
     get_project_store,
 )
 from ..projects.layout import CHECKPOINTS, ensure_layout, file_url, project_dir
+from ..projects.store import VerticalLocked
 from .envelope import ok
 
 router = APIRouter(prefix="/api", tags=["projects"])
@@ -32,6 +34,34 @@ files_router = APIRouter(tags=["files"])
 IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"}
 MAX_IMAGE_BYTES = 25 * 1024 * 1024
 MAX_REFERENCES = 12
+# A brief is prose, not a document: ~3k words. It is scanned on every write,
+# stored in a TEXT column and pasted verbatim into every provider prompt, so
+# the real ceiling is the prompt. References are already capped at 25 MB x 12.
+MAX_BRIEF_CHARS = 20_000
+
+# Regulated industrial-facility work this product declines. Facility and
+# regulatory phrases only — the aesthetic vocabulary ("industrial", "loft",
+# "exposed brick", "warehouse") is deliberately absent, a loft-look flat is
+# ordinary work. Matching is a plain substring scan whose only outcome is a
+# refusal: nothing here evaluates a load, a code or a safety rule.
+OUT_OF_SCOPE_TERMS = (
+    "manufacturing plant",
+    "manufacturing facility",
+    "factory floor",
+    "machine guarding",
+    "load bearing",
+    "load-bearing",
+    "structural load",
+    "fire code",
+    "factories act",
+    "osh code",
+)
+
+IN_SCOPE_SUMMARY = (
+    "This product designs interiors — residential, hospitality and "
+    "industrial-style spaces: layout, furnishing, materials, lighting mood "
+    "and walkthrough renders."
+)
 
 
 def _now() -> str:
@@ -42,12 +72,14 @@ class CreateProjectBody(BaseModel):
     name: str
     description: str = ""
     room_hints: list[RoomHint] = []
+    vertical: Vertical = Vertical.RESIDENTIAL
 
 
 class UpdateProjectBody(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     room_hints: Optional[list[RoomHint]] = None
+    vertical: Optional[Vertical] = None
 
 
 class EnqueueJobBody(BaseModel):
@@ -65,8 +97,16 @@ def list_projects() -> dict:
 
 @router.post("/projects")
 def create_project(body: CreateProjectBody) -> dict:
+    refusal = _brief_refusal(body.description)
+    if refusal is not None:
+        return refusal  # nothing is created for a brief we decline
     store = get_project_store()
-    project = store.create(name=body.name, description=body.description, room_hints=body.room_hints)
+    project = store.create(
+        name=body.name,
+        description=body.description,
+        room_hints=body.room_hints,
+        vertical=body.vertical,
+    )
     get_job_store().add_event(project.project_id, "project", "created", f"project '{project.name}' created")
     if body.description:
         _write_description(project.project_id, body.description)
@@ -92,9 +132,27 @@ def get_project(project_id: str) -> dict:
 @router.patch("/projects/{project_id}")
 def update_project(project_id: str, body: UpdateProjectBody) -> dict:
     store = get_project_store()
-    project = store.update(
-        project_id, name=body.name, description=body.description, room_hints=body.room_hints
-    )
+    refusal = _brief_refusal(body.description)
+    if refusal is not None:
+        return refusal
+    try:
+        # the store gates the vertical inside the write itself; an unknown
+        # project raises ProjectNotFound and 404s through its handler
+        project = store.update(
+            project_id,
+            name=body.name,
+            description=body.description,
+            room_hints=body.room_hints,
+            vertical=body.vertical,
+        )
+    except VerticalLocked as exc:
+        return _error(
+            "VERTICAL_LOCKED",
+            f"The vertical is fixed once a project leaves CREATED (now {exc.stage.value}); "
+            f"the work already done was analysed as '{exc.vertical.value}' and changing it "
+            "would invalidate that. Start a new project for a different vertical.",
+            409,
+        )
     if body.description is not None:
         _write_description(project_id, body.description)
     return {"success": True, "project": project.model_dump(mode="json")}
@@ -121,6 +179,9 @@ async def add_inputs(
     `references[]` (images). Any subset may be sent; each call appends."""
     store = get_project_store()
     project = store.get(project_id)
+    refusal = _brief_refusal(description)
+    if refusal is not None:
+        return refusal  # refuse before anything in the request is stored
     root = ensure_layout(project_id)
     created: list[InputRecord] = []
     rejected: list[dict] = []
@@ -309,7 +370,9 @@ def patch_analysis(project_id: str, body: AnalysisPatchBody) -> dict:
             from ..intelligence import vocab
 
             rtype = data.get("type", "other")
-            dw, dl = vocab.ROOM_DEFAULT_DIMS.get(rtype, vocab.ROOM_DEFAULT_DIMS["other"])
+            # the project's vertical decides what a room of this type measures
+            dims = vocab.room_default_dims(store.get(project_id).vertical)
+            dw, dl = dims.get(rtype, dims["other"])
             analysis.rooms.append(
                 RoomAnalysis(
                     room_id=patch.room_id,
@@ -605,6 +668,33 @@ def project_file(project_id: str, path: str):
 
 
 # ── helpers ─────────────────────────────────────────────────────────────
+
+
+def _brief_refusal(text: Optional[str]):
+    """Bound a brief and decline one that asks for regulated industrial-facility
+    work. Returns an error response, or None when the brief is acceptable. The
+    refusal is all it does — it makes no judgement about the building."""
+    if not text or not text.strip():
+        return None
+    if len(text) > MAX_BRIEF_CHARS:
+        return _error(
+            "BRIEF_TOO_LONG",
+            f"The brief is {len(text)} characters; keep it under {MAX_BRIEF_CHARS}. "
+            "Describe the space and the look you want — plans and photos belong in "
+            "the dimensions and reference uploads.",
+            422,
+        )
+    lowered = text.lower()
+    hit = next((term for term in OUT_OF_SCOPE_TERMS if term in lowered), None)
+    if hit is None:
+        return None
+    return _error(
+        "OUT_OF_SCOPE",
+        f"This brief asks for regulated industrial-facility work ('{hit}'), which is out of "
+        "scope: no plant or factory-floor layouts, no structural or load-bearing work, and no "
+        f"fire, safety or building-code advice. {IN_SCOPE_SUMMARY}",
+        422,
+    )
 
 
 def _write_description(project_id: str, text: str) -> Path:

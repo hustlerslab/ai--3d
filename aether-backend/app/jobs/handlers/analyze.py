@@ -41,7 +41,11 @@ def analyze(ctx: JobContext) -> dict:
     if not bundle.has_content:
         raise NoInputs("project has no description, dimensions or reference images")
     provider = get_provider()
-    ctx.emit("analyze.inputs", f"{len(bundle.references)} photo(s), {len(bundle.room_hints)} room hint(s), provider={provider.mode}")
+    ctx.emit(
+        "analyze.inputs",
+        f"{len(bundle.references)} photo(s), {len(bundle.room_hints)} room hint(s), "
+        f"provider={provider.mode}, vertical={bundle.vertical.value}",
+    )
 
     # ── design analysis ──────────────────────────────────────────────────
     if ctx.has_checkpoint(ANALYSIS) and not force:
@@ -63,7 +67,8 @@ def analyze(ctx: JobContext) -> dict:
         ctx.emit(
             "analyze.analysis",
             f"{len(analysis.rooms)} room(s), {len(analysis.spotted_objects)} object(s), "
-            f"confidence {analysis.confidence:.2f} via {analysis.provider}",
+            f"confidence {analysis.confidence:.2f} via {analysis.provider} "
+            f"[vertical={bundle.vertical.value}]",
         )
 
     # ── crops of every item the reading located in a photo (deterministic) ─
@@ -92,7 +97,11 @@ def analyze(ctx: JobContext) -> dict:
         )
         ctx.projects.add_analysis(ctx.project_id, "style_spec", STYLE, style.version)
         ctx.mark_checkpoint(STYLE)
-        ctx.emit("analyze.style", f"{style.name} · {', '.join(style.palette[:3])} · {style.lighting_mood}")
+        ctx.emit(
+            "analyze.style",
+            f"{style.name} · {', '.join(style.palette[:3])} · {style.lighting_mood} "
+            f"[vertical={bundle.vertical.value}]",
+        )
 
     # ── moodboard (derived, always rebuilt) ──────────────────────────────
     moodboard = build_moodboard(analysis, style, bundle)
@@ -104,6 +113,7 @@ def analyze(ctx: JobContext) -> dict:
     warnings = list(dict.fromkeys(analysis.warnings + style.warnings))
     return {
         "provider": provider.mode,
+        "vertical": bundle.vertical.value,
         "analysis_provider": analysis.provider,
         "style_provider": style.provider,
         "rooms": [r.room_id for r in analysis.rooms],
