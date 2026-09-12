@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/*
+  Aether walkthrough — design tokens.
+
+  Same brand register as the Allure portals (gold / copper / ink / cream), so
+  the walkthrough reads as part of the same product when it is embedded or
+  linked from there. This file is the only place a hex value may appear.
+*/
+
+:root {
+  --gold: #b88538;
+  --gold-light: #bc8b41;
+  --copper: #c87f5a;
+
+  --ink: #0b0b0b;
+  --ink-soft: #131313;
+  --ink-muted: #464646;
+
+  --cream: #eee2d2;
+  --sand: #e6d3bf;
+  --beige: #e1ccb1;
+  --tan: #c8ae8c;
+
+  --surface: #fdfbf8;
+  --surface-raised: #ffffff;
+  --border: #e8e0d5;
+
+  --success: #5c7a5c;
+  --warning: #c9873a;
+  --danger: #a64b3c;
+  --info: #5a6b7a;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(19, 19, 19, 0.04), 0 1px 3px rgba(19, 19, 19, 0.06);
+  --shadow-md: 0 4px 12px rgba(19, 19, 19, 0.06), 0 2px 4px rgba(19, 19, 19, 0.04);
+  --shadow-lg: 0 12px 32px rgba(19, 19, 19, 0.1), 0 4px 8px rgba(19, 19, 19, 0.05);
+
+  --background: var(--surface);
+  --foreground: var(--ink-soft);
+  --muted: var(--sand);
+  --muted-foreground: var(--ink-muted);
+  --ring: var(--gold);
+}
+
+@theme inline {
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-copper: var(--copper);
+
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-muted: var(--ink-muted);
+
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-beige: var(--beige);
+  --color-tan: var(--tan);
+
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-sans: var(--font-body);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-pill: var(--r-pill);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Type scale — Playfair for display only, Inter for everything else. */
+@layer components {
+  .display-xl,
+  .display-lg,
+  .display-md,
+  .display-sm,
+  .display {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+
+  .display-xl { font-size: 4.5rem; line-height: 1.05; letter-spacing: -0.02em; }
+  .display-lg { font-size: 3.5rem; line-height: 1.1; letter-spacing: -0.015em; }
+  .display-md { font-size: 2.5rem; line-height: 1.15; letter-spacing: -0.01em; }
+  .display-sm { font-size: 1.75rem; line-height: 1.2; }
+
+  .body-lg,
+  .body,
+  .body-sm,
+  .caption {
+    font-family: var(--font-body);
+    font-weight: 400;
+  }
+
+  .body-lg { font-size: 1.125rem; line-height: 1.6; }
+  .body { font-size: 1rem; line-height: 1.6; }
+  .body-sm { font-size: 0.875rem; line-height: 1.5; }
+  .caption { font-size: 0.8125rem; line-height: 1.45; }
+
+  .overline {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .wordmark {
+    font-family: var(--font-body);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .pressable:active:not(:disabled):not([aria-disabled="true"]) {
+    scale: 0.97;
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}

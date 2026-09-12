@@ -241,7 +241,12 @@ def style_prompt(analysis: DesignAnalysis, bundle: InputBundle, catalog: list[di
     )
 
 
-def objects_prompt(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle) -> str:
+def objects_prompt(
+    analysis: DesignAnalysis,
+    style: StyleSpec,
+    bundle: InputBundle,
+    catalog: list[dict[str, Any]] | None = None,
+) -> str:
     vertical = vocab._v(bundle.vertical)
     rooms = [
         {"room_id": r.room_id, "name": r.name, "type": r.type, "width_m": r.width_m, "length_m": r.length_m}
@@ -262,7 +267,15 @@ def objects_prompt(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBund
         f"ROOMS:\n{json.dumps(rooms)}\n\n"
         f"STYLE:\n{json.dumps(style.model_dump(include={'name', 'tags', 'palette', 'lighting_mood'}))}\n\n"
         f"ITEMS SEEN IN PHOTOS OR REQUESTED (keep every one; carry its spotted_index):\n{json.dumps(spotted)}\n\n"
-        "Rules:\n"
+        + (
+            "ASSET LIBRARY — what this studio can already render. `model: true` means a real 3D "
+            "model exists and the piece will look like furniture; `model: false` means only a "
+            "parametric primitive exists and the piece renders as a plain block.\n"
+            f"{json.dumps(catalog)}\n\n"
+            if catalog
+            else ""
+        )
+        + "Rules:\n"
         "- Every item above appears in the plan with priority 1, from_photo true when seen, its "
         "spotted_index, its name, family, placement and support carried over. Then complete each room "
         "with what the style needs (spotted_index -1).\n"
@@ -280,4 +293,91 @@ def objects_prompt(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBund
         "- material_hint: fabric | wood | metal | glass | stone.\n"
         + _PLANNING_RULES[vertical]
         + "- unique: true for a bespoke or sculptural piece no catalog would have (a carved secretary, an ornament).\n"
+        + (
+            "- When you ADD a piece the brief never asked for, prefer a semantic_type the ASSET "
+            "LIBRARY marks `model: true`, and size it near that entry's dimensions. A modelled "
+            "piece reads as furniture; an unmodelled one reads as a box, so a well-chosen chair "
+            "beats an unrenderable chaise. This applies to your own additions only — never drop "
+            "or substitute something the photos or the brief actually asked for.\n"
+            "- unique stays reserved for genuinely bespoke pieces. Do not set it merely because "
+            "the library lacks the type; that decision belongs to the asset stage.\n"
+            if catalog
+            else ""
+        )
     )
+
+
+# Stable Diffusion's CLIP text encoder hard-truncates at 77 tokens. The Gemini
+# scene prompt is ~330 and loses everything after the first sentence — palette,
+# lighting and composition all silently discarded. This builds a compact,
+# comma-weighted phrase instead, the form SD actually responds to.
+# The last four terms do real work. IP-Adapter conditions on a photo of one
+# piece of furniture, and left alone the model happily returns another photo of
+# one piece of furniture — a catalogue shot filling the frame, no room around
+# it. Naming that failure here pushes against it from the other side of the
+# prompt while the furniture list below pulls towards a furnished room.
+SD_NEGATIVE = (
+    "text, watermark, logo, label, people, collage, grid, swatches, "
+    "blurry, distorted, deformed, lowres, cartoon, cluttered, "
+    "close-up, product photo, single piece of furniture, furniture catalogue shot"
+)
+
+
+def _scene_furniture(analysis: DesignAnalysis, room) -> str:
+    """The pieces the room should be furnished with, essentials first.
+
+    Reuses ROOM_SETS — the same per-room, per-vertical set the rule-based
+    planner lays out — so the moodboard promises a room the later stages can
+    actually build, rather than a second opinion about what belongs in it.
+    Pieces the reading actually saw come first: those are the ones the client
+    owns, and the ones IP-Adapter is simultaneously conditioning on.
+
+    Kept to five. CLIP truncates at 77 tokens, and a long list of nouns costs
+    the framing and lighting words at the end of the prompt, which are what
+    stop the render becoming a close-up in the first place.
+    """
+    from .mock_provider import ROOM_SETS      # local: keeps the prompts module leaf-like
+
+    room_type = getattr(room, "type", "") or "living_room"
+    planned = [t for t, priority, _ in ROOM_SETS.get(room_type, []) if priority <= 2]
+    if not planned:
+        return ""
+    room_id = getattr(room, "room_id", None)
+    seen = [s.semantic_type for s in analysis.spotted_objects
+            if s.room_id == room_id and s.semantic_type in planned]
+    ordered = list(dict.fromkeys(seen + planned))[:5]
+    words = [t.replace("_", " ") for t in ordered]
+    return ", ".join(words[:-1]) + " and " + words[-1] if len(words) > 1 else words[0]
+
+
+def scene_prompt_sd(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle) -> str:
+    """A <=77-token prompt for a local Stable Diffusion render.
+
+    Deliberately terse and keyword-led. The client's actual furniture does NOT
+    come from this text — it reaches the image through IP-Adapter conditioning
+    on the reference photo, because no 77-token prompt can describe a specific
+    sofa. This only has to establish room, style, materials and light.
+    """
+    room = analysis.rooms[0] if analysis.rooms else None
+    where = (room.type.replace("_", " ") if room else "living room")
+    style_words = ", ".join((style.tags or ["modern", "warm"])[:3]).replace("_", " ")
+    mood = style.lighting_mood.replace("_", " ")
+
+    # Material names carry more visual weight in SD than hex codes, which it
+    # cannot read at all.
+    materials = ", ".join(m.replace("_", " ") for m in (style.materials or [])[:2])
+
+    furniture = _scene_furniture(analysis, room)
+
+    parts = [
+        f"photo of a {style_words} {where}",
+        f"furnished with {furniture}" if furniture else "",
+        materials,
+        f"{mood} from a window",
+        # "whole room" and "far from the subject" are the counterweight to
+        # IP-Adapter, which carries the reference's framing as well as its
+        # object and will otherwise reproduce a close-up of one sofa.
+        "wide angle, whole room, far from the subject, eye level, two walls and floor visible",
+        "photorealistic interior photography, lived-in, natural light",
+    ]
+    return ", ".join(p for p in parts if p)

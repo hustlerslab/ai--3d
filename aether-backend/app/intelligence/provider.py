@@ -97,6 +97,16 @@ def get_provider() -> ResilientProvider:
             settings = get_settings()
             primary: Optional[IntelligenceProvider] = None
             choice = settings.intelligence_provider.lower().strip()
+            # Local and free, but slower and weaker than the cloud models, so
+            # `auto` never picks it — it has to be asked for by name.
+            if choice == "ollama":
+                from .ollama_provider import OllamaProvider
+
+                _provider = ResilientProvider(
+                    OllamaProvider(settings), MockProvider(), settings.provider_fallback_to_mock
+                )
+                return _provider
+
             use_anthropic = choice == "anthropic" or (choice == "auto" and settings.anthropic_configured)
             use_gemini = choice == "gemini" or (choice == "auto" and not use_anthropic and settings.gemini_configured)
             if use_anthropic and settings.anthropic_configured:

@@ -201,6 +201,22 @@ class ProjectStore:
         )
         return record
 
+    def delete_input(self, project_id: str, input_id: str) -> Optional[InputRecord]:
+        """Drop one input row and hand it back so the caller can remove the
+        file. Scoped by project_id so an id belonging to another project cannot
+        be used to delete someone else's upload. Returns None when there is
+        nothing to delete, which the route turns into a 404."""
+        row = self._db.one(
+            "SELECT * FROM inputs WHERE input_id = ? AND project_id = ?", (input_id, project_id)
+        )
+        if row is None:
+            return None
+        record = _row_to_input(row)
+        self._db.execute(
+            "DELETE FROM inputs WHERE input_id = ? AND project_id = ?", (input_id, project_id)
+        )
+        return record
+
     def list_inputs(self, project_id: str, kind: Optional[InputKind] = None) -> list[InputRecord]:
         if kind is None:
             rows = self._db.query(

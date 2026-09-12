@@ -1,0 +1,12 @@
+# Agent and tooling scratch. Machine-local, regenerated on demand, never part
+# of the product.
+.claude/
+.claude-flow/
+graphify-out/
+
+# Reference 3D models: six .glb files at ~89 MB each, 535 MB in total. The
+# jpegs beside them ARE committed — the tests and the reference-scale work in
+# docs/ADR-002 use them — but the models are not: git keeps binaries in history
+# forever, so every clone would pay half a gigabyte for assets that live on the
+# design machine anyway.
+sample/*.glb

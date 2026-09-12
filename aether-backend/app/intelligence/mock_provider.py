@@ -9,6 +9,7 @@ import re
 from typing import Optional
 
 from ..materials.registry import get_material_registry
+from ..projects.layout import file_url
 from ..projects.schema import Vertical
 from . import vocab
 from .images import palette_from_images
@@ -327,6 +328,15 @@ def build_moodboard(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBun
         material_ids=style.materials,
         lighting_mood=style.lighting_mood,
         reference_urls=[r.url for r in bundle.references if r.url],
+        # The board shows what the reading FOUND, not what the user uploaded —
+        # one crop per identified piece. When nothing was identified it stays
+        # empty rather than replaying the uploads, which is the upload step's
+        # job, not the moodboard's.
+        piece_urls=[
+            file_url(bundle.project_id, s.crop_ref)
+            for s in analysis.spotted_objects
+            if s.crop_ref
+        ],
         keywords=analysis.keywords,
         rooms=[r.name for r in analysis.rooms],
     )

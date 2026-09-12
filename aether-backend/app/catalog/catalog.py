@@ -11,7 +11,7 @@ Ranking is hard-filter first, then a weighted score.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -146,6 +146,43 @@ def all_items() -> list[CatalogItem]:
 
 def semantic_types() -> list[str]:
     return sorted({i.semantic_type for i in all_items()})
+
+
+def planning_summary(room_types: list[str] | None = None) -> list[dict[str, Any]]:
+    """What the object planner is allowed to know about the library.
+
+    One entry per semantic type, saying whether a real 3D model backs it or
+    only a parametric primitive. The planner uses this to prefer pieces we can
+    actually render: a type with `model: true` arrives as furniture, a type
+    without arrives as a coloured box. Deliberately small — this goes into a
+    prompt, so it is types and dimensions, not the whole catalog.
+    """
+    wanted = set(room_types or [])
+    by_type: dict[str, dict[str, Any]] = {}
+    for item in all_items():
+        if wanted and item.room_types and not (wanted & set(item.room_types)):
+            continue
+        has_model = bool(item.model_url)
+        entry = by_type.get(item.semantic_type)
+        if entry is None:
+            by_type[item.semantic_type] = {
+                "type": item.semantic_type,
+                "model": has_model,
+                "examples": [item.name],
+                "dimensions": [round(d, 2) for d in item.dimensions],
+                "style_tags": sorted(set(item.style_tags))[:4],
+            }
+            continue
+        # A real model beats a primitive, and its dimensions are the truthful ones.
+        if has_model and not entry["model"]:
+            entry["model"] = True
+            entry["dimensions"] = [round(d, 2) for d in item.dimensions]
+        if has_model and len(entry["examples"]) < 3:
+            entry["examples"].append(item.name)
+        entry["style_tags"] = sorted(set(entry["style_tags"]) | set(item.style_tags))[:4]
+
+    # Modelled types first: the planner should reach for those before the rest.
+    return sorted(by_type.values(), key=lambda e: (not e["model"], e["type"]))
 
 
 def get_item(asset_id: str) -> CatalogItem | None:

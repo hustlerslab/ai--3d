@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
 
-from app.walkthrough.tour_nodes import plan_nodes, yaw_from
+from app.walkthrough.tour_nodes import LARGE_ROOM_M2, MAX_NODES_PER_ROOM, plan_nodes, yaw_from
 from tests.test_blender_build import BRIEF, _compiled_scene
 
 
@@ -30,6 +30,31 @@ def test_nodes_one_per_room_with_links(env):
         assert n.links, n.id
         assert all(l != n.id and any(m.id == l for m in nodes) for l in n.links)
         assert n.position[1] == pytest.approx(1.6)
+
+
+def test_vantage_points_scale_with_floor_area_and_stay_apart(env):
+    """Each node is a full 360 panorama, so extra nodes buy standing points
+    rather than angles — the count follows the floor, and two cameras must not
+    end up beside each other."""
+    from app.spatial import geometry as geo
+
+    scene = _compiled_scene()
+    nodes, _ = plan_nodes(scene)
+    for room in scene.rooms:
+        mine = [n for n in nodes if n.room_id == room.room_id]
+        area = geo.polygon_area(room.boundary)
+        expected = min(MAX_NODES_PER_ROOM, 1 + int(area // LARGE_ROOM_M2))
+        assert len(mine) <= expected, f"{room.room_id}: {len(mine)} nodes for {area:.1f} m2"
+        assert mine, f"{room.room_id} has no vantage point at all"
+        # every pair at least 2 m apart, or the second panorama shows the first view
+        for i, a in enumerate(mine):
+            for b in mine[i + 1:]:
+                d = geo.distance((a.position[0], a.position[2]), (b.position[0], b.position[2]))
+                assert d > 2.0, f"{a.id} and {b.id} are {d:.2f} m apart"
+        # a second camera looks at the room, not back at the first camera
+        for extra in mine[1:]:
+            first = mine[0].position
+            assert (extra.look_at[0], extra.look_at[2]) != (first[0], first[2])
 
 
 @pytest.mark.blender

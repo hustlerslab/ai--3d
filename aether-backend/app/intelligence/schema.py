@@ -21,6 +21,10 @@ def _now() -> str:
 
 
 class ReferenceImage(BaseModel):
+    # The upload's own id, stable for the life of the file. Everything that
+    # needs to name a photo later names it with this, never with its position
+    # in the list — see InputBundle.photo_for.
+    input_id: str = ""
     path: str                      # absolute path on disk
     url: str = ""                  # /files/projects/... for the UI
     filename: str = ""
@@ -42,6 +46,26 @@ class InputBundle(BaseModel):
     @property
     def has_content(self) -> bool:
         return bool(self.description.strip()) or bool(self.references) or bool(self.room_hints)
+
+    def photo_for(self, item: "SpottedObject") -> Optional[ReferenceImage]:
+        """The photo an item was read from, or None if it is no longer here.
+
+        Resolves on the upload's stable id. The model can only answer in
+        positions ("the sofa is in photo 3"), so the position is turned into an
+        id at coercion time, while the bundle it counted is still the one in
+        hand. After that the position is dead weight: delete a photo and every
+        later index is off by one, which silently re-pointed crops and the
+        scene reference at the wrong file until it was caught.
+
+        `image_index` is honoured only for analyses written before `image_ref`
+        existed, and callers must treat a None here as a real condition rather
+        than quietly carrying on without a photo.
+        """
+        if item.image_ref:
+            return next((r for r in self.references if r.input_id == item.image_ref), None)
+        if 0 <= item.image_index < len(self.references):
+            return self.references[item.image_index]
+        return None
 
 
 # ── Design analysis (stage 5) ────────────────────────────────────────────
@@ -92,6 +116,11 @@ class SpottedObject(BaseModel):
     count: int = 1
     confidence: float = Field(default=0.5, ge=0, le=1)
     notes: str = ""                # colour, material, style seen in the photo
+    # Which photo. `image_ref` is the upload's stable id and is authoritative;
+    # `image_index` is the raw position the model answered with, kept only so
+    # analyses written before image_ref existed still resolve. Resolve through
+    # InputBundle.photo_for, never by indexing references directly.
+    image_ref: str = ""
     image_index: int = -1
     bbox: Optional[tuple[float, float, float, float]] = None
     crop_ref: str = ""
@@ -155,7 +184,29 @@ class MoodboardSpec(BaseModel):
     palette: list[str] = []
     material_ids: list[str] = []
     lighting_mood: LightingMood = "warm_daylight"
+    # The raw files the user uploaded. Kept for provenance — NOT what the board
+    # should show, or the moodboard is just the upload step played back.
     reference_urls: list[str] = []
+    # Cutouts of the pieces the reading identified, one per spotted item.
+    # Data only: DO NOT put these back on the moodboard. Showing the user's own
+    # uploads, cut up, is the upload step played back — it was tried and
+    # rejected. The board shows the generated scene or nothing. The crops
+    # themselves still earn their keep: they texture rugs and wall art in the
+    # Blender build via SceneObject.texture_ref.
+    piece_urls: list[str] = []
+    # The generated scene: Gemini reads the references and the brief and paints
+    # the room it is proposing. Empty when image generation is unavailable —
+    # the board still works, it just has no hero image.
+    scene_url: str = ""
+    # Why there is no scene, in words a user can act on (billing, a refusal).
+    scene_error: str = ""
+    # Was the scene actually conditioned on one of the client's photos? A false
+    # here with a scene_url present is a real degradation: the render is a
+    # generic room, not their room. It is a field rather than a log line
+    # because a silently unconditioned image looks exactly like a good one.
+    reference_resolved: bool = False
+    # Which photo, or why there was none. Shown to the user beside the scene.
+    reference_note: str = ""
     keywords: list[str] = []
     rooms: list[str] = []
     created_at: str = Field(default_factory=_now)
@@ -203,6 +254,12 @@ class ObjectPlanItem(BaseModel):
     placement: Placement = "floor"
     support_key: Optional[str] = None  # object_key of the piece this sits on (on_surface)
     crop_ref: str = ""                 # project-relative crop of the item in the photo
+    # Position in the analysis this plan was built from, and only that one.
+    # Same shape as the image_index bug: re-run the reading and this points at
+    # a different item. It survives because nothing downstream reads it — it is
+    # written, carried through the planner prompt so items are not dropped, and
+    # then dropped itself. Do NOT start resolving it against a stored analysis;
+    # give SpottedObject a stable id first, the way ReferenceImage has one.
     spotted_index: int = -1
     priority: int = Field(default=2, ge=1, le=3)   # 1 essential · 2 recommended · 3 optional
     count: int = Field(default=1, ge=1, le=12)

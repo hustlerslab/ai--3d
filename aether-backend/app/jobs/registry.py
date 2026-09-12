@@ -29,6 +29,10 @@ class JobSpec:
     stage_running: Optional[ProjectStage] = None
     stage_done: Optional[ProjectStage] = None
     description: str = ""
+    # True when this handler calls the intelligence provider. Harmless for a
+    # cloud provider, but a local one runs on the same GPU as Blender, so the
+    # runner moves these jobs to the render lane to serialise them against it.
+    uses_intelligence: bool = False
 
 
 _REGISTRY: dict[str, JobSpec] = {}
@@ -42,6 +46,7 @@ def register(
     stage_running: Optional[ProjectStage] = None,
     stage_done: Optional[ProjectStage] = None,
     description: str = "",
+    uses_intelligence: bool = False,
 ) -> Callable[[Handler], Handler]:
     def deco(fn: Handler) -> Handler:
         _REGISTRY[type] = JobSpec(
@@ -51,6 +56,7 @@ def register(
             max_attempts=max_attempts,
             stage_running=stage_running,
             stage_done=stage_done,
+            uses_intelligence=uses_intelligence,
             description=description or (fn.__doc__ or "").strip().splitlines()[0] if (description or fn.__doc__) else "",
         )
         return fn

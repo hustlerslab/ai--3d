@@ -136,6 +136,11 @@ def coerce_analysis(raw: dict[str, Any], bundle: InputBundle, warnings: list[str
             image_index = 0 if n_refs else -1
             if image_index < 0:
                 bbox = None
+        # Pin the position to the upload's stable id NOW, while the bundle in
+        # hand is still the one the model was shown. Everything downstream
+        # resolves on the id, so deleting or reordering a photo can no longer
+        # re-point a reading at somebody else's furniture.
+        image_ref = bundle.references[image_index].input_id if 0 <= image_index < n_refs else ""
         spotted.append(
             SpottedObject(
                 semantic_type=sem,
@@ -150,6 +155,7 @@ def coerce_analysis(raw: dict[str, Any], bundle: InputBundle, warnings: list[str
                 count=max(1, min(12, int(item.get("count") or 1))),
                 confidence=clamp(item.get("confidence", 0.5)),
                 notes=str(item.get("notes") or ""),
+                image_ref=image_ref,
                 image_index=image_index,
                 bbox=bbox,
             )

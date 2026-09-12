@@ -161,7 +161,15 @@ class GeminiProvider:
         return coerce_style(raw, {m.material_id for m in materials}, warnings, provider=self.label, vertical=bundle.vertical)
 
     def plan_objects(self, analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle) -> ObjectPlan:
-        raw = self._generate([{"text": objects_prompt(analysis, style, bundle)}], OBJECT_PLAN_SCHEMA, "plan_objects")
+        # The planner sees the asset library so its own additions favour pieces
+        # backed by a real model; without it every addition is a coin flip
+        # between furniture and a coloured box.
+        from ..catalog.catalog import planning_summary
+
+        catalog = planning_summary([r.type for r in analysis.rooms])
+        raw = self._generate(
+            [{"text": objects_prompt(analysis, style, bundle, catalog)}], OBJECT_PLAN_SCHEMA, "plan_objects"
+        )
         return coerce_object_plan(raw, analysis, provider=self.label)
 
 

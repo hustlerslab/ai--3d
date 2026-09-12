@@ -11,7 +11,11 @@ from pydantic import BaseModel, Field
 
 from ..scene.schema import Vec3, new_id
 
-Mount = Literal["floor", "ceiling", "wall"]
+# "surface" arrived with spec 1.1 (a lamp on a bedside table) but this literal
+# was never widened with it, so any surface-mounted asset failed to ingest.
+# The planner speaks "on_surface" and PLACEMENT_MOUNT translates it to
+# "surface" — see app/planning/asset_decision.py.
+Mount = Literal["floor", "ceiling", "wall", "surface"]
 
 
 class AssetSource(BaseModel):

@@ -35,6 +35,10 @@ def env(tmp_path, monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", "")
     monkeypatch.setenv("MESHY_API_KEY", "")
     monkeypatch.setenv("INTELLIGENCE_PROVIDER", "auto")
+    # No GPU work in the test suite. Left on, the analyze job loads Stable
+    # Diffusion and renders for ~40 s per call — the run went from 25 s to
+    # 339 s and blew wait_idle(30). Tests that want it opt in explicitly.
+    monkeypatch.setenv("SCENE_IMAGE_ENABLED", "false")
     monkeypatch.setenv("JOBS_RETRY_DELAY_SECONDS", "0.05")
     monkeypatch.setenv("JOBS_AI_WORKERS", "2")
     monkeypatch.setenv("JOBS_RENDER_WORKERS", "1")

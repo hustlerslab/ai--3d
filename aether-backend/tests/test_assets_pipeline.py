@@ -160,3 +160,40 @@ def test_catalog_prefers_real_model(tmp_path, data_dir):
     assert best is not None and best.asset_id == "real_sofa" and best.model_url
     ranked = search("sofa")
     assert ranked[0].asset_id == "real_sofa"
+
+
+def test_a_surface_mounted_asset_ingests(tmp_path, data_dir):
+    """Regression: `Mount` was Literal["floor","ceiling","wall"] and never
+    widened when spec 1.1 added "surface" (a lamp on a bedside table), so every
+    surface-mounted asset raised a ValidationError on ingest — uploads and
+    generated models alike. Surfaced by the first live Meshy run, 11 Sep 2026.
+    """
+    from app.assets import pipeline
+    from app.assets.schema import IngestMeta
+
+    folder = tmp_path / "vase"
+    folder.mkdir()
+    src = write_box_gltf(folder)
+    record = pipeline.ingest_file(
+        src, IngestMeta(asset_id="surface_vase", name="Vase", semantic_type="vase", mount="surface")
+    )
+
+    assert record.mount == "surface"
+    assert record.status == "normalized"
+
+
+def test_every_planner_mount_is_accepted_by_the_ingester(tmp_path, data_dir):
+    """The planner's PLACEMENT_MOUNT is the only producer of asset mounts, so
+    its full range must round-trip. This fails if either side drifts again."""
+    from app.assets import pipeline
+    from app.assets.schema import IngestMeta
+    from app.planning.asset_decision import PLACEMENT_MOUNT
+
+    for i, mount in enumerate(sorted(set(PLACEMENT_MOUNT.values()))):
+        folder = tmp_path / f"m{i}"
+        folder.mkdir()
+        src = write_box_gltf(folder)
+        record = pipeline.ingest_file(
+            src, IngestMeta(asset_id=f"mount_{mount}", name=mount, semantic_type="vase", mount=mount)
+        )
+        assert record.mount == mount, f"{mount} did not survive ingestion"

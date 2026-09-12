@@ -51,6 +51,7 @@ def _load_specs(ctx: JobContext) -> tuple[DesignAnalysis, StyleSpec]:
     stage_running=ProjectStage.ASSET_PLANNING,
     stage_done=ProjectStage.ASSETS_READY,
     description="Object plan → asset resolution → compiled Scene",
+    uses_intelligence=True,
 )
 def scene_plan(ctx: JobContext) -> dict[str, Any]:
     force = bool(ctx.params.get("force", False))
@@ -154,6 +155,7 @@ def _commit_with_retry(store, scene, ops, warnings: list[str], attempts: int = 4
     lane=JobLane.ai,
     max_attempts=2,
     description="Re-run the asset decision on the current scene (after edits)",
+    uses_intelligence=True,
 )
 def resolve_assets(ctx: JobContext) -> dict[str, Any]:
     analysis, style = _load_specs(ctx)

@@ -19,6 +19,10 @@ from .store import JobStore, get_job_store
 
 log = logging.getLogger("aether.jobs")
 
+# Providers that run on this machine's GPU rather than over the network. Jobs
+# that call one are serialised against Blender — see JobRunner._lane_for.
+_LOCAL_PROVIDERS = {"ollama"}
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -85,13 +89,35 @@ class JobRunner:
         job = self.jobs.create(
             project_id=project_id,
             type=type,
-            lane=spec.lane,
+            lane=self._lane_for(spec),
             params=params,
             max_attempts=spec.max_attempts,
         )
         self.jobs.add_event(project_id, type, "queued", job_id=job.job_id)
         self._submit(job.job_id, job.lane)
         return job
+
+    def _lane_for(self, spec) -> JobLane:
+        """Which pool a job belongs in.
+
+        Normally the lane the handler registered. The exception is a LOCAL
+        intelligence provider: it runs on the same GPU as Blender, and the ai
+        lane has two threads while the render lane has one. Leaving an Ollama
+        analysis on the ai lane would let two inferences and a render fight
+        over the same 6 GB. Routing them to the render lane makes the existing
+        single-thread pool the GPU mutex — no new locking, and the choice is
+        recorded on the job row so a resume after restart lands correctly.
+        """
+        if not spec.uses_intelligence or spec.lane is JobLane.render:
+            return spec.lane
+        if get_settings().intelligence_provider.lower().strip() in _LOCAL_PROVIDERS:
+            log.info(
+                "routing %s to the render lane: %s runs on the GPU Blender uses",
+                spec.type,
+                get_settings().intelligence_provider,
+            )
+            return JobLane.render
+        return spec.lane
 
     def _submit(self, job_id: str, lane: JobLane) -> None:
         with self._cv:

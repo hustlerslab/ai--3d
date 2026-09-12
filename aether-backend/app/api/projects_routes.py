@@ -168,6 +168,36 @@ def list_inputs(project_id: str) -> dict:
     return ok([i.model_dump(mode="json") for i in store.list_inputs(project_id)])
 
 
+@router.delete("/projects/{project_id}/inputs/{input_id}")
+def delete_input(project_id: str, input_id: str) -> dict:
+    """Remove one uploaded file. Without this the 12-reference cap is a dead
+    end: a user who uploads the wrong photos has no way to make room."""
+    store = get_project_store()
+    store.get(project_id)                      # 404s through ProjectNotFound
+    record = store.delete_input(project_id, input_id)
+    if record is None:
+        return _error("INPUT_NOT_FOUND", f"No such input on this project: {input_id}", 404)
+
+    # Same containment check as the file route: resolve both sides and refuse
+    # anything that escapes the project directory, whatever the stored path says.
+    root = project_dir(project_id).resolve()
+    target = (root / record.path).resolve()
+    removed = False
+    if root in target.parents and target.is_file():
+        try:
+            target.unlink()
+            removed = True
+        except OSError:
+            pass                               # the row is gone; a stale file is not fatal
+
+    # Room hints live on the project, not in the file, so dropping the
+    # dimensions input has to clear them or they outlive their source.
+    if record.kind == InputKind.dimensions:
+        store.update(project_id, room_hints=[])
+
+    return ok({"input_id": input_id, "kind": record.kind.value, "file_removed": removed})
+
+
 @router.post("/projects/{project_id}/inputs")
 async def add_inputs(
     project_id: str,

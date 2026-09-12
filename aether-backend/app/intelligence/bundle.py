@@ -22,6 +22,7 @@ def build_input_bundle(project_id: str) -> InputBundle:
         if path.exists():
             references.append(
                 ReferenceImage(
+                    input_id=rec.input_id,
                     path=str(path),
                     url=file_url(project_id, rec.path),
                     filename=rec.filename,

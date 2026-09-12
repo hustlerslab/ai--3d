@@ -1,0 +1,208 @@
+"""Meshy adapter — text-to-3D generation.
+
+Only URL shapes, payloads and polling live here. Everything product-specific
+(when to generate, what to do with the result) belongs to the job handler, and
+ingestion is the shared asset pipeline. Swapping Meshy for another generator
+means replacing this file and nothing else.
+
+API shape (verified against the live API, 11 Sep 2026):
+  POST /openapi/v2/text-to-3d   {mode, prompt, art_style, should_remesh}
+                                → 202 {"result": "<task_id>"}
+                                  `prompt` is required; omitting it is a 400.
+  GET  /openapi/v2/text-to-3d/{id}
+                                → {status, progress, model_urls{glb,fbx,obj,
+                                   usdz,stl}, thumbnail_url, texture_urls,
+                                   consumed_credits, task_error{message}}
+  GET  /openapi/v1/balance      → {"balance": <int>}
+
+`mode: "preview"` returns geometry only — `texture_urls` comes back empty. A
+textured model needs a second `refine` call carrying the preview's task id.
+A preview of a simple object took roughly 75 s end to end.
+
+Model URLs are pre-signed and long-lived, but treat them as short-lived: fetch
+the file as soon as the task succeeds rather than storing the URL.
+"""
+from __future__ import annotations
+
+import asyncio
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Callable, Optional
+
+import httpx
+
+BASE = "https://api.meshy.ai"
+LICENSE = "meshy-commercial"          # per Meshy's terms for paid plans
+LICENSE_URL = "https://www.meshy.ai/terms"
+
+TERMINAL = {"SUCCEEDED", "FAILED", "CANCELED", "EXPIRED"}
+
+
+class MeshyError(RuntimeError):
+    """Any non-recoverable Meshy failure: bad request, refusal, dead task."""
+
+
+class MeshyOutOfCredits(MeshyError):
+    """402 from the API. Distinct so callers can stop a batch instead of
+    retrying every remaining item into the same wall."""
+
+
+@dataclass
+class GeneratedModel:
+    task_id: str
+    glb_url: str
+    thumbnail_url: str
+    credits: int
+    textured: bool
+
+
+def _raise_for(resp: httpx.Response, what: str) -> None:
+    if resp.status_code == 402:
+        raise MeshyOutOfCredits(f"{what}: Meshy reports no remaining credits")
+    if resp.status_code >= 400:
+        detail = ""
+        try:                                  # validation errors are {"message": ...}
+            detail = resp.json().get("message", "")
+        except Exception:
+            detail = resp.text[:200]
+        raise MeshyError(f"{what}: HTTP {resp.status_code} {detail}".strip())
+
+
+async def balance(client: httpx.AsyncClient) -> int:
+    """Remaining credits. Cheap — use it to fail fast before a batch."""
+    resp = await client.get(f"{BASE}/openapi/v1/balance")
+    _raise_for(resp, "balance")
+    return int(resp.json().get("balance", 0))
+
+
+async def submit_text_to_3d(
+    client: httpx.AsyncClient,
+    prompt: str,
+    *,
+    mode: str = "preview",
+    art_style: str = "realistic",
+    should_remesh: bool = True,
+    target_polycount: int = 30_000,
+    negative_prompt: str = "",
+) -> str:
+    """Queue a generation. Returns the task id.
+
+    `should_remesh` defaults to True, unlike Meshy's own default. Measured on
+    the same prompt: remesh off gave 1,926,510 triangles in a 34.7 MB glb —
+    past this pipeline's hard limit, so the asset ingests as `failed` and is
+    unusable. Remesh on at 30k gave 30,573 triangles in 0.83 MB, which passes
+    validation and loads in the web viewer. Turn it off only for a hero piece
+    that will be decimated by hand.
+    """
+    if not prompt.strip():
+        raise MeshyError("submit_text_to_3d: prompt is required")
+    body: dict[str, Any] = {
+        "mode": mode,
+        "prompt": prompt.strip(),
+        "art_style": art_style,
+        "should_remesh": should_remesh,
+    }
+    if should_remesh and target_polycount > 0:
+        body["target_polycount"] = int(target_polycount)
+        body["topology"] = "triangle"
+    if negative_prompt:
+        body["negative_prompt"] = negative_prompt
+    resp = await client.post(f"{BASE}/openapi/v2/text-to-3d", json=body)
+    _raise_for(resp, "submit_text_to_3d")
+    task_id = resp.json().get("result")
+    if not task_id:
+        raise MeshyError("submit_text_to_3d: no task id in the response")
+    return str(task_id)
+
+
+async def submit_refine(client: httpx.AsyncClient, preview_task_id: str) -> str:
+    """Second stage: texture a finished preview. Returns a new task id."""
+    resp = await client.post(
+        f"{BASE}/openapi/v2/text-to-3d",
+        json={"mode": "refine", "preview_task_id": preview_task_id},
+    )
+    _raise_for(resp, "submit_refine")
+    task_id = resp.json().get("result")
+    if not task_id:
+        raise MeshyError("submit_refine: no task id in the response")
+    return str(task_id)
+
+
+async def get_task(client: httpx.AsyncClient, task_id: str) -> dict[str, Any]:
+    resp = await client.get(f"{BASE}/openapi/v2/text-to-3d/{task_id}")
+    _raise_for(resp, f"get_task {task_id}")
+    return resp.json()
+
+
+async def wait_for(
+    client: httpx.AsyncClient,
+    task_id: str,
+    *,
+    timeout_seconds: float,
+    poll_seconds: float = 10.0,
+    on_progress: Optional[Callable[[str, int], None]] = None,
+) -> GeneratedModel:
+    """Poll until the task reaches a terminal state.
+
+    Raises MeshyError on failure or timeout. A preview of a simple object
+    finishes in roughly 60-90 s, so the default poll is deliberately coarse.
+    """
+    loop = asyncio.get_event_loop()
+    deadline = loop.time() + timeout_seconds
+    last = -1
+    while True:
+        task = await get_task(client, task_id)
+        status = str(task.get("status", ""))
+        progress = int(task.get("progress", 0) or 0)
+        if on_progress is not None and progress != last:
+            on_progress(status, progress)
+            last = progress
+
+        if status == "SUCCEEDED":
+            glb = (task.get("model_urls") or {}).get("glb")
+            if not glb:
+                raise MeshyError(f"task {task_id} succeeded without a glb url")
+            return GeneratedModel(
+                task_id=task_id,
+                glb_url=glb,
+                thumbnail_url=task.get("thumbnail_url") or "",
+                credits=int(task.get("consumed_credits", 0) or 0),
+                textured=bool(task.get("texture_urls")),
+            )
+        if status in TERMINAL:
+            why = (task.get("task_error") or {}).get("message") or status
+            raise MeshyError(f"task {task_id} ended as {status}: {why}")
+
+        if loop.time() >= deadline:
+            raise MeshyError(
+                f"task {task_id} still {status or 'PENDING'} at {progress}% "
+                f"after {timeout_seconds:.0f}s"
+            )
+        await asyncio.sleep(poll_seconds)
+
+
+async def download_glb(client: httpx.AsyncClient, url: str, dest: Path) -> Path:
+    """Stream the model to disk. Returns the written path."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    async with client.stream("GET", url) as resp:
+        resp.raise_for_status()
+        with dest.open("wb") as fh:
+            async for chunk in resp.aiter_bytes():
+                fh.write(chunk)
+    if dest.stat().st_size == 0:
+        dest.unlink(missing_ok=True)
+        raise MeshyError(f"downloaded an empty file from {url[:80]}")
+    return dest
+
+
+def make_client(api_key: str, timeout_seconds: float = 300.0) -> httpx.AsyncClient:
+    if not api_key:
+        raise MeshyError("MESHY_API_KEY is not set")
+    return httpx.AsyncClient(
+        timeout=httpx.Timeout(timeout_seconds),
+        follow_redirects=True,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "User-Agent": "aether-asset-pipeline/0.1",
+        },
+    )

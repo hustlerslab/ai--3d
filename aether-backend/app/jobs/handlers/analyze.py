@@ -7,6 +7,8 @@ params.force is true.
 from __future__ import annotations
 
 import time
+from pathlib import Path
+from typing import Optional
 
 from ...intelligence import DesignAnalysis, StyleSpec, build_input_bundle, get_provider
 from ...intelligence.crops import write_crops
@@ -34,6 +36,7 @@ class NoInputs(Exception):
     stage_running=ProjectStage.ANALYZING,
     stage_done=ProjectStage.DESIGN_SPEC_READY,
     description="Input analysis + style interpretation + moodboard",
+    uses_intelligence=True,
 )
 def analyze(ctx: JobContext) -> dict:
     force = bool(ctx.params.get("force", False))
@@ -105,6 +108,7 @@ def analyze(ctx: JobContext) -> dict:
 
     # ── moodboard (derived, always rebuilt) ──────────────────────────────
     moodboard = build_moodboard(analysis, style, bundle)
+    _add_scene_image(ctx, moodboard, analysis, style, bundle, force=force)
     ctx.write_json(MOODBOARD, moodboard)
     ctx.projects.add_analysis(ctx.project_id, "moodboard_spec", MOODBOARD, style.version)
     ctx.mark_checkpoint("moodboard")
@@ -142,3 +146,150 @@ def _envelope(ctx: JobContext, stage: str, provider: str, confidence: float, war
 
 
 __all__ = ["analyze", "AgentInput", "NoInputs"]
+
+
+SCENE_IMAGE = "analysis/moodboard_scene.png"
+
+
+def _add_scene_image(
+    ctx: JobContext,
+    moodboard,
+    analysis,
+    style,
+    bundle,
+    *,
+    force: bool = False,
+) -> None:
+    """Paint the room being proposed and hang it on the moodboard.
+
+    Runs locally on Stable Diffusion, conditioned on one of the client's own
+    photos through IP-Adapter, so the render shows their furniture rather than
+    a generic room. No API key and no per-image cost.
+
+    Never raises. A missing install, a disabled flag, an out-of-VRAM or a
+    model failure all leave `scene_url` empty and put a readable reason in
+    `scene_error`, because a moodboard without its hero image is still a usable
+    moodboard — and failing the whole analysis over a picture would throw away
+    the reading, the style and the crops with it.
+    """
+    from ...core.config import get_settings
+    from ...intelligence.prompts import SD_NEGATIVE, scene_prompt_sd
+    from ...projects.layout import file_url
+    from ...providers import local_image
+
+    settings = get_settings()
+    if not settings.scene_image_enabled:
+        return
+    if not local_image.available():
+        moodboard.scene_error = (
+            "Local image generation is not installed. Run: pip install --index-url "
+            "https://download.pytorch.org/whl/cu126 torch torchvision, then "
+            "pip install 'diffusers==0.35.1' 'transformers<5' accelerate safetensors"
+        )
+        return
+
+    dest = ctx.path(SCENE_IMAGE)
+    if dest.exists() and not force:                 # checkpoint: the file itself
+        moodboard.scene_url = file_url(ctx.project_id, SCENE_IMAGE)
+        # Carry the previous run's verdict forward. Defaulting to "resolved"
+        # on a resume would vouch for a render this run never looked at.
+        prior = [o for o in ctx.projects.list_outputs(ctx.project_id)
+                 if o["kind"] == "moodboard_scene"]
+        meta = prior[-1]["meta"] if prior else {}
+        moodboard.reference_resolved = bool(meta.get("reference_resolved"))
+        moodboard.reference_note = str(meta.get("reference", "") or "from a previous run")
+        ctx.emit("analyze.scene", "checkpoint present, skipped")
+        return
+
+    reference, ref_note = _scene_reference(analysis, bundle)
+    moodboard.reference_resolved = reference is not None
+    moodboard.reference_note = ref_note
+    if reference is None:
+        # Loud, not quiet. Generation still runs — a generic room beats no
+        # moodboard — but "we could not use your photo" is a result the user
+        # has to be told, not a log line nobody reads.
+        ctx.log.warning("scene reference unresolved: %s", ref_note)
+        ctx.emit("analyze.scene", f"no reference photo — {ref_note}", status="warning")
+    try:
+        image = local_image.generate(
+            scene_prompt_sd(analysis, style, bundle),
+            model=settings.scene_image_model,
+            negative_prompt=SD_NEGATIVE,
+            steps=settings.scene_image_steps,
+            width=settings.scene_image_width,
+            height=settings.scene_image_height,
+            references=[reference] if reference else None,
+            reference_scale=settings.scene_image_reference_scale,
+        )
+        local_image.write(image, dest)
+    except Exception as exc:
+        moodboard.scene_error = f"{type(exc).__name__}: {exc}"
+        # Warning, not info: a degraded result that looks like a success
+        # everywhere else has to be loud in the log too.
+        ctx.log.warning("moodboard scene image failed: %s", exc)
+        ctx.emit("analyze.scene", f"no scene image — {exc}", status="warning")
+        return
+    finally:
+        # Hand the card back. Blender and Ollama want the same 6 GB, and the
+        # runner only serialises jobs — it cannot reclaim a pipeline this
+        # process is still holding.
+        local_image.unload()
+
+    moodboard.scene_url = file_url(ctx.project_id, SCENE_IMAGE)
+    ctx.add_output(
+        "moodboard_scene",
+        SCENE_IMAGE,
+        {"model": image.model, "reference_resolved": reference is not None, "reference": ref_note},
+    )
+    ctx.emit(
+        "analyze.scene",
+        f"scene painted by {image.model} ({dest.stat().st_size // 1024} KB), "
+        + (f"conditioned on {ref_note}" if reference else f"UNCONDITIONED — {ref_note}"),
+        status="ok" if reference else "warning",
+    )
+
+
+# Anchor pieces, best first: a room reads as the client's when the big
+# upholstered item is theirs. IP-Adapter takes ONE embedding, so several
+# references average into mush — picking the right single photo beats blending.
+_ANCHOR_TYPES = ("sofa", "loveseat", "bed", "armchair", "dining_table")
+
+
+def _scene_reference(analysis, bundle) -> tuple[Optional[Path], str]:
+    """The one photo worth conditioning the render on, and a note saying which.
+
+    Prefers the FULL upload an anchor piece was seen in, not its crop.
+    Measured on the sample set: conditioning on a crop produced a flat
+    product shot against a wall, because IP-Adapter carries composition as
+    well as the object and a crop is an isolated thing on white. The same
+    prompt with the full photo produced the sofa in a real room. Crops remain
+    the right input for texturing — just not for composing a scene.
+
+    Returns (path, note). A None path is never silent: the note says why, the
+    caller logs it at warning level and it is stored on the moodboard, because
+    an unconditioned render is a generic room wearing a successful job's
+    clothes.
+    """
+    spotted = list(getattr(analysis, "spotted_objects", []) or [])
+    missing: list[str] = []
+
+    for wanted in _ANCHOR_TYPES:
+        for s in spotted:
+            if s.semantic_type != wanted:
+                continue
+            photo = bundle.photo_for(s)
+            if photo is not None and Path(photo.path).is_file():
+                return Path(photo.path), f"{s.name or wanted} in {photo.filename or Path(photo.path).name}"
+            if s.image_ref or s.image_index >= 0:
+                missing.append(s.name or wanted)
+
+    for r in bundle.references:                 # any upload beats no reference
+        if Path(r.path).is_file():
+            note = f"no anchor piece resolved; fell back to {r.filename or Path(r.path).name}"
+            if missing:
+                note = f"photo for {', '.join(missing[:3])} is gone from the project; " + note
+            return Path(r.path), note
+
+    if missing:
+        return None, f"photo for {', '.join(missing[:3])} is gone from the project and no upload remains"
+    return None, "project has no reference photos"

@@ -29,9 +29,16 @@ def write_crops(analysis: DesignAnalysis, bundle: InputBundle, project_root: Pat
     if Image is None:
         return ["Pillow missing; no crops written"]
     out_dir = project_root / CROP_DIR
-    opened: dict[int, "Image.Image"] = {}
+    opened: dict[str, "Image.Image"] = {}
     for idx, item in enumerate(analysis.spotted_objects):
-        if item.bbox is None or not (0 <= item.image_index < len(bundle.references)):
+        # By stable id, not by position: a deleted photo used to shift every
+        # later index down one, so a crop meant for the sofa was cut out of
+        # whatever photo had slid into its place, and that crop then went on to
+        # texture the object and seed image-to-3D.
+        photo = bundle.photo_for(item) if item.bbox is not None else None
+        if photo is None:
+            if item.bbox is not None and (item.image_ref or item.image_index >= 0):
+                warnings.append(f"{item.name}: photo it was read from is no longer in the project; no crop")
             item.crop_ref = ""
             continue
         rel = f"{CROP_DIR}/{idx:02d}_{vocab.slug(item.name or item.semantic_type)[:40]}.png"
@@ -40,10 +47,10 @@ def write_crops(analysis: DesignAnalysis, bundle: InputBundle, project_root: Pat
             item.crop_ref = rel
             continue
         try:
-            im = opened.get(item.image_index)
+            im = opened.get(photo.path)
             if im is None:
-                im = Image.open(bundle.references[item.image_index].path).convert("RGB")
-                opened[item.image_index] = im
+                im = Image.open(photo.path).convert("RGB")
+                opened[photo.path] = im
             w, h = im.size
             x0, y0, x1, y1 = item.bbox
             px = (x1 - x0) * PAD
