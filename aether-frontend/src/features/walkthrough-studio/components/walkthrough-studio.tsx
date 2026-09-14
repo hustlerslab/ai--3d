@@ -4,7 +4,8 @@
  * Walkthrough Studio — the homeowner journey, now wired to the local pipeline:
  *
  *   Create Project → Upload & Describe → Generate Moodboard (FREE, analyze job)
- *   → Review & Refine (corrections + scene-plan job → instant 3D preview)
+ *   → Review & Refine (corrections, then confirm which read pieces get built)
+ *   → Plan 3D Space (FREE: the confirmed pieces become meshes and are placed)
  *   → Generate 3D Space (PAID: build + preview jobs on the render lane)
  *   → View 3D Experience (Explore in 3D · 360° Tour)
  *   → Save / Share (public /w/{projectId} link) → Connect with Designer (mock)
@@ -60,7 +61,9 @@ import { Walkthrough3DView } from "@/features/walkthrough3d/components/walkthrou
 
 /* ── Steps ─────────────────────────────────────────────────────────────── */
 
-type StepId = "project" | "describe" | "moodboard" | "refine" | "generate3d" | "experience" | "share" | "designer";
+type StepId =
+  | "project" | "describe" | "moodboard" | "refine" | "planspace"
+  | "generate3d" | "experience" | "share" | "designer";
 
 interface StepDef {
   id: StepId;
@@ -73,6 +76,10 @@ const STEPS: StepDef[] = [
   { id: "describe", title: "Upload & Describe", badge: null },
   { id: "moodboard", title: "Generate Moodboard", badge: "free" },
   { id: "refine", title: "Review & Refine", badge: null },
+  // Confirming what gets built and seeing it in 3D are two different jobs, and
+  // they were sharing one screen. Step 4 is now purely the decision — crops and
+  // labels, Build or Skip — and step 5 is the room that decision produced.
+  { id: "planspace", title: "Plan 3D Space", badge: null },
   { id: "generate3d", title: "Generate 3D Space", badge: "paid" },
   { id: "experience", title: "View 3D Experience", badge: null },
   { id: "share", title: "Save / Share", badge: null },
@@ -151,7 +158,11 @@ function stepForStage(stage: ProjectRecord["stage"], hasTour: boolean): StepId {
     case "DESIGN_SPEC_READY":
     case "ASSET_PLANNING":
       return "refine";
+    // The plan exists but nothing has been rendered: that is the Plan step,
+    // not the paid one. Resuming straight to "Generate 3D Space" used to skip
+    // the room the client is meant to look at before paying for it.
     case "ASSETS_READY":
+      return "planspace";
     case "SCENE_BUILDING":
     case "SCENE_VALIDATING":
     case "CAMERA_PLANNING":
@@ -236,6 +247,14 @@ export function WalkthroughStudio() {
   const goToStep = useCallback((id: StepId) => goTo(STEP_INDEX[id]), [goTo]);
   const next = useCallback(() => goTo(Math.min(stepIndex + 1, STEPS.length - 1)), [goTo, stepIndex]);
   const back = useCallback(() => setStepIndex((i) => Math.max(0, i - 1)), []);
+
+  /** Has the client actually confirmed anything to build?
+   *
+   *  This is what opens the Plan step. Approval is the whole gate — a piece
+   *  nobody ticked is not built (ADR-003 §5) — so moving on before any
+   *  decision exists would land on an empty room and read as a broken step. */
+  const confirmedAnything = (sceneReading?.summary.approved ?? 0) > 0;
+
 
   /* ── Resume a project after a reload ──────────────────────────────── */
 
@@ -580,6 +599,34 @@ export function WalkthroughStudio() {
     }
     await refreshCredits();
   }, [project, elementsJob, refreshCredits, refreshDetail]);
+  /** Leaving step 4 IS the commitment: build what was confirmed, then show it.
+   *
+   *  The generation is awaited rather than fired off, so the Plan step is
+   *  never entered with meshes still arriving — that was how a room full of
+   *  loading placeholders got mistaken for a finished one. Advancing anyway on
+   *  failure is deliberate: the plan still stands with catalog pieces, and the
+   *  job's own error panel says what went wrong. */
+  const confirmAndPlan = useCallback(async () => {
+    if (!project) return;
+    if ((sceneReading?.summary.to_generate ?? 0) > 0) {
+      await runGenerateElements();
+    }
+    // Re-plan, because the scene was laid out BEFORE those meshes existed and
+    // therefore still points at catalog stand-ins. Without this the pieces are
+    // generated, paid for, and never appear: a fresh project spent 180 credits
+    // on six meshes and the 3D plan showed none of them.
+    //
+    // Forced, and safe to force: `force` rebuilds the plan only — re-reading
+    // the moodboard is `force_read`, kept separate precisely because it would
+    // discard the approvals just given.
+    const planned = await planJob.run(() => api.scenePlan(project.project_id, true));
+    if (planned?.status === "SUCCEEDED") {
+      const spec = await api.getSceneSpec(project.project_id).catch(() => null);
+      if (spec) setSceneId(spec.scene.scene_id);
+      await refreshDetail(project.project_id);
+    }
+    next();
+  }, [project, sceneReading, runGenerateElements, planJob, refreshDetail, next]);
 
   /* ── Step 5: build + preview panoramas ──────────────────────────────── */
 
@@ -719,6 +766,12 @@ export function WalkthroughStudio() {
                 activeProjectId={project?.project_id ?? null}
                 onOpen={openFromHistory}
                 onCreateNew={project ? startNewProject : undefined}
+                onDeleted={(id) => {
+                  // Only if it was the one open: otherwise the Studio would
+                  // drop the user's current work because they tidied up an
+                  // unrelated project.
+                  if (project?.project_id === id) startNewProject();
+                }}
               />
             </div>
           </StepShell>
@@ -872,17 +925,6 @@ export function WalkthroughStudio() {
               {planJob.job || planJob.error ? (
                 <JobProgress title="Planning rooms, furniture and materials" job={planJob.job} events={planJob.events} error={planJob.error} onRetry={() => void runPlan()} compact={Boolean(sceneId) && !planJob.running} />
               ) : null}
-              {sceneId && !planJob.running ? <Walkthrough3DView key={sceneId} sceneId={sceneId} /> : null}
-              {elementsJob.job || elementsJob.error ? (
-                <JobProgress
-                  title="Building the confirmed pieces in 3D"
-                  job={elementsJob.job}
-                  events={elementsJob.events}
-                  error={elementsJob.error}
-                  onRetry={() => void runGenerateElements()}
-                  compact={!elementsJob.running}
-                />
-              ) : null}
               {sceneReading && !planJob.running ? (
                 <ElementReview
                   data={sceneReading}
@@ -894,7 +936,47 @@ export function WalkthroughStudio() {
                 />
               ) : null}
             </div>
-            <NavRow onBack={back} onNext={next} nextDisabled={!sceneId || planJob.running} nextLabel="Happy with the plan — render it" />
+            <NavRow
+              onBack={back}
+              onNext={confirmAndPlan}
+              nextDisabled={!confirmedAnything || planJob.running || elementsJob.running}
+              nextLabel={
+                elementsJob.running
+                  ? "Building…"
+                  : confirmedAnything
+                    ? `Build ${sceneReading?.summary.to_generate ?? 0} and plan the space`
+                    : "Confirm at least one piece first"
+              }
+            />
+          </StepShell>
+        ) : null}
+
+        {step.id === "planspace" ? (
+          <StepShell
+            title="Plan your 3D space"
+            subtitle="The pieces you confirmed are built as 3D models and placed in the rooms. Free — nothing is rendered yet, so move things about until the layout is right."
+          >
+            <div className="flex flex-col gap-3">
+              {elementsJob.job || elementsJob.error ? (
+                <JobProgress
+                  title="Building the confirmed pieces in 3D"
+                  job={elementsJob.job}
+                  events={elementsJob.events}
+                  error={elementsJob.error}
+                  onRetry={() => void runGenerateElements()}
+                  compact={!elementsJob.running}
+                />
+              ) : null}
+              {sceneId && !planJob.running && !elementsJob.running ? (
+                <Walkthrough3DView key={sceneId} sceneId={sceneId} />
+              ) : null}
+              {!sceneId && !planJob.running && !elementsJob.running ? (
+                <div className="rounded-md border border-dashed px-4 py-6 text-center body-sm text-ink-muted">
+                  No 3D plan yet. Go back a step and confirm the pieces you want built.
+                </div>
+              ) : null}
+            </div>
+            <NavRow onBack={back} onNext={next} nextDisabled={!sceneId || elementsJob.running} nextLabel="Happy with the plan — render it" />
           </StepShell>
         ) : null}
 

@@ -170,6 +170,33 @@ def list_inputs(project_id: str) -> dict:
     return ok([i.model_dump(mode="json") for i in store.list_inputs(project_id)])
 
 
+@router.delete("/projects/{project_id}")
+def delete_project(project_id: str) -> dict:
+    """Delete a project, keeping the moodboard renders and generated meshes.
+
+    Archive first, then delete. The other order risks removing the folder and
+    then failing halfway through the copy, and what is kept is the expensive
+    half: renders the client approved, and meshes at 30 credits each.
+
+    The response says what survived, so the caller can tell the user instead of
+    leaving them to guess whether their work is gone.
+    """
+    import shutil
+
+    from ..projects.layout import archive_project
+
+    store = get_project_store()
+    project = store.get(project_id)            # 404s through ProjectNotFound
+    manifest = archive_project(project_id, name=project.name,
+                               description=project.description,
+                               vertical=project.vertical.value)
+    store.delete_project(project_id)
+    root = project_dir(project_id)
+    if root.is_dir():
+        shutil.rmtree(root, ignore_errors=True)
+    return ok({"deleted": project_id, "kept": manifest["kept"]})
+
+
 @router.delete("/projects/{project_id}/inputs/{input_id}")
 def delete_input(project_id: str, input_id: str) -> dict:
     """Remove one uploaded file. Without this the 12-reference cap is a dead

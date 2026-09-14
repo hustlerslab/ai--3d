@@ -217,6 +217,25 @@ class ProjectStore:
         )
         return record
 
+    def delete_project(self, project_id: str) -> ProjectRecord:
+        """Forget the project, keeping what it produced.
+
+        Everything keyed on the project goes: its inputs, analyses, scene specs,
+        jobs, events and outputs, then the row itself. Raises ProjectNotFound if
+        there is nothing to delete, so the route answers 404 rather than
+        reporting a success that removed nothing.
+
+        What deliberately survives is handled by `archive_project` in
+        layout.py: the moodboard renders the client approved, and the meshes
+        generated from them. Those cost real minutes and real credits, and a
+        client who comes back should not pay for them twice.
+        """
+        record = self.get(project_id)                      # raises if unknown
+        for table in ("events", "jobs", "outputs", "scene_specs", "analyses", "inputs"):
+            self._db.execute(f"DELETE FROM {table} WHERE project_id = ?", (project_id,))
+        self._db.execute("DELETE FROM projects WHERE project_id = ?", (project_id,))
+        return record
+
     def list_inputs(self, project_id: str, kind: Optional[InputKind] = None) -> list[InputRecord]:
         if kind is None:
             rows = self._db.query(

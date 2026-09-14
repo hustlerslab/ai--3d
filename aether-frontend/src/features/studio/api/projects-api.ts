@@ -92,6 +92,21 @@ export async function deleteInput(projectId: string, inputId: string): Promise<v
   await request<{ data: unknown }>(`/projects/${projectId}/inputs/${inputId}`, { method: "DELETE" });
 }
 
+/** What survived a delete. The expensive half outlives the project. */
+export interface DeletedProject {
+  deleted: string;
+  kept: { moodboard_rooms: number; references?: number; scene_crops?: number; asset_ids: string[] };
+}
+
+/** Delete a project. Its moodboard renders and any meshes generated from them
+ *  are archived rather than removed — they cost real minutes and real credits.
+ *  The caller is told what survived so it can say so instead of leaving the
+ *  user to guess whether the work is gone. */
+export async function deleteProject(projectId: string): Promise<DeletedProject> {
+  const body = await request<{ data: DeletedProject }>(`/projects/${projectId}`, { method: "DELETE" });
+  return body.data;
+}
+
 /** Multipart upload with real progress (XHR: fetch has no upload progress). */
 export function uploadInputs(
   projectId: string,
