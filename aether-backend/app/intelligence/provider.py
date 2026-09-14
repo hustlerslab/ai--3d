@@ -50,6 +50,62 @@ class ResilientProvider:
     def mode(self) -> str:
         return "live" if self.primary else "mock"
 
+    def read_scene_elements(self, image, room, style, vertical) -> dict:
+        """Optional capability. No mock fallback: an empty reading tells the
+        caller nothing was read, which is honest, where a mock-invented list of
+        furniture would be fabricated detail presented as observation."""
+        read = getattr(self.primary, "read_scene_elements", None)
+        if not callable(read):
+            return {}
+        try:
+            return read(image, room, style, vertical) or {}
+        except Exception:                                  # noqa: BLE001
+            log.exception("read_scene_elements failed on %s", self.label)
+            return {}
+
+    def check_element_crop(self, crop, room_type, vertical) -> dict:
+        """Optional capability. No mock fallback, and a failure is NOT a pass:
+        an empty result makes the caller record `unreadable`, which sends the
+        crop to a human rather than quietly waving it through to spend."""
+        check = getattr(self.primary, "check_element_crop", None)
+        if not callable(check):
+            return {}
+        try:
+            return check(crop, room_type, vertical) or {}
+        except Exception:                                  # noqa: BLE001
+            log.exception("check_element_crop failed on %s", self.label)
+            return {}
+
+    def estimate_element_dimensions(self, room, elements, vertical) -> dict:
+        """Optional capability. An empty answer means every piece keeps the
+        per-type default, which is generic but never absurd."""
+        estimate = getattr(self.primary, "estimate_element_dimensions", None)
+        if not callable(estimate):
+            return {}
+        try:
+            return estimate(room, elements, vertical) or {}
+        except Exception:                                  # noqa: BLE001
+            log.exception("estimate_element_dimensions failed on %s", self.label)
+            return {}
+
+    def compose_scene_prompt(self, analysis, style, bundle, room) -> str:
+        """Optional capability, not part of the Protocol (ADR-001 pins that to
+        three methods). Delegated only when the primary offers it.
+
+        Deliberately no mock fallback: an empty string tells the caller to use
+        the keyword template, which is a real prompt rather than a pretend one,
+        and the caller records which was used. A mock-written prompt would be
+        exactly the silent degradation this class exists to prevent.
+        """
+        compose = getattr(self.primary, "compose_scene_prompt", None)
+        if not callable(compose):
+            return ""
+        try:
+            return compose(analysis, style, bundle, room)
+        except Exception as exc:                       # noqa: BLE001
+            log.exception("compose_scene_prompt failed on %s", self.label)
+            return ""
+
     def _run(self, stage: str, fn_primary, fn_fallback):
         if self.primary is None:
             return fn_fallback()

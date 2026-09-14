@@ -15,6 +15,8 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, ValidationError
 
 from ..core.config import get_settings
+from ..intelligence.schema import SceneReading
+from ..jobs.handlers.generate_elements import CREDITS_PER_PIECE as _CREDITS_PER_PIECE
 from ..jobs import get_job_store, get_runner, known_types
 from ..projects import (
     InputKind,
@@ -329,6 +331,10 @@ class AnalysisPatchBody(BaseModel):
     rooms: Optional[list[RoomPatch]] = None
     remove_rooms: list[str] = []
     style: Optional[StylePatch] = None
+    # {object_id: "place" | "reference"} — the client settling which read items
+    # are theirs and which were shop photos. Keyed by the item's stable id, not
+    # its position (ADR-002 §2).
+    item_roles: dict[str, str] = {}
 
 
 @router.post("/projects/{project_id}/analyze")
@@ -338,6 +344,31 @@ def analyze_project(project_id: str, body: AnalyzeBody = AnalyzeBody()) -> dict:
     if not build_input_bundle(project_id).has_content:
         return _error("NO_INPUTS", "Add a description, dimensions or reference photos before analysing.", 422)
     job = get_runner().enqueue(project_id, "analyze", {"force": body.force})
+    return {"success": True, "job": job.model_dump(mode="json")}
+
+
+@router.post("/projects/{project_id}/moodboard/rooms/{room_id}/repaint")
+def repaint_room(project_id: str, room_id: str) -> dict:
+    """Redraw one room's moodboard image on a fresh seed.
+
+    The reviewer's backstop for seed variance (ADR-002 §1): the same prompt
+    gives a complete bathroom on one seed and a bathtub in an alcove on another,
+    and no wording distinguishes them. Repainting one room leaves the reading,
+    the style and the other rooms untouched.
+    """
+    from ..intelligence import DesignAnalysis
+
+    store = get_project_store()
+    store.get(project_id)
+    root = project_dir(project_id)
+    analysis_path = root / "analysis" / "design_analysis.json"
+    if not analysis_path.exists():
+        return _error("ANALYSIS_NOT_READY", "Nothing to repaint: run /analyze first.", 404)
+    analysis = DesignAnalysis.model_validate(_read(analysis_path))
+    if not any(r.room_id == room_id for r in analysis.rooms):
+        known = ", ".join(r.room_id for r in analysis.rooms) or "none"
+        return _error("ROOM_NOT_FOUND", f"No room {room_id!r} in this reading. Rooms: {known}.", 404)
+    job = get_runner().enqueue(project_id, "repaint_room", {"room_id": room_id})
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
@@ -391,6 +422,17 @@ def patch_analysis(project_id: str, body: AnalysisPatchBody) -> dict:
         changed = True
     if body.remove_rooms:
         analysis.rooms = [r for r in analysis.rooms if r.room_id not in body.remove_rooms]
+        changed = True
+    if body.item_roles:
+        bad = sorted(set(body.item_roles.values()) - {"place", "reference"})
+        if bad:
+            return _error("INVALID_ROLE", f"Unknown item role(s): {', '.join(bad)}. Use 'place' or 'reference'.", 422)
+        by_id = {s.object_id: s for s in analysis.spotted_objects}
+        missing = sorted(set(body.item_roles) - set(by_id))
+        if missing:
+            return _error("ITEM_NOT_FOUND", f"No read item with id(s): {', '.join(missing)}.", 404)
+        for object_id, role in body.item_roles.items():
+            by_id[object_id].role = role  # type: ignore[assignment]
         changed = True
     for patch in body.rooms or []:
         room = analysis.room(patch.room_id)
@@ -465,6 +507,119 @@ class ScenePlanBody(BaseModel):
     force: bool = False
 
 
+class ElementReviewBody(BaseModel):
+    """{element_id: true|false} — the client confirming or rejecting crops.
+
+    Keyed by the element's stable id, never its position in the list, for the
+    same reason item roles are (ADR-002 s2): the list is re-read and re-ordered
+    between the render and the click.
+    """
+
+    decisions: dict[str, bool] = {}
+
+
+@router.get("/projects/{project_id}/scene-reading")
+def get_scene_reading(project_id: str) -> dict:
+    """The elements read out of the approved moodboard, for human review.
+
+    Each one carries its crop, the label the scene read gave it, and the
+    verdict of the isolated second look. Nothing here is generated yet: this is
+    the screen where a wrong crop gets stopped before it costs credits.
+    """
+    get_project_store().get(project_id)
+    root = project_dir(project_id)
+    data = _read(root / "planning" / "scene_reading.json")
+    if data is None:
+        latest = get_job_store().latest_of_type(project_id, "scene_plan")
+        return _error(
+            "SCENE_READING_NOT_READY",
+            "The moodboard has not been read yet. POST /scene-plan first."
+            + (f" Latest job: {latest.status.value}." if latest else ""),
+            404,
+        )
+    return ok(_reading_payload(project_id, data))
+
+
+@router.patch("/projects/{project_id}/scene-reading")
+def review_scene_reading(project_id: str, body: ElementReviewBody) -> dict:
+    """Record the human's confirm/reject per element. Nothing else changes."""
+    get_project_store().get(project_id)
+    path = project_dir(project_id) / "planning" / "scene_reading.json"
+    data = _read(path)
+    if data is None:
+        return _error("SCENE_READING_NOT_READY", "Nothing to review yet.", 404)
+    reading = SceneReading.model_validate(data)
+    known = {e.element_id for e in reading.elements}
+    unknown = sorted(set(body.decisions) - known)
+    if unknown:
+        # Loudly, not quietly: a decision landing on nothing means the client is
+        # looking at a reading that has since been re-read, and silently
+        # dropping it would approve crops nobody actually looked at.
+        return _error("UNKNOWN_ELEMENT",
+                      f"No such element(s) in this reading: {', '.join(unknown)}. Re-fetch and review again.",
+                      409)
+    for el in reading.elements:
+        if el.element_id in body.decisions:
+            el.approved = bool(body.decisions[el.element_id])
+    _write(path, reading)
+    return ok(_reading_payload(project_id, reading.model_dump(mode="json")))
+
+
+def _reading_payload(project_id: str, data: dict) -> dict:
+    """The reading as the review screen needs it, for BOTH routes.
+
+    `crop_url` is derived here rather than stored, because the file lives under
+    the project directory and only the API knows how it is served. It used to be
+    added by the GET alone, and the PATCH answered with the bare model — so
+    saving a decision handed the client elements with no crop_url and the review
+    screen crashed in `fileUrl` on the next render. Every read of the reading
+    goes through this function now, so the two answers cannot drift again.
+    """
+    summary = _review_summary(data, project_id)
+    for el in data.get("elements", []):
+        crop = el.get("crop_ref") or ""
+        el["crop_url"] = f"/files/projects/{project_id}/{crop}" if crop else ""
+    return {"reading": data, "summary": summary}
+
+
+def _review_summary(data: dict, project_id: str = "") -> dict:
+    """What still needs a human, and what the next click would actually cost.
+
+    The cost is computed the same way the job computes it - shape groups minus
+    the ones already on disk - so the number on the button is the number that
+    gets spent, not an estimate of it.
+    """
+    from ..intelligence.schema import SceneReading
+    from ..intelligence.scene_reading import approved_for_generation, distinct_shapes
+    from ..jobs.handlers.generate_elements import CREDITS_PER_PIECE, _glb_rel
+
+    els = [e for e in data.get("elements", []) if e.get("crop_ref")]
+    approved = [e for e in els if e.get("approved") is True]
+    rejected = [e for e in els if e.get("approved") is False]
+
+    to_generate = reused = 0
+    if project_id and approved:
+        ready, _ = approved_for_generation(SceneReading.model_validate(data))
+        root = project_dir(project_id)
+        for key in distinct_shapes(ready):
+            if (root / _glb_rel(key)).is_file():
+                reused += 1
+            else:
+                to_generate += 1
+    return {
+        "with_crops": len(els),
+        "approved": len(approved),
+        "rejected": len(rejected),
+        "pending": len(els) - len(approved) - len(rejected),
+        "flagged_by_check": sum(1 for e in els if e.get("check") not in ("ok",)),
+        "ready_to_generate": len(approved),
+        # What pressing Generate would do right now.
+        "to_generate": to_generate,
+        "already_generated": reused,
+        "credits_needed": to_generate * CREDITS_PER_PIECE,
+    }
+
+
 @router.post("/projects/{project_id}/scene-plan")
 def scene_plan_project(project_id: str, body: ScenePlanBody = ScenePlanBody()) -> dict:
     get_project_store().get(project_id)
@@ -473,6 +628,67 @@ def scene_plan_project(project_id: str, body: ScenePlanBody = ScenePlanBody()) -
         return _error("ANALYSIS_REQUIRED", "Run POST /analyze before planning the scene.", 409)
     job = get_runner().enqueue(project_id, "scene_plan", {"force": body.force})
     return {"success": True, "job": job.model_dump(mode="json")}
+
+
+class GenerateElementsBody(BaseModel):
+    # Defaults to the per-project cap. A caller can lower it; raising it past
+    # the configured cap is refused below rather than silently honoured.
+    limit: Optional[int] = None
+
+
+@router.post("/projects/{project_id}/elements/generate")
+def generate_project_elements(project_id: str, body: GenerateElementsBody = GenerateElementsBody()) -> dict:
+    """Turn the crops a human approved into meshes. This is the paid step.
+
+    Refuses rather than no-ops when nothing is approved: a button that appears
+    to work and quietly does nothing is how a reviewer concludes the pipeline
+    is broken.
+    """
+    get_project_store().get(project_id)
+    settings = get_settings()
+    if not settings.meshy_configured:
+        return _error("MESHY_NOT_CONFIGURED", "MESHY_API_KEY is not set; nothing to generate with.", 409)
+    root = project_dir(project_id)
+    data = _read(root / "planning" / "scene_reading.json")
+    if data is None:
+        return _error("SCENE_READING_NOT_READY", "Plan the space first: there are no crops to generate from.", 409)
+    summary = _review_summary(data, project_id)
+    if not summary["approved"]:
+        return _error("NOTHING_APPROVED",
+                      "No crops are approved yet. Confirm the pieces you want built first.", 409)
+    cap = int(settings.meshy_max_per_project)
+    limit = cap if body.limit is None else max(0, min(int(body.limit), cap))
+    job = get_runner().enqueue(project_id, "generate_elements", {"limit": limit})
+    return {"success": True, "job": job.model_dump(mode="json"), "summary": summary}
+
+
+@router.get("/credits")
+def get_credits() -> dict:
+    """Remaining Meshy credits, for the screen that is about to spend them.
+
+    Never fails the page: an unreachable vendor answers `available: false` with
+    the reason, because a missing balance is not a reason to block planning.
+    """
+    import asyncio
+
+    from ..providers import meshy
+
+    settings = get_settings()
+    if not settings.meshy_configured:
+        return ok({"available": False, "reason": "MESHY_API_KEY is not set",
+                   "credits_per_piece": _CREDITS_PER_PIECE})
+
+    async def read() -> int:
+        async with meshy.make_client(settings.meshy_api_key.get_secret_value(), 15.0) as client:
+            return await meshy.balance(client)
+
+    try:
+        return ok({"available": True, "balance": asyncio.run(read()),
+                   "credits_per_piece": _CREDITS_PER_PIECE,
+                   "max_per_project": int(settings.meshy_max_per_project)})
+    except Exception as exc:                                   # noqa: BLE001
+        return ok({"available": False, "reason": f"{type(exc).__name__}: {exc}",
+                   "credits_per_piece": _CREDITS_PER_PIECE})
 
 
 @router.post("/projects/{project_id}/assets/resolve")

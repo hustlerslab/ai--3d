@@ -170,6 +170,10 @@ export interface CatalogItem {
   thumbnail_url: string | null;
   source: "builtin" | "polyhaven" | "upload" | "meshy";
   license: string;
+  /** Set when the model was generated for one project from that project's own
+   *  material. Renderers leave its textures alone: they are already the
+   *  client's fabric, and re-skinning them discards what was generated. */
+  project_id?: string;
 }
 
 export interface MaterialMaps {

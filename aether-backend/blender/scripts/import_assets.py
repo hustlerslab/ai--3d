@@ -137,6 +137,11 @@ def _apply_upholstery(children, spec: dict, materials) -> None:
     so a black leather catalogue sofa becomes the client's linen sofa."""
     if spec.get("semantic_type") not in FABRIC_TYPES:
         return
+    if (spec.get("asset") or {}).get("own_materials"):
+        # Generated from this client's own approved render: the texture on the
+        # mesh IS their fabric. Re-skinning it with the style material would
+        # discard exactly what the generation bought.
+        return
     override = (spec.get("material_overrides") or {}).get("primary")
     if not override:
         return

@@ -1,10 +1,10 @@
 "use client";
 
-import { Check, Loader2, Plus, Trash2 } from "lucide-react";
+import { Check, Loader2, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { fileUrl } from "../api/projects-api";
-import type { AnalysisDto, AnalysisPatch, RoomAnalysis } from "../types";
+import type { AnalysisDto, AnalysisPatch, ItemRole, RoomAnalysis } from "../types";
 
 const ROOM_TYPES = [
   "living_room", "bedroom", "master_bedroom", "kids_bedroom", "kitchen", "dining_room",
@@ -22,10 +22,15 @@ const human = (s: string) => s.replace(/_/g, " ");
 export function AnalysisReview({
   data,
   onSave,
+  onRepaintRoom,
+  repaintingRoom = null,
   saving = false,
 }: {
   data: AnalysisDto;
   onSave?: (patch: AnalysisPatch) => Promise<void>;
+  /** Redraw one room's image. Absent on read-only screens. */
+  onRepaintRoom?: (roomId: string) => Promise<void>;
+  repaintingRoom?: string | null;
   saving?: boolean;
 }) {
   const { analysis, style, moodboard, provider } = data;
@@ -33,6 +38,7 @@ export function AnalysisReview({
   const [removed, setRemoved] = useState<string[]>([]);
   const [constraints, setConstraints] = useState(analysis.constraints.join("\n"));
   const [mood, setMood] = useState(style?.lighting_mood ?? "warm_daylight");
+  const [roles, setRoles] = useState<Record<string, ItemRole>>({});
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -41,6 +47,7 @@ export function AnalysisReview({
     setRemoved([]);
     setConstraints(analysis.constraints.join("\n"));
     setMood(style?.lighting_mood ?? "warm_daylight");
+    setRoles(Object.fromEntries(analysis.spotted_objects.map((o) => [o.object_id, o.role])));
     setDirty(false);
   }, [analysis, style]);
 
@@ -73,6 +80,7 @@ export function AnalysisReview({
       remove_rooms: removed,
       constraints: constraints.split("\n").map((s) => s.trim()).filter(Boolean),
       style: { lighting_mood: mood },
+      item_roles: roles,
     };
     await onSave(patch);
     setDirty(false);
@@ -123,6 +131,66 @@ export function AnalysisReview({
           <div className="rounded-md border border-dashed px-4 py-3">
             <p className="body-sm font-medium text-ink">No scene image for this moodboard</p>
             <p className="mt-1 caption text-ink-muted">{moodboard.scene_error}</p>
+          </div>
+        ) : null}
+
+        {/* One image per room: a moodboard that shows only the living room is
+            not a direction for a home. These are generated, not the user's
+            uploads played back — the rule below still holds. */}
+        {(moodboard?.room_scenes?.length ?? 0) > 1 ? (
+          <div className="flex flex-col gap-2">
+            <p className="body-sm font-medium text-ink-soft">Room by room</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {moodboard!.room_scenes!.map((r) => (
+                <figure key={r.room_id} className="flex flex-col gap-1">
+                  {r.url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={fileUrl(r.url)}
+                      alt={`${r.name} as Allure is proposing it`}
+                      className="w-full rounded-md border"
+                    />
+                  ) : (
+                    <div className="rounded-md border border-dashed px-3 py-6 text-center">
+                      <p className="caption text-ink-muted">{r.error || "No image for this room."}</p>
+                    </div>
+                  )}
+                  <figcaption className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="body-sm text-ink-soft">{r.name}</span>
+                    <span className="flex items-center gap-2">
+                      {r.url && !r.reference_resolved ? (
+                        <span className="caption text-ink-muted" title={r.reference_note}>
+                          from your brief and style
+                        </span>
+                      ) : r.url ? (
+                        <span className="caption text-ink-muted" title={r.reference_note}>
+                          uses your photo
+                        </span>
+                      ) : null}
+                      {onRepaintRoom ? (
+                        <button
+                          type="button"
+                          onClick={() => void onRepaintRoom(r.room_id)}
+                          disabled={repaintingRoom !== null}
+                          title={
+                            "Draw this room again. Same brief and style — a different composition." +
+                            (r.seed ? ` (seed ${r.seed})` : "")
+                          }
+                          className="flex items-center gap-1 rounded-md border px-2 py-0.5 caption text-ink-muted hover:bg-muted disabled:opacity-40"
+                        >
+                          {repaintingRoom === r.room_id ? (
+                            <Loader2 className="size-3 animate-spin" />
+                          ) : (
+                            <RefreshCw className="size-3" />
+                          )}
+                          {repaintingRoom === r.room_id ? "Drawing…" : "Redraw"}
+                        </button>
+                      ) : null}
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
         ) : null}
 
@@ -236,7 +304,7 @@ export function AnalysisReview({
             />
           ) : analysis.constraints.length ? (
             <ul className="list-disc pl-5 body-sm text-ink-muted">
-              {analysis.constraints.map((c) => <li key={c}>{c}</li>)}
+              {[...new Set(analysis.constraints)].map((c) => <li key={c}>{c}</li>)}
             </ul>
           ) : (
             <p className="body-sm text-ink-muted">None mentioned.</p>
@@ -245,17 +313,54 @@ export function AnalysisReview({
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <p className="body-sm font-medium text-ink-soft">Spotted in your brief and photos</p>
+            {editable && analysis.spotted_objects.some((o) => o.crop_ref) ? (
+              <p className="caption text-ink-muted">
+                Shop photos are welcome — tell us which pieces are actually yours so we only
+                place those. The rest still guide the colours and materials.
+              </p>
+            ) : null}
             <div className="flex flex-wrap gap-1.5">
-              {analysis.spotted_objects.length ? analysis.spotted_objects.map((o, i) => (
-                <span
-                  key={`${o.semantic_type}-${i}`}
-                  className="rounded-full bg-muted px-2 py-0.5 caption text-ink-soft"
-                  title={[o.notes, o.placement === "on_surface" && o.support ? `on ${o.support}` : o.placement === "wall" ? "on the wall" : "", o.crop_ref ? "cut from your photo" : ""].filter(Boolean).join(" · ")}
-                >
-                  {o.name || human(o.semantic_type)}{o.count > 1 ? ` ×${o.count}` : ""}
-                </span>
-              )) : <span className="caption text-ink-muted">Nothing specific yet.</span>}
+              {analysis.spotted_objects.length ? analysis.spotted_objects.map((o) => {
+                const role = roles[o.object_id] ?? o.role;
+                const isReference = role === "reference";
+                const label = `${o.name || human(o.semantic_type)}${o.count > 1 ? ` ×${o.count}` : ""}`;
+                const detail = [o.notes, o.placement === "on_surface" && o.support ? `on ${o.support}` : o.placement === "wall" ? "on the wall" : "", o.crop_ref ? "cut from your photo" : ""].filter(Boolean).join(" · ");
+                // Only photo-read items can be a reference; anything the planner
+                // added is there because the room needs it.
+                if (!editable || !o.crop_ref) {
+                  return (
+                    <span key={o.object_id} className="rounded-full bg-muted px-2 py-0.5 caption text-ink-soft" title={detail}>
+                      {label}
+                    </span>
+                  );
+                }
+                return (
+                  <button
+                    type="button"
+                    key={o.object_id}
+                    aria-pressed={!isReference}
+                    onClick={() => {
+                      setRoles((r) => ({ ...r, [o.object_id]: isReference ? "place" : "reference" }));
+                      setDirty(true);
+                    }}
+                    title={`${detail}${detail ? " · " : ""}${isReference ? "Inspiration only — not placed in your room. Click to place it." : "Will be placed in your room. Click to treat as inspiration only."}`}
+                    className={
+                      isReference
+                        ? "rounded-full border border-dashed px-2 py-0.5 caption text-ink-muted line-through decoration-1"
+                        : "rounded-full bg-muted px-2 py-0.5 caption text-ink-soft"
+                    }
+                  >
+                    {label}
+                  </button>
+                );
+              }) : <span className="caption text-ink-muted">Nothing specific yet.</span>}
             </div>
+            {editable && Object.values(roles).some((r) => r === "reference") ? (
+              <p className="caption text-ink-muted">
+                Crossed-out pieces are inspiration only — they shape the palette but won&apos;t
+                be placed.
+              </p>
+            ) : null}
           </div>
           <label className="flex flex-col gap-1.5">
             <span className="body-sm font-medium text-ink-soft">Light</span>
@@ -272,7 +377,12 @@ export function AnalysisReview({
 
       {analysis.warnings.length || style?.warnings?.length ? (
         <ul className="rounded-md border border-warning/35 bg-warning/8 p-3 caption text-ink-muted">
-          {[...analysis.warnings, ...(style?.warnings ?? [])].map((w) => <li key={w}>{w}</li>)}
+          {/* Deduped, and the key is why it matters: the analysis and the style
+              spec each carry their own copy of shared warnings ("only the first
+              6 of 8 references were sent"), so keying <li> by the text collided
+              and React logged "two children with the same key". Showing the
+              user the same warning twice was the visible half of that. */}
+          {[...new Set([...analysis.warnings, ...(style?.warnings ?? [])])].map((w) => <li key={w}>{w}</li>)}
         </ul>
       ) : null}
 

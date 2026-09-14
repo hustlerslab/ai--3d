@@ -37,6 +37,8 @@ import { DESIGNERS } from "@/lib/mock/designers";
 
 import * as api from "@/features/studio/api/projects-api";
 import { AnalysisReview } from "@/features/studio/components/analysis-review";
+import { ElementReview } from "@/features/studio/components/element-review";
+import type { CreditsDto, SceneReadingDto } from "@/features/studio/types";
 import { JobProgress } from "@/features/studio/components/job-progress";
 import { ProjectHistory } from "@/features/studio/components/project-history";
 import { useJob } from "@/features/studio/hooks/use-job";
@@ -98,18 +100,44 @@ interface RoomRow {
   length: string;
 }
 
+const room = (key: string, name: string, type: string): RoomRow => ({ key, name, type, width: "", length: "" });
+
+/** What each space IS, structurally — not a hint about it.
+ *
+ *  A 2BHK has two bedrooms, a living room, a kitchen and a bathroom whether or
+ *  not the client thought to mention them in the brief; the brief then says
+ *  what each room is for. These used to be `rooms: []` with the choice passed
+ *  only as the sentence "Space: 2BHK apartment.", which left the room list
+ *  entirely to the reading — so the same project came back with a bathroom one
+ *  run and without it the next. */
 const SPACE_PRESETS: Record<string, { hint: string; rooms: RoomRow[] }> = {
-  "Full 2BHK": { hint: "2BHK apartment", rooms: [] },
-  "Full 3BHK": { hint: "3BHK apartment", rooms: [] },
-  "Living room + bedroom": {
-    hint: "living room and one bedroom",
+  "Full 2BHK": {
+    hint: "2BHK apartment",
     rooms: [
-      { key: "l", name: "Living Room", type: "living_room", width: "", length: "" },
-      { key: "b", name: "Bedroom", type: "bedroom", width: "", length: "" },
+      room("l", "Living Room", "living_room"),
+      room("b1", "Master Bedroom", "master_bedroom"),
+      room("b2", "Second Bedroom", "bedroom"),
+      room("k", "Kitchen", "kitchen"),
+      room("ba", "Bathroom", "bathroom"),
     ],
   },
-  "Living room": { hint: "living room only", rooms: [{ key: "l", name: "Living Room", type: "living_room", width: "", length: "" }] },
-  "Bedroom": { hint: "one bedroom", rooms: [{ key: "b", name: "Bedroom", type: "bedroom", width: "", length: "" }] },
+  "Full 3BHK": {
+    hint: "3BHK apartment",
+    rooms: [
+      room("l", "Living Room", "living_room"),
+      room("b1", "Master Bedroom", "master_bedroom"),
+      room("b2", "Second Bedroom", "bedroom"),
+      room("b3", "Third Bedroom", "bedroom"),
+      room("k", "Kitchen", "kitchen"),
+      room("ba", "Bathroom", "bathroom"),
+    ],
+  },
+  "Living room + bedroom": {
+    hint: "living room and one bedroom",
+    rooms: [room("l", "Living Room", "living_room"), room("b", "Bedroom", "bedroom")],
+  },
+  "Living room": { hint: "living room only", rooms: [room("l", "Living Room", "living_room")] },
+  "Bedroom": { hint: "one bedroom", rooms: [room("b", "Bedroom", "bedroom")] },
 };
 
 /** Furthest wizard step a project's backend stage justifies. */
@@ -165,8 +193,19 @@ export function WalkthroughStudio() {
   const analyzeJob = useJob();
   const [analysis, setAnalysis] = useState<AnalysisDto | null>(null);
   const [savingAnalysis, setSavingAnalysis] = useState(false);
+  // Redrawing one room: a different seed, same brief and style (ADR-002 §1).
+  const repaintJob = useJob();
+  const [repaintingRoom, setRepaintingRoom] = useState<string | null>(null);
   const [analysisEditedSincePlan, setAnalysisEditedSincePlan] = useState(false);
   const planJob = useJob();
+  // The crops read out of the approved rooms, awaiting a human yes/no.
+  // Loaded after a plan succeeds, because that is the job that writes them.
+  const [sceneReading, setSceneReading] = useState<SceneReadingDto | null>(null);
+  const [savingReview, setSavingReview] = useState(false);
+  // The paid step: approved crops become meshes. The balance is shown beside
+  // the button that spends it, so the cost is never a surprise after the fact.
+  const elementsJob = useJob();
+  const [credits, setCredits] = useState<CreditsDto | null>(null);
   const [sceneId, setSceneId] = useState<string | null>(null);
 
   // Step 5/6 — render lane
@@ -234,6 +273,13 @@ export function WalkthroughStudio() {
       let pkg: TourPackage | null = null;
       if (d.checkpoints.preview || d.checkpoints.outputs) pkg = await getTour(projectId).catch(() => null);
       setTour(pkg);
+
+      // Unconditional like every field above it: a project without crops to
+      // review must clear the previous project's, or the reviewer would be
+      // ticking someone else's furniture.
+      setSceneReading(
+        d.checkpoints.scene_reading ? await api.getSceneReading(projectId).catch(() => null) : null,
+      );
 
       try {
         window.sessionStorage.setItem(STORAGE_KEY, projectId);
@@ -444,6 +490,23 @@ export function WalkthroughStudio() {
     }
   }, [step.id, project, analysis, analyzeJob.running, analyzeJob.job, runAnalyze]);
 
+  const repaintRoom = useCallback(
+    async (roomId: string) => {
+      if (!project) return;
+      setRepaintingRoom(roomId);
+      try {
+        // Poll the job we just started — never read the moodboard on a timer.
+        // Reading before the job that writes it has finished is how a previous
+        // run's image gets reported as the current one.
+        const job = await repaintJob.run(() => api.repaintRoom(project.project_id, roomId));
+        if (job?.status === "SUCCEEDED") setAnalysis(await api.getAnalysis(project.project_id));
+      } finally {
+        setRepaintingRoom(null);
+      }
+    },
+    [project, repaintJob],
+  );
+
   const saveAnalysis = useCallback(
     async (patch: AnalysisPatch) => {
       if (!project) return;
@@ -471,9 +534,52 @@ export function WalkthroughStudio() {
       setAnalysisEditedSincePlan(false);
       setBuildPreviewUrl(null);
       setTour(null);
+      // Read-back is optional in the pipeline, so a project whose provider
+      // cannot do it simply has nothing to review rather than an error.
+      try {
+        setSceneReading(await api.getSceneReading(project.project_id));
+      } catch {
+        setSceneReading(null);
+      }
       await refreshDetail(project.project_id);
     }
   }, [project, planJob, analysisEditedSincePlan, sceneId, refreshDetail]);
+
+  const saveElementReview = useCallback(
+    async (decisions: Record<string, boolean>) => {
+      if (!project) return;
+      setSavingReview(true);
+      try {
+        setSceneReading(await api.reviewSceneReading(project.project_id, decisions));
+      } finally {
+        setSavingReview(false);
+      }
+    },
+    [project],
+  );
+
+  /** Never throws into the page: an unreachable vendor shows as "unavailable"
+   *  beside the button rather than stopping someone planning a room. */
+  const refreshCredits = useCallback(async () => {
+    setCredits(await api.getCredits().catch(() => null));
+  }, []);
+
+  useEffect(() => {
+    void refreshCredits();
+  }, [refreshCredits]);
+
+  /** The paid step. Re-reads both the reading and the balance afterwards, so
+   *  the cost shown is what the server says was spent rather than what the
+   *  client assumed. */
+  const runGenerateElements = useCallback(async () => {
+    if (!project) return;
+    const job = await elementsJob.run(() => api.generateElements(project.project_id));
+    if (job?.status === "SUCCEEDED") {
+      setSceneReading(await api.getSceneReading(project.project_id).catch(() => null));
+      await refreshDetail(project.project_id);
+    }
+    await refreshCredits();
+  }, [project, elementsJob, refreshCredits, refreshDetail]);
 
   /* ── Step 5: build + preview panoramas ──────────────────────────────── */
 
@@ -588,7 +694,17 @@ export function WalkthroughStudio() {
               </label>
               <label className="flex flex-col gap-1.5">
                 <span className="body-sm font-medium text-ink-soft">Space</span>
-                <select value={spaceType} onChange={(e) => setSpaceType(e.target.value)} className="rounded-md border bg-transparent px-3 py-2 body-sm text-ink-soft focus:outline-none focus:ring-1 focus:ring-gold">
+                <select
+                  value={spaceType}
+                  onChange={(e) => {
+                    // The space defines the rooms, so changing it reloads them.
+                    // Without this, picking 3BHK kept the 2BHK room list and the
+                    // extra bedroom never reached the backend at all.
+                    setSpaceType(e.target.value);
+                    setRoomRows(SPACE_PRESETS[e.target.value]?.rooms ?? []);
+                  }}
+                  className="rounded-md border bg-transparent px-3 py-2 body-sm text-ink-soft focus:outline-none focus:ring-1 focus:ring-gold"
+                >
                   {Object.keys(SPACE_PRESETS).map((k) => <option key={k}>{k}</option>)}
                 </select>
               </label>
@@ -697,7 +813,11 @@ export function WalkthroughStudio() {
               <JobProgress title="Reading your photos and composing a direction" job={analyzeJob.job} events={analyzeJob.events} error={analyzeJob.error} onRetry={() => void runAnalyze(true)} />
             ) : analysis ? (
               <>
-                <AnalysisReview data={analysis} />
+                <AnalysisReview
+                  data={analysis}
+                  onRepaintRoom={repaintRoom}
+                  repaintingRoom={repaintingRoom}
+                />
                 <button type="button" onClick={() => void runAnalyze(true)} className="flex w-fit items-center gap-1.5 rounded-md border px-3 py-1.5 body-sm text-ink-muted hover:bg-muted">
                   <RefreshCw className="size-3.5" /> Regenerate
                 </button>
@@ -716,7 +836,15 @@ export function WalkthroughStudio() {
 
         {step.id === "refine" ? (
           <StepShell title="Review and refine" subtitle="Correct room sizes, add must-haves, then plan the space: the layout and furniture appear in 3D within seconds, and you can edit any of it before rendering.">
-            {analysis ? <AnalysisReview data={analysis} onSave={saveAnalysis} saving={savingAnalysis} /> : null}
+            {analysis ? (
+              <AnalysisReview
+                data={analysis}
+                onSave={saveAnalysis}
+                saving={savingAnalysis}
+                onRepaintRoom={repaintRoom}
+                repaintingRoom={repaintingRoom}
+              />
+            ) : null}
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-3">
                 <button
@@ -729,11 +857,42 @@ export function WalkthroughStudio() {
                   {sceneId ? (analysisEditedSincePlan ? "Re-plan the space" : "Plan again") : "Plan the space"}
                 </button>
                 {sceneId && analysisEditedSincePlan ? <span className="caption text-ink-muted">Your corrections haven&apos;t been applied to the 3D plan yet.</span> : null}
+                {/* Planning is free; building the confirmed pieces is not.
+                    The balance sits on this step because this is where the
+                    spending decision gets made. */}
+                {credits ? (
+                  <span className="ml-auto flex items-center gap-1.5 rounded-full border px-2.5 py-1 caption text-ink-muted tabular">
+                    <Sparkles className="size-3 text-gold" />
+                    {credits.available && typeof credits.balance === "number"
+                      ? `${credits.balance.toLocaleString()} 3D credits`
+                      : "3D credits unavailable"}
+                  </span>
+                ) : null}
               </div>
               {planJob.job || planJob.error ? (
                 <JobProgress title="Planning rooms, furniture and materials" job={planJob.job} events={planJob.events} error={planJob.error} onRetry={() => void runPlan()} compact={Boolean(sceneId) && !planJob.running} />
               ) : null}
               {sceneId && !planJob.running ? <Walkthrough3DView key={sceneId} sceneId={sceneId} /> : null}
+              {elementsJob.job || elementsJob.error ? (
+                <JobProgress
+                  title="Building the confirmed pieces in 3D"
+                  job={elementsJob.job}
+                  events={elementsJob.events}
+                  error={elementsJob.error}
+                  onRetry={() => void runGenerateElements()}
+                  compact={!elementsJob.running}
+                />
+              ) : null}
+              {sceneReading && !planJob.running ? (
+                <ElementReview
+                  data={sceneReading}
+                  onSave={saveElementReview}
+                  saving={savingReview}
+                  credits={credits}
+                  onGenerate={runGenerateElements}
+                  generating={elementsJob.running}
+                />
+              ) : null}
             </div>
             <NavRow onBack={back} onNext={next} nextDisabled={!sceneId || planJob.running} nextLabel="Happy with the plan — render it" />
           </StepShell>

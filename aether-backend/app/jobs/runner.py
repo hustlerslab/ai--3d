@@ -108,7 +108,14 @@ class JobRunner:
         single-thread pool the GPU mutex — no new locking, and the choice is
         recorded on the job row so a resume after restart lands correctly.
         """
-        if not spec.uses_intelligence or spec.lane is JobLane.render:
+        if spec.lane is JobLane.render:
+            return spec.lane
+        # A handler that drives the GPU itself belongs behind the same mutex,
+        # whoever the intelligence provider is. The moodboard's Stable
+        # Diffusion pass is local even when the reading is Gemini.
+        if getattr(spec, "uses_local_gpu", False) and get_settings().scene_image_enabled:
+            return JobLane.render
+        if not spec.uses_intelligence:
             return spec.lane
         if get_settings().intelligence_provider.lower().strip() in _LOCAL_PROVIDERS:
             log.info(

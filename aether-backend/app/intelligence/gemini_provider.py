@@ -12,6 +12,8 @@ and the working model is remembered for the process.
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import json
 import logging
 from typing import Any, Optional
@@ -24,6 +26,10 @@ from . import vocab
 from .coerce import coerce_analysis, coerce_object_plan, coerce_style
 from .images import encode_for_gemini
 from .prompts import (
+    ELEMENT_CHECK_SCHEMA,
+    ELEMENT_DIMENSIONS_SCHEMA,
+    element_dimensions_prompt,
+    element_check_prompt,
     OBJECT_PLAN_SCHEMA,
     analysis_prompt,
     analysis_schema,
@@ -31,6 +37,10 @@ from .prompts import (
     objects_prompt,
     style_prompt,
     style_schema,
+    ROOM_PROMPT_SCHEMA,
+    room_prompt_request,
+    SCENE_READING_SCHEMA,
+    scene_reading_prompt,
 )
 from .schema import DesignAnalysis, InputBundle, ObjectPlan, StyleSpec
 
@@ -145,6 +155,51 @@ class GeminiProvider:
             parts.append({"text": f"{len(images)} reference photo(s) attached above."})
         raw = self._generate(parts, analysis_schema(bundle.vertical), "analyze_input")
         return coerce_analysis(raw, bundle, warnings, provider=self.label)
+
+    # NOT part of IntelligenceProvider. The Protocol is pinned to three methods
+    # and a vendor implementing only those must keep working (ADR-001), so this
+    # is an optional capability discovered with hasattr; providers without it
+    # fall back to the keyword template.
+    # Also NOT on the Protocol (ADR-001 pins it to three methods).
+    def read_scene_elements(self, image: "Path", room, style: StyleSpec, vertical) -> dict:
+        """Box every piece in ONE rendered room image, plus its surfaces."""
+        encoded = encode_for_gemini(str(image), max_side=1024)
+        if encoded is None:
+            raise ValueError(f"could not encode {image} for Gemini")
+        mime, data = encoded
+        parts = [
+            {"text": scene_reading_prompt(room, style, vertical)},
+            {"inline_data": {"mime_type": mime, "data": data}},
+            {"text": "The rendered room is attached above."},
+        ]
+        return self._generate(parts, gemini_schema(SCENE_READING_SCHEMA), "read_scene_elements")
+
+    def check_element_crop(self, crop: "Path", room_type: str, vertical) -> dict:
+        """Look at ONE crop alone and say what it is. No label, no scene."""
+        encoded = encode_for_gemini(str(crop), max_side=512)
+        if encoded is None:
+            raise ValueError(f"could not encode {crop} for Gemini")
+        mime, data = encoded
+        parts = [
+            {"text": element_check_prompt(room_type, vertical)},
+            {"inline_data": {"mime_type": mime, "data": data}},
+        ]
+        return self._generate(parts, gemini_schema(ELEMENT_CHECK_SCHEMA), "check_element_crop")
+
+    def estimate_element_dimensions(self, room, elements, vertical) -> dict:
+        """How big each piece really is, in metres. One call for the room."""
+        return self._generate(
+            [{"text": element_dimensions_prompt(room, elements, vertical)}],
+            gemini_schema(ELEMENT_DIMENSIONS_SCHEMA), "estimate_element_dimensions",
+        )
+
+    def compose_scene_prompt(self, analysis: DesignAnalysis, style: StyleSpec,
+                             bundle: InputBundle, room) -> str:
+        raw = self._generate(
+            [{"text": room_prompt_request(analysis, style, bundle, room)}],
+            ROOM_PROMPT_SCHEMA, "compose_scene_prompt",
+        )
+        return str(raw.get("prompt") or "").strip()
 
     def create_style_spec(self, analysis: DesignAnalysis, bundle: InputBundle) -> StyleSpec:
         materials = get_material_registry().list()

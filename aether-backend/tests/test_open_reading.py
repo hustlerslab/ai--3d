@@ -80,6 +80,32 @@ def test_crops_are_written_for_boxed_items(env, tmp_path):
     assert write_crops(analysis, bundle, root) == warnings
 
 
+def test_a_re_read_does_not_leave_the_previous_runs_crops_behind(env, tmp_path):
+    """Crop names carry the item's index, so a reading that finds different
+    items writes new files and orphans the old ones. The sample project had 11
+    crops on disk for 6 read items."""
+    photo = _photo(tmp_path / "ref.png")
+    bundle = InputBundle(project_id="p", description=BRIEF, references=[ReferenceImage(path=str(photo))])
+    root = tmp_path / "proj"
+    first = coerce_analysis(RAW_ANALYSIS, bundle, [], provider="test")
+    write_crops(first, bundle, root)
+    before = {p.name for p in (root / "analysis/crops").glob("*.png")}
+    assert before
+
+    # a second reading that finds one differently-named item
+    other = dict(RAW_ANALYSIS, spotted_objects=[{
+        "name": "brass floor lamp", "family": "lighting", "semantic_type": "floor_lamp",
+        "placement": "floor", "room_name": "Living Room",
+        "image_index": 0, "bbox": [0.3, 0.1, 0.6, 0.6],
+    }])
+    second = coerce_analysis(other, bundle, [], provider="test")
+    write_crops(second, bundle, root, force=True)
+
+    after = {p.name for p in (root / "analysis/crops").glob("*.png")}
+    assert after == {Path(s.crop_ref).name for s in second.spotted_objects if s.crop_ref}
+    assert not (after & before), f"stale crops left behind: {after & before}"
+
+
 def test_object_plan_carries_reading_and_restores_dropped_items(env, tmp_path):
     bundle = InputBundle(project_id="p", description=BRIEF, references=[ReferenceImage(path=str(_photo(tmp_path / "r.png")))])
     analysis = coerce_analysis(RAW_ANALYSIS, bundle, [], provider="test")

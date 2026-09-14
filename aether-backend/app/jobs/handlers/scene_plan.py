@@ -27,6 +27,7 @@ from ..context import JobContext
 from ..registry import register
 from ..schema import JobLane
 
+SCENE_READING = "planning/scene_reading.json"
 OBJECT_PLAN = "planning/object_plan.json"
 ASSET_PLAN = "planning/asset_plan.json"
 SCENE_SPEC = "planning/scene_spec.json"
@@ -36,6 +37,105 @@ STYLE = "analysis/style_spec.json"
 
 class AnalysisRequired(Exception):
     pass
+
+
+def _room_images(ctx: JobContext, analysis) -> dict:
+    """room_id -> the approved render, for rooms that actually have one."""
+    from ...intelligence.schema import MoodboardSpec
+
+    path = ctx.path("analysis/moodboard_spec.json")
+    if not path.exists():
+        return {}
+    board = MoodboardSpec.model_validate(ctx.read_json("analysis/moodboard_spec.json"))
+    out = {}
+    for scene in board.room_scenes:
+        if not scene.url:
+            continue
+        # scene.url is a /files/... url; the file sits under the project dir
+        rel = scene.url.split(f"{ctx.project_id}/", 1)[-1]
+        candidate = ctx.path(rel)
+        if candidate.is_file():
+            out[scene.room_id] = candidate
+    return out
+
+
+def _read_scene(ctx: JobContext, analysis, style, provider, *, force: bool):
+    """Read every approved room render into elements, crops and surfaces.
+
+    Optional by design: a provider without the capability, or a project whose
+    moodboard was never painted, yields an empty reading and the plan proceeds
+    exactly as it did before. The reading enriches the plan; it is not a
+    precondition for having one.
+    """
+    from ...intelligence.scene_reading import (
+        check_element_crops, coerce_room_reading, estimate_dimensions,
+        write_element_crops)
+    from ...intelligence.schema import SceneReading
+    from ...projects.layout import project_dir
+
+    if ctx.has_checkpoint(SCENE_READING) and not force:
+        reading = SceneReading.model_validate(ctx.read_json(SCENE_READING))
+        ctx.emit("plan.read", f"checkpoint present, skipped ({len(reading.elements)} element(s))")
+        return reading
+
+    images = _room_images(ctx, analysis)
+    read = getattr(provider, "read_scene_elements", None)
+    if not images or not callable(read):
+        why = "no approved room images yet" if not images else f"{provider.label} cannot read renders"
+        ctx.emit("plan.read", f"skipped — {why}", status="warning")
+        return SceneReading(provider=getattr(provider, "label", "none"),
+                            warnings=[f"scene reading skipped: {why}"])
+
+    elements, surfaces, warnings = [], [], []
+    for room in analysis.rooms:
+        image = images.get(room.room_id)
+        if image is None:
+            warnings.append(f"{room.room_id}: no approved image; not read")
+            continue
+        raw = read(image, room, style, ctx.project.vertical) or {}
+        if not raw:
+            warnings.append(f"{room.room_id}: the reader returned nothing")
+            continue
+        room_elements, room_surfaces = coerce_room_reading(raw, room, ctx.project.vertical, warnings)
+        elements.extend(room_elements)
+        if room_surfaces is not None:
+            surfaces.append(room_surfaces)
+        ctx.emit("plan.read", f"{room.name}: {len(room_elements)} element(s)")
+
+    reading = SceneReading(elements=elements, surfaces=surfaces,
+                           provider=getattr(provider, "label", "unknown"), warnings=warnings)
+    root = project_dir(ctx.project_id)
+    reading.warnings += write_element_crops(reading, images, root, force=force)
+    # Second look at each crop on its own. A box can be structurally perfect
+    # and around the wrong thing, and only a fresh look at the cut-out picture
+    # can tell. Optional like the read itself: a provider that cannot do it
+    # leaves every element `unchecked`, which the approval gate treats as
+    # needing a human, not as a pass.
+    # How big each piece really is, before anything is generated from it: the
+    # mesh is scaled to this at ingest, and a per-type table cannot tell a
+    # single bed from a king or size a range hood at all.
+    sized = estimate_dimensions(reading, {r.room_id: r for r in analysis.rooms},
+                                ctx.project.vertical, provider, reading.warnings)
+    if sized:
+        ctx.emit("plan.size", f"{sized} piece(s) measured in metres by the reader")
+
+    if callable(getattr(provider, "check_element_crop", None)):
+        tally = check_element_crops(
+            reading, {r.room_id: r.type for r in analysis.rooms},
+            ctx.project.vertical, root, provider)
+        ctx.emit("plan.check", ", ".join(f"{n} {k}" for k, n in sorted(tally.items())) or "nothing to check",
+                 status="warning" if tally.get("ok", 0) < sum(tally.values()) else "info")
+    reading.version = ctx.projects.next_analysis_version(ctx.project_id, "scene_reading")
+    ctx.write_json(SCENE_READING, reading)
+    ctx.projects.add_analysis(ctx.project_id, "scene_reading", SCENE_READING, reading.version)
+    ctx.mark_checkpoint("scene_reading")
+    cut = sum(1 for e in reading.elements if e.crop_ref)
+    ctx.emit(
+        "plan.read",
+        f"{len(reading.elements)} element(s) across {len(images)} room(s), {cut} crop(s) cut, "
+        f"{len(reading.surfaces)} surface set(s)",
+    )
+    return reading
 
 
 def _load_specs(ctx: JobContext) -> tuple[DesignAnalysis, StyleSpec]:
@@ -55,10 +155,21 @@ def _load_specs(ctx: JobContext) -> tuple[DesignAnalysis, StyleSpec]:
 )
 def scene_plan(ctx: JobContext) -> dict[str, Any]:
     force = bool(ctx.params.get("force", False))
+    # Re-reading the moodboard is NOT part of "force". It calls the vision model
+    # again, and because the answer is non-deterministic the new elements get
+    # new ids and new names — which discards every approval a human made and
+    # orphans every mesh already bought from those crops. Forcing a re-plan cost
+    # 12 approvals and re-priced 7 pieces we already owned at 210 credits before
+    # this was separated. Ask for it explicitly.
+    force_read = bool(ctx.params.get("force_read", False))
     analysis, style = _load_specs(ctx)
     bundle = build_input_bundle(ctx.project_id)
     provider = get_provider()
     warnings: list[str] = []
+
+    # ── read the approved moodboard ──────────────────────────────────────
+    reading = _read_scene(ctx, analysis, style, provider, force=force_read)
+    warnings += reading.warnings
 
     # ── object plan ──────────────────────────────────────────────────────
     if ctx.has_checkpoint(OBJECT_PLAN) and not force:
@@ -66,6 +177,14 @@ def scene_plan(ctx: JobContext) -> dict[str, Any]:
         ctx.emit("plan.objects", "checkpoint present, skipped")
     else:
         plan = provider.plan_objects(analysis, style, bundle)
+        # The approved render decides what is in the rooms it shows; the brief
+        # keeps the rooms it does not. Free, and not gated on approval -
+        # approval gates SPENDING, which is the generate_elements job.
+        from ...intelligence.scene_reading import merge_reading_into_plan
+
+        plan, merge_notes = merge_reading_into_plan(plan, reading)
+        for note in merge_notes:
+            ctx.emit("plan.merge", note)
         plan.version = ctx.projects.next_analysis_version(ctx.project_id, "object_plan")
         ctx.write_json(OBJECT_PLAN, plan)
         ctx.projects.add_analysis(ctx.project_id, "object_plan", OBJECT_PLAN, plan.version)
@@ -82,7 +201,12 @@ def scene_plan(ctx: JobContext) -> dict[str, Any]:
         assets = AssetPlan.model_validate(ctx.read_json(ASSET_PLAN))
         ctx.emit("plan.assets", "checkpoint present, skipped")
     else:
-        assets = resolve_plan(plan, style)
+        # Meshes already made from these elements' own crops outrank the
+        # catalog: the client chose that piece, everything else is a substitute.
+        element_assets = {e.element_id: e.asset_id for e in reading.elements if e.asset_id}
+        assets = resolve_plan(plan, style, element_assets)
+        if element_assets:
+            ctx.emit("plan.assets", f"{len(element_assets)} element(s) carry a generated mesh")
         assets.version = ctx.projects.next_analysis_version(ctx.project_id, "asset_plan")
         ctx.write_json(ASSET_PLAN, assets)
         ctx.projects.add_analysis(ctx.project_id, "asset_plan", ASSET_PLAN, assets.version)
@@ -97,7 +221,8 @@ def scene_plan(ctx: JobContext) -> dict[str, Any]:
         scene = store.load(snapshot["scene_id"])
         ctx.emit("plan.scene", f"checkpoint present, skipped (scene {scene.scene_id} v{scene.version})")
     else:
-        scene, layout_warnings = compile_scene(ctx.project_id, analysis, style, name=f"{ctx.project.name} · {style.name}")
+        scene, layout_warnings = compile_scene(ctx.project_id, analysis, style,
+                                               name=f"{ctx.project.name} · {style.name}", reading=reading)
         warnings += layout_warnings
         store.create(scene)
         ctx.emit("plan.scene", f"{len(scene.rooms)} room(s), {len(scene.walls)} wall(s), {len(scene.openings)} opening(s) laid out")

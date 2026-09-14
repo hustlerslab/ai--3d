@@ -33,7 +33,7 @@ from ..scene.schema import (
 )
 from ..spatial import geometry as geo
 from ..spatial.validation import object_footprint, validate_object
-from .layout import build_walls_and_openings, layout_rooms
+from .layout import build_walls_and_openings, layout_rooms, wall_segments
 
 Vec2 = tuple[float, float]
 Candidate = tuple[Vec2, float, Optional[float]]   # (x, z), yaw, y (None = from mount)
@@ -49,6 +49,57 @@ SPEC_VERSION = "1.1"
 
 
 # ── rooms, walls, style, lighting ────────────────────────────────────────
+
+
+# What the reader writes is free text off a picture ("wood paneling and
+# wallpaper", "plaster and dark wood panelling"), and the scene needs a
+# registry id. Keyword -> id, most specific first, so "dark wood" beats "wood".
+# Unmatched text falls through to the style's own choice rather than guessing:
+# a wrong floor everywhere is more noticeable than a default one.
+_SURFACE_WORDS: list[tuple[tuple[str, ...], str]] = [
+    (("herringbone",), "wood_oak_herringbone"),
+    (("walnut",), "wood_walnut"),
+    (("dark wood", "dark timber", "espresso", "wenge"), "wood_dark"),
+    (("oak", "light wood", "timber", "wood", "parquet", "laminate"), "wood_oak"),
+    (("marble",), "marble"),
+    (("terrazzo",), "terrazzo"),
+    (("granite", "stone"), "stone_granite"),
+    (("tile", "ceramic", "porcelain"), "tile_ivory"),
+    (("lime", "limewash"), "plaster_lime"),
+    (("wallpaper", "patterned", "textured"), "plaster_patterned"),
+    (("sage", "green"), "paint_sage"),
+    (("terracotta", "rust", "clay"), "paint_terracotta"),
+    (("ivory", "cream", "beige"), "paint_ivory"),
+    (("plaster", "paint", "white", "painted"), "paint_white"),
+]
+
+
+def material_for(text: str, applies_to: str) -> str:
+    """Registry id for a described surface, or "" when nothing matches.
+
+    Empty is a real answer: the caller keeps the style's material, which is at
+    least coherent. Guessing would put an invented floor in every room.
+    """
+    low = (text or "").lower()
+    if not low.strip():
+        return ""
+    registry = get_material_registry()
+    for words, mid in _SURFACE_WORDS:
+        if not any(w in low for w in words):
+            continue
+        rec = registry.get(mid)
+        if rec is not None and applies_to in rec.applies_to:
+            return mid
+    return ""
+
+
+def room_surface_materials(reading) -> dict[str, tuple[str, str]]:
+    """room_id -> (floor material id, wall material id), "" where unknown."""
+    out: dict[str, tuple[str, str]] = {}
+    for s in getattr(reading, "surfaces", []) or []:
+        out[s.room_id] = (material_for(s.floor_material, "floor"),
+                          material_for(s.wall_material, "wall"))
+    return out
 
 
 def _floor_and_wall_materials(style: StyleSpec) -> tuple[str, str, str]:
@@ -71,12 +122,26 @@ def _floor_and_wall_materials(style: StyleSpec) -> tuple[str, str, str]:
     return floor, wet, wall
 
 
-def compile_scene(project_id: str, analysis: DesignAnalysis, style: StyleSpec, *, name: str) -> tuple[Scene, list[str]]:
+def compile_scene(project_id: str, analysis: DesignAnalysis, style: StyleSpec, *, name: str,
+                  reading=None) -> tuple[Scene, list[str]]:
     placed = layout_rooms(analysis.rooms)
     walls, openings, warnings = build_walls_and_openings(placed)
     floor, wet, wall_mat = _floor_and_wall_materials(style)
+    # The approved render describes what each room is actually made of. Where it
+    # does, that beats the style's blanket choice: the style picked one wood for
+    # the whole flat, while the picture the client agreed to has panelling in one
+    # bedroom and paint in the other. Rooms the render could not describe keep
+    # the style default rather than a guess.
+    per_room = room_surface_materials(reading) if reading is not None else {}
+    # A wall segment borders one or two rooms (WallSeg.rooms). An exterior wall
+    # takes its room's finish; an interior wall only takes one when both sides
+    # agree, because a single slab cannot be panelled on one face and painted on
+    # the other in this geometry, and picking a side would be arbitrary.
+    seg_rooms = {seg.wall_id: seg.rooms for seg in wall_segments(placed)}
     for w in walls:
-        w.material = wall_mat
+        sides = {per_room.get(r, ("", ""))[1] for r in seg_rooms.get(w.wall_id, set())}
+        sides.discard("")
+        w.material = sides.pop() if len(sides) == 1 else wall_mat
 
     features = [f for f in analysis.architecture if f in vocab.ARCHITECTURE_FEATURES]
     rooms: list[Room] = []
@@ -90,7 +155,8 @@ def compile_scene(project_id: str, analysis: DesignAnalysis, style: StyleSpec, *
                 type=p.type,
                 boundary=p.boundary,
                 ceiling_height=p.height,
-                floor_material=wet if p.type in ("kitchen", "bathroom", "balcony") else floor,
+                floor_material=(per_room.get(p.room_id, ("", ""))[0]
+                                or (wet if p.type in ("kitchen", "bathroom", "balcony") else floor)),
                 confidence=conf,
                 features=[] if p.type in ("kitchen", "bathroom", "balcony") else list(features),
             )
@@ -603,6 +669,69 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
     return ops, warnings
 
 
+# Arrangement hints from the approved render, used as PREFERENCES only.
+#
+# What is usable and what is not. The reader answers in the picture's own frame
+# ("back wall", "left wall", "front"), and a render has no fixed orientation
+# relative to the floor plan - its "left wall" is whichever wall the camera
+# happened to face. Mapping those onto real walls would be inventing a fact, so
+# they are deliberately ignored and the engine's existing order stands.
+#
+# What survives the translation is frame-independent:
+#   * "centre" / "middle"          - free-standing, not against a wall
+#   * "corner"                     - in a corner
+#   * anything naming a window     - a wall that has one
+#   * the name of another piece    - beside that piece
+#
+# Nothing here filters: every candidate the engine produced stays in the list,
+# in the same order among equals. A hint only moves matching spots earlier, so
+# an unsatisfiable hint costs nothing and the fallback path is byte-for-byte
+# what runs today for an element with no hint at all.
+_CENTRE_WORDS = ("centre", "center", "middle", "central", "free-standing", "freestanding")
+_CORNER_WORDS = ("corner",)
+_WINDOW_WORDS = ("window", "glazing", "french door")
+
+
+def _edge_has_window(scene: Scene, room: Room, pos: Vec2) -> bool:
+    windows = _window_points(scene, room) if scene is not None else []
+    return any(geo.distance(pos, w) <= 1.6 for w in windows)
+
+
+def _near_corner(room: Room, pos: Vec2) -> bool:
+    return any(geo.distance(pos, v) <= 1.2 for v in room.boundary)
+
+
+def _hint_rank(candidate: tuple[Vec2, float], item: ObjectPlanItem, scene: Scene, room: Room,
+               placed_by_key: dict[str, SceneObject]) -> int:
+    """0 = matches the hint, 1 = does not. Lower sorts first; ties keep order."""
+    hint = (item.against or "").strip().lower()
+    if not hint:
+        return 1
+    pos = candidate[0]
+    centroid = geo.polygon_centroid(room.boundary)
+    if any(w in hint for w in _WINDOW_WORDS) and _edge_has_window(scene, room, pos):
+        return 0
+    if any(w in hint for w in _CORNER_WORDS) and _near_corner(room, pos):
+        return 0
+    if any(w in hint for w in _CENTRE_WORDS) and geo.distance(pos, centroid) <= 1.0:
+        return 0
+    # "against the sofa": beside a piece already standing in this room.
+    for key, obj in placed_by_key.items():
+        name = (obj.semantic_type or "").replace("_", " ")
+        if obj.room_id == room.room_id and name and name in hint:
+            if geo.distance(pos, (obj.position[0], obj.position[2])) <= 1.8:
+                return 0
+    return 1
+
+
+def _prefer_hint(candidates: list[tuple[Vec2, float]], item: ObjectPlanItem, scene: Scene,
+                 room: Room, placed_by_key: dict[str, SceneObject]) -> list[tuple[Vec2, float]]:
+    """Re-order, never re-select. Same list, matching spots first."""
+    if not (item.against or "").strip():
+        return candidates
+    return sorted(candidates, key=lambda c: _hint_rank(c, item, scene, room, placed_by_key))
+
+
 def _floor_candidates(working: Scene, room: Room, item: ObjectPlanItem, dims: tuple[float, float, float], n: int,
                       placed_by_key: dict[str, SceneObject]) -> list[tuple[Vec2, float]]:
     candidates: list[tuple[Vec2, float]] = []
@@ -630,4 +759,7 @@ def _floor_candidates(working: Scene, room: Room, item: ObjectPlanItem, dims: tu
         # counters and chimney breasts run along the longest wall, away from the door
         wall_candidates.sort(key=lambda c: _door_distance(working, room, c[0]), reverse=True)
     candidates += wall_candidates
-    return candidates
+    # Preference pass, last: everything above decided WHICH spots are valid and
+    # in what default order; this only moves the ones the approved render
+    # points at earlier among them.
+    return _prefer_hint(candidates, item, working, room, placed_by_key)

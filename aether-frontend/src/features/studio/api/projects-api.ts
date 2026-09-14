@@ -16,6 +16,8 @@ import {
   type RoomHint,
   type SceneSpecDto,
   type Vertical,
+  type CreditsDto,
+  type SceneReadingDto,
 } from "../types";
 
 export const AETHER_BASE_URL = (
@@ -135,6 +137,13 @@ async function enqueue(path: string, body: unknown): Promise<JobDto> {
 }
 
 export const analyze = (projectId: string, force = false) => enqueue(`/projects/${projectId}/analyze`, { force });
+
+/** Redraw one room's moodboard image on a fresh seed, leaving the reading, the
+ *  style and the other rooms alone. The same prompt gives a complete bathroom
+ *  on one seed and a bathtub in an alcove on another, and no wording tells them
+ *  apart — so the reviewer draws again (ADR-002 §1). */
+export const repaintRoom = (projectId: string, roomId: string) =>
+  enqueue(`/projects/${projectId}/moodboard/rooms/${roomId}/repaint`, {});
 export const scenePlan = (projectId: string, force = false) => enqueue(`/projects/${projectId}/scene-plan`, { force });
 export const resolveAssets = (projectId: string) => enqueue(`/projects/${projectId}/assets/resolve`, {});
 export const build = (projectId: string, opts: { force?: boolean; preview?: boolean; preview_profile?: string } = {}) =>
@@ -182,3 +191,37 @@ export async function getEvents(projectId: string, after = 0, signal?: AbortSign
 
 export const TERMINAL: JobDto["status"][] = ["SUCCEEDED", "FAILED", "CANCELLED"];
 export const isTerminal = (status: JobDto["status"]) => TERMINAL.includes(status);
+
+/** The crops read out of the approved moodboard, each with the label the scene
+ *  read gave it and the verdict of the isolated second look. */
+export async function getSceneReading(projectId: string, signal?: AbortSignal): Promise<SceneReadingDto> {
+  const body = await request<{ data: SceneReadingDto }>(`/projects/${projectId}/scene-reading`, { signal });
+  return body.data;
+}
+
+/** Record confirm/reject per element. Keyed by element_id, never by position:
+ *  the list is re-read and re-ordered between the render and the click. */
+export async function reviewSceneReading(projectId: string, decisions: Record<string, boolean>) {
+  const body = await request<{ data: SceneReadingDto }>(
+    `/projects/${projectId}/scene-reading`,
+    { ...json({ decisions }), method: "PATCH" },
+  );
+  return body.data;
+}
+
+/** Remaining Meshy credits. Never throws the page: the backend answers
+ *  `available: false` with a reason rather than failing, because a missing
+ *  balance is not a reason to stop someone planning a room. */
+export async function getCredits(signal?: AbortSignal): Promise<CreditsDto> {
+  const body = await request<{ data: CreditsDto }>(`/credits`, { signal });
+  return body.data;
+}
+
+/** The paid step: turn approved crops into meshes.
+ *
+ *  Unwraps to the job like every other trigger, so it composes with `useJob`.
+ *  The cost is deliberately not read back from here — the caller re-fetches the
+ *  reading afterwards, because what was actually spent is the server's answer,
+ *  not the quote the button happened to be pressed on. */
+export const generateElements = (projectId: string, limit?: number) =>
+  enqueue(`/projects/${projectId}/elements/generate`, limit === undefined ? {} : { limit });

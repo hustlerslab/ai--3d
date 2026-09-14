@@ -47,6 +47,9 @@ class ValidationIssue(BaseModel):
 class AssetFiles(BaseModel):
     original: str = ""      # path relative to data dir
     normalized: str = ""    # path relative to data dir
+    # Same geometry, textures resized for the browser. Empty when the model was
+    # already light enough to need no second copy.
+    web: str = ""           # path relative to data dir
 
 
 class AssetRecord(BaseModel):
@@ -70,6 +73,12 @@ class AssetRecord(BaseModel):
     price_inr: int = 0
     color: str = "#8a7862"
     created_at: str = ""
+    # Set when this model was generated FOR one project from that
+    # project's own material. It stays out of the shared catalog: a sofa
+    # generated from one client's moodboard is not a library piece, and
+    # offering it to the next project would silently put one client's
+    # furniture in another's home. Reached by id instead, deliberately.
+    project_id: str = ""
 
     @property
     def valid(self) -> bool:
@@ -90,3 +99,9 @@ class IngestMeta(BaseModel):
     price_inr: int = 0
     color: str = "#8a7862"
     source: AssetSource = AssetSource()
+    # Set when this model was generated FOR one project from that
+    # project's own material. It stays out of the shared catalog: a sofa
+    # generated from one client's moodboard is not a library piece, and
+    # offering it to the next project would silently put one client's
+    # furniture in another's home. Reached by id instead, deliberately.
+    project_id: str = ""

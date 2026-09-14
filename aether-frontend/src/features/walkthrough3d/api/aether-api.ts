@@ -223,8 +223,12 @@ export async function rejectProposal(
 
 /* ── Catalog ───────────────────────────────────────────────────────────── */
 
-export async function getCatalog(signal?: AbortSignal): Promise<CatalogItem[]> {
-  return request<CatalogItem[]>("/catalog", { signal });
+export async function getCatalog(projectId = "", signal?: AbortSignal): Promise<CatalogItem[]> {
+  // Scoped so the renderer can resolve the pieces generated for THIS project.
+  // Without it they are absent from the catalog by design and every generated
+  // mesh silently falls back to a parametric box.
+  const q = projectId ? `?project_id=${encodeURIComponent(projectId)}` : "";
+  return request<CatalogItem[]>(`/catalog${q}`, { signal });
 }
 
 /**

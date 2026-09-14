@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from ..core.config import get_settings
-from . import gltf, normalization, validation
+from . import gltf, normalization, validation, web_variant
 from .registry import get_registry
 from .schema import AssetFiles, AssetRecord, IngestMeta
 
@@ -59,6 +59,7 @@ def ingest_file(source_path: Path, meta: IngestMeta) -> AssetRecord:
         room_types=meta.room_types,
         price_inr=meta.price_inr,
         color=meta.color,
+        project_id=meta.project_id,
         created_at=datetime.now(timezone.utc).isoformat(),
     )
 
@@ -72,6 +73,24 @@ def ingest_file(source_path: Path, meta: IngestMeta) -> AssetRecord:
     out_path.write_bytes(gltf.pack_glb(doc, plan.root_transform))
     record.files.normalized = _relative(out_path)
     record.file_size = out_path.stat().st_size
+
+    # A viewer-sized copy beside it. A generated mesh carries three 2048 px
+    # maps - 88 % of its bytes and 48 MB of GPU memory each - and fifteen of
+    # them asked for ~900 MB of texture memory, which a 6 GB card refused
+    # silently: every model showed as a placeholder. Never fatal: if this
+    # fails the viewer simply loads the full-size file, as it did before.
+    try:
+        web_out = registry.web_path(asset_id)
+        stats = web_variant.build(out_path, web_out)
+        if stats["images_resized"]:
+            record.files.web = _relative(web_out)
+            log.info("Web variant for %s: %.1f MB -> %.1f MB, VRAM %.0f MB -> %.0f MB",
+                     asset_id, stats["source_bytes"] / 2**20, stats["dest_bytes"] / 2**20,
+                     stats["vram_before"] / 2**20, stats["vram_after"] / 2**20)
+        else:
+            web_out.unlink(missing_ok=True)      # nothing to gain; do not keep a copy
+    except Exception:                            # noqa: BLE001
+        log.exception("%s: web variant failed; the viewer will load the full model", asset_id)
     log.info(
         "Ingested %s: %.2fx%.2fx%.2f m, %s tris, unit=%s scale=%.4g",
         asset_id, *plan.dimensions, f"{measurement.triangles:,}", plan.info.detected_unit, plan.info.unit_scale,

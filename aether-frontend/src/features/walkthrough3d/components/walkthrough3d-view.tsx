@@ -120,11 +120,11 @@ export function Walkthrough3DView({
     if (engineState !== "up") return;
     const controller = new AbortController();
     api
-      .getCatalog(controller.signal)
+      .getCatalog(scene?.project_id ?? "", controller.signal)
       .then((items) => setCatalog(items))
       .catch(() => setCatalog([]));
     return () => controller.abort();
-  }, [engineState]);
+  }, [engineState, scene?.project_id]);
 
   /* ── Scene refresh after any mutation ────────────────────────────────── */
 

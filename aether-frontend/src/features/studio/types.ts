@@ -107,7 +107,15 @@ export interface RoomAnalysis {
   notes: string;
 }
 
+/** What a read item is for. "place" becomes geometry; "reference" shapes the
+ *  palette and materials without furnishing the room — uploads are often shop
+ *  photos, and four mattresses from a showroom are not four beds. */
+export type ItemRole = "place" | "reference";
+
 export interface SpottedObject {
+  /** Stable, content-derived. Address items by this, never by list position. */
+  object_id: string;
+  role: ItemRole;
   semantic_type: string;
   /** Open reading (schema 1.1): free name, coarse family, where it sits and the photo crop. */
   name?: string;
@@ -148,6 +156,23 @@ export interface StyleSpec {
   warnings: string[];
 }
 
+/** One room's moodboard image. `url` empty means it could not be painted. */
+export interface RoomScene {
+  room_id: string;
+  name: string;
+  type: string;
+  url: string;
+  error: string;
+  /** False means the render never saw a photo of this room's own pieces — the
+   *  normal case for rooms the client photographed nothing of. */
+  reference_resolved: boolean;
+  reference_note: string;
+  /** The noise seed this image was drawn from. Regenerating draws a different
+   *  one, so the button is a new attempt rather than the same dice re-rolled. */
+  seed?: number;
+  recipe_version?: string;
+}
+
 export interface MoodboardSpec {
   title: string;
   style_name: string;
@@ -167,6 +192,9 @@ export interface MoodboardSpec {
   scene_url?: string;
   /** Why there is no scene image, in words the user can act on. */
   scene_error?: string;
+  /** One image per room. `scene_url` above is the first of these, kept as the
+   *  hero so older screens keep working. */
+  room_scenes?: RoomScene[];
   /** Was the scene actually conditioned on one of the user's photos? False with
    *  a scene_url present means a generic room was rendered — it must be shown,
    *  because it looks identical to a good result. */
@@ -191,6 +219,8 @@ export interface AnalysisPatch {
   rooms?: Partial<RoomAnalysis>[];
   remove_rooms?: string[];
   style?: Partial<Pick<StyleSpec, "name" | "tags" | "palette" | "materials" | "lighting_mood" | "description">>;
+  /** { object_id: role } — which read items the client actually owns. */
+  item_roles?: Record<string, ItemRole>;
 }
 
 export interface SceneSpecDto {
@@ -213,4 +243,61 @@ export class ProjectsApiError extends Error {
     super(message);
     this.name = "ProjectsApiError";
   }
+}
+
+/** Verdict of the isolated second look at one crop. `unchecked` and
+ *  `unreadable` both mean nobody has established what the crop shows — they
+ *  are not passes, and the review screen treats them as needing eyes. */
+export type ElementCheck =
+  | "unchecked" | "ok" | "mismatch" | "crowded" | "duplicate" | "unreadable";
+
+export interface SceneElement {
+  element_id: string;
+  room_id: string;
+  name: string;
+  semantic_type: string;
+  bbox: [number, number, number, number] | null;
+  material: string;
+  color: string;
+  placement: string;
+  against: string;
+  faces: string;
+  confidence: number;
+  crop_ref: string;
+  crop_url: string;
+  check: ElementCheck;
+  check_note: string;
+  /** null until a human has actually looked. Not the same as false. */
+  approved: boolean | null;
+}
+
+export interface SceneReadingDto {
+  reading: {
+    elements: SceneElement[];
+    surfaces: { room_id: string; wall_color: string; wall_material: string;
+                floor_color: string; floor_material: string; notes: string }[];
+    provider: string;
+    warnings: string[];
+  };
+  summary: {
+    with_crops: number;
+    approved: number;
+    rejected: number;
+    pending: number;
+    flagged_by_check: number;
+    ready_to_generate: number;
+    /** What pressing Generate would do right now. */
+    to_generate: number;
+    already_generated: number;
+    credits_needed: number;
+  };
+}
+
+export interface CreditsDto {
+  available: boolean;
+  /** Present only when available. */
+  balance?: number;
+  reason?: string;
+  credits_per_piece: number;
+  max_per_project?: number;
 }

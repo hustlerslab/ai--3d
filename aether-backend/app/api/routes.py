@@ -8,6 +8,7 @@ Response envelope matches the frontend client convention:
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from functools import lru_cache
 from typing import Any, Optional
 
 from fastapi import APIRouter, File, Form, Request, UploadFile
@@ -54,6 +55,48 @@ def _intelligence_status() -> dict:
     return {"provider": p.name, "mode": p.mode, "model": p.label, "fallback_to_mock": p.allow_fallback}
 
 
+_STARTED_AT = datetime.now(timezone.utc)
+
+
+@lru_cache(maxsize=1)
+def _git_sha() -> dict[str, str]:
+    """The commit this process was started from, plus whether the tree was
+    dirty. Read once: it cannot change without a restart, which is the point."""
+    import subprocess
+
+    root = get_settings().repo_root
+    def run(*args: str) -> str:
+        try:
+            return subprocess.run(["git", *args], cwd=root, capture_output=True,
+                                  text=True, timeout=5).stdout.strip()
+        except Exception:                                  # noqa: BLE001
+            return ""
+
+    sha = run("rev-parse", "HEAD")
+    return {
+        "sha": sha[:12] or "unknown",
+        "branch": run("rev-parse", "--abbrev-ref", "HEAD") or "unknown",
+        # A dirty tree means the running process may differ from the commit
+        # even when the sha matches, so say so rather than imply precision.
+        "dirty": bool(run("status", "--porcelain")),
+    }
+
+
+def _runtime_status() -> dict:
+    now = datetime.now(timezone.utc)
+    git = _git_sha()
+    return {
+        "started_at": _STARTED_AT.isoformat(),
+        "uptime_seconds": int((now - _STARTED_AT).total_seconds()),
+        "git": git,
+        # The one question this endpoint exists to answer.
+        "note": (
+            "Code is loaded at start-up (no --reload). If files changed after "
+            f"{_STARTED_AT.isoformat()}, restart the server before trusting behaviour."
+        ),
+    }
+
+
 @router.get("/health")
 def health() -> dict:
     settings = get_settings()
@@ -61,6 +104,12 @@ def health() -> dict:
         "status": "ok",
         "service": "aether-walkthrough-backend",
         "version": "0.1.0",
+        # Which code is actually RUNNING, not which code is on disk. The server
+        # is launched without --reload (stale-route hang on Windows), so a
+        # process can serve code that was edited hours ago and nothing says so.
+        # That cost two full rounds of misdiagnosis: a deleted Gemini image path
+        # kept answering because a process from before its removal was still up.
+        "runtime": _runtime_status(),
         "providers": {
             "intelligence": _intelligence_status(),
             "gemini": gemini.status(),
@@ -383,12 +432,16 @@ def catalog(
     max_price: Optional[int] = None,
     style: Optional[str] = None,
     require_model: bool = False,
+    # A renderer asks for one project's catalog so it can resolve the generated
+    # pieces that project's scene references. Searching without it never sees
+    # them, which is what keeps one client's sofa out of another's results.
+    project_id: str = "",
 ) -> dict:
     style_tags = [s.strip() for s in style.split(",")] if style else None
     if q or room_type or max_width or max_price or style_tags or require_model:
         items = search(q, room_type, max_width, max_price, style_tags, None, require_model)
     else:
-        items = all_items()
+        items = all_items(project_id)
     return ok([i.model_dump() for i in items])
 
 

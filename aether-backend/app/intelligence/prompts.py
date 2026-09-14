@@ -10,7 +10,10 @@ bounding box in the photo, so nothing visible is dropped for lack of a type.
 """
 from __future__ import annotations
 
+import hashlib
 import json
+import logging
+from functools import lru_cache
 from typing import Any
 
 from ..projects.schema import Vertical
@@ -252,6 +255,11 @@ def objects_prompt(
         {"room_id": r.room_id, "name": r.name, "type": r.type, "width_m": r.width_m, "length_m": r.length_m}
         for r in analysis.rooms
     ]
+    # `reference` items are deliberately withheld. They were read from shop or
+    # inspiration photos, and the planner's instruction is "keep every one" —
+    # offer it four mattresses and it will dutifully furnish a bedroom with
+    # four beds. They still reach the style stage, which reads the whole
+    # analysis, so the palette and materials they carry are not lost.
     spotted = [
         {
             "spotted_index": i,
@@ -259,6 +267,7 @@ def objects_prompt(
                                     "material", "color", "approx_dimensions", "notes"}),
         }
         for i, s in enumerate(analysis.spotted_objects)
+        if s.role == "place"
     ]
     return (
         "You are the furniture-planning agent of an interior design pipeline. Decide WHAT goes in "
@@ -350,7 +359,204 @@ def _scene_furniture(analysis: DesignAnalysis, room) -> str:
     return ", ".join(words[:-1]) + " and " + words[-1] if len(words) > 1 else words[0]
 
 
-def scene_prompt_sd(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle) -> str:
+# Asking the reading model to write the image prompt, instead of joining a
+# keyword list with commas. The engine is SD 1.5 behind CLIP, so the brief is
+# unusually specific about length and about what actually survives encoding.
+ROOM_PROMPT_SCHEMA = {
+    "type": "object",
+    "properties": {"prompt": {"type": "string"}},
+    "required": ["prompt"],
+}
+
+CLIP_WINDOW = 77                     # hard: CLIP silently truncates past this
+ROOM_PROMPT_MAX_TOKENS = 70          # what we ask for, leaving headroom
+# Asked-for word budget. Measured: at "~45 words" Gemini came back over the
+# CLIP window on 2 of 5 rooms (112 and 95 tokens) and both had to fall back to
+# the template. Models overshoot a stated budget, so the ask is set well under
+# what the window allows rather than at it.
+ROOM_PROMPT_MAX_WORDS = 34
+
+# The framing clause is ours, not the model's. Measured: asked to include it,
+# the model wrote "wide angle interior render" and spent the rest of its budget
+# on adjectives — and the bathroom came back as a close-up of the bathtub. It is
+# appended verbatim to every composed prompt so the framing cannot be dropped,
+# and the word budget above is cut to pay for it.
+FRAMING_TAIL = "wide angle, whole room, far from the subject, two walls and floor visible"
+
+# Fixtures a room needs in the PICTURE but the 3D planner has no semantic type
+# for, so ROOM_SETS cannot offer them. A moodboard image is a photograph, not a
+# plan: it can show a toilet and a shower even though nothing will place one.
+# Without this the bathroom prompt named only vanity, mirror and bathtub —
+# everything SEMANTIC_TYPES knows — and read as a tub in an alcove.
+PICTURE_ONLY_FIXTURES: dict[str, str] = {
+    "bathroom": "toilet, basin, walk-in shower with a glass screen, towel rail",
+    "kitchen": "sink, hob and oven, extractor, upper cabinets",
+}
+
+
+def room_prompt_request(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle, room) -> str:
+    """Ask the intelligence layer to compose one room's image prompt.
+
+    Deliberately hands over ONLY this room: its own pieces, the shared style,
+    and the brief. Passing the whole reading is how another room's furniture
+    ends up in the picture — the same leak the per-room reference chooser was
+    fixed for.
+    """
+    mine = [
+        {k: v for k, v in s.model_dump(include={"name", "semantic_type", "material", "color"}).items() if v}
+        for s in analysis.spotted_objects
+        if s.room_id == room.room_id and s.role == "place"
+    ]
+    staples = _scene_furniture(analysis, room)
+    fixtures = PICTURE_ONLY_FIXTURES.get(room.type, "")
+    return (
+        "You write prompts for a Stable Diffusion 1.5 interior render. "
+        'Return JSON {"prompt": "..."}.\n\n'
+        f"ROOM: {room.name} ({room.type.replace('_', ' ')}), "
+        f"{room.width_m:.1f} x {room.length_m:.1f} m.\n"
+        f"THE CLIENT'S OWN PIECES HERE: "
+        f"{json.dumps(mine) if mine else 'none photographed'}\n"
+        f"PIECES THE ROOM STILL NEEDS: {staples or 'use your judgement'}\n"
+        + (f"ALSO SHOW, the room is not complete without them: {fixtures}\n" if fixtures else "")
+        + f"STYLE: {', '.join(style.tags) or 'modern, warm'}; "
+        + f"materials {', '.join(style.materials) or 'wood, plaster'}; "
+        + f"light {style.lighting_mood.replace('_', ' ')}\n"
+        + f"BRIEF: {(bundle.description or analysis.intent)[:300]}\n\n"
+        + "RULES\n"
+        + f"- HARD LIMIT {ROOM_PROMPT_MAX_WORDS} words. Over that and the prompt "
+        "is discarded for the keyword template. Count them.\n"
+        "- Do NOT write camera or framing words (wide angle, whole room, eye "
+        "level, shot, view, render). They are appended for you — spend every "
+        "word on what is IN the room instead.\n"
+        "- One flowing phrase of comma-separated clauses, not a list.\n"
+        "- Name every piece listed above that a person would notice on walking "
+        "in, the client's own pieces first.\n"
+        "- Describe materials and light in words; CLIP cannot read hex codes.\n"
+        "- Only this room. Never mention another room's furniture.\n"
+        "- No camera brands, no artist names, no quality tokens."
+    )
+
+
+log = logging.getLogger("aether.intelligence.prompts")
+
+
+_TOKENIZER: Any = None
+
+
+@lru_cache(maxsize=1)
+def _rules_fingerprint() -> str:
+    """Hash of the instructions handed to the model, taken from the source of
+    the two functions that build a prompt. Source-derived so that editing a
+    rule invalidates old images automatically — nobody has to remember."""
+    import inspect
+
+    try:
+        text = inspect.getsource(room_prompt_request) + inspect.getsource(scene_prompt_sd)
+    except (OSError, TypeError):                       # frozen/zipped install
+        return "nosource"
+    return hashlib.sha1(text.encode("utf-8")).hexdigest()[:12]
+
+
+def scene_recipe_version() -> str:
+    """A short hash of everything that decides what a room image looks like.
+
+    Stored beside each generated image. When the recipe changes — the framing
+    clause, the fixture vocabulary, the rules handed to the model, the negative
+    prompt, the render size or the reference strength — the hash changes, and
+    every image made under the old recipe becomes detectably stale.
+
+    Without this, staleness was invisible: an image written after a code change
+    can still predate it, because the server loads code once at start-up. File
+    timestamps actively mislead — a bathroom image newer than prompts.py was
+    produced by a process that started ten minutes before the change landed.
+
+    Deliberately content-derived rather than a number someone must remember to
+    bump: the failure mode of a manual version is forgetting it, which returns
+    us to exactly the silent staleness this exists to end.
+    """
+    from ..core.config import get_settings
+
+    settings = get_settings()
+    material = "|".join([
+        "v1",
+        FRAMING_TAIL,
+        SD_NEGATIVE,
+        repr(sorted(PICTURE_ONLY_FIXTURES.items())),
+        str(ROOM_PROMPT_MAX_WORDS),
+        str(ROOM_PROMPT_MAX_TOKENS),
+        _rules_fingerprint(),
+        f"{settings.scene_image_width}x{settings.scene_image_height}",
+        str(settings.scene_image_steps),
+        str(settings.scene_image_reference_scale),
+        settings.scene_image_model,
+    ])
+    return hashlib.sha1(material.encode("utf-8")).hexdigest()[:12]
+
+
+def _clip_tokens_estimate(text: str) -> int:
+    """Word-based fallback when the real tokenizer is unavailable.
+
+    Measured against CLIP on real prompts it over-counts by 6-20 %, which is
+    not the safe direction it looks like: it scored the keyword template at 81
+    against a true 70 and rejected composed prompts that fit comfortably. Kept
+    only so this module works without the image stack installed.
+    """
+    return int(len(text.split()) * 1.3) + sum(text.count(c) for c in ",.;:()") + 2
+
+
+def clip_tokens(text: str) -> int:
+    """How many tokens CLIP will actually make of this, measured not guessed.
+
+    CLIP's window is the real constraint on an SD prompt and a guess is no
+    better than the thing it guards: an over-count silently throws away good
+    prompts, an under-count silently loses the end of one. The tokenizer is
+    already a dependency of the image stack, costs one lazy load, and is then
+    cached for the life of the process.
+    """
+    global _TOKENIZER
+    if _TOKENIZER is None:
+        try:
+            from transformers import CLIPTokenizer
+
+            _TOKENIZER = CLIPTokenizer.from_pretrained("openai/clip-vit-base-patch32")
+        except Exception as exc:                       # noqa: BLE001
+            log.warning("CLIP tokenizer unavailable (%s); falling back to the word estimate", exc)
+            _TOKENIZER = False
+    if _TOKENIZER is False:
+        return _clip_tokens_estimate(text)
+    return len(_TOKENIZER(text)["input_ids"])
+
+
+def compose_room_prompt(provider, analysis: DesignAnalysis, style: StyleSpec,
+                        bundle: InputBundle, room) -> tuple[str, str]:
+    """This room's image prompt, and where it came from ("llm" or "template").
+
+    Asks the intelligence layer to write it; falls back to the keyword template
+    when the provider has no such capability, returns nothing, or returns
+    something CLIP would truncate. The source is returned rather than hidden, so
+    the moodboard can say which one it used.
+    """
+    compose = getattr(provider, "compose_scene_prompt", None)
+    if callable(compose):
+        try:
+            text = " ".join((compose(analysis, style, bundle, room) or "").split())
+        except Exception as exc:                       # noqa: BLE001
+            log.exception("%s: composed prompt failed", room.room_id)
+            text = ""
+        if text:
+            # The framing is appended, never left to the model. Asked to write
+            # it, the model produced "wide angle interior render" and the
+            # bathroom came back as a close-up of the bathtub.
+            text = f"{text.rstrip(' .,')}, {FRAMING_TAIL}"
+        if text and clip_tokens(text) <= CLIP_WINDOW:
+            return text, "llm"
+        if text:
+            log.warning("%s: composed prompt is %d CLIP tokens (limit %d); using the template",
+                        room.room_id, clip_tokens(text), CLIP_WINDOW)
+    return scene_prompt_sd(analysis, style, bundle, room), "template"
+
+
+def scene_prompt_sd(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle, room=None) -> str:
     """A <=77-token prompt for a local Stable Diffusion render.
 
     Deliberately terse and keyword-led. The client's actual furniture does NOT
@@ -358,7 +564,9 @@ def scene_prompt_sd(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBun
     on the reference photo, because no 77-token prompt can describe a specific
     sofa. This only has to establish room, style, materials and light.
     """
-    room = analysis.rooms[0] if analysis.rooms else None
+    # `room` is the room being painted. It defaults to the first for callers
+    # that still want a single hero image.
+    room = room or (analysis.rooms[0] if analysis.rooms else None)
     where = (room.type.replace("_", " ") if room else "living room")
     style_words = ", ".join((style.tags or ["modern", "warm"])[:3]).replace("_", " ")
     mood = style.lighting_mood.replace("_", " ")
@@ -381,3 +589,226 @@ def scene_prompt_sd(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBun
         "photorealistic interior photography, lived-in, natural light",
     ]
     return ", ".join(p for p in parts if p)
+
+
+# ── real-world size of each piece ─────────────────────────────────────────
+
+ELEMENT_DIMENSIONS_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "items": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "ref": {"type": "string"},
+                    "width_m": {"type": "number"},
+                    "height_m": {"type": "number"},
+                    "depth_m": {"type": "number"},
+                    "sure": {"type": "boolean"},
+                },
+                "required": ["ref", "width_m", "height_m", "depth_m", "sure"],
+            },
+        }
+    },
+    "required": ["items"],
+}
+
+
+def element_dimensions_prompt(room, elements, vertical) -> str:
+    """Ask how big each piece really is, in metres.
+
+    A generated mesh arrives in arbitrary units and is scaled at ingest to
+    `expected_dimensions`. Those came from a per-type table, so every bed was
+    1.6 x 0.55 x 2.05 m whether the picture showed a single or a king, and a
+    wall mirror was always 0.8 x 1.2 m. One table cannot describe a specific
+    piece in a specific room.
+
+    Asked per room and in one call, because the room's own size is most of the
+    evidence: a wardrobe in a 2.5 m bathroom is not the wardrobe in a 4 m
+    bedroom, and the pieces constrain each other.
+
+    `sure` matters more than the numbers. An unsure answer is dropped by the
+    caller in favour of the table, which is merely generic - where a confident
+    wrong answer would scale a mesh to something absurd and place it anyway.
+    """
+    lines = [
+        "You are estimating the REAL size of furniture seen in a photograph of "
+        "one room, so each piece can be built to scale in 3D.",
+        "",
+        f"ROOM: {room.name} ({room.type.replace('_', ' ')}), "
+        f"{room.width_m:.1f} x {room.length_m:.1f} m, ceiling {room.height_m:.1f} m.",
+        "",
+        "PIECES, each with the label it was given and how much of the frame it fills:",
+    ]
+    for el in elements:
+        box = el.bbox or (0.0, 0.0, 0.0, 0.0)
+        w_frac, h_frac = box[2] - box[0], box[3] - box[1]
+        lines.append(
+            f"- ref={el.element_id} · {el.name or el.semantic_type} "
+            f"({el.semantic_type.replace('_', ' ')}) · fills {w_frac:.0%} of the width "
+            f"and {h_frac:.0%} of the height of the picture · sits on the {el.placement}"
+        )
+    lines += [
+        "",
+        "For each, give width_m, height_m and depth_m as a real object in this room:",
+        "- width is side to side, height is floor to top, depth is front to back.",
+        "- Give the size the PIECE would really be, not the size it looks in the",
+        "  picture: a photograph has no depth and does not obey the room's size.",
+        "- They must fit in this room together, and be sane against each other.",
+        "- sure: false if the piece is cut off, hidden, or you are guessing.",
+        "  A false here is respected - a generic size is used instead, which is",
+        "  a better outcome than a confident wrong one.",
+    ]
+    return "\n".join(lines)
+
+
+# ── checking one crop on its own ──────────────────────────────────────────
+
+ELEMENT_CHECK_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "sees": {"type": "string"},
+        "semantic_type": {"type": "string"},
+        "fills_frame": {"type": "boolean"},
+        "certain": {"type": "boolean"},
+    },
+    "required": ["sees", "semantic_type", "fills_frame", "certain"],
+}
+
+
+def element_check_prompt(room_type: str, vertical) -> str:
+    """Ask what a single crop shows, WITHOUT naming what we think it shows.
+
+    The defect this exists for is a box that is structurally perfect and around
+    the wrong thing: a floor plank returned as "table lamp", a bed returned as
+    "rug", the whole kitchen returned as "kitchen counter". No geometric guard
+    can see that, because the geometry is fine.
+
+    Asked "is this a table lamp?" a vision model agrees, so the expected label
+    is deliberately absent from this prompt and the crop arrives with no scene
+    around it. The caller compares the answer to the label instead. Same reason
+    the scene read is not allowed to grade its own work.
+
+    `fills_frame` catches the whole-room box: a crop of one piece has one piece
+    in it, and a crop of half a kitchen does not.
+    """
+    types = ", ".join(sorted(vocab.semantic_types(vertical))[:60])
+    room = room_type.replace("_", " ")
+    return "\n".join([
+        f"This is a small crop cut out of a photograph of a {room}.",
+        "",
+        "Answer only from what is in this image:",
+        "- sees: the single main thing in it, plainly: 'wooden side table',",
+        "  'bare floorboards', 'a corner of a bed'. If it is mostly floor, wall",
+        "  or empty space, say so - do not name furniture at the edges.",
+        f"- semantic_type: the closest of: {types}. Use 'other' if none fit.",
+        "- fills_frame: true if ONE piece of furniture or fitting takes up most",
+        "  of this image. False if it is a wide view holding several things, or",
+        "  is mostly background.",
+        "- certain: false if the crop is too tight, too blurred or too partial",
+        "  to tell what the thing is.",
+    ])
+
+
+# ── reading the approved moodboard back out ──────────────────────────────
+
+SCENE_READING_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "elements": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "semantic_type": {"type": "string"},
+                    "bbox": {"type": "array", "items": {"type": "integer"}},
+                    "material": {"type": "string"},
+                    "color": {"type": "string"},
+                    "placement": {"type": "string"},
+                    "against": {"type": "string"},
+                    "faces": {"type": "string"},
+                    "confidence": {"type": "number"},
+                },
+                # `against` and `faces` are REQUIRED so the model actually
+                # answers them. Left optional, flash-lite simply omitted both on
+                # every element of every room - 0 of 26 - and the arrangement
+                # intent the planner was built to use never existed. A required
+                # field can still come back empty or unsure, which the caller
+                # treats as "no hint"; an absent one cannot be told apart from
+                # "the model had nothing to say".
+                "required": ["name", "semantic_type", "bbox", "against", "faces"],
+            },
+        },
+        "surfaces": {
+            "type": "object",
+            "properties": {
+                "wall_color": {"type": "string"},
+                "wall_material": {"type": "string"},
+                "floor_color": {"type": "string"},
+                "floor_material": {"type": "string"},
+                "notes": {"type": "string"},
+            },
+        },
+    },
+    "required": ["elements"],
+}
+
+
+def scene_reading_prompt(room, style: StyleSpec, vertical) -> str:
+    """Read one APPROVED room image back into elements and surfaces.
+
+    The inverse of the moodboard prompt: the client agreed to that picture, so
+    the picture is now the brief. Every piece is boxed so its crop can become a
+    mesh; walls and floor are described as MATERIALS because room geometry stays
+    procedural — Blender builds it from the room boundary, which keeps doors
+    aligned and lets the validator prove nothing blocks a doorway.
+
+    Positions are asked for in words, not coordinates. A 2D render has no depth
+    and does not obey the room's real size — the bathroom render is a long spa,
+    the room is 2.5 x 2.0 m — so it is intent for the planner, never metres.
+    """
+    types = ", ".join(sorted(vocab.semantic_types(vertical))[:60])
+    lines = [
+        "You are reading a rendered interior so it can be rebuilt in 3D.",
+        'Return JSON {"elements": [...], "surfaces": {...}}.',
+        "",
+        f"ROOM: {room.name} ({room.type.replace('_', ' ')}), "
+        f"{room.width_m:.1f} x {room.length_m:.1f} m.",
+        f"STYLE: {', '.join(style.tags) or 'modern'}",
+        "",
+        "FOR EVERY DISTINCT PIECE OF FURNITURE OR FITTING YOU CAN SEE:",
+        "- name: what it is, plainly ('low oak sideboard', 'freestanding bath')",
+        f"- semantic_type: the closest of: {types}. Use 'other' if none fit.",
+        # Whole numbers out of 1000, not fractions. Asked for "fractions,
+        # 0-1" the model mixed the two conventions inside a single box in
+        # a third of cases - and per axis: x as 0-1 beside y as 0-1000,
+        # e.g. [0.0, 483, 1.0, 936]. One integer convention removes the
+        # choice; a decimal point is then self-evidently wrong.
+        "- bbox: [x0, y0, x1, y1] as WHOLE NUMBERS out of 1000 measured from",
+        "  the top-left corner, e.g. [402, 237, 806, 712]. Never decimals,",
+        "  never 0-1 fractions. x0 < x1 and y0 < y1 always.",
+        "  Keep it tight: the box is cut out and turned into a 3D model, so",
+        "  one that catches the wall or a neighbour produces a wrong mesh.",
+        "- material and color (hex if you can judge it)",
+        "- placement: floor, wall, ceiling or on_surface",
+        "- against: which wall or corner it sits against, in words",
+        "- faces: what it is turned towards, in words",
+        "",
+        "SURFACES: the wall and floor colour and material. Describe them only —",
+        "they are rebuilt as geometry, not cut out.",
+        "",
+        "RULES",
+        "- One entry per distinct piece. Never box the room, a wall, the floor,",
+        "  the ceiling, a window or a doorway as an element.",
+        # Written two-dimensionally on purpose. "smaller than a book" was
+        # read as "thin", and the model dropped a towel rail it could
+        # plainly see - the same mistake the 64 px-per-side crop gate made
+        # with a rug seen edge-on. Long and thin is not small.
+        "- Skip only specks: a tap, a knob, a soap dish, a switch. A piece",
+        "  that is long but thin - a rail, a shelf, a rug seen edge-on - is",
+        "  NOT small. Box it.",
+        "- Do not invent pieces that are not visible in the image.",
+    ]
+    return "\n".join(lines)

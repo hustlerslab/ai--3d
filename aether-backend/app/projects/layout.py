@@ -38,6 +38,10 @@ CHECKPOINTS = {
     "inputs": "input/description.txt",
     "analysis": "analysis/design_analysis.json",
     "moodboard": "analysis/moodboard_spec.json",
+    # The crops read back out of the approved moodboard, awaiting review.
+    # Listed here so the Studio can show the review panel for a project it is
+    # merely opening, not only for one whose plan it just ran.
+    "scene_reading": "planning/scene_reading.json",
     "object_plan": "planning/object_plan.json",
     "asset_plan": "planning/asset_plan.json",
     "scene_spec": "planning/scene_spec.json",

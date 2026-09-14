@@ -33,6 +33,12 @@ class JobSpec:
     # cloud provider, but a local one runs on the same GPU as Blender, so the
     # runner moves these jobs to the render lane to serialise them against it.
     uses_intelligence: bool = False
+    # True when this handler drives the local GPU itself, whatever the
+    # intelligence provider is. The moodboard's Stable Diffusion pass does,
+    # on every analyze run — and the ai lane has two threads, so two analyses
+    # drove one global pipeline and generation died on "list index out of
+    # range". Measured: two analyze jobs overlapped for 11 minutes.
+    uses_local_gpu: bool = False
 
 
 _REGISTRY: dict[str, JobSpec] = {}
@@ -47,6 +53,7 @@ def register(
     stage_done: Optional[ProjectStage] = None,
     description: str = "",
     uses_intelligence: bool = False,
+    uses_local_gpu: bool = False,
 ) -> Callable[[Handler], Handler]:
     def deco(fn: Handler) -> Handler:
         _REGISTRY[type] = JobSpec(
@@ -57,6 +64,7 @@ def register(
             stage_running=stage_running,
             stage_done=stage_done,
             uses_intelligence=uses_intelligence,
+            uses_local_gpu=uses_local_gpu,
             description=description or (fn.__doc__ or "").strip().splitlines()[0] if (description or fn.__doc__) else "",
         )
         return fn

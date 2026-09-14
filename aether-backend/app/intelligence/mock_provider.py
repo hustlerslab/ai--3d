@@ -211,7 +211,11 @@ ROOM_SETS: dict[str, list[tuple[str, int, int]]] = {
     "study": [("desk", 1, 1), ("chair", 1, 1), ("bookshelf", 2, 1), ("floor_lamp", 3, 1), ("plant", 3, 1)],
     "entry": [("console", 2, 1), ("mirror", 2, 1), ("plant", 3, 1)],
     "balcony": [("chair", 2, 2), ("plant", 2, 2), ("side_table", 3, 1)],
-    "bathroom": [],
+    # Only types the vocabulary actually knows: there is no toilet/basin/shower
+    # in SEMANTIC_TYPES, so naming them here would plan objects that cannot
+    # resolve. Empty meant the moodboard prompt named no fixture at all.
+    "bathroom": [("vanity", 1, 1), ("mirror", 1, 1), ("bathtub", 2, 1),
+                 ("wall_shelf", 3, 1), ("plant", 3, 1)],
     # hospitality
     "hotel_lobby": [
         ("lounge_sofa", 1, 2), ("armchair", 1, 4), ("coffee_table", 2, 2), ("rug", 2, 2),

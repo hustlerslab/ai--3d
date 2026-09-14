@@ -144,3 +144,38 @@ def test_lanes_and_stage_transitions(env):
         runner.shutdown()
     finally:
         unregister("test_render")
+
+
+def test_a_gpu_handler_is_serialised_even_when_the_reading_is_remote(env, monkeypatch):
+    """The moodboard paints on the local GPU on every analyze run, whoever does
+    the reading. Left on the ai lane (two threads) two analyses drove one global
+    Stable Diffusion pipeline and generation died on "list index out of range";
+    the job table showed two analyze jobs overlapping for eleven minutes."""
+    from app.core import config
+    from app.jobs.registry import get_spec
+    from app.jobs.runner import JobRunner
+
+    monkeypatch.setenv("INTELLIGENCE_PROVIDER", "gemini")      # a REMOTE reading
+    monkeypatch.setenv("SCENE_IMAGE_ENABLED", "true")
+    config.get_settings.cache_clear()
+    runner = JobRunner()
+
+    analyze = get_spec("analyze")
+    assert analyze.uses_local_gpu, "analyze paints the moodboard locally"
+    assert runner._lane_for(analyze) is JobLane.render
+
+    # a stage that only talks to a remote provider keeps its own lane, so the
+    # single render worker is not needlessly blocked
+    assert runner._lane_for(get_spec("scene_plan")) is JobLane.ai
+
+
+def test_turning_the_moodboard_off_releases_the_render_lane(env, monkeypatch):
+    """Nothing local to serialise, so analyze goes back to the parallel lane."""
+    from app.core import config
+    from app.jobs.registry import get_spec
+    from app.jobs.runner import JobRunner
+
+    monkeypatch.setenv("INTELLIGENCE_PROVIDER", "gemini")
+    monkeypatch.setenv("SCENE_IMAGE_ENABLED", "false")
+    config.get_settings.cache_clear()
+    assert JobRunner()._lane_for(get_spec("analyze")) is JobLane.ai

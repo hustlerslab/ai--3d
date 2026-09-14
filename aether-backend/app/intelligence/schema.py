@@ -93,6 +93,15 @@ class RoomAnalysis(BaseModel):
 
 Placement = Literal["floor", "wall", "ceiling", "on_surface"]
 
+# What a read item is FOR. "place" means the client owns it and it becomes
+# geometry; "reference" means they photographed it as inspiration and it should
+# shape the palette and materials without furnishing the room.
+#
+# The distinction exists because uploads are often shop or catalogue photos. On
+# the sample set the reading correctly found four *different* mattresses in a
+# showroom — the bedroom is not meant to contain four beds.
+ItemRole = Literal["place", "reference"]
+
 
 class SpottedObject(BaseModel):
     """One item read from the photos or the brief (open vocabulary, schema 1.1).
@@ -104,10 +113,20 @@ class SpottedObject(BaseModel):
     image-to-3D; `crop_ref` is the project-relative path of that crop.
     """
 
+    # Stable name for this item, filled by `coerce.assign_ids`. The review
+    # screen addresses items by this and never by their position — the lesson
+    # ADR-002 §2 recorded for photos, applied the day something finally needed
+    # to name an item across a request boundary.
+    #
+    # Derived from the item's own content rather than a random uuid, so a
+    # re-read of the same photos produces the same ids and the client's
+    # place/reference choices survive it.
+    object_id: str = ""
     semantic_type: str
     name: str = ""
     family: str = "other"
     placement: Placement = "floor"
+    role: ItemRole = "place"
     support: str = ""              # name of the item it rests on (placement on_surface)
     material: str = ""
     color: str = ""                # hex when known
@@ -174,6 +193,37 @@ class StyleSpec(BaseModel):
         return out
 
 
+class RoomScene(BaseModel):
+    """One room's moodboard image. `url` empty means it could not be painted;
+    `error` says why, in words the client can act on."""
+
+    room_id: str
+    name: str = ""
+    type: str = ""
+    url: str = ""
+    error: str = ""
+    # Same honesty as the hero image: a render that never saw the client's
+    # furniture looks exactly like one that did.
+    reference_resolved: bool = False
+    reference_note: str = ""
+    # The prompt this image was painted from, and whether the intelligence
+    # layer composed it ("llm") or it fell back to the keyword template
+    # ("template"). Recorded rather than hidden: the two read very differently
+    # and a reviewer should be able to see which one they are looking at.
+    prompt: str = ""
+    prompt_source: str = "template"
+    # Hash of the recipe (framing, fixtures, rules, size, reference strength)
+    # this image was painted under. Empty means "made before versioning
+    # existed", which is treated as stale — the retroactive case.
+    recipe_version: str = ""
+    # The noise seed this image was drawn from. Recorded so a picture a reviewer
+    # likes stays that picture, and so "regenerate" is a DIFFERENT draw rather
+    # than a re-roll of the same dice. Seed variance is large and is not a
+    # prompt defect: the same bathroom prompt gives a complete room on one seed
+    # and a bathtub in an alcove on another (ADR-002 §1 on the same effect).
+    seed: int = 0
+
+
 class MoodboardSpec(BaseModel):
     """What the Studio's moodboard step shows: derived, never edited directly."""
 
@@ -200,6 +250,10 @@ class MoodboardSpec(BaseModel):
     scene_url: str = ""
     # Why there is no scene, in words a user can act on (billing, a refusal).
     scene_error: str = ""
+    # One image per room in the reading. `scene_url` above stays the hero (the
+    # first room) so anything written against the single-image shape keeps
+    # working; this is the whole set.
+    room_scenes: list[RoomScene] = []
     # Was the scene actually conditioned on one of the client's photos? A false
     # here with a scene_url present is a real degradation: the render is a
     # generic room, not their room. It is a field rather than a log line
@@ -210,6 +264,102 @@ class MoodboardSpec(BaseModel):
     keywords: list[str] = []
     rooms: list[str] = []
     created_at: str = Field(default_factory=_now)
+
+
+# ── Reading the generated scene (moodboard → 3D) ─────────────────────────
+
+
+ElementCheck = Literal["unchecked", "ok", "mismatch", "crowded", "duplicate", "unreadable"]
+"""Verdict of the isolated second look at one crop.
+
+`ok` the crop shows what it claims; `mismatch` it shows something else;
+`crowded` no single piece fills it (a whole-room box labelled as one object);
+`duplicate` another element already claims the same pixels; `unreadable` the
+check itself failed, which is NOT a pass.
+"""
+
+
+class SceneElement(BaseModel):
+    """One thing seen in a GENERATED room image.
+
+    Distinct from `SpottedObject`, which is read from the client's own photos.
+    This is read from the moodboard the client approved, so it describes the
+    design being proposed rather than what they already own — and its crop is
+    what image-to-3D turns into a mesh.
+    """
+
+    element_id: str = ""
+    room_id: str
+    name: str = ""                 # free text: "low oak sideboard"
+    semantic_type: str = "other"
+    # [x0, y0, x1, y1] as fractions of the room image
+    bbox: Optional[tuple[float, float, float, float]] = None
+    material: str = ""
+    color: str = ""                # hex when known
+    # Where it sits relative to the room, in the render's own terms. Used as
+    # ARRANGEMENT INTENT only — the planner still decides actual metres, because
+    # a 2D render has no depth and does not obey the room's real dimensions.
+    placement: Placement = "floor"
+    against: str = ""              # "window wall", "long wall", "corner"
+    faces: str = ""                # what it is oriented towards
+    confidence: float = Field(default=0.5, ge=0, le=1)
+    crop_ref: str = ""             # project-relative png cut from the render
+    # The crop's size BEFORE it was enlarged. Every crop is upscaled to a
+    # usable input size, which would otherwise make a 59 x 88 towel rail and
+    # a 586 x 420 bed look identical to whoever is reviewing them. The
+    # enlargement adds no detail, so the native size is what says how much
+    # was really seen.
+    crop_px: tuple[int, int] = (0, 0)
+    # Real size in metres for THIS piece, when the reader was sure of it.
+    # Ingest scales the generated mesh to this; empty means the per-type
+    # table decides, which is generic but never absurd.
+    dimensions_m: Optional[tuple[float, float, float]] = None
+
+    # A box can be structurally perfect and still be around the wrong thing —
+    # a floor plank labelled "table lamp" passes every geometric guard there is.
+    # So the crop is shown back to the vision model on its own, with no scene
+    # context and no mention of the expected label, and asked what it is.
+    check: ElementCheck = "unchecked"
+    check_note: str = ""           # what the second look actually saw
+    # The human's call, which is the one that gates spend. None = not yet asked.
+    approved: Optional[bool] = None
+    # Set once this element's crop has been turned into a mesh. Elements that
+    # share a `shape_key` share one asset: three identical bar stools are one
+    # generation and three placements, not three generations.
+    asset_id: str = ""
+
+
+class RoomSurfaces(BaseModel):
+    """Walls and floor as MATERIALS, never as generated meshes.
+
+    Room geometry stays procedural — Blender builds it from the room boundary,
+    which is what keeps corners square, doors aligned and the spatial validator
+    able to prove nothing blocks a doorway. Generating wall meshes from crops
+    would replace geometry that is correct by construction with geometry that
+    is correct by luck.
+    """
+
+    room_id: str
+    wall_color: str = ""
+    wall_material: str = ""
+    floor_color: str = ""
+    floor_material: str = ""
+    notes: str = ""
+
+
+class SceneReading(BaseModel):
+    """Everything read out of the approved moodboard, per room."""
+
+    schema_version: str = SCHEMA_VERSION
+    version: int = 1
+    elements: list[SceneElement] = []
+    surfaces: list[RoomSurfaces] = []
+    provider: str = "mock"
+    warnings: list[str] = []
+    created_at: str = Field(default_factory=_now)
+
+    def for_room(self, room_id: str) -> list[SceneElement]:
+        return [e for e in self.elements if e.room_id == room_id]
 
 
 # ── Agent envelopes (DPR §8) ─────────────────────────────────────────────
@@ -261,6 +411,16 @@ class ObjectPlanItem(BaseModel):
     # then dropped itself. Do NOT start resolving it against a stored analysis;
     # give SpottedObject a stable id first, the way ReferenceImage has one.
     spotted_index: int = -1
+    # The moodboard element this item came from, when it came from one. Carries
+    # the link that lets the asset ladder pick the mesh generated from THIS
+    # piece's crop instead of guessing a catalog match by size.
+    element_id: str = ""
+    # Arrangement intent carried over from the approved render, in its own
+    # words ("window wall", "beside the sofa"). Preferences for the placement
+    # engine, never instructions: a hint no valid spot satisfies is dropped,
+    # and the engine's existing choice stands unchanged.
+    against: str = ""
+    faces: str = ""
     priority: int = Field(default=2, ge=1, le=3)   # 1 essential · 2 recommended · 3 optional
     count: int = Field(default=1, ge=1, le=12)
     approx_dimensions: Optional[tuple[float, float, float]] = None  # w, h, d metres

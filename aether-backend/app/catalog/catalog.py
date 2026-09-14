@@ -36,6 +36,11 @@ class CatalogItem(BaseModel):
     thumbnail_url: Optional[str] = None
     source: str = "builtin"     # builtin | polyhaven | upload | meshy
     license: str = "n/a"
+    # Set when this model was generated for one project from that project's own
+    # material. Renderers use it to leave the mesh's textures alone: they are
+    # already the client's fabric, and re-skinning them with the style material
+    # discards what the generation was for.
+    project_id: str = ""
 
 
 BUILTIN: list[CatalogItem] = [
@@ -131,16 +136,29 @@ def _from_record(record: AssetRecord) -> CatalogItem:
         price_inr=record.price_inr,
         shape="model",
         mount=record.mount,
-        model_url=f"/files/assets/{record.asset_id}.glb",
+        # The viewer gets the light copy when there is one. Blender does not
+        # go through this url at all - it reads the normalized file from disk.
+        model_url=(f"/files/assets-web/{record.asset_id}.glb" if record.files.web
+                   else f"/files/assets/{record.asset_id}.glb"),
         thumbnail_url=record.source.thumbnail_url or None,
         source=record.source.provider,
         license=record.source.license,
+        project_id=record.project_id,
     )
 
 
-def all_items() -> list[CatalogItem]:
-    """Real models first, then built-ins."""
-    real = [_from_record(r) for r in get_registry().list() if r.valid]
+def all_items(project_id: str = "") -> list[CatalogItem]:
+    """Real models first, then built-ins.
+
+    Models generated for a project are excluded by default: they come from one
+    client's own moodboard and must never be offered as a library match to
+    anybody else. `project_id` adds back that project's own, which is what a
+    renderer needs - resolving an id the scene already references is a
+    different question from searching for a piece to use.
+    """
+    records = get_registry().list()
+    real = [_from_record(r) for r in records
+            if r.valid and (not r.project_id or r.project_id == project_id)]
     return real + BUILTIN
 
 

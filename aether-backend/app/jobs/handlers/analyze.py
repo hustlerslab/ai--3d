@@ -6,6 +6,7 @@ params.force is true.
 """
 from __future__ import annotations
 
+import random
 import time
 from pathlib import Path
 from typing import Optional
@@ -37,6 +38,8 @@ class NoInputs(Exception):
     stage_done=ProjectStage.DESIGN_SPEC_READY,
     description="Input analysis + style interpretation + moodboard",
     uses_intelligence=True,
+    # paints the moodboard on the local GPU; see JobSpec.uses_local_gpu
+    uses_local_gpu=True,
 )
 def analyze(ctx: JobContext) -> dict:
     force = bool(ctx.params.get("force", False))
@@ -108,7 +111,7 @@ def analyze(ctx: JobContext) -> dict:
 
     # ── moodboard (derived, always rebuilt) ──────────────────────────────
     moodboard = build_moodboard(analysis, style, bundle)
-    _add_scene_image(ctx, moodboard, analysis, style, bundle, force=force)
+    _add_scene_image(ctx, moodboard, analysis, style, bundle, provider=provider, force=force)
     ctx.write_json(MOODBOARD, moodboard)
     ctx.projects.add_analysis(ctx.project_id, "moodboard_spec", MOODBOARD, style.version)
     ctx.mark_checkpoint("moodboard")
@@ -158,6 +161,7 @@ def _add_scene_image(
     style,
     bundle,
     *,
+    provider=None,
     force: bool = False,
 ) -> None:
     """Paint the room being proposed and hang it on the moodboard.
@@ -188,31 +192,106 @@ def _add_scene_image(
         )
         return
 
-    dest = ctx.path(SCENE_IMAGE)
-    if dest.exists() and not force:                 # checkpoint: the file itself
-        moodboard.scene_url = file_url(ctx.project_id, SCENE_IMAGE)
-        # Carry the previous run's verdict forward. Defaulting to "resolved"
-        # on a resume would vouch for a render this run never looked at.
-        prior = [o for o in ctx.projects.list_outputs(ctx.project_id)
-                 if o["kind"] == "moodboard_scene"]
-        meta = prior[-1]["meta"] if prior else {}
-        moodboard.reference_resolved = bool(meta.get("reference_resolved"))
-        moodboard.reference_note = str(meta.get("reference", "") or "from a previous run")
-        ctx.emit("analyze.scene", "checkpoint present, skipped")
+    from ...intelligence.schema import RoomScene
+
+    rooms = list(getattr(analysis, "rooms", []) or [])
+    if not rooms:
+        moodboard.scene_error = "the reading found no rooms to paint"
         return
 
-    reference, ref_note = _scene_reference(analysis, bundle)
-    moodboard.reference_resolved = reference is not None
-    moodboard.reference_note = ref_note
+    scenes: list[RoomScene] = []
+    try:
+        for room in rooms:
+            scenes.append(_paint_room(ctx, room, analysis, style, bundle, settings,
+                                      provider=provider, force=force))
+    finally:
+        # Once, after every room. Unloading between rooms would pay the cold
+        # load each time — measured at ~31 s for the first room against ~15 s
+        # for each one after it, on the same card.
+        local_image.unload()
+
+    moodboard.room_scenes = scenes
+    hero = next((s for s in scenes if s.url), None)
+    if hero is None:
+        moodboard.scene_error = "; ".join(dict.fromkeys(s.error for s in scenes if s.error))[:500]
+        return
+    # The first painted room stays the hero, so anything written against the
+    # single-image shape keeps working unchanged.
+    moodboard.scene_url = hero.url
+    moodboard.reference_resolved = hero.reference_resolved
+    moodboard.reference_note = hero.reference_note
+    painted = sum(1 for s in scenes if s.url)
+    ctx.emit(
+        "analyze.scene",
+        f"{painted}/{len(scenes)} room image(s) painted"
+        + (f"; {len(scenes) - painted} failed" if painted < len(scenes) else ""),
+        status="ok" if painted == len(scenes) else "warning",
+    )
+
+
+def _room_image(room_id: str) -> str:
+    return f"analysis/moodboard_room_{room_id}.png"
+
+
+def _paint_room(ctx, room, analysis, style, bundle, settings, *, provider=None,
+                force: bool, seed: Optional[int] = None) -> "RoomScene":
+    """One room's image. Never raises: a failed room leaves the others intact."""
+    from ...intelligence.prompts import SD_NEGATIVE, compose_room_prompt, scene_recipe_version
+    from ...intelligence.schema import RoomScene
+    from ...projects.layout import file_url
+    from ...providers import local_image
+
+    rel = _room_image(room.room_id)
+    dest = ctx.path(rel)
+    scene = RoomScene(room_id=room.room_id, name=room.name, type=room.type)
+
+    recipe = scene_recipe_version()
+    prior = [o for o in ctx.projects.list_outputs(ctx.project_id)
+             if o["kind"] == "moodboard_scene" and o.get("meta", {}).get("room_id") == room.room_id]
+    meta = prior[-1]["meta"] if prior else {}
+    painted_under = str(meta.get("recipe_version", ""))
+
+    # The checkpoint is "is this image CURRENT", not "does a file exist". A file
+    # can be newer than the code that should have produced it and still be
+    # stale, because the server loads code once at start-up — that is exactly
+    # how a bathroom image written at 20:13 came from 19:57 code. An image with
+    # no recorded recipe predates versioning and is stale by definition, which
+    # is what makes this retroactive for every existing project.
+    if dest.exists() and not force and painted_under == recipe:
+        scene.url = file_url(ctx.project_id, rel)
+        scene.recipe_version = painted_under
+        scene.reference_resolved = bool(meta.get("reference_resolved"))
+        scene.reference_note = str(meta.get("reference", "") or "from a previous run")
+        scene.prompt = str(meta.get("prompt", ""))
+        scene.prompt_source = str(meta.get("prompt_source", "template"))
+        scene.seed = int(meta.get("seed", 0) or 0)
+        ctx.emit("analyze.scene", f"{room.name}: up to date, skipped")
+        return scene
+    if dest.exists() and not force:
+        ctx.emit(
+            "analyze.scene",
+            f"{room.name}: repainting — made under recipe "
+            f"{painted_under or '(none recorded)'}, current is {recipe}",
+        )
+
+    reference, ref_note = _scene_reference(analysis, bundle, room_id=room.room_id)
+    scene.reference_resolved = reference is not None
+    scene.reference_note = ref_note
     if reference is None:
-        # Loud, not quiet. Generation still runs — a generic room beats no
-        # moodboard — but "we could not use your photo" is a result the user
-        # has to be told, not a log line nobody reads.
-        ctx.log.warning("scene reference unresolved: %s", ref_note)
-        ctx.emit("analyze.scene", f"no reference photo — {ref_note}", status="warning")
+        # Loud, not quiet — an unconditioned render is indistinguishable from a
+        # conditioned one. Rooms the client photographed nothing of are the
+        # normal case here, so this is information, not an alarm.
+        ctx.log.warning("%s: scene reference unresolved: %s", room.room_id, ref_note)
+
+    prompt, prompt_source = compose_room_prompt(provider, analysis, style, bundle, room)
+    scene.prompt, scene.prompt_source = prompt, prompt_source
+    # An explicit seed, always: a random draw cannot be repeated, so a reviewer
+    # who likes an image cannot keep it and one who does not cannot tell whether
+    # a repaint changed anything.
+    scene.seed = seed if seed is not None else random.randrange(1, 2**31 - 1)
     try:
         image = local_image.generate(
-            scene_prompt_sd(analysis, style, bundle),
+            prompt,
             model=settings.scene_image_model,
             negative_prompt=SD_NEGATIVE,
             steps=settings.scene_image_steps,
@@ -220,33 +299,33 @@ def _add_scene_image(
             height=settings.scene_image_height,
             references=[reference] if reference else None,
             reference_scale=settings.scene_image_reference_scale,
+            seed=scene.seed,
         )
         local_image.write(image, dest)
     except Exception as exc:
-        moodboard.scene_error = f"{type(exc).__name__}: {exc}"
-        # Warning, not info: a degraded result that looks like a success
-        # everywhere else has to be loud in the log too.
-        ctx.log.warning("moodboard scene image failed: %s", exc)
-        ctx.emit("analyze.scene", f"no scene image — {exc}", status="warning")
-        return
-    finally:
-        # Hand the card back. Blender and Ollama want the same 6 GB, and the
-        # runner only serialises jobs — it cannot reclaim a pipeline this
-        # process is still holding.
-        local_image.unload()
+        scene.error = f"{type(exc).__name__}: {exc}"
+        # exception(), not warning(): the message alone is often opaque
+        # ("list index out of range" from inside diffusers) and cost hours of
+        # guessing. The stack says which line, in one run instead of five.
+        ctx.log.exception("%s: moodboard image failed", room.room_id)
+        ctx.emit("analyze.scene", f"{room.name}: no image — {exc}", status="warning")
+        return scene
 
-    moodboard.scene_url = file_url(ctx.project_id, SCENE_IMAGE)
-    ctx.add_output(
-        "moodboard_scene",
-        SCENE_IMAGE,
-        {"model": image.model, "reference_resolved": reference is not None, "reference": ref_note},
-    )
+    scene.url = file_url(ctx.project_id, rel)
+    scene.recipe_version = recipe
+    ctx.add_output("moodboard_scene", rel, {
+        "model": image.model, "room_id": room.room_id, "room_name": room.name,
+        "reference_resolved": reference is not None, "reference": ref_note,
+        "prompt_source": prompt_source, "prompt": prompt, "recipe_version": recipe,
+        "seed": scene.seed,
+    })
     ctx.emit(
         "analyze.scene",
-        f"scene painted by {image.model} ({dest.stat().st_size // 1024} KB), "
-        + (f"conditioned on {ref_note}" if reference else f"UNCONDITIONED — {ref_note}"),
+        f"{room.name}: {dest.stat().st_size // 1024} KB, "
+        + (f"conditioned on {ref_note}" if reference else f"unconditioned — {ref_note}"),
         status="ok" if reference else "warning",
     )
+    return scene
 
 
 # Anchor pieces, best first: a room reads as the client's when the big
@@ -255,7 +334,7 @@ def _add_scene_image(
 _ANCHOR_TYPES = ("sofa", "loveseat", "bed", "armchair", "dining_table")
 
 
-def _scene_reference(analysis, bundle) -> tuple[Optional[Path], str]:
+def _scene_reference(analysis, bundle, room_id: Optional[str] = None) -> tuple[Optional[Path], str]:
     """The one photo worth conditioning the render on, and a note saying which.
 
     Prefers the FULL upload an anchor piece was seen in, not its crop.
@@ -271,6 +350,14 @@ def _scene_reference(analysis, bundle) -> tuple[Optional[Path], str]:
     clothes.
     """
     spotted = list(getattr(analysis, "spotted_objects", []) or [])
+    if room_id is not None:
+        # Per-room images condition on that room's own pieces: painting the
+        # bedroom from a photo of the sofa is worse than painting it from
+        # nothing, because it looks conditioned and is not.
+        spotted = [s for s in spotted if s.room_id == room_id]
+    # Items the client keeps are theirs; a reference photo is something they
+    # liked in a shop and must not be used as if it were in the room.
+    spotted = [s for s in spotted if getattr(s, "role", "place") == "place"]
     missing: list[str] = []
 
     for wanted in _ANCHOR_TYPES:
@@ -283,13 +370,16 @@ def _scene_reference(analysis, bundle) -> tuple[Optional[Path], str]:
             if s.image_ref or s.image_index >= 0:
                 missing.append(s.name or wanted)
 
-    for r in bundle.references:                 # any upload beats no reference
-        if Path(r.path).is_file():
-            note = f"no anchor piece resolved; fell back to {r.filename or Path(r.path).name}"
-            if missing:
-                note = f"photo for {', '.join(missing[:3])} is gone from the project; " + note
-            return Path(r.path), note
+    if room_id is None:
+        for r in bundle.references:             # any upload beats no reference
+            if Path(r.path).is_file():
+                note = f"no anchor piece resolved; fell back to {r.filename or Path(r.path).name}"
+                if missing:
+                    note = f"photo for {', '.join(missing[:3])} is gone from the project; " + note
+                return Path(r.path), note
 
     if missing:
         return None, f"photo for {', '.join(missing[:3])} is gone from the project and no upload remains"
+    if room_id is not None:
+        return None, "no photo of this room's own pieces; painted from the brief and style"
     return None, "project has no reference photos"

@@ -25,6 +25,7 @@ the file as soon as the task succeeds rather than storing the URL.
 from __future__ import annotations
 
 import asyncio
+import base64
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -128,8 +129,64 @@ async def submit_refine(client: httpx.AsyncClient, preview_task_id: str) -> str:
     return str(task_id)
 
 
-async def get_task(client: httpx.AsyncClient, task_id: str) -> dict[str, Any]:
-    resp = await client.get(f"{BASE}/openapi/v2/text-to-3d/{task_id}")
+# Which Meshy endpoint a task belongs to. Image-to-3D lives on v1 and
+# text-to-3D on v2 — probing the live API, GET /openapi/v1/text-to-3d/<id>
+# answers 404 NoMatchingRoute while /openapi/v1/image-to-3d/<id> answers
+# 400 Invalid ID, so the versions are not interchangeable. A task id alone
+# does not say which endpoint made it, so callers carry it.
+TEXT_TO_3D = "openapi/v2/text-to-3d"
+IMAGE_TO_3D = "openapi/v1/image-to-3d"
+
+
+def _data_uri(image: Path) -> str:
+    """Meshy takes a publicly reachable URL or a data URI. Our crops live on
+    a developer's disk behind no web server, so the bytes travel inline."""
+    suffix = image.suffix.lower().lstrip(".") or "png"
+    mime = {"jpg": "jpeg", "jpeg": "jpeg", "png": "png", "webp": "webp"}.get(suffix)
+    if mime is None:
+        raise MeshyError(f"unsupported reference image type: {image.suffix!r}")
+    return f"data:image/{mime};base64," + base64.b64encode(image.read_bytes()).decode("ascii")
+
+
+async def submit_image_to_3d(
+    client: httpx.AsyncClient,
+    image: Path,
+    *,
+    should_remesh: bool = True,
+    target_polycount: int = 30_000,
+    enable_pbr: bool = True,
+    symmetry_mode: str = "auto",
+) -> str:
+    """Queue a generation from ONE image. Returns the task id.
+
+    `should_remesh` defaults True for the same reason as the text path:
+    unremeshed output measured 1.9 M triangles, past the ingester's hard limit,
+    so the asset registers as `failed` and cannot be used.
+
+    Unlike text-to-3D there is no preview/refine split here — image-to-3D
+    returns a textured model in one task.
+    """
+    if not image.is_file():
+        raise MeshyError(f"submit_image_to_3d: {image} does not exist")
+    body: dict[str, Any] = {
+        "image_url": _data_uri(image),
+        "enable_pbr": enable_pbr,
+        "should_remesh": should_remesh,
+        "symmetry_mode": symmetry_mode,
+    }
+    if should_remesh and target_polycount > 0:
+        body["target_polycount"] = int(target_polycount)
+        body["topology"] = "triangle"
+    resp = await client.post(f"{BASE}/{IMAGE_TO_3D}", json=body)
+    _raise_for(resp, "submit_image_to_3d")
+    task_id = resp.json().get("result")
+    if not task_id:
+        raise MeshyError(f"submit_image_to_3d: no task id in {resp.text[:200]}")
+    return str(task_id)
+
+
+async def get_task(client: httpx.AsyncClient, task_id: str, endpoint: str = TEXT_TO_3D) -> dict[str, Any]:
+    resp = await client.get(f"{BASE}/{endpoint}/{task_id}")
     _raise_for(resp, f"get_task {task_id}")
     return resp.json()
 
@@ -141,6 +198,7 @@ async def wait_for(
     timeout_seconds: float,
     poll_seconds: float = 10.0,
     on_progress: Optional[Callable[[str, int], None]] = None,
+    endpoint: str = TEXT_TO_3D,
 ) -> GeneratedModel:
     """Poll until the task reaches a terminal state.
 
@@ -151,7 +209,7 @@ async def wait_for(
     deadline = loop.time() + timeout_seconds
     last = -1
     while True:
-        task = await get_task(client, task_id)
+        task = await get_task(client, task_id, endpoint)
         status = str(task.get("status", ""))
         progress = int(task.get("progress", 0) or 0)
         if on_progress is not None and progress != last:

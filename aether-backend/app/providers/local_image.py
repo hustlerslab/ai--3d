@@ -47,6 +47,12 @@ IP_ADAPTER_WEIGHT = "ip-adapter_sd15.bin"
 _pipeline: Any = None
 _pipeline_key: tuple[str, str, bool] | None = None
 _lock = threading.Lock()
+# The pipeline is a single global with internal state, so two concurrent
+# generations corrupt each other — the symptom is an opaque "list index out of
+# range" from inside diffusers, not an error that names the cause. The runner
+# also serialises these onto the render lane; this is the guarantee that holds
+# even if a caller bypasses it.
+_generate_lock = threading.Lock()
 
 
 class LocalImageError(RuntimeError):
@@ -265,6 +271,15 @@ def generate(
         log.warning("no CUDA device: generating on CPU, which is very slow")
 
     ip_images = _open_references(references or [])
+    with _generate_lock:
+        return _generate_locked(prompt, model, device, ip_images, reference_scale,
+                                negative_prompt, steps, guidance, width, height, seed)
+
+
+def _generate_locked(prompt, model, device, ip_images, reference_scale,
+                     negative_prompt, steps, guidance, width, height, seed) -> GeneratedImage:
+    import torch
+
     pipe = _load(model, device, with_ip_adapter=bool(ip_images))
     if ip_images:
         pipe.set_ip_adapter_scale(reference_scale)

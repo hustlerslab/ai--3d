@@ -70,6 +70,12 @@ app.include_router(projects_router)
 # (system design §26). Only the normalized models, material maps and the
 # per-project artifact folders are exposed — never the raw data dir.
 app.mount("/files/assets", StaticFiles(directory=str(get_registry().root / "normalized")), name="asset-files")
+# The browser's copy: same geometry, textures sized to a GPU budget. A separate
+# mount rather than a replacement, because Blender reads the normalized folder
+# straight off disk and must keep getting every pixel.
+_web_dir = get_registry().root / "web"
+_web_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/files/assets-web", StaticFiles(directory=str(_web_dir)), name="asset-files-web")
 app.mount("/files/materials", StaticFiles(directory=str(get_material_registry().root)), name="material-files")
 app.include_router(files_router)  # /files/projects/{id}/{path} resolved per request
 

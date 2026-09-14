@@ -111,6 +111,7 @@ async def _generate_one(
             expected_dimensions=decision.dimensions,
             mount=decision.mount,  # type: ignore[arg-type]
             color=decision.color,
+            project_id=ctx.project_id,
             source=AssetSource(
                 provider="meshy",
                 source_id=model.task_id,
@@ -165,6 +166,9 @@ async def _run(ctx: JobContext, todo: list[AssetDecision], settings: Settings) -
                 warnings.append(f"{decision.object_key}: {exc}")
                 ctx.emit("generate.failed", f"{decision.object_key}: {exc}; keeping the stand-in", status="warning")
             except Exception as exc:         # network, disk, a malformed glb
+                # The event and the warning both carry only the message; without
+                # the stack a failure here is as opaque as the moodboard one was.
+                ctx.log.exception("%s: generation failed", decision.object_key)
                 warnings.append(f"{decision.object_key}: {type(exc).__name__}: {exc}")
                 ctx.emit("generate.failed", f"{decision.object_key}: {exc}; keeping the stand-in", status="warning")
 

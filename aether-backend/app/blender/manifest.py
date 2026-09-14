@@ -86,6 +86,12 @@ def _asset_entry(asset_id: Optional[str], semantic_type: str, *, shape_hint: Opt
                 "asset_id": asset_id,
                 "path": str(glb),
                 "name": record.name if record else asset_id,
+                # A model generated for THIS project came from the client's own
+                # approved render, so its textures are already the fabric they
+                # chose. Re-skinning it with the style material would throw that
+                # away - which is the whole thing the generation was paid for.
+                # A catalog piece is generic and still gets re-skinned.
+                "own_materials": bool(record and record.project_id),
             }
         item = get_item(asset_id)
         if item is not None and item.shape != "model":

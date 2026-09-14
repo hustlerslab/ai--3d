@@ -236,7 +236,10 @@ def test_scene_plan_job_end_to_end(client, tmp_path):
     job2 = client.post(f"/api/projects/{pid}/scene-plan", json={}).json()["job"]
     assert get_runner().wait_idle(60)
     events = client.get(f"/api/jobs/{job2['job_id']}").json()["data"]["events"]
-    assert sum("skipped" in e["message"] for e in events) == 3
+    # Four checkpointed steps now: scene reading, object plan, asset plan,
+    # scene spec. The reading was added when the approved moodboard became the
+    # brief for the 3D build.
+    assert sum("skipped" in e["message"] for e in events) == 4
 
 
 def test_scene_plan_requires_analysis(client):

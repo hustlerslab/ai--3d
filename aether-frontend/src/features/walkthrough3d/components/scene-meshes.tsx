@@ -16,7 +16,7 @@ import { RoundedBox, useGLTF } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import * as THREE from "three";
 
-import { resolveModelUrl } from "../api/asset-resolver";
+import { resolveModelUrl, resolveOwnMaterials } from "../api/asset-resolver";
 import type {
   AetherScene,
   Opening,
@@ -535,7 +535,7 @@ function BoxShape({ obj }: { obj: SceneObject }) {
 
 const FABRIC_TYPES = new Set(["sofa", "loveseat", "armchair", "ottoman", "chair", "bed", "bar_stool", "pillows", "rug", "curtains"]);
 
-function GlbModel({ url, obj }: { url: string; obj: SceneObject }) {
+function GlbModel({ url, obj, ownMaterials }: { url: string; obj: SceneObject; ownMaterials: boolean }) {
   const gltf = useGLTF(url);
   const normalized = useMemo(() => {
     const clone = gltf.scene.clone(true);
@@ -571,8 +571,12 @@ function GlbModel({ url, obj }: { url: string; obj: SceneObject }) {
         }
       }
     });
-    // Moodboard fidelity: the upholstery of a fabric piece takes the planned colour.
-    if (largest && FABRIC_TYPES.has(obj.semantic_type) && obj.material_overrides?.primary) {
+    // Moodboard fidelity: the upholstery of a fabric piece takes the planned
+    // colour — but only for a generic catalog model. A piece generated from
+    // this project's own approved render already wears the client's fabric,
+    // and tinting it throws away the thing the generation was paid for. Same
+    // rule the Blender importer follows.
+    if (!ownMaterials && largest && FABRIC_TYPES.has(obj.semantic_type) && obj.material_overrides?.primary) {
       const mesh = largest as THREE.Mesh;
       const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
       mesh.material = mats.map((m) => {
@@ -583,25 +587,30 @@ function GlbModel({ url, obj }: { url: string; obj: SceneObject }) {
       if (!Array.isArray(mesh.material) || mesh.material.length === 1) mesh.material = (mesh.material as THREE.Material[])[0];
     }
     return clone;
-  }, [gltf, obj.dimensions, obj.semantic_type, obj.material_overrides, obj.color]);
+  }, [gltf, obj.dimensions, obj.semantic_type, obj.material_overrides, obj.color, ownMaterials]);
   return <primitive object={normalized} />;
 }
 
 /** The engine's normalized GLB for this asset, or null → parametric fallback. */
-function useModelUrl(assetId: string | null): string | null {
+function useModelUrl(assetId: string | null, projectId = ""): { url: string | null; ownMaterials: boolean } {
   const [url, setUrl] = useState<string | null>(null);
+  const [ownMaterials, setOwn] = useState(false);
   useEffect(() => {
     let alive = true;
     setUrl(null);
+    setOwn(false);
     if (!assetId) return;
-    void resolveModelUrl(assetId).then((resolved) => {
+    void resolveOwnMaterials(assetId, projectId).then((own) => {
+      if (alive) setOwn(own);
+    });
+    void resolveModelUrl(assetId, projectId).then((resolved) => {
       if (alive) setUrl(resolved);
     });
     return () => {
       alive = false;
     };
-  }, [assetId]);
-  return url;
+  }, [assetId, projectId]);
+  return { url, ownMaterials };
 }
 
 /** Ceiling-mounted objects hang from the ceiling; wall art sits at eye line. */
@@ -641,18 +650,52 @@ function ParametricShape({ obj }: { obj: SceneObject }) {
   }
 }
 
+/**
+ * What is shown while a real model is still loading, or after it failed.
+ *
+ * Deliberately unmistakable. Without it the Suspense fallback draws a
+ * furniture-shaped primitive that reads as the real asset: a plan view full of
+ * these was twice reported as "the generated meshes are rendering" when not
+ * one of them had loaded. A screenshot has to be able to tell the two apart on
+ * its own, with nobody there to explain it.
+ *
+ * A wireframe cage over a washed-out shape. The cage doubles as useful
+ * information — it is the volume the piece has been allotted — but its real
+ * job is to look like scaffolding rather than furniture.
+ */
+function PendingAsset({ obj }: { obj: SceneObject }) {
+  const [w, h, d] = obj.dimensions;
+  return (
+    <group>
+      <ParametricShape obj={obj} />
+      <mesh position={[0, h / 2, 0]}>
+        <boxGeometry args={[w + 0.03, h + 0.03, d + 0.03]} />
+        <meshBasicMaterial color="#6E7B8F" wireframe transparent opacity={0.85} />
+      </mesh>
+      <mesh position={[0, h / 2, 0]}>
+        <boxGeometry args={[w, h, d]} />
+        <meshBasicMaterial color="#AEB8C6" transparent opacity={0.35} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
 export function FurnitureMesh({
   obj,
+  projectId = "",
   selected,
   onSelect,
   ceilingHeight = 2.8,
 }: {
   obj: SceneObject;
+  /** Scopes the model lookup: pieces generated for this project are only in
+   *  this project's catalog, and without it every one falls back to a box. */
+  projectId?: string;
   selected: boolean;
   onSelect?: (id: string) => void;
   ceilingHeight?: number;
 }) {
-  const modelUrl = useModelUrl(obj.asset_id);
+  const { url: modelUrl, ownMaterials } = useModelUrl(obj.asset_id, projectId);
   const [w, h, d] = obj.dimensions;
   const liftY = mountOffsetY(obj, ceilingHeight);
 
@@ -667,8 +710,8 @@ export function FurnitureMesh({
       }}
     >
       {modelUrl ? (
-        <Suspense fallback={<ParametricShape obj={obj} />}>
-          <GlbModel url={modelUrl} obj={obj} />
+        <Suspense fallback={<PendingAsset obj={obj} />}>
+          <GlbModel url={modelUrl} obj={obj} ownMaterials={ownMaterials} />
         </Suspense>
       ) : (
         <ParametricShape obj={obj} />
@@ -736,6 +779,7 @@ export function SceneMeshes({
         <FurnitureMesh
           key={obj.object_id}
           obj={obj}
+          projectId={scene.project_id}
           selected={obj.object_id === selectedId}
           onSelect={(id) => onSelect?.(id)}
           ceilingHeight={

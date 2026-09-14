@@ -29,6 +29,10 @@ def write_crops(analysis: DesignAnalysis, bundle: InputBundle, project_root: Pat
     if Image is None:
         return ["Pillow missing; no crops written"]
     out_dir = project_root / CROP_DIR
+    # Names are "<index>_<slug>.png", so a re-read with a different item order
+    # leaves the previous run's files behind forever — the sample project had 11
+    # crops on disk for 6 read items. Sweep anything this run does not claim.
+    written: set[Path] = set()
     opened: dict[str, "Image.Image"] = {}
     for idx, item in enumerate(analysis.spotted_objects):
         # By stable id, not by position: a deleted photo used to shift every
@@ -45,6 +49,7 @@ def write_crops(analysis: DesignAnalysis, bundle: InputBundle, project_root: Pat
         target = project_root / rel
         if target.exists() and not force:
             item.crop_ref = rel
+            written.add(target)
             continue
         try:
             im = opened.get(photo.path)
@@ -71,9 +76,17 @@ def write_crops(analysis: DesignAnalysis, bundle: InputBundle, project_root: Pat
             out_dir.mkdir(parents=True, exist_ok=True)
             crop.save(target, format="PNG", optimize=True)
             item.crop_ref = rel
+            written.add(target)
         except Exception as exc:  # one bad photo never sinks the stage
             warnings.append(f"{item.name}: crop failed: {exc}")
             item.crop_ref = ""
     for im in opened.values():
         im.close()
+    if out_dir.is_dir():
+        for stale in out_dir.glob("*.png"):
+            if stale not in written:
+                try:
+                    stale.unlink()
+                except OSError as exc:                     # a locked file is not fatal
+                    warnings.append(f"could not remove stale crop {stale.name}: {exc}")
     return warnings
