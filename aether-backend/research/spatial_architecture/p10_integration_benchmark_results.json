@@ -1,0 +1,373 @@
+{
+  "_about": "P10 end-to-end adversarial integration benchmark.",
+  "multi_constraint_composite": {
+    "candidate_count_before_filter": 16,
+    "candidate_count_after_filter": 16,
+    "feasible_candidate_count": 16,
+    "selected_candidate": [
+      -3.0,
+      -0.0
+    ],
+    "satisfied_constraints": [
+      "NEAR"
+    ],
+    "violated_constraints": [
+      "FACES"
+    ],
+    "hard_violations": 0
+  },
+  "adversarial_pass": 30,
+  "adversarial_total": 30,
+  "adversarial": [
+    {
+      "name": "single_object_placement",
+      "actual": {
+        "hard": 0
+      },
+      "expected": {
+        "hard": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "multi_object_collision",
+      "actual": {
+        "terminal": "REPAIRED",
+        "hard_after": 0
+      },
+      "expected": {
+        "terminal": "REPAIRED",
+        "hard_after": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "wall_competition",
+      "actual": {
+        "conflict": true
+      },
+      "expected": {
+        "conflict": true
+      },
+      "pass": true
+    },
+    {
+      "name": "faces",
+      "actual": {
+        "verdict": "satisfied"
+      },
+      "expected": {
+        "verdict": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "near",
+      "actual": {
+        "found": true
+      },
+      "expected": {
+        "found": true
+      },
+      "pass": true
+    },
+    {
+      "name": "between",
+      "actual": {
+        "found": true
+      },
+      "expected": {
+        "found": true
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_plus_near",
+      "actual": {
+        "satisfied_constraints": [
+          "NEAR"
+        ],
+        "violated_constraints": [
+          "FACES"
+        ],
+        "hard_violations": 0
+      },
+      "expected": {
+        "satisfied_constraints": [
+          "NEAR"
+        ],
+        "violated_constraints": [
+          "FACES"
+        ],
+        "hard_violations": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_plus_collision",
+      "actual": {
+        "feasible": 0
+      },
+      "expected": {
+        "feasible": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "near_plus_circulation",
+      "actual": {
+        "ran_without_crash": true,
+        "n_violations_is_int": true
+      },
+      "expected": {
+        "ran_without_crash": true,
+        "n_violations_is_int": true
+      },
+      "pass": true
+    },
+    {
+      "name": "between_plus_collision",
+      "actual": {
+        "found": true,
+        "avoided_obstruction": true
+      },
+      "expected": {
+        "found": true,
+        "avoided_obstruction": true
+      },
+      "pass": true
+    },
+    {
+      "name": "wall_intent_conflict",
+      "actual": {
+        "conflict": true
+      },
+      "expected": {
+        "conflict": true
+      },
+      "pass": true
+    },
+    {
+      "name": "open_plan_no_wall",
+      "actual": {
+        "hard": 0
+      },
+      "expected": {
+        "hard": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "contaminated_wall",
+      "actual": {
+        "crashed": false,
+        "verdict": "satisfied"
+      },
+      "expected": {
+        "crashed": false,
+        "verdict": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "uncertain_floor",
+      "actual": {
+        "low_confidence_representable": true
+      },
+      "expected": {
+        "low_confidence_representable": true
+      },
+      "pass": true
+    },
+    {
+      "name": "object_extent_ambiguity",
+      "actual": {
+        "hard": 0
+      },
+      "expected": {
+        "hard": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "ambiguous_object_identity",
+      "actual": {
+        "distinct_results": true
+      },
+      "expected": {
+        "distinct_results": true
+      },
+      "pass": true
+    },
+    {
+      "name": "impossible_constraint",
+      "actual": {
+        "honestly_infeasible": true
+      },
+      "expected": {
+        "honestly_infeasible": true
+      },
+      "pass": true
+    },
+    {
+      "name": "unknown_constraint",
+      "actual": {
+        "verdict": "unknown"
+      },
+      "expected": {
+        "verdict": "unknown"
+      },
+      "pass": true
+    },
+    {
+      "name": "repairable_violation",
+      "actual": {
+        "terminal": "REPAIRED"
+      },
+      "expected": {
+        "terminal": "REPAIRED"
+      },
+      "pass": true
+    },
+    {
+      "name": "unrepairable_violation",
+      "actual": {
+        "terminal_is_terminal_state": true
+      },
+      "expected": {
+        "terminal_is_terminal_state": true
+      },
+      "pass": true
+    },
+    {
+      "name": "dense_scene",
+      "actual": {
+        "scene_builds": true,
+        "n_objects": 16
+      },
+      "expected": {
+        "scene_builds": true,
+        "n_objects": 16
+      },
+      "pass": true
+    },
+    {
+      "name": "sparse_scene",
+      "actual": {
+        "hard": 0
+      },
+      "expected": {
+        "hard": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "tilted_wall",
+      "actual": {
+        "basis_orthogonal": true
+      },
+      "expected": {
+        "basis_orthogonal": true
+      },
+      "pass": true
+    },
+    {
+      "name": "multiple_coordinate_frames",
+      "actual": {
+        "camera_to_room": [
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "room_to_blender": [
+          1.0,
+          1.0,
+          -1.0
+        ]
+      },
+      "expected": {
+        "camera_to_room": [
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "room_to_blender": [
+          1.0,
+          1.0,
+          -1.0
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "asset_mismatch",
+      "actual": {
+        "hard": 0
+      },
+      "expected": {
+        "hard": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "blender_round_trip",
+      "actual": {
+        "matches_production": true
+      },
+      "expected": {
+        "matches_production": true
+      },
+      "pass": true
+    },
+    {
+      "name": "model_evidence_corruption",
+      "actual": {
+        "crashed": false
+      },
+      "expected": {
+        "crashed": false
+      },
+      "pass": true
+    },
+    {
+      "name": "missing_evidence",
+      "actual": {
+        "verdict": "unknown"
+      },
+      "expected": {
+        "verdict": "unknown"
+      },
+      "pass": true
+    },
+    {
+      "name": "duplicate_like_objects",
+      "actual": {
+        "distinct_ids": true
+      },
+      "expected": {
+        "distinct_ids": true
+      },
+      "pass": true
+    },
+    {
+      "name": "complete_end_to_end_scene",
+      "actual": {
+        "hard_violations": 0,
+        "objects_placed": 5
+      },
+      "expected": {
+        "hard_violations": 0,
+        "objects_placed": 5
+      },
+      "pass": true
+    }
+  ],
+  "deterministic": true,
+  "metrics": {
+    "physical_success_rate": 1.0,
+    "intent_success_rate": 0.4,
+    "evidence_honesty_rate": 1.0,
+    "system_success_rate": 1.0,
+    "n_scenarios": 30
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "_about": "P6 coordinate-transform performance/determinism benchmark. P1-P5 regression benchmarks are separate, unmodified scripts.",
+  "performance": [
+    {
+      "n": 1,
+      "raw_ms": 0.021,
+      "typed_ms": 0.0886,
+      "overhead_ratio": 4.22
+    },
+    {
+      "n": 10,
+      "raw_ms": 0.0264,
+      "typed_ms": 0.0966,
+      "overhead_ratio": 3.66
+    },
+    {
+      "n": 100,
+      "raw_ms": 0.2504,
+      "typed_ms": 0.4374,
+      "overhead_ratio": 1.75
+    },
+    {
+      "n": 1000,
+      "raw_ms": 1.6201,
+      "typed_ms": 4.0351,
+      "overhead_ratio": 2.49
+    }
+  ],
+  "deterministic": true
+}

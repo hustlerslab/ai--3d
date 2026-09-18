@@ -556,6 +556,41 @@ def compose_room_prompt(provider, analysis: DesignAnalysis, style: StyleSpec,
     return scene_prompt_sd(analysis, style, bundle, room), "template"
 
 
+#: The mirror image of SD_NEGATIVE. A room render must NOT be a product shot;
+#: an element image must be NOTHING BUT one. Everything that makes a room a
+#: room is unwanted here, and so is a second object.
+ELEMENT_NEGATIVE = (
+    "room, interior, wall, floor, window, curtain, rug, plant, multiple objects, "
+    "two pieces, pair, set, collage, grid, text, watermark, logo, label, people, "
+    "hands, blurry, distorted, deformed, lowres, cartoon, cropped, cut off, close-up"
+)
+
+
+def element_prompt_sd(semantic_type: str, canonical_name: str = "", material: str = "",
+                      style_tags: Optional[list[str]] = None) -> str:
+    """A <=77-token prompt for one isolated piece on a neutral ground.
+
+    Words that carry weight in SD: the material name and the piece's own name.
+    A hex colour carries none, so it is not sent; when the piece was
+    photographed, its colour reaches the render through IP-Adapter on the crop
+    instead. The framing words are the counterweight to that conditioning,
+    which otherwise reproduces the crop's context along with its object.
+    """
+    what = (canonical_name or semantic_type.replace("_", " ")).strip()
+    kind = semantic_type.replace("_", " ")
+    if kind not in what:
+        what = f"{what} {kind}"
+    material = (material or "").strip().replace("_", " ")
+    tags = ", ".join((style_tags or [])[:2]).replace("_", " ")
+    parts = [
+        f"product photo of a single {material + ' ' if material else ''}{what}",
+        tags,
+        "isolated on a plain light grey studio background, centered, entire piece in frame",
+        "three-quarter view, soft even studio lighting, photorealistic, sharp focus",
+    ]
+    return ", ".join(p for p in parts if p)
+
+
 def scene_prompt_sd(analysis: DesignAnalysis, style: StyleSpec, bundle: InputBundle, room=None) -> str:
     """A <=77-token prompt for a local Stable Diffusion render.
 
@@ -713,6 +748,154 @@ def element_check_prompt(room_type: str, vertical) -> str:
 
 # ── reading the approved moodboard back out ──────────────────────────────
 
+REFERENCE_CLASSIFICATION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        # REQUIRED so the model commits to a class instead of omitting the
+        # field and leaving the caller to guess - the same lesson as `against`
+        # and `faces` below. An honest "uncertain" is a valid answer; silence
+        # is not.
+        "reference_class": {
+            "type": "string",
+            "enum": ["exact_object", "design_reference", "style_reference",
+                     "inspiration_only", "uncertain"],
+        },
+        "object_name": {"type": "string"},
+        "object_category": {"type": "string"},
+        "room_hint": {"type": "string"},
+        "color_words": {"type": "array", "items": {"type": "string"}},
+        "color_hex": {"type": "string"},
+        "material": {"type": "string"},
+        "upholstery": {"type": "string"},
+        "pattern": {"type": "string"},
+        "frame_finish": {"type": "string"},
+        "style_descriptors": {"type": "array", "items": {"type": "string"}},
+        "visual_descriptors": {"type": "array", "items": {"type": "string"}},
+        "confidence": {"type": "number"},
+        "notes": {"type": "string"},
+    },
+    # P15: the attribute fields are REQUIRED, the same lesson `against` and
+    # `faces` taught in SCENE_READING_SCHEMA below. Left optional, flash-lite
+    # simply omitted them: MEASURED at frame_finish 0/8, color_words 1/8 and
+    # pattern 1/8 on 8 real photographs. Required, the same 8 images give
+    # frame_finish 2/8 (both genuinely visible), color_words 8/8, pattern 8/8,
+    # with zero false positives. A required field can still come back empty,
+    # which the caller reads as "nothing to say"; an absent one cannot be told
+    # apart from a field the model never considered.
+    # Measured: docs/benchmarks/p15_reference_extraction.json
+    "required": ["reference_class", "confidence", "material", "upholstery", "frame_finish",
+                 "color_words", "color_hex", "pattern", "visual_descriptors",
+                 "style_descriptors"],
+}
+
+
+def reference_classification_prompt(description: str, vertical) -> str:
+    """Read ONE reference photo: what did the client mean by showing it?
+
+    One photo per call on purpose. Batched onto a single call the model's
+    attribute extraction thins out as images accumulate (measured:
+    docs/benchmarks/p11_reference_capacity.json), and worse, nothing ties an
+    attribute back to the picture that justified it.
+
+    The class matters more than the description: "the sofa I own" and "a mood I
+    like" are different instructions, and the whole failure this phase exists
+    to fix is the two being indistinguishable by the time an asset is chosen.
+    So the prompt spells out the consequence of each class and says plainly
+    that guessing costs more than admitting uncertainty.
+
+    P15 rewrote the attribute half. The old wording invited omission ("leave a
+    field out otherwise") and the model took it: on 8 real photographs it filled
+    `frame_finish` 0 times, `color_words` once and `pattern` once, putting the
+    frame information into `visual_descriptors` instead ("wooden frame", "gold
+    accent trim"). Three variants were run over those same 8 images and scored
+    against ground truth read off the pictures; this is the winner, measured at
+    extraction fidelity 0.96 with zero false positives and zero invented hex
+    values. The part-by-part inspection order and the explicit "a mattress has
+    no frame" instruction both earn their place: four of the eight images are
+    mattresses, and they are what keeps a frame-hunting prompt honest.
+
+    Measured: docs/benchmarks/p15_reference_extraction.json
+    """
+    types = ", ".join(sorted(vocab.semantic_types(vertical))[:60])
+    lines = [
+        "You are classifying ONE reference image a client uploaded for an interior design project.",
+        "Return JSON describing what this image is FOR.",
+        "",
+        f"THE CLIENT'S BRIEF: {description.strip()[:600] or '(none given)'}",
+        "",
+        "CHOOSE EXACTLY ONE reference_class:",
+        "  exact_object     - a specific piece the client owns or wants exactly. It WILL be "
+        "built into their 3D room. Only choose this if one piece is clearly the subject.",
+        "  design_reference - the look for a piece of that kind (this colour, this material). "
+        "It shapes the piece we choose or make, but is not copied literally.",
+        "  style_reference  - an overall mood, palette or material direction. It influences "
+        "colours and materials and creates NO furniture by itself.",
+        "  inspiration_only - saved for feel only. It creates nothing and changes nothing.",
+        "  uncertain        - you cannot tell. ALWAYS choose this rather than guessing.",
+        "",
+        "An exact_object or design_reference MUST name object_category from this list, or you "
+        "must answer uncertain instead:",
+        f"  {types}",
+        "",
+        "FILL THE STRUCTURED FIELDS. Downstream systems read ONLY the structured fields - "
+        "a detail written into visual_descriptors and nowhere else is lost.",
+        "Answer every field. Use an empty string or empty list when the image does not "
+        "support an answer: empty is a correct, expected answer and is always better than "
+        "a guess.",
+        "",
+        "  material           - the primary/body surface material, when independently "
+        "visible: wood, marble, glass, metal, stone, leather. Leave empty for a fully "
+        "upholstered piece.",
+        "  upholstery         - the soft covering: linen, velvet, boucle, leather, cotton, "
+        "knit fabric. This is NOT the same field as material.",
+        "  frame_finish       - the finish of the visible structural frame, base, legs, "
+        "arms or trim.",
+        "  color_words        - the visible colours in plain words, e.g. ['sage green', "
+        "'warm beige']. Always words, never a hex code.",
+        "  color_hex          - #RRGGBB ONLY if an exact shade is genuinely certain. Do NOT "
+        "convert a colour word into a hex value. Empty is almost always right.",
+        "  pattern            - ONLY an actually visible pattern: 'vertical stripes', "
+        "'floral', 'geometric', 'herringbone', 'quilted'. Not a style, not a mood.",
+        "  style_descriptors  - design idiom, e.g. ['japandi', 'mid-century']",
+        "  visual_descriptors - remaining visible detail that fits no field above, "
+        "e.g. ['low back', 'rounded arms']",
+        "  room_hint          - the room it belongs in, if the image makes that clear",
+        "",
+        "INSPECT THE PIECE IN PARTS, in this order, before answering:",
+        "  1. the whole object        5. the arms",
+        "  2. the main body           6. the legs or base",
+        "  3. the upholstered areas   7. the trim and accent regions",
+        "  4. the structural frame    8. surface, colour, pattern",
+        "",
+        "Keep these four apart. They are different fields: the body material, "
+        "the upholstery, the structural frame finish, the trim/accent finish.",
+        "",
+        "FRAME FINISH is the field most often lost. If you can see the material or finish "
+        "of a frame, structural frame, armrest, structural arm, leg, base, trim or accent "
+        "trim, put it in frame_finish. Do not leave it only in visual_descriptors. You may "
+        "ALSO keep the descriptive phrase in visual_descriptors for traceability.",
+        "  'wooden frame'         -> frame_finish: 'wood'",
+        "  'wooden armrests'      -> frame_finish: 'wood'",
+        "  'black metal frame'    -> frame_finish: 'black metal'",
+        "  'gold metal trim'      -> frame_finish: 'gold metal'",
+        "  'brass trim'           -> frame_finish: 'brass'",
+        "  'blackened metal base' -> frame_finish: 'blackened metal'",
+        "",
+        "But ONLY when you can actually see it. Many pieces have no visible frame at all - "
+        "an upholstered piece on a hidden or skirted base, or a mattress, has no frame, and "
+        "frame_finish must then be empty. Never assume a frame exists because pieces of "
+        "this kind usually have one.",
+        "",
+        "Say what you can see, not what you can identify. Generic wood grain is 'wood'; "
+        "call it 'walnut' or 'oak' only if the image truly shows that species. The same "
+        "restraint applies to every field.",
+        "",
+        "confidence is 0.0-1.0 for the CLASS you chose. Below 0.25 is treated as uncertain, "
+        "so use a low number honestly rather than inflating it.",
+    ]
+    return "\n".join(lines)
+
+
 SCENE_READING_SCHEMA = {
     "type": "object",
     "properties": {
@@ -729,6 +912,15 @@ SCENE_READING_SCHEMA = {
                     "placement": {"type": "string"},
                     "against": {"type": "string"},
                     "faces": {"type": "string"},
+                    # P22: the picture's own frame, which the model answers in
+                    # readily (30 of 30 `against` answers were camera-relative
+                    # before the prompt forbade it). The plan adopts this frame
+                    # per room, so here it is asked for on purpose, as numbers.
+                    "wall": {"type": "string", "enum": ["back", "left", "right", "front", "none"]},
+                    "along": {"type": "integer"},
+                    "depth": {"type": "integer"},
+                    "height": {"type": "integer"},
+                    "facing": {"type": "string"},
                     "confidence": {"type": "number"},
                 },
                 # `against` and `faces` are REQUIRED so the model actually
@@ -738,7 +930,8 @@ SCENE_READING_SCHEMA = {
                 # field can still come back empty or unsure, which the caller
                 # treats as "no hint"; an absent one cannot be told apart from
                 # "the model had nothing to say".
-                "required": ["name", "semantic_type", "bbox", "against", "faces"],
+                "required": ["name", "semantic_type", "bbox", "against", "faces",
+                             "wall", "along", "depth", "facing"],
             },
         },
         "surfaces": {
@@ -749,6 +942,23 @@ SCENE_READING_SCHEMA = {
                 "floor_color": {"type": "string"},
                 "floor_material": {"type": "string"},
                 "notes": {"type": "string"},
+                # P22: finish zones per named wall, so tiles to waist height
+                # and paint above, or a feature wall, survive the reading.
+                "walls": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "wall": {"type": "string", "enum": ["back", "left", "right", "front"]},
+                            "material": {"type": "string"},
+                            "color": {"type": "string"},
+                            "pattern": {"type": "string"},
+                            "span": {"type": "array", "items": {"type": "integer"}},
+                            "band": {"type": "array", "items": {"type": "integer"}},
+                        },
+                        "required": ["wall", "material", "span", "band"],
+                    },
+                },
             },
         },
     },
@@ -793,11 +1003,58 @@ def scene_reading_prompt(room, style: StyleSpec, vertical) -> str:
         "  one that catches the wall or a neighbour produces a wrong mesh.",
         "- material and color (hex if you can judge it)",
         "- placement: floor, wall, ceiling or on_surface",
-        "- against: which wall or corner it sits against, in words",
-        "- faces: what it is turned towards, in words",
+        # P22: the picture's frame, deliberately. `against`/`faces` below must
+        # name pieces because a direction alone cannot be mapped onto the
+        # plan; these four CAN, because the plan adopts the picture's frame
+        # for the room: the wall you look at is its back wall. Whole numbers
+        # out of 1000, same convention as bbox, for the same reason.
+        "- wall: the wall this piece stands against or hangs on, IN THE",
+        "  PICTURE'S FRAME: 'back' is the wall you are looking at, 'left' and",
+        "  'right' are the picture's left and right, 'front' is behind the",
+        "  camera. 'none' if it stands free of every wall.",
+        "- along: where it is from left to right across the room, as a WHOLE",
+        "  NUMBER out of 1000 (0 = touching the left wall, 1000 = the right).",
+        "- depth: how far it is from the back wall towards the camera, 0-1000",
+        "  (0 = touching the back wall, 1000 = nearest the camera).",
+        "- height: for wall and ceiling pieces, the height of its bottom edge",
+        "  above the floor, 0-1000 of the ceiling. 0 for anything on the floor.",
+        "- facing: the way its front is turned, in the picture's frame:",
+        "  'back', 'left', 'right', 'front' (towards the camera), 'up', 'down',",
+        "  or the NAME of the piece it is turned towards if that is clearer.",
+        # Both of these must NAME something. Asked for them "in words" the
+        # model answered in the camera's frame on every element of both sample
+        # projects - "left wall", "back wall", "front", "right", "up" - and the
+        # planner discards those, correctly: a render has no fixed left or back
+        # against the floor plan. Measured on the two stored readings: 30 of 30
+        # `against` values and 30 of 30 `faces` values were camera-relative, so
+        # the whole arrangement-hint path did nothing in production. Naming a
+        # thing survives the translation; naming a direction cannot.
+        # Measured over five fresh reads: offering "into the room" beside the
+        # specific answer meant the model took the easy one 10 times out of 14
+        # and named a piece ZERO times, and "what it sits against" drew "floor"
+        # - true, and useless, since everything stands on the floor. Both are
+        # now last resorts, stated after the answer that is actually wanted.
+        "- against: NAME the piece of furniture this one backs onto or stands",
+        "  beside - 'the sofa', 'the kitchen island'. If it touches no piece,",
+        "  answer 'wall', 'window' or 'corner'. The FLOOR IS NOT AN ANSWER:",
+        "  everything stands on the floor, so it says nothing about where.",
+        "  Never a direction - 'left wall' and 'back wall' are discarded,",
+        "  because the floor plan has no left or back.",
+        "- faces: NAME the piece this one is turned towards - 'the television',",
+        "  'the dining table', 'the window'. A sofa faces a television; a chair",
+        "  faces a desk. ONLY if it faces no particular piece, answer 'into the",
+        "  room'. Never 'front', 'right' or 'up'.",
         "",
         "SURFACES: the wall and floor colour and material. Describe them only —",
         "they are rebuilt as geometry, not cut out.",
+        "- walls: one entry per DISTINCT finish zone you can see, named by",
+        "  wall in the picture's frame (back, left, right, front). A wall that",
+        "  is tiled to waist height and painted above is TWO entries. Each:",
+        "  material, color (hex), pattern ('herringbone', 'vertical panelling',",
+        "  '' if plain), span [from, to] out of 1000 along the wall from its",
+        "  left end, band [from, to] out of 1000 up from the floor. One plain",
+        "  finish on every wall: a single entry per wall, span [0,1000],",
+        "  band [0,1000], or leave the list empty.",
         "",
         "RULES",
         "- One entry per distinct piece. Never box the room, a wall, the floor,",

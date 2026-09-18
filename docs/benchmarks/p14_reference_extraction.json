@@ -1,0 +1,137 @@
+{
+  "_about": "What real Gemini populates from real project photographs. P14's rendering ceiling is set by extraction, not by the executor.",
+  "images": 8,
+  "per_image": [
+    {
+      "file": "ref_04.jpeg",
+      "object_category": "sofa",
+      "reference_class": "design_reference",
+      "stated": [
+        "upholstery",
+        "visual_descriptors"
+      ],
+      "visual_descriptors": [
+        "rounded arms",
+        "segmented backrest",
+        "contrasting geometric band on backrest"
+      ]
+    },
+    {
+      "file": "ref_05.jpeg",
+      "object_category": "sofa",
+      "reference_class": "design_reference",
+      "stated": [
+        "upholstery",
+        "visual_descriptors"
+      ],
+      "visual_descriptors": [
+        "pull-out bed mechanism",
+        "quilted pull-out panel",
+        "loose back cushions",
+        "gold accent trim"
+      ]
+    },
+    {
+      "file": "ref_06.jpeg",
+      "object_category": "sofa",
+      "reference_class": "design_reference",
+      "stated": [
+        "upholstery",
+        "visual_descriptors"
+      ],
+      "visual_descriptors": [
+        "quilted panel",
+        "tufted buttons",
+        "two-tone",
+        "rounded arms"
+      ]
+    },
+    {
+      "file": "ref_07.jpeg",
+      "object_category": "sofa",
+      "reference_class": "design_reference",
+      "stated": [
+        "upholstery",
+        "visual_descriptors"
+      ],
+      "visual_descriptors": [
+        "tufted back",
+        "tufted seat",
+        "wooden frame",
+        "slatted armrest detail"
+      ]
+    },
+    {
+      "file": "ref_09.jpeg",
+      "object_category": "bed",
+      "reference_class": "exact_object",
+      "stated": [
+        "upholstery",
+        "visual_descriptors"
+      ],
+      "visual_descriptors": [
+        "thick",
+        "patterned top",
+        "piped edges"
+      ]
+    },
+    {
+      "file": "ref_10.jpeg",
+      "object_category": "bed",
+      "reference_class": "design_reference",
+      "stated": [
+        "upholstery",
+        "visual_descriptors"
+      ],
+      "visual_descriptors": [
+        "vertical standing",
+        "gradient pattern",
+        "blue side border",
+        "quilted surface"
+      ]
+    },
+    {
+      "file": "ref_11.jpeg",
+      "object_category": "bed",
+      "reference_class": "exact_object",
+      "stated": [
+        "upholstery",
+        "visual_descriptors"
+      ],
+      "visual_descriptors": [
+        "thick",
+        "padded",
+        "piped edges"
+      ]
+    },
+    {
+      "file": "ref_12.jpeg",
+      "object_category": "bed",
+      "reference_class": "exact_object",
+      "stated": [
+        "upholstery",
+        "visual_descriptors"
+      ],
+      "visual_descriptors": [
+        "quilted",
+        "striped side panel",
+        "branded trim",
+        "standing upright on end",
+        "rectangular profile with rounded corners",
+        "textured surface patterns",
+        "side branding text Sleepfresh",
+        "dark piping border"
+      ]
+    }
+  ],
+  "populated": {
+    "color_hex": 0,
+    "color_words": 0,
+    "frame_finish": 0,
+    "material": 0,
+    "pattern": 0,
+    "style_descriptors": 0,
+    "upholstery": 8,
+    "visual_descriptors": 8
+  }
+}

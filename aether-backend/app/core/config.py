@@ -49,6 +49,13 @@ class Settings(BaseSettings):
     # eight photos and still distinguishes a sofa from a mattress.
     ollama_image_max_px: int = 512
     ollama_max_images: int = 8
+    # Reading ONE approved render is a different budget from reading eight
+    # reference photos. The 512 px above exists because eight photos at 1024 px
+    # cost ~11.6k image tokens and did not fit the window; a single render at
+    # 768 px costs a fraction of that and leaves the 16k context mostly free.
+    # It matters because this read has to produce tight bounding boxes, and a
+    # 704x448 render thumbnailed to 512 px throws away detail the box needs.
+    ollama_scene_image_max_px: int = 768
     # Ollama's default output cap truncated the analysis mid-string at ~23 KB
     # of JSON, which then fails to parse and throws the whole call away. The
     # analysis schema is large (up to 40 spotted objects), so it needs room.
@@ -64,6 +71,18 @@ class Settings(BaseSettings):
     # clean runs at 180. The fallback to the mock hides this as a quietly worse
     # plan rather than an error, so the headroom matters.
     gemini_timeout_seconds: int = 150
+    # How many reference photos may ride along on one vision call. Was a
+    # hardcoded 6 inside the provider while uploads allowed 12, so two of a
+    # client's eight references silently never reached the model. Measured
+    # (research/p11_reference_capacity.py, docs/benchmarks/
+    # p11_reference_capacity.json): 6/8/10/12 all return HTTP 200 with valid
+    # JSON, costing ~1.1 k prompt tokens per image and 15.1 k in total at 12 -
+    # nowhere near the model's context, so the old cap was never a token
+    # limit. Set to MAX_REFERENCES so no upload is ever dropped. Attribute
+    # extraction does thin out as images pile up on ONE call, which is why
+    # per-reference classification (app/intelligence/reference_reader.py)
+    # reads each photo on its own rather than trusting this batch.
+    gemini_max_reference_images: int = 12
 
     # ── Moodboard scene image (local Stable Diffusion) ──────────────────
     # Replaced the Gemini image path, which needs billing: every image model
@@ -97,7 +116,13 @@ class Settings(BaseSettings):
 
     meshy_api_key: SecretStr = SecretStr("")
     meshy_base_url: str = "https://api.meshy.ai"
-    meshy_timeout_seconds: int = 300
+    # How long to wait for one mesh. Raised from 300 s, which was under the
+    # vendor's own worst case and so read as a failure when it was only
+    # slowness: measured in one batch, two pieces were abandoned "still
+    # IN_PROGRESS at 45% after 300s" while four others in the same batch
+    # finished. Abandoning at 45% wastes the wait and leaves a stand-in in the
+    # room; waiting costs only time, and the poll is cheap.
+    meshy_timeout_seconds: int = 900
     # preview = geometry only (cheap, ~75 s). refine adds textures for a second
     # charge against the same task; preview is the default because the planner
     # already supplies a colour and the stand-in being replaced is untextured.
@@ -111,7 +136,14 @@ class Settings(BaseSettings):
     # Generation costs credits, so a runaway plan must not drain the account.
     # Per project, not per job: a re-run resumes from checkpoints and never
     # re-spends on a piece already generated.
-    meshy_max_per_project: int = 6
+    #
+    # Raised from 6, which sat below the size of an ordinary room and so acted
+    # as a silent truncation rather than a safety rail: measured on a single
+    # living room, 11 approved pieces became "5 over the limit of 6" in a job
+    # event nobody reads, and five pieces stood in the finished 3D space as
+    # catalog stand-ins with nothing on screen saying why. A cap still exists -
+    # a plan cannot drain the account - but it now sits above a real room.
+    meshy_max_per_project: int = 20
     meshy_poll_seconds: float = 10.0
 
     provider_fallback_to_mock: bool = True

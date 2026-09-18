@@ -17,6 +17,7 @@ import {
   type SceneSpecDto,
   type Vertical,
   type CreditsDto,
+  type ElementImageSetDto,
   type SceneReadingDto,
 } from "../types";
 
@@ -151,7 +152,27 @@ async function enqueue(path: string, body: unknown): Promise<JobDto> {
   return res.job;
 }
 
-export const analyze = (projectId: string, force = false) => enqueue(`/projects/${projectId}/analyze`, { force });
+/** `paint=false` is the element-first entry: analysis, crops and style without
+ *  painting rooms, so the pieces can be pictured before any room exists. */
+export const analyze = (projectId: string, force = false, paint = true) =>
+  enqueue(`/projects/${projectId}/analyze`, { force, paint });
+
+/** One isolated picture per canonical piece, from the photos and the brief.
+ *  Local GPU; no per-image cost. */
+export const elementImages = (projectId: string, force = false) =>
+  enqueue(`/projects/${projectId}/element-images`, { force });
+
+/** The client's decision per pictured piece, keyed by canonical element id. */
+export async function reviewElementImages(projectId: string, decisions: Record<string, boolean>): Promise<ElementImageSetDto> {
+  const body = await request<{ data: ElementImageSetDto }>(
+    `/projects/${projectId}/element-images`, { ...json({ decisions }), method: "PATCH" });
+  return body.data;
+}
+
+export async function getElementImages(projectId: string, signal?: AbortSignal): Promise<ElementImageSetDto> {
+  const body = await request<{ data: ElementImageSetDto }>(`/projects/${projectId}/element-images`, { signal });
+  return body.data;
+}
 
 /** Redraw one room's moodboard image on a fresh seed, leaving the reading, the
  *  style and the other rooms alone. The same prompt gives a complete bathroom

@@ -1,0 +1,831 @@
+{
+  "environment": {
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+      "vram_total_mib": 6144,
+      "vram_used_mib": 4648,
+      "vram_free_mib": 1354
+    },
+    "system_ram_before": {
+      "total_gb": 16.8,
+      "available_gb": 0.1,
+      "load_pct": 99
+    },
+    "temperature": 0.2,
+    "num_ctx": 16384,
+    "num_predict": 8192,
+    "image_max_px": 768,
+    "prompt": "phase1d _wall_a, imported unmodified",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "answer"
+      ]
+    }
+  },
+  "dataset": {
+    "cases": 16,
+    "positives": 11,
+    "negatives": 5,
+    "source": "tests/fixtures/relationship_benchmark.json binary_relations, identical to Phase 1d"
+  },
+  "models": {
+    "7b": {
+      "model": "qwen2.5vl:7b",
+      "load": {
+        "load_s": 15.9,
+        "residency": {
+          "total_gb": 6.17,
+          "vram_gb": 3.47,
+          "cpu_gb": 2.7,
+          "on_gpu_pct": 56.3
+        },
+        "gpu_after": {
+          "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+          "vram_total_mib": 6144,
+          "vram_used_mib": 4648,
+          "vram_free_mib": 1354
+        }
+      },
+      "runs": [
+        {
+          "n": 16,
+          "yes_truth": 11,
+          "no_truth": 5,
+          "tp": 10,
+          "tn": 3,
+          "fp": 2,
+          "fn": 1,
+          "unanswered": 0,
+          "accuracy": 81.2,
+          "yes_precision": 83.3,
+          "yes_recall": 90.9,
+          "f1": 86.9,
+          "no_precision": 75.0,
+          "no_recall": 60.0,
+          "false_wall_rate": 40.0,
+          "latency": {
+            "mean": 3.21,
+            "median": 0.97,
+            "p95": 23.38,
+            "worst": 23.38
+          },
+          "first_query_s": 23.38,
+          "valid_json": 16,
+          "answer_distribution": {
+            "true": 12,
+            "false": 4,
+            "failed": 0
+          },
+          "rows": [
+            {
+              "source": "living_room_a.sofa.0",
+              "room": "living_room_a",
+              "elapsed_s": 23.38,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.sofa.1",
+              "room": "living_room_a",
+              "elapsed_s": 0.91,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.side_table.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.92,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.ottoman.0",
+              "room": "living_room_a",
+              "elapsed_s": 1.0,
+              "answer": false,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.kitchen_counter.0",
+              "room": "kitchen",
+              "elapsed_s": 4.37,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.0",
+              "room": "kitchen",
+              "elapsed_s": 0.88,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.1",
+              "room": "kitchen",
+              "elapsed_s": 0.92,
+              "answer": false,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.2",
+              "room": "kitchen",
+              "elapsed_s": 0.87,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "bathroom.vanity.0",
+              "room": "bathroom",
+              "elapsed_s": 4.45,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bed.0",
+              "room": "master_bedroom",
+              "elapsed_s": 4.41,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bedside_table.0",
+              "room": "master_bedroom",
+              "elapsed_s": 0.97,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bedside_table.1",
+              "room": "master_bedroom",
+              "elapsed_s": 0.92,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.sofa.0",
+              "room": "living_room_b",
+              "elapsed_s": 4.4,
+              "answer": false,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.tv_unit.0",
+              "room": "living_room_b",
+              "elapsed_s": 0.91,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.tv_unit.1",
+              "room": "living_room_b",
+              "elapsed_s": 1.02,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.coffee_table.0",
+              "room": "living_room_b",
+              "elapsed_s": 0.98,
+              "answer": false,
+              "status": "complete"
+            }
+          ],
+          "run": 1
+        },
+        {
+          "n": 16,
+          "yes_truth": 11,
+          "no_truth": 5,
+          "tp": 11,
+          "tn": 2,
+          "fp": 3,
+          "fn": 0,
+          "unanswered": 0,
+          "accuracy": 81.2,
+          "yes_precision": 78.6,
+          "yes_recall": 100.0,
+          "f1": 88.0,
+          "no_precision": 100.0,
+          "no_recall": 40.0,
+          "false_wall_rate": 60.0,
+          "latency": {
+            "mean": 0.92,
+            "median": 0.93,
+            "p95": 1.03,
+            "worst": 1.03
+          },
+          "first_query_s": 0.94,
+          "valid_json": 16,
+          "answer_distribution": {
+            "true": 14,
+            "false": 2,
+            "failed": 0
+          },
+          "rows": [
+            {
+              "source": "living_room_a.sofa.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.94,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.sofa.1",
+              "room": "living_room_a",
+              "elapsed_s": 0.93,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.side_table.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.98,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.ottoman.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.89,
+              "answer": false,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.kitchen_counter.0",
+              "room": "kitchen",
+              "elapsed_s": 0.98,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.0",
+              "room": "kitchen",
+              "elapsed_s": 0.93,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.1",
+              "room": "kitchen",
+              "elapsed_s": 0.92,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.2",
+              "room": "kitchen",
+              "elapsed_s": 0.92,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "bathroom.vanity.0",
+              "room": "bathroom",
+              "elapsed_s": 0.7,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bed.0",
+              "room": "master_bedroom",
+              "elapsed_s": 0.94,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bedside_table.0",
+              "room": "master_bedroom",
+              "elapsed_s": 0.88,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bedside_table.1",
+              "room": "master_bedroom",
+              "elapsed_s": 0.88,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.sofa.0",
+              "room": "living_room_b",
+              "elapsed_s": 1.0,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.tv_unit.0",
+              "room": "living_room_b",
+              "elapsed_s": 0.96,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.tv_unit.1",
+              "room": "living_room_b",
+              "elapsed_s": 0.88,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.coffee_table.0",
+              "room": "living_room_b",
+              "elapsed_s": 1.03,
+              "answer": false,
+              "status": "complete"
+            }
+          ],
+          "run": 2
+        }
+      ],
+      "combined": {
+        "n": 32,
+        "yes_truth": 22,
+        "no_truth": 10,
+        "tp": 21,
+        "tn": 5,
+        "fp": 5,
+        "fn": 1,
+        "unanswered": 0,
+        "accuracy": 81.2,
+        "yes_precision": 80.8,
+        "yes_recall": 95.5,
+        "f1": 87.5,
+        "no_precision": 83.3,
+        "no_recall": 50.0,
+        "false_wall_rate": 50.0,
+        "latency": {
+          "mean": 2.06,
+          "median": 0.94,
+          "p95": 4.45,
+          "worst": 23.38
+        },
+        "agreement_pct": 87.5
+      },
+      "ram_after": {
+        "total_gb": 16.8,
+        "available_gb": 1.1,
+        "load_pct": 93
+      }
+    },
+    "3b": {
+      "model": "qwen2.5vl:3b",
+      "load": {
+        "load_s": 9.4,
+        "residency": {
+          "total_gb": 2.9,
+          "vram_gb": 2.9,
+          "cpu_gb": 0.0,
+          "on_gpu_pct": 100.0
+        },
+        "gpu_after": {
+          "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+          "vram_total_mib": 6144,
+          "vram_used_mib": 4090,
+          "vram_free_mib": 1912
+        }
+      },
+      "runs": [
+        {
+          "n": 16,
+          "yes_truth": 11,
+          "no_truth": 5,
+          "tp": 11,
+          "tn": 0,
+          "fp": 5,
+          "fn": 0,
+          "unanswered": 0,
+          "accuracy": 68.8,
+          "yes_precision": 68.8,
+          "yes_recall": 100.0,
+          "f1": 81.5,
+          "no_precision": null,
+          "no_recall": 0.0,
+          "false_wall_rate": 100.0,
+          "latency": {
+            "mean": 1.44,
+            "median": 0.29,
+            "p95": 10.26,
+            "worst": 10.26
+          },
+          "first_query_s": 10.26,
+          "valid_json": 16,
+          "answer_distribution": {
+            "true": 16,
+            "false": 0,
+            "failed": 0
+          },
+          "rows": [
+            {
+              "source": "living_room_a.sofa.0",
+              "room": "living_room_a",
+              "elapsed_s": 10.26,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.sofa.1",
+              "room": "living_room_a",
+              "elapsed_s": 0.23,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.side_table.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.22,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.ottoman.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.23,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.kitchen_counter.0",
+              "room": "kitchen",
+              "elapsed_s": 2.49,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.0",
+              "room": "kitchen",
+              "elapsed_s": 0.21,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.1",
+              "room": "kitchen",
+              "elapsed_s": 0.23,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.2",
+              "room": "kitchen",
+              "elapsed_s": 0.24,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "bathroom.vanity.0",
+              "room": "bathroom",
+              "elapsed_s": 2.45,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bed.0",
+              "room": "master_bedroom",
+              "elapsed_s": 2.49,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bedside_table.0",
+              "room": "master_bedroom",
+              "elapsed_s": 0.23,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bedside_table.1",
+              "room": "master_bedroom",
+              "elapsed_s": 0.2,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.sofa.0",
+              "room": "living_room_b",
+              "elapsed_s": 2.45,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.tv_unit.0",
+              "room": "living_room_b",
+              "elapsed_s": 0.33,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.tv_unit.1",
+              "room": "living_room_b",
+              "elapsed_s": 0.35,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.coffee_table.0",
+              "room": "living_room_b",
+              "elapsed_s": 0.44,
+              "answer": true,
+              "status": "complete"
+            }
+          ],
+          "run": 1
+        },
+        {
+          "n": 16,
+          "yes_truth": 11,
+          "no_truth": 5,
+          "tp": 11,
+          "tn": 0,
+          "fp": 5,
+          "fn": 0,
+          "unanswered": 0,
+          "accuracy": 68.8,
+          "yes_precision": 68.8,
+          "yes_recall": 100.0,
+          "f1": 81.5,
+          "no_precision": null,
+          "no_recall": 0.0,
+          "false_wall_rate": 100.0,
+          "latency": {
+            "mean": 0.26,
+            "median": 0.23,
+            "p95": 0.47,
+            "worst": 0.47
+          },
+          "first_query_s": 0.47,
+          "valid_json": 16,
+          "answer_distribution": {
+            "true": 16,
+            "false": 0,
+            "failed": 0
+          },
+          "rows": [
+            {
+              "source": "living_room_a.sofa.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.47,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.sofa.1",
+              "room": "living_room_a",
+              "elapsed_s": 0.36,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.side_table.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.32,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_a.ottoman.0",
+              "room": "living_room_a",
+              "elapsed_s": 0.23,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.kitchen_counter.0",
+              "room": "kitchen",
+              "elapsed_s": 0.26,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.0",
+              "room": "kitchen",
+              "elapsed_s": 0.22,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.1",
+              "room": "kitchen",
+              "elapsed_s": 0.2,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "kitchen.bar_stool.2",
+              "room": "kitchen",
+              "elapsed_s": 0.21,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "bathroom.vanity.0",
+              "room": "bathroom",
+              "elapsed_s": 0.24,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bed.0",
+              "room": "master_bedroom",
+              "elapsed_s": 0.25,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bedside_table.0",
+              "room": "master_bedroom",
+              "elapsed_s": 0.22,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "master_bedroom.bedside_table.1",
+              "room": "master_bedroom",
+              "elapsed_s": 0.21,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.sofa.0",
+              "room": "living_room_b",
+              "elapsed_s": 0.27,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.tv_unit.0",
+              "room": "living_room_b",
+              "elapsed_s": 0.21,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.tv_unit.1",
+              "room": "living_room_b",
+              "elapsed_s": 0.2,
+              "answer": true,
+              "status": "complete"
+            },
+            {
+              "source": "living_room_b.coffee_table.0",
+              "room": "living_room_b",
+              "elapsed_s": 0.21,
+              "answer": true,
+              "status": "complete"
+            }
+          ],
+          "run": 2
+        }
+      ],
+      "combined": {
+        "n": 32,
+        "yes_truth": 22,
+        "no_truth": 10,
+        "tp": 22,
+        "tn": 0,
+        "fp": 10,
+        "fn": 0,
+        "unanswered": 0,
+        "accuracy": 68.8,
+        "yes_precision": 68.8,
+        "yes_recall": 100.0,
+        "f1": 81.5,
+        "no_precision": null,
+        "no_recall": 0.0,
+        "false_wall_rate": 100.0,
+        "latency": {
+          "mean": 0.85,
+          "median": 0.23,
+          "p95": 2.49,
+          "worst": 10.26
+        },
+        "agreement_pct": 100.0
+      },
+      "ram_after": {
+        "total_gb": 16.8,
+        "available_gb": 4.0,
+        "load_pct": 75
+      }
+    }
+  },
+  "phase_1d_3b_reference": {
+    "n": 16,
+    "yes_truth": 11,
+    "no_truth": 5,
+    "tp": 11,
+    "tn": 0,
+    "fp": 5,
+    "fn": 0,
+    "unanswered": 0,
+    "accuracy": 68.8,
+    "yes_precision": 68.8,
+    "yes_recall": 100.0,
+    "f1": 81.5,
+    "no_precision": null,
+    "no_recall": 0.0
+  },
+  "cases": [
+    {
+      "source": "living_room_a.sofa.0",
+      "room": "living_room_a",
+      "truth_wall": true,
+      "note": "backs onto the left wall"
+    },
+    {
+      "source": "living_room_a.sofa.1",
+      "room": "living_room_a",
+      "truth_wall": true,
+      "note": "backs onto the curtained wall"
+    },
+    {
+      "source": "living_room_a.side_table.0",
+      "room": "living_room_a",
+      "truth_wall": true,
+      "note": "stands against the back wall between the sofa ends"
+    },
+    {
+      "source": "living_room_a.ottoman.0",
+      "room": "living_room_a",
+      "truth_wall": false,
+      "note": "NEGATIVE CONTROL for wall detection - sits in open floor between the two sofas"
+    },
+    {
+      "source": "kitchen.kitchen_counter.0",
+      "room": "kitchen",
+      "truth_wall": true,
+      "note": "runs along the window wall"
+    },
+    {
+      "source": "kitchen.bar_stool.0",
+      "room": "kitchen",
+      "truth_wall": false,
+      "note": "NEGATIVE CONTROL for wall detection - stands in open floor"
+    },
+    {
+      "source": "kitchen.bar_stool.1",
+      "room": "kitchen",
+      "truth_wall": false,
+      "note": "NEGATIVE CONTROL for wall detection"
+    },
+    {
+      "source": "kitchen.bar_stool.2",
+      "room": "kitchen",
+      "truth_wall": false,
+      "note": "NEGATIVE CONTROL for wall detection"
+    },
+    {
+      "source": "bathroom.vanity.0",
+      "room": "bathroom",
+      "truth_wall": true,
+      "note": "runs the full length of the left wall"
+    },
+    {
+      "source": "master_bedroom.bed.0",
+      "room": "master_bedroom",
+      "truth_wall": true,
+      "note": "headboard wall"
+    },
+    {
+      "source": "master_bedroom.bedside_table.0",
+      "room": "master_bedroom",
+      "truth_wall": true,
+      "note": "against the same timber wall as the bed"
+    },
+    {
+      "source": "master_bedroom.bedside_table.1",
+      "room": "master_bedroom",
+      "truth_wall": true,
+      "note": "against the same timber wall as the bed"
+    },
+    {
+      "source": "living_room_b.sofa.0",
+      "room": "living_room_b",
+      "truth_wall": true,
+      "note": ""
+    },
+    {
+      "source": "living_room_b.tv_unit.0",
+      "room": "living_room_b",
+      "truth_wall": true,
+      "note": "hung on the timber wall"
+    },
+    {
+      "source": "living_room_b.tv_unit.1",
+      "room": "living_room_b",
+      "truth_wall": true,
+      "note": "the console runs along the same wall"
+    },
+    {
+      "source": "living_room_b.coffee_table.0",
+      "room": "living_room_b",
+      "truth_wall": false,
+      "note": "NEGATIVE CONTROL for wall detection - stands mid-room on the rug, its placement set by the sofa"
+    }
+  ]
+}

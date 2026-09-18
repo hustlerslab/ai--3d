@@ -62,6 +62,31 @@ def _asset_id(project_id: str, key: str) -> str:
     return f"el_{project_id[-8:]}_{_safe(key)}".lower()
 
 
+def storage_key(exists, key: str, els: list[SceneElement]) -> str:
+    """The key a canonical group is stored under on disk.
+
+    Groups are now keyed by what a piece IS (`canonical_key`), but every mesh
+    bought before that change sits under the old centre-keyed name. A group
+    with no file under its canonical name checks each member's legacy name and
+    adopts the first one that exists - so the three stools already paid for
+    are found, registered once, and attached to all three instances at zero
+    credits. Only a group with no file anywhere generates, under the canonical
+    name, and from then on the canonical name is what exists.
+
+    `exists` answers "is this project-relative path a file", so the job (which
+    has a context) and the review route (which has a directory) share one rule.
+    """
+    from ...intelligence.scene_reading import shape_key
+
+    if exists(_glb_rel(key)):
+        return key
+    for el in els:
+        legacy = shape_key(el)
+        if exists(_glb_rel(legacy)):
+            return legacy
+    return key
+
+
 def _target_dims(element: SceneElement) -> tuple[float, float, float]:
     """Real-world size for the piece, from the vocabulary, never from the crop.
 
@@ -93,11 +118,40 @@ def _mount(element: SceneElement) -> str:
     return PLACEMENT_MOUNT.get(element.placement, "floor")
 
 
+def element_image_for(ctx: JobContext, element: SceneElement) -> Optional[str]:
+    """The canonical element image for this piece, if one was painted.
+
+    Element-first: a clean isolated render of the piece is a better image-to-3D
+    input than a crop cut out of a busy room render. Matched by the SAME
+    canonical key the identity resolver uses, so it only applies when the
+    pre-moodboard definition and the moodboard reading agree on what the piece
+    is. No match, no change: the crop is used exactly as before.
+    """
+    from ...intelligence.scene_reading import canonical_key
+    from .element_images import ELEMENT_IMAGES, ElementImageSet
+
+    if not ctx.has_checkpoint(ELEMENT_IMAGES):
+        return None
+    try:
+        images = ElementImageSet.model_validate(ctx.read_json(ELEMENT_IMAGES)).images
+    except Exception:                                                     # noqa: BLE001
+        return None
+    key = canonical_key(element)
+    for im in images:
+        if im.canonical_key == key and im.image_ref and not im.error and ctx.path(im.image_ref).is_file():
+            return im.image_ref
+    return None
+
+
 async def _generate_one(client: httpx.AsyncClient, ctx: JobContext, key: str,
                         element: SceneElement, settings: Settings) -> tuple[str, int]:
-    crop = ctx.path(element.crop_ref)
+    element_image = element_image_for(ctx, element)
+    source_rel = element_image or element.crop_ref
+    crop = ctx.path(source_rel)
     if not crop.is_file():
-        raise meshy.MeshyError(f"crop missing on disk: {element.crop_ref}")
+        raise meshy.MeshyError(f"crop missing on disk: {source_rel}")
+    ctx.emit("elements.source",
+             f"{element.name}: " + ("canonical element image" if element_image else "moodboard crop"))
 
     task_id = await meshy.submit_image_to_3d(
         client, crop,
@@ -146,6 +200,51 @@ async def _generate_one(client: httpx.AsyncClient, ctx: JobContext, key: str,
         dest.unlink(missing_ok=True)
         raise meshy.MeshyError(f"generated model failed ingest validation: {why}")
     return record.asset_id, model.credits
+
+
+#: Types whose SHAPE is part of what the word means, with the proportion that
+#: has to hold. A rug is flat by definition; a television and a picture are
+#: flat in depth; a floor lamp is tall and narrow. Everything absent from this
+#: table is unconstrained - a "sculpture" or an "other" may be any shape at
+#: all, and inventing a rule for those would reject good meshes.
+#: (measure, limit, comparison) where measure is read off (w, h, d).
+_SHAPE_RULES: dict[str, tuple[str, float]] = {
+    "rug": ("flatness", 0.15),            # height vs its own footprint
+    "television": ("depth_ratio", 0.35),  # depth vs its face
+    "wall_art": ("depth_ratio", 0.35),
+    "mirror": ("depth_ratio", 0.35),
+    "curtains": ("depth_ratio", 0.40),
+}
+
+
+def _contradicts_its_type(asset_id: str, semantic_type: str) -> str:
+    """Why this mesh cannot be the thing it is labelled, or "" if it can.
+
+    Deterministic and deliberately narrow: it only catches a mesh whose
+    PROPORTIONS contradict the word, which is the failure that reaches the
+    client looking like nonsense. It says nothing about whether a chair is a
+    nice chair.
+    """
+    from ...assets.registry import get_registry
+
+    rule = _SHAPE_RULES.get(semantic_type)
+    if rule is None:
+        return ""
+    record = get_registry().get(asset_id)
+    dims = tuple(float(v) for v in (getattr(record, "dimensions", None) or ()))
+    if len(dims) != 3 or min(dims) <= 0:
+        # No dimensions means nothing to judge, and judging anyway would be
+        # inventing. Not wrapped in a bare except: a registry that cannot be
+        # read is a fault worth seeing, not a reason to accept every mesh.
+        return ""
+    w, h, d = dims
+    measure, limit = rule
+    value = (h / max(w, d)) if measure == "flatness" else (d / max(w, h))
+    if value <= limit:
+        return ""
+    return (f"the generated mesh is {w:.2f} x {h:.2f} x {d:.2f} m, "
+            f"{measure.replace('_', ' ')} {value:.2f} against a limit of {limit:.2f} "
+            f"for a {semantic_type.replace('_', ' ')}")
 
 
 def _ensure_registered(ctx: JobContext, key: str, element: SceneElement) -> Optional[str]:
@@ -217,7 +316,12 @@ async def _run(ctx: JobContext, todo: dict[str, SceneElement], settings: Setting
                 # One vendor failure keeps that piece's catalog match and the
                 # rest of the batch stands: degradation is the point.
                 warnings.append(f"{name}: {type(exc).__name__}: {exc}")
-                ctx.emit("elements.failed", f"{name}: {exc}; keeping the catalog match", status="warning")
+                # The type, always: several vendor exceptions carry no message
+                # at all, and "oak tv unit: ; keeping the catalog match" tells
+                # nobody anything about why a paid-for mesh went missing.
+                ctx.emit("elements.failed",
+                         f"{name}: {type(exc).__name__}: {exc or 'no detail'}; keeping the catalog match",
+                         status="warning")
                 continue
             asset_id, spent = result                      # type: ignore[misc]
             made[key] = asset_id
@@ -251,8 +355,11 @@ def generate_elements(ctx: JobContext) -> dict[str, Any]:
 
     todo: dict[str, SceneElement] = {}
     reused = 0
+    on_disk: dict[str, str] = {}
     for key, els in groups.items():
-        if ctx.has_checkpoint(_glb_rel(key)):
+        disk = storage_key(ctx.has_checkpoint, key, els)
+        on_disk[key] = disk
+        if ctx.has_checkpoint(_glb_rel(disk)):
             reused += 1                                   # already bought; never bought twice
             continue
         todo[key] = els[0]                                # the biggest crop of the group
@@ -274,9 +381,24 @@ def generate_elements(ctx: JobContext) -> dict[str, Any]:
     attached = 0
     for key, els in groups.items():
         asset_id: Optional[str] = made.get(key)
-        if not asset_id and ctx.has_checkpoint(_glb_rel(key)):
-            asset_id = _ensure_registered(ctx, key, els[0])
+        disk = on_disk.get(key, key)
+        if not asset_id and ctx.has_checkpoint(_glb_rel(disk)):
+            asset_id = _ensure_registered(ctx, disk, els[0])
         if not asset_id:
+            continue
+        wrong = _contradicts_its_type(asset_id, els[0].semantic_type)
+        if wrong:
+            # The vendor built what the crop showed, and the crop showed
+            # something else. Measured: the crop for a "large area rug" framed
+            # the rug's whole footprint, which contains the coffee table
+            # standing on it, so the returned mesh was a table with two vases -
+            # 1.27 m tall, placed in the middle of the floor, and passing every
+            # position and orientation check because those never look at shape.
+            # Keeping the catalog match is the honest outcome; a rug-shaped
+            # stand-in is nearer the truth than a table called a rug.
+            reading.warnings.append(f"{els[0].name}: {wrong}")
+            ctx.emit("elements.rejected", f"{els[0].name}: {wrong}; keeping the catalog match",
+                     status="warning")
             continue
         for el in els:
             el.asset_id = asset_id

@@ -27,7 +27,8 @@ from pathlib import Path
 from typing import Any, Optional
 
 from . import vocab
-from .schema import ObjectPlan, ObjectPlanItem, RoomSurfaces, SceneElement, SceneReading
+from .schema import (ElementDefinition, ElementInstance, ElementInventory, ObjectPlan, WallFinish,
+                     ObjectPlanItem, RoomSurfaces, SceneElement, SceneReading)
 
 try:
     from PIL import Image
@@ -167,6 +168,136 @@ def _phrase(value: Any, warn: list[str], label: str, limit: int = MAX_PHRASE) ->
     return text[:limit].rstrip()
 
 
+WALL_NAMES = ("back", "left", "right", "front")
+#: The way a piece faces when it faces a named wall, as a unit (dx, dz) in the
+#: room frame: the back wall is -z (the room rectangle's north edge), the
+#: right wall +x. The compiler's yaw-0 forward is (0, -1), i.e. "back".
+FACING_DIR: dict[str, tuple[float, float]] = {
+    "back": (0.0, -1.0), "front": (0.0, 1.0), "left": (-1.0, 0.0), "right": (1.0, 0.0),
+}
+
+
+def _frac(raw: Any) -> Optional[float]:
+    """0-1 from a whole number out of 1000 (the prompt's convention) or a
+    fraction; None when unreadable. Clamped, never rejected: a 1040 is a
+    piece against the wall, not a reason to lose its anchor."""
+    try:
+        v = float(raw)
+    except (TypeError, ValueError):
+        return None
+    if v > 1.0:
+        v = v / 1000.0
+    return min(1.0, max(0.0, v))
+
+
+def _pair(raw: Any) -> Optional[tuple[float, float]]:
+    if not isinstance(raw, (list, tuple)) or len(raw) != 2:
+        return None
+    a, b = _frac(raw[0]), _frac(raw[1])
+    if a is None or b is None:
+        return None
+    return (min(a, b), max(a, b))
+
+
+def render_frame_position(wall: str, along: Optional[float], depth: Optional[float],
+                          height: Optional[float], placement: str,
+                          width_m: float, length_m: float, height_m: float,
+                          ) -> Optional[tuple[float, float, float]]:
+    """Room-local metres from the render-frame fractions. Pure and total.
+
+    x runs along the back wall from the left corner (0..width), z from the
+    back wall towards the camera (0..length), y up. A named wall snaps the
+    coordinate it fixes - "against the back wall" is z = 0 whatever `depth`
+    said - because the wall is the stronger claim. Floor pieces are at y = 0;
+    a wall piece's y is its bottom edge; a ceiling piece hangs from the top.
+    """
+    if along is None and depth is None and wall not in WALL_NAMES:
+        return None
+    x = (0.5 if along is None else along) * width_m
+    z = (0.5 if depth is None else depth) * length_m
+    if wall == "back":
+        z = 0.0
+    elif wall == "front":
+        z = length_m
+    elif wall == "left":
+        x = 0.0
+    elif wall == "right":
+        x = width_m
+    if placement == "ceiling":
+        y = height_m
+    elif placement == "floor":
+        y = 0.0
+    else:
+        y = (0.0 if height is None else height) * height_m
+    return (round(x, 2), round(y, 2), round(z, 2))
+
+
+def anchor_from_bbox(bbox: tuple[float, float, float, float], placement: str,
+                     width_m: float, length_m: float, height_m: float,
+                     ) -> Optional[tuple[float, float, float]]:
+    """The anchor the crop box alone implies, for when the reader is silent.
+
+    The box is REQUIRED on every element and already validated, so it is the
+    one cue that always exists. Horizontally it is a direct correspondence
+    under the fixed frame - the picture's left is the room's left - so the
+    box's centre is `along`. Front-to-back it is ORDINAL, not metric: a piece
+    whose box bottom sits lower in the frame is nearer the camera, but turning
+    that into metres needs a horizon this layer does not have. That is enough
+    for the only thing the anchor does - order candidates the solver has
+    already ruled valid - and it is marked `derived` so nothing downstream
+    mistakes it for something the reader actually said.
+    """
+    if bbox is None:
+        return None
+    x0, y0, x1, y1 = bbox
+    along = (x0 + x1) / 2.0
+    if placement in ("wall", "ceiling"):
+        # Image y grows downward, so the box's bottom edge is (1 - y1) up.
+        return render_frame_position("", along, None, max(0.0, 1.0 - y1), placement,
+                                     width_m, length_m, height_m)
+    return render_frame_position("", along, y1, None, placement, width_m, length_m, height_m)
+
+
+def ensure_anchors(reading, rooms) -> int:
+    """Give every boxed element an anchor, whatever the reader answered.
+
+    `rooms` maps room_id to anything carrying width_m / length_m / height_m.
+    Idempotent: an element that already has a position keeps it, so this can
+    run on every load. Returns how many were derived.
+
+    This is what makes the anchor a property of EVERY reading rather than of
+    the lucky ones: a project read before the frame fields existed gets its
+    anchors the next time its plan is opened, from the box it already carries,
+    with no model call and no repaint.
+    """
+    filled = 0
+    for el in reading.elements:
+        if el.position_m is not None or el.bbox is None:
+            continue
+        room = rooms.get(el.room_id)
+        if room is None:
+            continue
+        position = anchor_from_bbox(el.bbox, el.placement, float(room.width_m),
+                                    float(room.length_m), float(room.height_m))
+        if position is None:
+            continue
+        el.position_m = position
+        el.position_source = "derived"
+        filled += 1
+    return filled
+
+
+def wall_finish_extent(wall: str, span: Optional[tuple[float, float]], band: Optional[tuple[float, float]],
+                       width_m: float, length_m: float, height_m: float) -> tuple[float, float, float, float]:
+    """Metres along the named wall (from its left end, seen from inside) and
+    up from the floor. Back and front walls run the room's width, left and
+    right its length. A missing span or band means the whole wall."""
+    run = width_m if wall in ("back", "front") else length_m
+    s0, s1 = span or (0.0, 1.0)
+    b0, b1 = band or (0.0, 1.0)
+    return (round(s0 * run, 2), round(s1 * run, 2), round(b0 * height_m, 2), round(b1 * height_m, 2))
+
+
 def coerce_room_reading(raw: dict, room, vertical, warnings: list[str]):
     """Validate one room's raw reading into (elements, surfaces)."""
     elements: list[SceneElement] = []
@@ -185,6 +316,33 @@ def coerce_room_reading(raw: dict, room, vertical, warnings: list[str]):
         seed = f"{room.room_id}|{sem}|{name}|{box}"
         n = seen.get(seed, 0)
         seen[seed] = n + 1
+        placement = vocab.placement_for(sem, str(item.get("placement") or ""))
+        wall = str(item.get("wall") or "").strip().lower()
+        wall = wall if wall in WALL_NAMES else ""
+        facing = str(item.get("facing") or "").strip()
+        # Always an anchor: what the reader said, else what the box implies.
+        height_frac = _frac(item.get("height"))
+        source = "read"
+        if placement == "wall" and not height_frac:
+            # Zero counts as unanswered here, not as a measurement: a piece
+            # that hangs ON A WALL cannot have its bottom edge on the floor,
+            # so 0 is the model declining, the same as omitting the field.
+            # Measured live on proj_a25a006c88: a framed print whose box ran
+            # from the top of the picture to a third of the way down, and a
+            # wall-mounted TV, both came back height 0 and were stored at
+            # y = 0.0 - on the floor. The box knows: image y grows downward,
+            # so the bottom edge is (1 - y1) up the picture. Any component the
+            # box had to answer makes the whole anchor `derived` - never claim
+            # the reader said more than it did.
+            height_frac = max(0.0, 1.0 - box[3])
+            source = "derived"
+        position = render_frame_position(
+            wall, _frac(item.get("along")), _frac(item.get("depth")), height_frac,
+            placement, float(room.width_m), float(room.length_m), float(room.height_m))
+        if position is None:
+            position = anchor_from_bbox(box, placement, float(room.width_m),
+                                        float(room.length_m), float(room.height_m))
+            source = "derived" if position is not None else ""
         elements.append(
             SceneElement(
                 element_id="el_" + hashlib.sha1(f"{seed}#{n}".encode("utf-8")).hexdigest()[:10],
@@ -194,16 +352,37 @@ def coerce_room_reading(raw: dict, room, vertical, warnings: list[str]):
                 bbox=box,
                 material=str(item.get("material") or "").strip(),
                 color=_hex(item.get("color")),
-                placement=vocab.placement_for(sem, str(item.get("placement") or "")),
+                placement=placement,
                 against=str(item.get("against") or "").strip(),
                 faces=str(item.get("faces") or "").strip(),
                 confidence=min(1.0, max(0.0, float(item.get("confidence", 0.6) or 0.6))),
+                wall=wall,
+                position_m=position,
+                position_source=source,
+                facing=facing,
+                facing_dir=FACING_DIR.get(facing.lower()),
             )
         )
 
     raw_surfaces = raw.get("surfaces") or {}
     surfaces = None
     if raw_surfaces:
+        finishes: list[WallFinish] = []
+        for zone in (raw_surfaces.get("walls") or []):
+            if not isinstance(zone, dict):
+                continue
+            wall = str(zone.get("wall") or "").strip().lower()
+            if wall not in WALL_NAMES:
+                warnings.append(f"{room.room_id}: wall finish on {wall or '?'!r} dropped - not a named wall")
+                continue
+            finishes.append(WallFinish(
+                wall=wall,
+                material=_phrase(zone.get("material"), warnings, f"{room.room_id}.{wall}.material"),
+                color=_hex(zone.get("color")),
+                pattern=_phrase(zone.get("pattern"), warnings, f"{room.room_id}.{wall}.pattern"),
+                extent_m=wall_finish_extent(wall, _pair(zone.get("span")), _pair(zone.get("band")),
+                                            float(room.width_m), float(room.length_m), float(room.height_m)),
+            ))
         surfaces = RoomSurfaces(
             room_id=room.room_id,
             wall_color=_hex(raw_surfaces.get("wall_color")),
@@ -213,6 +392,7 @@ def coerce_room_reading(raw: dict, room, vertical, warnings: list[str]):
             floor_material=_phrase(raw_surfaces.get("floor_material"), warnings,
                                    f"{room.room_id}.floor_material"),
             notes=_phrase(raw_surfaces.get("notes"), warnings, f"{room.room_id}.notes", limit=400),
+            walls=finishes,
         )
     return elements, surfaces
 
@@ -273,6 +453,42 @@ def mark_duplicates(reading: SceneReading) -> int:
     return flagged
 
 
+def flag_implausible(reading: SceneReading, room_types: dict[str, str]) -> int:
+    """Mark pieces that cannot belong to the room they were read from.
+
+    Valid JSON is not valid semantics. A `freestanding bath` came back inside a
+    living room: structurally perfect, correctly boxed, and wrong. Salvage will
+    happily preserve a hallucination, so something has to say so before a human
+    is asked to approve spend on it.
+
+    Deliberately narrow. Only `vocab.ROOM_BOUND_TYPES` is consulted, which lists
+    the handful of pieces genuinely impossible elsewhere - a bath, a hob, a bed.
+    Everything else is left alone, because most furniture is room-agnostic and a
+    warning that fires on ordinary designs teaches the reviewer to ignore
+    warnings.
+
+    Flags, never deletes, and never overwrites a verdict the isolated crop check
+    or the duplicate pass already reached: those looked at the picture, this only
+    looks at the label, and the picture is the better evidence.
+    """
+    flagged = 0
+    for el in reading.elements:
+        if el.check not in ("unchecked", "ok"):
+            continue
+        allowed = vocab.room_bound(el.semantic_type)
+        if not allowed:
+            continue
+        room_type = (room_types.get(el.room_id) or el.room_id or "").strip().lower()
+        if not room_type or room_type in allowed:
+            continue
+        el.check = "implausible"
+        el.check_note = (f"a {el.semantic_type.replace('_', ' ')} in "
+                         f"{room_type.replace('_', ' ')} - expected in: "
+                         f"{', '.join(sorted(allowed))}")
+        flagged += 1
+    return flagged
+
+
 # Elements that reduce to the same shape key are ONE piece of furniture seen
 # more than once, and cost one generation between them. Three "black bar stool"
 # boxes in a kitchen are three placements of one stool; generating each would
@@ -307,20 +523,147 @@ def shape_key(element: SceneElement) -> str:
     return f"{element.room_id}|{element.semantic_type}|{cx:.1f}x{cy:.1f}"
 
 
-def distinct_shapes(elements: list[SceneElement]) -> dict[str, list[SceneElement]]:
-    """Group elements by shape key, best crop first within each group.
+def _norm_attr(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", (text or "").strip().lower()).strip("_")
 
-    The biggest native crop leads: it is the one that gets generated, and more
-    pixels of the same piece is the only thing here that is unambiguously
-    better. Whether it is worth generating at all is not decided by size - that
-    was measured and retired (ADR-003 s2) - only which of several views wins.
+
+def _dims_bucket(element: SceneElement) -> str:
+    """Dimensions to the nearest 10 cm, so a 44 cm and a 46 cm stool agree."""
+    if not element.dimensions_m:
+        return ""
+    return "x".join(f"{round(v * 10) / 10:.1f}" for v in element.dimensions_m)
+
+
+def canonical_key(element: SceneElement) -> str:
+    """What this element IS, with NOTHING about where it sits.
+
+    `shape_key` keeps the box centre, and its own comment promised that three
+    bar stools would be "three placements of one stool, one generation". Along
+    a counter the three stools have three centres, so it bought the stool three
+    times - measured on the real project, 90 credits for 30 credits of stool.
+
+    This key is the winner of a six-way ablation over that project and five
+    golden cases (research/element-first/identity-ablation.json): room, type,
+    dimensions bucket, material and colour, scoring 0 false merges and 0 false
+    splits. The production key scored 2 and 10.
+
+    The rule that costs the most and matters the most: a piece with NO positive
+    evidence - no material, no colour, no dimensions - keeps its own key. Two
+    same-type pieces in one room that both say nothing are not known to be the
+    same, and an unknown must not merge. A wrong merge puts one bed in two
+    bedrooms; a missed merge buys a second stool. Only one of those is visible
+    to the client.
+
+    Room stays in the key on purpose. Dropping it merged the master bedroom's
+    bed with the second bedroom's - two plainly different beds - and that is the
+    mismatch this whole path exists to remove.
+    """
+    return canonical_key_for(element.room_id, element.semantic_type, element.material,
+                             element.color, element.dimensions_m, element.element_id)
+
+
+def canonical_key_for(room_id: str, semantic_type: str, material: str, color: str,
+                      dimensions_m, fallback_id: str) -> str:
+    """The identity rule itself, so a reading row and a plan item that describe
+    the same piece land on the same key. `fallback_id` is what a piece with no
+    evidence keeps to itself."""
+    material, color = _norm_attr(material), _norm_attr(color)
+    dims = ""
+    if dimensions_m:
+        dims = "x".join(f"{round(v * 10) / 10:.1f}" for v in dimensions_m)
+    if not (material or color or dims):
+        return f"{room_id}|{semantic_type}|?{fallback_id}"
+    return f"{room_id}|{semantic_type}|{dims}|{material}|{color}"
+
+
+def definitions_from_plan(plan: ObjectPlan) -> tuple[list[ElementDefinition], list[ElementInstance]]:
+    """The inventory BEFORE any room is painted, from the object plan.
+
+    The plan already folds the client's photographed pieces (with their crops)
+    and the brief's pieces, per room, with `count`. Grouping them by the same
+    canonical key the moodboard reading uses is what lets a piece decided here
+    be recognised there. Deterministic; no model is asked anything.
+    """
+    groups: dict[str, list[ObjectPlanItem]] = {}
+    for item in plan.items:
+        key = canonical_key_for(item.room_id, item.semantic_type, item.material_hint,
+                                item.color_hint, item.approx_dimensions, item.object_key)
+        groups.setdefault(key, []).append(item)
+
+    definitions: list[ElementDefinition] = []
+    instances: list[ElementInstance] = []
+    for key in sorted(groups):
+        items = groups[key]
+        lead = next((i for i in items if i.crop_ref), items[0])
+        element_id = "cel_" + hashlib.sha1(key.encode("utf-8")).hexdigest()[:10]
+        count = sum(i.count for i in items)
+        definitions.append(ElementDefinition(
+            element_id=element_id, room_id=lead.room_id, semantic_type=lead.semantic_type,
+            canonical_name=lead.name, material=lead.material_hint, color=lead.color_hint,
+            dimensions_m=lead.approx_dimensions,
+            identity_method="unresolved" if "|?" in key else "room_type_dims_material_colour",
+            instance_count=count, source_element_ids=[i.object_key for i in items]))
+        n = 0
+        for item in items:
+            for _ in range(item.count):
+                n += 1
+                instances.append(ElementInstance(
+                    instance_id=f"{element_id}.{n}", element_id=element_id,
+                    room_id=item.room_id, source_element_id=item.object_key,
+                    crop_ref=item.crop_ref))
+    return definitions, instances
+
+
+def distinct_shapes(elements: list[SceneElement]) -> dict[str, list[SceneElement]]:
+    """Group elements by canonical key, best crop first within each group.
+
+    Grouped by what the piece IS (`canonical_key`), not where it sits: the
+    group is what gets generated once and placed N times. The biggest native
+    crop leads: it is the one that gets generated, and more pixels of the same
+    piece is the only thing here that is unambiguously better. Whether it is
+    worth generating at all is not decided by size - that was measured and
+    retired (ADR-003 s2) - only which of several views wins.
+
+    Meshes already bought under the old centre-keyed name are still found: the
+    generation handler resolves a group to an existing legacy file before it
+    spends anything (`generate_elements.storage_key`).
     """
     groups: dict[str, list[SceneElement]] = {}
     for el in elements:
-        groups.setdefault(shape_key(el), []).append(el)
+        groups.setdefault(canonical_key(el), []).append(el)
     for els in groups.values():
         els.sort(key=lambda e: -(e.crop_px[0] * e.crop_px[1]))
     return groups
+
+
+def resolve_elements(reading: SceneReading) -> tuple[list[ElementDefinition], list[ElementInstance]]:
+    """Fold the reading's rows into canonical definitions and their instances.
+
+    Deterministic: ids are content-addressed from the canonical key, order is
+    fixed, and nothing is asked of a model. Only trustworthy rows take part -
+    a row a check removed is not evidence of a piece, and the inventory already
+    records that it was read.
+    """
+    groups = distinct_shapes([el for el in reading.elements if trustworthy(el)])
+    definitions: list[ElementDefinition] = []
+    instances: list[ElementInstance] = []
+    for key in sorted(groups):
+        els = groups[key]
+        lead = els[0]
+        element_id = "cel_" + hashlib.sha1(key.encode("utf-8")).hexdigest()[:10]
+        unresolved = "|?" in key
+        definitions.append(ElementDefinition(
+            element_id=element_id, room_id=lead.room_id, semantic_type=lead.semantic_type,
+            canonical_name=lead.name, material=lead.material, color=lead.color,
+            dimensions_m=lead.dimensions_m,
+            identity_method="unresolved" if unresolved else "room_type_dims_material_colour",
+            instance_count=len(els), source_element_ids=[e.element_id for e in els],
+            canonical_asset_id=next((e.asset_id for e in els if e.asset_id), "")))
+        for n, el in enumerate(els, start=1):
+            instances.append(ElementInstance(
+                instance_id=f"{element_id}.{n}", element_id=element_id, room_id=el.room_id,
+                source_element_id=el.element_id, bbox=el.bbox, crop_ref=el.crop_ref))
+    return definitions, instances
 
 
 def trustworthy(element: SceneElement) -> bool:
@@ -333,6 +676,52 @@ def trustworthy(element: SceneElement) -> bool:
     if element.approved is not None:
         return element.approved
     return element.check == "ok"
+
+
+def element_inventory(reading: SceneReading) -> list[ElementInventory]:
+    """Count the instances the reading found, per room and per type.
+
+    Derived from the rows, deterministically, in a fixed order - no model is
+    asked how many there are. This exists because the number was previously
+    implicit in `len(...)` at every stage, so a shortfall had nowhere to show:
+    three bar stools whose boxes each ran to the image edge reach the plan as
+    ONE piece, and before this the other two left no trace.
+
+    Recomputed rather than trusted, so a reading edited by a human review - or
+    one written before this field existed - still produces the right answer.
+    """
+    counts: dict[tuple[str, str], ElementInventory] = {}
+    for el in reading.elements:
+        key = (el.room_id, el.semantic_type)
+        row = counts.get(key)
+        if row is None:
+            row = ElementInventory(room_id=el.room_id, semantic_type=el.semantic_type)
+            counts[key] = row
+        row.read += 1
+        if trustworthy(el):
+            row.usable += 1
+        else:
+            reason = el.check if el.check != "unchecked" else "unapproved"
+            row.lost_to[reason] = row.lost_to.get(reason, 0) + 1
+    return [counts[k] for k in sorted(counts)]
+
+
+def inventory_notes(inventory: list[ElementInventory]) -> list[str]:
+    """One line per room/type whose usable count is below what was read.
+
+    A note, not an error. The reading is still the best evidence available and
+    a flagged duplicate is usually genuinely a duplicate - but "three read, one
+    usable" is a fact the approval screen and the job trail should be able to
+    state, instead of quietly planning one stool.
+    """
+    notes = []
+    for row in inventory:
+        if not row.discrepant:
+            continue
+        lost = ", ".join(f"{n} {reason}" for reason, n in sorted(row.lost_to.items()))
+        notes.append(f"{row.room_id}: read {row.read} "
+                     f"{row.semantic_type.replace('_', ' ')}, {row.usable} usable ({lost})")
+    return notes
 
 
 def merge_reading_into_plan(plan: ObjectPlan, reading: SceneReading) -> tuple[ObjectPlan, list[str]]:
@@ -386,6 +775,11 @@ def merge_reading_into_plan(plan: ObjectPlan, reading: SceneReading) -> tuple[Ob
                     color_hint=el.color,
                     against=el.against,
                     faces=el.faces,
+                    # P22: the render-frame anchor rides along for the solver.
+                    anchor_m=el.position_m,
+                    anchor_source=el.position_source,
+                    wall=el.wall,
+                    facing_dir=el.facing_dir,
                     # `_target()` already prefers this over the per-type table,
                     # so a measured size reaches catalog fit scoring and
                     # procedural stand-ins too - not only generated meshes.
@@ -542,6 +936,19 @@ def check_element_crops(reading: SceneReading, room_types: dict, vertical, proje
                 el.check = "mismatch"
                 el.check_note = f"looks like {sees!r} ({got}), labelled {el.semantic_type}"
         tally[el.check] = tally.get(el.check, 0) + 1
+
+    # LAST, so the picture gets the first word. `flag_implausible` reasons from
+    # the label alone; the crop check above actually looked at the pixels, and
+    # where the two disagree the one that looked wins. It only ever touches
+    # elements this pass left as `ok` or never examined.
+    if flag_implausible(reading, room_types):
+        # Recount rather than adjust: an element moved from `ok` to
+        # `implausible` has to leave one bucket and join another, and doing that
+        # by arithmetic on two keys double-counts.
+        tally = {}
+        for el in reading.elements:
+            if el.check == "duplicate" or el.crop_ref or el.check == "implausible":
+                tally[el.check] = tally.get(el.check, 0) + 1
     return tally
 
 
@@ -631,4 +1038,4 @@ def write_element_crops(reading: SceneReading, images: dict, project_root: Path,
 
 __all__ = ["coerce_room_reading", "write_element_crops", "check_element_crops", "approved_for_generation", "shape_key", "distinct_shapes",
            "merge_reading_into_plan", "trustworthy", "estimate_dimensions",
-           "mark_duplicates", "CROP_DIR", "NOT_ELEMENTS"]
+           "mark_duplicates", "flag_implausible", "CROP_DIR", "NOT_ELEMENTS"]

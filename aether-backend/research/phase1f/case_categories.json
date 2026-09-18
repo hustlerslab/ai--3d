@@ -1,0 +1,67 @@
+{
+  "_about": "Phase 1f Category A/B annotation for the wall-gate negatives, plus the observable confusion fields the brief's section 7 asks for. Additive: the shared fixture tests/fixtures/relationship_benchmark.json is NOT touched by this phase.",
+  "_blocker": "The brief asked for >=25 negatives. Every one of the 11 moodboard renders and 8 reference photos was examined; the imagery supports 5. The accounting is in docs/benchmarks/phase_1f_report.md. No case was invented, and no ambiguous piece was annotated NEGATIVE to reach a count.",
+  "_ground_truth_rule": "POSITIVE = the queried object itself physically contacts a wall. NEGATIVE = it does not. The presence of a wall somewhere behind the object is NOT part of the rule - it is recorded separately below, because whether the model is keying on it is the hypothesis under test.",
+  "_category_rule": "A = genuinely open floor: no wall-backed mass immediately behind the object at similar depth; floor visible around it. B = free-standing but wall-backed context: a wall-backed object or surface sits immediately behind it and overlaps it in the image. Assigned by eye from the render; the observable fields are recorded so the assignment can be re-derived.",
+  "negatives": [
+    {
+      "id": "living_room_a.ottoman.0",
+      "category": "A",
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": false,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "none",
+      "note": "sits on open rug between two sofas; the sofas are to its left and right, not behind it at similar depth"
+    },
+    {
+      "id": "living_room_b.coffee_table.0",
+      "category": "A",
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": false,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "none",
+      "note": "mid-rug with open floor behind it; the sectional is behind-left, not directly behind"
+    },
+    {
+      "id": "kitchen.bar_stool.0",
+      "category": "B",
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": true,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "the counter run occludes the stool's base and the floor behind it",
+      "note": "pulled up to a counter run that is itself wall-backed; stool and counter overlap in the image"
+    },
+    {
+      "id": "kitchen.bar_stool.1",
+      "category": "B",
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": true,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "the counter run occludes the stool's base and the floor behind it",
+      "note": "as bar_stool.0"
+    },
+    {
+      "id": "kitchen.bar_stool.2",
+      "category": "B",
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": true,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "the counter run occludes the stool's base and the floor behind it",
+      "note": "as bar_stool.0"
+    }
+  ],
+  "rejected_candidates": [
+    {"id": "primary_bedroom.side_table", "reason": "reads as against the wall beside the bed head; annotating it NEGATIVE to raise the count would be a convenient reading, not an honest one"},
+    {"id": "primary_bedroom.floor_lamp", "reason": "'is its back or main side against a wall' is ill-posed for a slim pole lamp"},
+    {"id": "primary_bedroom.white_form_foreground", "reason": "cut off by the frame and not confidently identifiable; no ground truth can be asserted"},
+    {"id": "archive_bathroom.bathtub", "reason": "freestanding tub set in an alcove; already UNKNOWN in Phase 1c and unchanged here"},
+    {"id": "archive_kitchen.hob_run", "reason": "ambiguous whether it returns onto the wall; already UNKNOWN"},
+    {"id": "all rugs", "reason": "a rug lies on the floor and touches walls at its edges; the wall question is degenerate for it, and Phase 1d eligibility already excluded rugs"},
+    {"id": "ref_04..ref_12", "reason": "product shots of sofas and mattresses in a warehouse, a showroom, or on a white background; two have no wall in frame at all. Out of domain for a room wall-gate."}
+  ]
+}

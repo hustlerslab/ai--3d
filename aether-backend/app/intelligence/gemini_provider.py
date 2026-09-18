@@ -28,6 +28,8 @@ from .images import encode_for_gemini
 from .prompts import (
     ELEMENT_CHECK_SCHEMA,
     ELEMENT_DIMENSIONS_SCHEMA,
+    REFERENCE_CLASSIFICATION_SCHEMA,
+    reference_classification_prompt,
     element_dimensions_prompt,
     element_check_prompt,
     OBJECT_PLAN_SCHEMA,
@@ -106,9 +108,15 @@ class GeminiProvider:
         last_error: Optional[str] = None
         for model in self.models[start:]:
             try:
+                # P16: the key travels in a header, NOT in the query string.
+                # As `params={"key": ...}` it was part of the URL, and httpx
+                # logs whole URLs at INFO - so every generate call wrote the
+                # live API key in clear text into the job and server logs.
+                # `x-goog-api-key` is the documented header form and nothing
+                # logs request headers.
                 response = self._client.post(
                     self._url(model),
-                    params={"key": self._settings.gemini_api_key.get_secret_value()},
+                    headers={"x-goog-api-key": self._settings.gemini_api_key.get_secret_value()},
                     json=body,
                 )
             except httpx.HTTPError as exc:
@@ -133,7 +141,11 @@ class GeminiProvider:
                 raise GeminiError(f"{stage}: unexpected response shape: {exc}") from exc
         raise GeminiError(f"{stage}: every configured model failed; last: {last_error}")
 
-    def _image_parts(self, bundle: InputBundle, limit: int = 6) -> tuple[list[dict[str, Any]], list[str]]:
+    def _image_parts(self, bundle: InputBundle, limit: int = 0) -> tuple[list[dict[str, Any]], list[str]]:
+        # `limit=0` means "ask the settings", which measure at 12 (config.py).
+        # The old hardcoded 6 dropped two of every eight references without
+        # anything but a warning nobody rendered.
+        limit = limit or self._settings.gemini_max_reference_images
         parts: list[dict[str, Any]] = []
         warnings: list[str] = []
         for ref in bundle.references[:limit]:
@@ -155,6 +167,28 @@ class GeminiProvider:
             parts.append({"text": f"{len(images)} reference photo(s) attached above."})
         raw = self._generate(parts, analysis_schema(bundle.vertical), "analyze_input")
         return coerce_analysis(raw, bundle, warnings, provider=self.label)
+
+    # Optional capability (ADR-001 pins the Protocol to three methods): P11
+    # reference classification. One image per call, deliberately - see
+    # `reference_classification_prompt`.
+    def classify_reference(self, image: "Path", description: str, vertical,
+                           filename: str = "") -> dict:
+        """What did the client mean by this ONE reference photo?
+
+        `filename` is accepted for parity with the capability's other
+        implementations and deliberately NOT used: a real classification must
+        come from the pixels, not from what someone called the file.
+        """
+        encoded = encode_for_gemini(str(image), max_side=1024)
+        if encoded is None:
+            raise ValueError(f"could not encode {image} for Gemini")
+        mime, data = encoded
+        parts = [
+            {"text": reference_classification_prompt(description, vertical)},
+            {"inline_data": {"mime_type": mime, "data": data}},
+            {"text": "The reference image is attached above."},
+        ]
+        return self._generate(parts, REFERENCE_CLASSIFICATION_SCHEMA, "classify_reference")
 
     # NOT part of IntelligenceProvider. The Protocol is pinned to three methods
     # and a vendor implementing only those must keep working (ADR-001), so this

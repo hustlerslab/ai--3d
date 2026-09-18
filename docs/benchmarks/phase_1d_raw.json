@@ -1,0 +1,1924 @@
+{
+  "model": "ollama:qwen2.5vl:3b",
+  "prompt_pilot": {
+    "wall": {
+      "sample": 10,
+      "no_cases": 5,
+      "A": {
+        "n": 10,
+        "yes_truth": 5,
+        "no_truth": 5,
+        "tp": 5,
+        "tn": 2,
+        "fp": 3,
+        "fn": 0,
+        "unanswered": 0,
+        "accuracy": 70.0,
+        "yes_precision": 62.5,
+        "yes_recall": 100.0,
+        "f1": 76.9,
+        "no_precision": 100.0,
+        "no_recall": 40.0
+      },
+      "B": {
+        "n": 10,
+        "yes_truth": 5,
+        "no_truth": 5,
+        "tp": 5,
+        "tn": 0,
+        "fp": 5,
+        "fn": 0,
+        "unanswered": 0,
+        "accuracy": 50.0,
+        "yes_precision": 50.0,
+        "yes_recall": 100.0,
+        "f1": 66.7,
+        "no_precision": null,
+        "no_recall": 0.0
+      },
+      "chosen": "A"
+    },
+    "adjacent": {
+      "sample": 5,
+      "no_cases": 0,
+      "A": {
+        "n": 5,
+        "yes_truth": 5,
+        "no_truth": 0,
+        "tp": 5,
+        "tn": 0,
+        "fp": 0,
+        "fn": 0,
+        "unanswered": 0,
+        "accuracy": 100.0,
+        "yes_precision": 100.0,
+        "yes_recall": 100.0,
+        "f1": 100.0,
+        "no_precision": null,
+        "no_recall": null
+      },
+      "B": {
+        "n": 5,
+        "yes_truth": 5,
+        "no_truth": 0,
+        "tp": 4,
+        "tn": 0,
+        "fp": 0,
+        "fn": 1,
+        "unanswered": 0,
+        "accuracy": 80.0,
+        "yes_precision": 100.0,
+        "yes_recall": 80.0,
+        "f1": 88.9,
+        "no_precision": 0.0,
+        "no_recall": null
+      },
+      "chosen": "A"
+    },
+    "orientation": {
+      "sample": 10,
+      "no_cases": 3,
+      "A": {
+        "n": 10,
+        "yes_truth": 7,
+        "no_truth": 3,
+        "tp": 2,
+        "tn": 3,
+        "fp": 0,
+        "fn": 5,
+        "unanswered": 0,
+        "accuracy": 50.0,
+        "yes_precision": 100.0,
+        "yes_recall": 28.6,
+        "f1": 44.5,
+        "no_precision": 37.5,
+        "no_recall": 100.0
+      },
+      "B": {
+        "n": 10,
+        "yes_truth": 7,
+        "no_truth": 3,
+        "tp": 5,
+        "tn": 0,
+        "fp": 3,
+        "fn": 2,
+        "unanswered": 0,
+        "accuracy": 50.0,
+        "yes_precision": 62.5,
+        "yes_recall": 71.4,
+        "f1": 66.7,
+        "no_precision": 0.0,
+        "no_recall": 0.0
+      },
+      "chosen": "A"
+    },
+    "faces_object": {
+      "sample": 7,
+      "no_cases": 1,
+      "A": {
+        "n": 7,
+        "yes_truth": 6,
+        "no_truth": 1,
+        "tp": 6,
+        "tn": 0,
+        "fp": 1,
+        "fn": 0,
+        "unanswered": 0,
+        "accuracy": 85.7,
+        "yes_precision": 85.7,
+        "yes_recall": 100.0,
+        "f1": 92.3,
+        "no_precision": null,
+        "no_recall": 0.0
+      },
+      "B": {
+        "n": 7,
+        "yes_truth": 6,
+        "no_truth": 1,
+        "tp": 1,
+        "tn": 1,
+        "fp": 0,
+        "fn": 5,
+        "unanswered": 0,
+        "accuracy": 28.6,
+        "yes_precision": 100.0,
+        "yes_recall": 16.7,
+        "f1": 28.6,
+        "no_precision": 16.7,
+        "no_recall": 100.0
+      },
+      "chosen": "A"
+    },
+    "supported": {
+      "sample": 9,
+      "no_cases": 1,
+      "A": {
+        "n": 9,
+        "yes_truth": 8,
+        "no_truth": 1,
+        "tp": 8,
+        "tn": 0,
+        "fp": 1,
+        "fn": 0,
+        "unanswered": 0,
+        "accuracy": 88.9,
+        "yes_precision": 88.9,
+        "yes_recall": 100.0,
+        "f1": 94.1,
+        "no_precision": null,
+        "no_recall": 0.0
+      },
+      "B": {
+        "n": 9,
+        "yes_truth": 8,
+        "no_truth": 1,
+        "tp": 8,
+        "tn": 0,
+        "fp": 1,
+        "fn": 0,
+        "unanswered": 0,
+        "accuracy": 88.9,
+        "yes_precision": 88.9,
+        "yes_recall": 100.0,
+        "f1": 94.1,
+        "no_precision": null,
+        "no_recall": 0.0
+      },
+      "chosen": "A"
+    }
+  },
+  "frozen_prompts": {
+    "wall": "A",
+    "adjacent": "A",
+    "orientation": "A",
+    "faces_object": "A",
+    "supported": "A"
+  },
+  "dataset": {
+    "rooms": 5,
+    "binary_chains": 37,
+    "scoreable": 35,
+    "unknown": 2,
+    "negative_controls": 10,
+    "phase1c_relations_carried_unchanged": 26
+  },
+  "stages": {
+    "wall": {
+      "n": 16,
+      "yes_truth": 11,
+      "no_truth": 5,
+      "tp": 11,
+      "tn": 0,
+      "fp": 5,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 68.8,
+      "yes_precision": 68.8,
+      "yes_recall": 100.0,
+      "f1": 81.5,
+      "no_precision": null,
+      "no_recall": 0.0
+    },
+    "orientation": {
+      "n": 10,
+      "yes_truth": 7,
+      "no_truth": 3,
+      "tp": 4,
+      "tn": 2,
+      "fp": 1,
+      "fn": 3,
+      "unanswered": 0,
+      "accuracy": 60.0,
+      "yes_precision": 80.0,
+      "yes_recall": 57.1,
+      "f1": 66.6,
+      "no_precision": 40.0,
+      "no_recall": 66.7
+    },
+    "faces_object": {
+      "n": 4,
+      "yes_truth": 4,
+      "no_truth": 0,
+      "tp": 4,
+      "tn": 0,
+      "fp": 0,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 100.0,
+      "yes_precision": 100.0,
+      "yes_recall": 100.0,
+      "f1": 100.0,
+      "no_precision": null,
+      "no_recall": null
+    },
+    "supported": {
+      "n": 9,
+      "yes_truth": 8,
+      "no_truth": 1,
+      "tp": 8,
+      "tn": 0,
+      "fp": 1,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 88.9,
+      "yes_precision": 88.9,
+      "yes_recall": 100.0,
+      "f1": 94.1,
+      "no_precision": null,
+      "no_recall": 0.0
+    }
+  },
+  "by_chain": {
+    "against": {
+      "chains": 16,
+      "end_to_end_pct": 68.8,
+      "deterministic_pct": 68.8,
+      "target_asked": 0,
+      "target_correct": 0,
+      "target_accuracy_pct": null,
+      "ai_better": 0,
+      "ai_worse": 0,
+      "latency": {
+        "mean": 0.25,
+        "median": 0.23,
+        "p95": 0.34,
+        "worst": 0.34
+      }
+    },
+    "faces": {
+      "chains": 10,
+      "end_to_end_pct": 30.0,
+      "deterministic_pct": 10.0,
+      "target_asked": 5,
+      "target_correct": 1,
+      "target_accuracy_pct": 20.0,
+      "ai_better": 3,
+      "ai_worse": 1,
+      "latency": {
+        "mean": 0.55,
+        "median": 0.54,
+        "p95": 0.9,
+        "worst": 0.9
+      }
+    },
+    "supported_by": {
+      "chains": 9,
+      "end_to_end_pct": 33.3,
+      "deterministic_pct": 88.9,
+      "target_asked": 9,
+      "target_correct": 3,
+      "target_accuracy_pct": 33.3,
+      "ai_better": 0,
+      "ai_worse": 5,
+      "latency": {
+        "mean": 0.78,
+        "median": 0.78,
+        "p95": 0.81,
+        "worst": 0.81
+      }
+    }
+  },
+  "hallucination": {
+    "A": 5,
+    "B": 0,
+    "C": 8,
+    "D": 1
+  },
+  "latency": {
+    "binary": {
+      "mean": 0.25,
+      "median": 0.23,
+      "p95": 0.33,
+      "worst": 0.34
+    },
+    "target": {
+      "mean": 0.46,
+      "median": 0.46,
+      "p95": 0.5,
+      "worst": 0.5
+    },
+    "queries": 54,
+    "queries_per_room": 10.8,
+    "seconds_per_room": 3.3,
+    "worst_room_s": 5.3
+  },
+  "reliability": {
+    "queries": 54,
+    "valid_json": 54,
+    "valid_json_pct": 100.0,
+    "status": {
+      "complete": 54
+    }
+  },
+  "budgets": {
+    "A_all_eligible": {
+      "chains": 35,
+      "queries": 54,
+      "queries_per_room": 10.8,
+      "end_to_end_pct": 48.6,
+      "ai_better": 3,
+      "seconds_per_room": 3.3
+    },
+    "B_major_anchors": {
+      "chains": 21,
+      "queries": 32,
+      "queries_per_room": 6.4,
+      "end_to_end_pct": 57.1,
+      "ai_better": 1,
+      "seconds_per_room": 2.1
+    },
+    "C_uncertain_oracle": {
+      "chains": 15,
+      "queries": 26,
+      "queries_per_room": 5.2,
+      "end_to_end_pct": 20.0,
+      "ai_better": 3,
+      "seconds_per_room": 1.5
+    }
+  },
+  "candidate_filter_dropped_truth": [],
+  "chains": [
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.sofa.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.sofa.0",
+          "kind": "binary",
+          "elapsed_s": 0.3,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.3,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.sofa.1",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.sofa.1",
+          "kind": "binary",
+          "elapsed_s": 0.21,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.21,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.side_table.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.side_table.0",
+          "kind": "binary",
+          "elapsed_s": 0.24,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.24,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.ottoman.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.ottoman.0",
+          "kind": "binary",
+          "elapsed_s": 0.28,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.28,
+      "truth_steps": {
+        "wall": false,
+        "adjacent": true
+      },
+      "truth_target": "living_room_a.sofa.0",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "A"
+      ]
+    },
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.sofa.0",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.sofa.0",
+          "kind": "binary",
+          "elapsed_s": 0.24,
+          "answer": false,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": false
+      },
+      "target": null,
+      "elapsed_s": 0.24,
+      "truth_steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "truth_target": "living_room_a.sofa.1",
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": []
+    },
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.sofa.1",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.sofa.1",
+          "kind": "binary",
+          "elapsed_s": 0.22,
+          "answer": false,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": false
+      },
+      "target": null,
+      "elapsed_s": 0.22,
+      "truth_steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "truth_target": "living_room_a.sofa.0",
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": []
+    },
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.ottoman.0",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.ottoman.0",
+          "kind": "binary",
+          "elapsed_s": 0.22,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "faces_object",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.ottoman.0",
+          "kind": "binary",
+          "elapsed_s": 0.22,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:faces",
+          "prompt_variant": "-",
+          "room": "living_room_a",
+          "source": "living_room_a.ottoman.0",
+          "kind": "target",
+          "candidates": 3,
+          "elapsed_s": 0.44,
+          "answer": "living_room_a.sofa.1",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "target": "living_room_a.sofa.1",
+      "candidate_count": 3,
+      "truth_in_candidates": null,
+      "elapsed_s": 0.88,
+      "truth_steps": {
+        "orientation": false,
+        "faces_object": null
+      },
+      "truth_target": null,
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": []
+    },
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.side_table.0",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.side_table.0",
+          "kind": "binary",
+          "elapsed_s": 0.23,
+          "answer": false,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": false
+      },
+      "target": null,
+      "elapsed_s": 0.23,
+      "truth_steps": {
+        "orientation": false,
+        "faces_object": null
+      },
+      "truth_target": null,
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": false,
+      "halluc": []
+    },
+    {
+      "room": "living_room_a",
+      "source": "living_room_a.pillows.0",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "living_room_a",
+          "source": "living_room_a.pillows.0",
+          "kind": "binary",
+          "elapsed_s": 0.31,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "living_room_a",
+          "source": "living_room_a.pillows.0",
+          "kind": "target",
+          "candidates": 4,
+          "elapsed_s": 0.46,
+          "answer": "living_room_a.ottoman.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "living_room_a.ottoman.0",
+      "candidate_count": 4,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.77,
+      "truth_steps": {
+        "supported": true
+      },
+      "truth_target": "living_room_a.sofa.0",
+      "deterministic": {
+        "supported": true,
+        "target": "living_room_a.sofa.0"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": true,
+      "halluc": [
+        "C"
+      ]
+    },
+    {
+      "room": "kitchen",
+      "source": "kitchen.kitchen_counter.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.kitchen_counter.0",
+          "kind": "binary",
+          "elapsed_s": 0.34,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.34,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "kitchen",
+      "source": "kitchen.bar_stool.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.0",
+          "kind": "binary",
+          "elapsed_s": 0.22,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.22,
+      "truth_steps": {
+        "wall": false,
+        "adjacent": true
+      },
+      "truth_target": "kitchen.kitchen_counter.1",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "A"
+      ]
+    },
+    {
+      "room": "kitchen",
+      "source": "kitchen.bar_stool.1",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.1",
+          "kind": "binary",
+          "elapsed_s": 0.2,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.2,
+      "truth_steps": {
+        "wall": false,
+        "adjacent": true
+      },
+      "truth_target": "kitchen.kitchen_counter.1",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "A"
+      ]
+    },
+    {
+      "room": "kitchen",
+      "source": "kitchen.bar_stool.2",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.2",
+          "kind": "binary",
+          "elapsed_s": 0.21,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.21,
+      "truth_steps": {
+        "wall": false,
+        "adjacent": true
+      },
+      "truth_target": "kitchen.kitchen_counter.1",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "A"
+      ]
+    },
+    {
+      "room": "kitchen",
+      "source": "kitchen.bar_stool.0",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.0",
+          "kind": "binary",
+          "elapsed_s": 0.21,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "faces_object",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.0",
+          "kind": "binary",
+          "elapsed_s": 0.21,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:faces",
+          "prompt_variant": "-",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.0",
+          "kind": "target",
+          "candidates": 6,
+          "elapsed_s": 0.47,
+          "answer": "kitchen.bar_stool.1",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "target": "kitchen.bar_stool.1",
+      "candidate_count": 6,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.89,
+      "truth_steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "truth_target": "kitchen.kitchen_counter.1",
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "C"
+      ]
+    },
+    {
+      "room": "kitchen",
+      "source": "kitchen.bar_stool.1",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.1",
+          "kind": "binary",
+          "elapsed_s": 0.24,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "faces_object",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.1",
+          "kind": "binary",
+          "elapsed_s": 0.21,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:faces",
+          "prompt_variant": "-",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.1",
+          "kind": "target",
+          "candidates": 6,
+          "elapsed_s": 0.45,
+          "answer": "kitchen.bar_stool.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "target": "kitchen.bar_stool.0",
+      "candidate_count": 6,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.9,
+      "truth_steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "truth_target": "kitchen.kitchen_counter.1",
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "C"
+      ]
+    },
+    {
+      "room": "kitchen",
+      "source": "kitchen.bar_stool.2",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.2",
+          "kind": "binary",
+          "elapsed_s": 0.19,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "faces_object",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.2",
+          "kind": "binary",
+          "elapsed_s": 0.2,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:faces",
+          "prompt_variant": "-",
+          "room": "kitchen",
+          "source": "kitchen.bar_stool.2",
+          "kind": "target",
+          "candidates": 6,
+          "elapsed_s": 0.45,
+          "answer": "kitchen.bar_stool.1",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "target": "kitchen.bar_stool.1",
+      "candidate_count": 6,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.84,
+      "truth_steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "truth_target": "kitchen.kitchen_counter.1",
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "C"
+      ]
+    },
+    {
+      "room": "kitchen",
+      "source": "kitchen.plant.0",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "kitchen",
+          "source": "kitchen.plant.0",
+          "kind": "binary",
+          "elapsed_s": 0.31,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "kitchen",
+          "source": "kitchen.plant.0",
+          "kind": "target",
+          "candidates": 4,
+          "elapsed_s": 0.45,
+          "answer": "kitchen.kitchen_counter.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "kitchen.kitchen_counter.0",
+      "candidate_count": 4,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.76,
+      "truth_steps": {
+        "supported": true
+      },
+      "truth_target": "kitchen.kitchen_counter.0",
+      "deterministic": {
+        "supported": true,
+        "target": "kitchen.kitchen_counter.0"
+      },
+      "target_correct": true,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "bathroom",
+      "source": "bathroom.vanity.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "bathroom",
+          "source": "bathroom.vanity.0",
+          "kind": "binary",
+          "elapsed_s": 0.31,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.31,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "master_bedroom",
+      "source": "master_bedroom.bed.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "master_bedroom",
+          "source": "master_bedroom.bed.0",
+          "kind": "binary",
+          "elapsed_s": 0.27,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.27,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "master_bedroom",
+      "source": "master_bedroom.bedside_table.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "master_bedroom",
+          "source": "master_bedroom.bedside_table.0",
+          "kind": "binary",
+          "elapsed_s": 0.21,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.21,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "master_bedroom",
+      "source": "master_bedroom.bedside_table.1",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "master_bedroom",
+          "source": "master_bedroom.bedside_table.1",
+          "kind": "binary",
+          "elapsed_s": 0.21,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.21,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "master_bedroom",
+      "source": "master_bedroom.bed.0",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "master_bedroom",
+          "source": "master_bedroom.bed.0",
+          "kind": "binary",
+          "elapsed_s": 0.19,
+          "answer": false,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": false
+      },
+      "target": null,
+      "elapsed_s": 0.19,
+      "truth_steps": {
+        "orientation": true,
+        "faces_object": false
+      },
+      "truth_target": null,
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "master_bedroom",
+      "source": "master_bedroom.pillows.0",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "master_bedroom",
+          "source": "master_bedroom.pillows.0",
+          "kind": "binary",
+          "elapsed_s": 0.27,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "master_bedroom",
+          "source": "master_bedroom.pillows.0",
+          "kind": "target",
+          "candidates": 3,
+          "elapsed_s": 0.46,
+          "answer": "master_bedroom.bedside_table.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "master_bedroom.bedside_table.0",
+      "candidate_count": 3,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.73,
+      "truth_steps": {
+        "supported": true
+      },
+      "truth_target": "master_bedroom.bed.0",
+      "deterministic": {
+        "supported": true,
+        "target": "master_bedroom.bed.0"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": true,
+      "halluc": [
+        "C"
+      ]
+    },
+    {
+      "room": "master_bedroom",
+      "source": "master_bedroom.pillows.1",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "master_bedroom",
+          "source": "master_bedroom.pillows.1",
+          "kind": "binary",
+          "elapsed_s": 0.32,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "master_bedroom",
+          "source": "master_bedroom.pillows.1",
+          "kind": "target",
+          "candidates": 3,
+          "elapsed_s": 0.44,
+          "answer": "master_bedroom.bed.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "master_bedroom.bed.0",
+      "candidate_count": 3,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.76,
+      "truth_steps": {
+        "supported": true
+      },
+      "truth_target": "master_bedroom.bed.0",
+      "deterministic": {
+        "supported": true,
+        "target": "master_bedroom.bed.0"
+      },
+      "target_correct": true,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "master_bedroom",
+      "source": "master_bedroom.plant.0",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "master_bedroom",
+          "source": "master_bedroom.plant.0",
+          "kind": "binary",
+          "elapsed_s": 0.33,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "master_bedroom",
+          "source": "master_bedroom.plant.0",
+          "kind": "target",
+          "candidates": 3,
+          "elapsed_s": 0.48,
+          "answer": "master_bedroom.bedside_table.1",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "master_bedroom.bedside_table.1",
+      "candidate_count": 3,
+      "truth_in_candidates": null,
+      "elapsed_s": 0.81,
+      "truth_steps": {
+        "supported": false
+      },
+      "truth_target": null,
+      "deterministic": {
+        "supported": true,
+        "target": "master_bedroom.bed.0"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "D"
+      ]
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.sofa.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.sofa.0",
+          "kind": "binary",
+          "elapsed_s": 0.29,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.29,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.tv_unit.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.tv_unit.0",
+          "kind": "binary",
+          "elapsed_s": 0.22,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.22,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.tv_unit.1",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.tv_unit.1",
+          "kind": "binary",
+          "elapsed_s": 0.23,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.23,
+      "truth_steps": {
+        "wall": true,
+        "adjacent": null
+      },
+      "truth_target": "wall",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.coffee_table.0",
+      "chain": "against",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "wall",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.coffee_table.0",
+          "kind": "binary",
+          "elapsed_s": 0.29,
+          "answer": true,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "wall": true
+      },
+      "target": null,
+      "elapsed_s": 0.29,
+      "truth_steps": {
+        "wall": false,
+        "adjacent": true
+      },
+      "truth_target": "living_room_b.sofa.0",
+      "deterministic": {
+        "wall": true,
+        "adjacent_object": null,
+        "target": "wall"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": false,
+      "halluc": [
+        "A"
+      ]
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.sofa.0",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.sofa.0",
+          "kind": "binary",
+          "elapsed_s": 0.26,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "faces_object",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.sofa.0",
+          "kind": "binary",
+          "elapsed_s": 0.22,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:faces",
+          "prompt_variant": "-",
+          "room": "living_room_b",
+          "source": "living_room_b.sofa.0",
+          "kind": "target",
+          "candidates": 3,
+          "elapsed_s": 0.42,
+          "answer": "living_room_b.tv_unit.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "target": "living_room_b.tv_unit.0",
+      "candidate_count": 3,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.9,
+      "truth_steps": {
+        "orientation": true,
+        "faces_object": true
+      },
+      "truth_target": "living_room_b.tv_unit.0",
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": true,
+      "end_to_end": true,
+      "deterministic_correct": false,
+      "halluc": []
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.coffee_table.0",
+      "chain": "faces",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "orientation",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.coffee_table.0",
+          "kind": "binary",
+          "elapsed_s": 0.22,
+          "answer": false,
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "orientation": false
+      },
+      "target": null,
+      "elapsed_s": 0.22,
+      "truth_steps": {
+        "orientation": false,
+        "faces_object": null
+      },
+      "truth_target": null,
+      "deterministic": {
+        "orientation_visible": true,
+        "faces_object": false,
+        "target": null
+      },
+      "target_correct": false,
+      "end_to_end": true,
+      "deterministic_correct": false,
+      "halluc": []
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.vase.0",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.vase.0",
+          "kind": "binary",
+          "elapsed_s": 0.29,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "living_room_b",
+          "source": "living_room_b.vase.0",
+          "kind": "target",
+          "candidates": 4,
+          "elapsed_s": 0.49,
+          "answer": "living_room_b.coffee_table.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "living_room_b.coffee_table.0",
+      "candidate_count": 4,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.78,
+      "truth_steps": {
+        "supported": true
+      },
+      "truth_target": "living_room_b.coffee_table.0",
+      "deterministic": {
+        "supported": true,
+        "target": "living_room_b.coffee_table.0"
+      },
+      "target_correct": true,
+      "end_to_end": true,
+      "deterministic_correct": true,
+      "halluc": []
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.vase.1",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.vase.1",
+          "kind": "binary",
+          "elapsed_s": 0.29,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "living_room_b",
+          "source": "living_room_b.vase.1",
+          "kind": "target",
+          "candidates": 4,
+          "elapsed_s": 0.5,
+          "answer": "living_room_b.sofa.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "living_room_b.sofa.0",
+      "candidate_count": 4,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.79,
+      "truth_steps": {
+        "supported": true
+      },
+      "truth_target": "living_room_b.coffee_table.0",
+      "deterministic": {
+        "supported": true,
+        "target": "living_room_b.coffee_table.0"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": true,
+      "halluc": [
+        "C"
+      ]
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.pillows.0",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.pillows.0",
+          "kind": "binary",
+          "elapsed_s": 0.33,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "living_room_b",
+          "source": "living_room_b.pillows.0",
+          "kind": "target",
+          "candidates": 4,
+          "elapsed_s": 0.48,
+          "answer": "living_room_b.coffee_table.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "living_room_b.coffee_table.0",
+      "candidate_count": 4,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.81,
+      "truth_steps": {
+        "supported": true
+      },
+      "truth_target": "living_room_b.sofa.0",
+      "deterministic": {
+        "supported": true,
+        "target": "living_room_b.sofa.0"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": true,
+      "halluc": [
+        "C"
+      ]
+    },
+    {
+      "room": "living_room_b",
+      "source": "living_room_b.pillows.1",
+      "chain": "supported_by",
+      "verdict": "TRUE",
+      "queries": [
+        {
+          "stage": "supported",
+          "prompt_variant": "A",
+          "room": "living_room_b",
+          "source": "living_room_b.pillows.1",
+          "kind": "binary",
+          "elapsed_s": 0.32,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "stage": "target:supported_by",
+          "prompt_variant": "-",
+          "room": "living_room_b",
+          "source": "living_room_b.pillows.1",
+          "kind": "target",
+          "candidates": 4,
+          "elapsed_s": 0.49,
+          "answer": "living_room_b.coffee_table.0",
+          "status": "complete"
+        }
+      ],
+      "steps": {
+        "supported": true
+      },
+      "target": "living_room_b.coffee_table.0",
+      "candidate_count": 4,
+      "truth_in_candidates": true,
+      "elapsed_s": 0.81,
+      "truth_steps": {
+        "supported": true
+      },
+      "truth_target": "living_room_b.sofa.0",
+      "deterministic": {
+        "supported": true,
+        "target": "living_room_b.sofa.0"
+      },
+      "target_correct": false,
+      "end_to_end": false,
+      "deterministic_correct": true,
+      "halluc": [
+        "C"
+      ]
+    }
+  ]
+}

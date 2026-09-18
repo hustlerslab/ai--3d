@@ -1,0 +1,1198 @@
+{
+  "_about": "Integration benchmark: real GroundingHypothesis output, through the research bridge, into UNMODIFIED production validate_scene and Blender build+read-back. See architecture_decision.md.",
+  "host": {
+    "gpu_used_mib_at_start": 0,
+    "ram": {
+      "total_gb": 16.8,
+      "available_gb": 2.5,
+      "load_pct": 84
+    }
+  },
+  "control": {
+    "stored": {
+      "tp": 7,
+      "tn": 24,
+      "fp": 2,
+      "fn": 3
+    },
+    "measured": {
+      "tp": 7,
+      "tn": 24,
+      "fp": 2,
+      "fn": 3
+    },
+    "reproduced": true
+  },
+  "summary": {
+    "images": 21,
+    "grounded_objects": 46,
+    "objects_placed_in_scene": 46,
+    "placed_rate_pct": 100.0,
+    "scenes_valid": 20,
+    "scenes_valid_pct": 95.2,
+    "scene_success": 20,
+    "scene_success_pct": 95.2,
+    "scene_success_definition": "zero hard validate_scene violations AND every grounded FLOOR_STANDING object placed AND (Blender build ok OR not attempted)",
+    "hard_violations_by_code": {
+      "COLLIDES_WALL": 1,
+      "COLLIDES_OBJECT": 2
+    },
+    "footprint_reconstruction_error_m": {
+      "n": 46,
+      "median": 0.1236,
+      "p95": 0.2854,
+      "max": 0.8865
+    },
+    "relations_emitted_total": 9,
+    "relations_emitted_predicates": [
+      "AGAINST_WALL"
+    ],
+    "blender_attempted": 20,
+    "blender_ok": 20,
+    "collision_resolver_moved": 13,
+    "collision_resolver_unresolved": 1,
+    "clearance_violations_total": 0,
+    "clearance_violations_by_category": {},
+    "p4_hard_before_total": 3,
+    "p4_hard_after_total": 3,
+    "p4_terminal_states": {
+      "ALREADY_VALID": 20,
+      "UNREPAIRABLE": 1
+    }
+  },
+  "scenes": [
+    {
+      "image": "research/phase1g/scenes/s01_living_room.png",
+      "room_type": "living_room",
+      "grounded": 1,
+      "objects_placed": 1,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "armchair.0": 0.0052
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s01.armchair.0 (armchair): x size 1.56 vs expected 1.10",
+          "obj_s01.armchair.0 (armchair): y size 1.54 vs expected 0.91",
+          "room room_97ad0147f9: no interior light"
+        ],
+        "seconds": 2.1,
+        "objects_built": 1
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s02_living_room.png",
+      "room_type": "living_room",
+      "grounded": 2,
+      "objects_placed": 2,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "ottoman.0": 0.0445,
+        "coffee_table.0": 0.2543
+      },
+      "bridge_warnings": [
+        "coffee_table.0: footprint reconstruction residual 0.254 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s02.ottoman.0 (ottoman): y size 1.04 vs expected 0.48",
+          "obj_s02.coffee_table.0 (coffee_table): y size 1.34 vs expected 0.39",
+          "obj_s02.coffee_table.0 (coffee_table): z size 0.39 vs expected 0.90",
+          "room room_c5ad469688: no interior light"
+        ],
+        "seconds": 1.9,
+        "objects_built": 2
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s03_living_room.png",
+      "room_type": "living_room",
+      "grounded": 2,
+      "objects_placed": 2,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "armchair.0": 0.0041,
+        "armchair.1": 0.0042
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "room room_fc78c09068: no interior light"
+        ],
+        "seconds": 1.7,
+        "objects_built": 2
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s04_bedroom.png",
+      "room_type": "bedroom",
+      "grounded": 1,
+      "objects_placed": 1,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "chair.0": 0.2782
+      },
+      "bridge_warnings": [
+        "chair.0: footprint reconstruction residual 0.278 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s04.chair.0 (chair): y size 0.45 vs expected 0.97",
+          "obj_s04.chair.0 (chair): z size 0.97 vs expected 0.58",
+          "room room_d626934243: no interior light"
+        ],
+        "seconds": 1.9,
+        "objects_built": 1
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s05_bedroom.png",
+      "room_type": "bedroom",
+      "grounded": 2,
+      "objects_placed": 2,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "bench.0": 0.0201,
+        "armchair.0": 0.0091
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s05.armchair.0 (armchair): x size 1.42 vs expected 1.10",
+          "obj_s05.armchair.0 (armchair): y size 1.51 vs expected 0.91",
+          "room room_d1e075a82d: no interior light"
+        ],
+        "seconds": 1.8,
+        "objects_built": 2
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s06_kitchen.png",
+      "room_type": "kitchen",
+      "grounded": 4,
+      "objects_placed": 4,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "bar_stool.0": 0.1406,
+        "bar_stool.1": 0.1355,
+        "bar_stool.2": 0.1358,
+        "bar_stool.3": 0.1406
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [
+        {
+          "object_id": "obj_s06.bar_stool.2",
+          "status": "moved",
+          "distance_moved_m": 0.1,
+          "candidates_tried": 1
+        },
+        {
+          "object_id": "obj_s06.bar_stool.0",
+          "status": "moved",
+          "distance_moved_m": 0.1,
+          "candidates_tried": 6
+        }
+      ],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "room room_1150891a7f: no interior light"
+        ],
+        "seconds": 1.5,
+        "objects_built": 4
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s07_kitchen.png",
+      "room_type": "kitchen",
+      "grounded": 0,
+      "objects_placed": 0,
+      "objects_skipped": 2,
+      "skipped_reasons": {
+        "floor hypothesis is UNKNOWN": 2
+      },
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view_sparse",
+      "room_confidence": 0.1,
+      "footprint_reconstruction_error_m": {},
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": null,
+        "note": "skipped (no objects or Blender unavailable)"
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s08_dining_room.png",
+      "room_type": "dining_room",
+      "grounded": 2,
+      "objects_placed": 2,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "dining_table.0": 0.0077,
+        "chair.0": 0.2876
+      },
+      "bridge_warnings": [
+        "chair.0: footprint reconstruction residual 0.288 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s08.chair.0 (chair): y size 0.49 vs expected 0.97",
+          "obj_s08.chair.0 (chair): z size 0.97 vs expected 0.58",
+          "obj_s08.dining_table.0 (dining_table): x size 1.12 vs expected 0.80",
+          "obj_s08.dining_table.0 (dining_table): y size 1.12 vs expected 0.75",
+          "room room_ec3f635fd2: no interior light"
+        ],
+        "seconds": 2.0,
+        "objects_built": 2
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s09_office.png",
+      "room_type": "home_office",
+      "grounded": 1,
+      "objects_placed": 1,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "chair.0": 0.1991
+      },
+      "bridge_warnings": [
+        "chair.0: footprint reconstruction residual 0.199 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s09.chair.0 (chair): x size 0.68 vs expected 0.43",
+          "obj_s09.chair.0 (chair): y size 0.72 vs expected 0.97",
+          "obj_s09.chair.0 (chair): z size 0.97 vs expected 0.58",
+          "room room_b1abe8f69c: no interior light"
+        ],
+        "seconds": 1.8,
+        "objects_built": 1
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s10_office.png",
+      "room_type": "home_office",
+      "grounded": 3,
+      "objects_placed": 3,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "chair.0": 0.1993,
+        "chair.1": 0.2784,
+        "chair.2": 0.2784
+      },
+      "bridge_warnings": [
+        "chair.0: footprint reconstruction residual 0.199 m exceeds 0.15 m",
+        "chair.1: footprint reconstruction residual 0.278 m exceeds 0.15 m",
+        "chair.2: footprint reconstruction residual 0.278 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s10.chair.0 (chair): x size 0.70 vs expected 0.43",
+          "obj_s10.chair.0 (chair): y size 0.72 vs expected 0.97",
+          "obj_s10.chair.0 (chair): z size 0.97 vs expected 0.58",
+          "obj_s10.chair.1 (chair): x size 0.67 vs expected 0.43",
+          "obj_s10.chair.1 (chair): y size 0.56 vs expected 0.97",
+          "obj_s10.chair.1 (chair): z size 0.97 vs expected 0.58",
+          "obj_s10.chair.2 (chair): y size 0.49 vs expected 0.97",
+          "obj_s10.chair.2 (chair): z size 0.97 vs expected 0.58",
+          "room room_70574ebe89: no interior light"
+        ],
+        "seconds": 2.0,
+        "objects_built": 3
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s11_lounge.png",
+      "room_type": "living_room",
+      "grounded": 4,
+      "objects_placed": 4,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "ottoman.0": 0.0451,
+        "armchair.0": 0.1227,
+        "armchair.1": 0.1239,
+        "armchair.2": 0.1234
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [
+        {
+          "object_id": "obj_s11.armchair.2",
+          "status": "moved",
+          "distance_moved_m": 0.1,
+          "candidates_tried": 1
+        }
+      ],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s11.armchair.0 (armchair): x size 1.35 vs expected 0.91",
+          "obj_s11.armchair.1 (armchair): x size 1.53 vs expected 0.91",
+          "obj_s11.armchair.1 (armchair): y size 1.46 vs expected 1.10",
+          "obj_s11.armchair.2 (armchair): x size 1.50 vs expected 0.91",
+          "obj_s11.armchair.2 (armchair): y size 1.40 vs expected 1.10",
+          "obj_s11.ottoman.0 (ottoman): y size 0.96 vs expected 0.48",
+          "room room_95257dde6e: no interior light"
+        ],
+        "seconds": 1.7,
+        "objects_built": 4
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s13_living_room.png",
+      "room_type": "living_room",
+      "grounded": 1,
+      "objects_placed": 1,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 1,
+      "relations": [
+        {
+          "subject_id": "obj_s13.armchair.0",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_2",
+          "confidence": "LOW",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.0671 m, wall_confidence 0.442"
+        }
+      ],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "armchair.0": 0.0064
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s13.armchair.0 (armchair): x size 1.52 vs expected 1.10",
+          "obj_s13.armchair.0 (armchair): y size 1.44 vs expected 0.91",
+          "room room_b99f038f27: no interior light"
+        ],
+        "seconds": 1.8,
+        "objects_built": 1
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s14_bedroom.png",
+      "room_type": "bedroom",
+      "grounded": 1,
+      "objects_placed": 1,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "bench.0": 0.0264
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "room room_dac01f0600: no interior light"
+        ],
+        "seconds": 1.5,
+        "objects_built": 1
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s15_kitchen.png",
+      "room_type": "kitchen",
+      "grounded": 1,
+      "objects_placed": 1,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "dining_table.0": 0.025
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s15.dining_table.0 (dining_table): x size 1.00 vs expected 0.80",
+          "obj_s15.dining_table.0 (dining_table): y size 1.00 vs expected 0.75",
+          "room room_5e5863040d: no interior light"
+        ],
+        "seconds": 1.8,
+        "objects_built": 1
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s16_dining_room.png",
+      "room_type": "dining_room",
+      "grounded": 2,
+      "objects_placed": 2,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 1,
+      "relations": [
+        {
+          "subject_id": "obj_s16.chair.0",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_3",
+          "confidence": "HIGH",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.0 m, wall_confidence 0.898"
+        }
+      ],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "dining_table.0": 0.0251,
+        "chair.0": 0.1997
+      },
+      "bridge_warnings": [
+        "chair.0: footprint reconstruction residual 0.200 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [
+        {
+          "object_id": "obj_s16.dining_table.0",
+          "status": "moved",
+          "distance_moved_m": 0.1,
+          "candidates_tried": 5
+        }
+      ],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s16.chair.0 (chair): x size 0.58 vs expected 0.97",
+          "obj_s16.chair.0 (chair): z size 0.97 vs expected 0.58",
+          "room room_7c6e0afe8d: no interior light"
+        ],
+        "seconds": 1.8,
+        "objects_built": 2
+      },
+      "scene_success": true
+    },
+    {
+      "image": "research/phase1g/scenes/s17_office.png",
+      "room_type": "home_office",
+      "grounded": 3,
+      "objects_placed": 3,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "chair.0": 0.1986,
+        "chair.1": 0.1986,
+        "chair.2": 0.2787
+      },
+      "bridge_warnings": [
+        "chair.0: footprint reconstruction residual 0.199 m exceeds 0.15 m",
+        "chair.1: footprint reconstruction residual 0.199 m exceeds 0.15 m",
+        "chair.2: footprint reconstruction residual 0.279 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [
+        {
+          "object_id": "obj_s17.chair.1",
+          "status": "moved",
+          "distance_moved_m": 0.1,
+          "candidates_tried": 1
+        }
+      ],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_s17.chair.0 (chair): y size 0.51 vs expected 0.97",
+          "obj_s17.chair.0 (chair): z size 0.97 vs expected 0.58",
+          "obj_s17.chair.1 (chair): y size 0.51 vs expected 0.97",
+          "obj_s17.chair.1 (chair): z size 0.97 vs expected 0.58",
+          "obj_s17.chair.2 (chair): x size 0.69 vs expected 0.43",
+          "obj_s17.chair.2 (chair): y size 0.61 vs expected 0.97",
+          "obj_s17.chair.2 (chair): z size 0.97 vs expected 0.58",
+          "room room_4891d0597d: no interior light"
+        ],
+        "seconds": 1.9,
+        "objects_built": 3
+      },
+      "scene_success": true
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "grounded": 4,
+      "objects_placed": 4,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 3,
+      "relations": [
+        {
+          "subject_id": "obj_preserved.living_room_a.sofa.0",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_1",
+          "confidence": "LOW",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.0 m, wall_confidence 0.426"
+        },
+        {
+          "subject_id": "obj_preserved.living_room_a.sofa.1",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_0",
+          "confidence": "LOW",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.058 m, wall_confidence 0.45"
+        },
+        {
+          "subject_id": "obj_preserved.living_room_a.side_table.0",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_0",
+          "confidence": "LOW",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.0318 m, wall_confidence 0.27"
+        }
+      ],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "living_room_a.sofa.0": 0.8865,
+        "living_room_a.sofa.1": 0.0897,
+        "living_room_a.side_table.0": 0.0947,
+        "living_room_a.ottoman.0": 0.0397
+      },
+      "bridge_warnings": [
+        "living_room_a.sofa.0: footprint reconstruction residual 0.887 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [
+        {
+          "object_id": "obj_preserved.living_room_a.sofa.1",
+          "status": "moved",
+          "distance_moved_m": 0.01,
+          "candidates_tried": 22
+        },
+        {
+          "object_id": "obj_preserved.living_room_a.sofa.0",
+          "status": "moved",
+          "distance_moved_m": 0.1,
+          "candidates_tried": 2
+        },
+        {
+          "object_id": "obj_preserved.living_room_a.side_table.0",
+          "status": "moved",
+          "distance_moved_m": 0.1,
+          "candidates_tried": 3
+        }
+      ],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_hist_neg.living_room_a.ottoman.0 (ottoman): y size 1.03 vs expected 0.48",
+          "obj_preserved.living_room_a.sofa.1 (sofa): y size 1.73 vs expected 0.71",
+          "obj_preserved.living_room_a.side_table.0 (side_table): x size 0.51 vs expected 0.36",
+          "obj_preserved.living_room_a.side_table.0 (side_table): z size 0.55 vs expected 0.36",
+          "room room_a42daa3ebb: no interior light"
+        ],
+        "seconds": 1.9,
+        "objects_built": 4
+      },
+      "scene_success": true
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "room_type": "kitchen",
+      "grounded": 4,
+      "objects_placed": 4,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "kitchen.kitchen_counter.0": 0.2277,
+        "kitchen.bar_stool.0": 0.1356,
+        "kitchen.bar_stool.1": 0.1355,
+        "kitchen.bar_stool.2": 0.1355
+      },
+      "bridge_warnings": [
+        "kitchen.kitchen_counter.0: footprint reconstruction residual 0.228 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [
+        {
+          "object_id": "obj_hist_neg.kitchen.bar_stool.1",
+          "status": "moved",
+          "distance_moved_m": 0.2,
+          "candidates_tried": 9
+        },
+        {
+          "object_id": "obj_hist_neg.kitchen.bar_stool.2",
+          "status": "moved",
+          "distance_moved_m": 0.3,
+          "candidates_tried": 17
+        }
+      ],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "room room_3672613ec5: no interior light"
+        ],
+        "seconds": 1.6,
+        "objects_built": 4
+      },
+      "scene_success": true
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "room_type": "bathroom",
+      "grounded": 1,
+      "objects_placed": 1,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 0,
+      "relations": [],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "bathroom.vanity.0": 0.0959
+      },
+      "bridge_warnings": [],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "room room_cde6f47a9e: no interior light"
+        ],
+        "seconds": 1.5,
+        "objects_built": 1
+      },
+      "scene_success": true
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "room_type": "bedroom",
+      "grounded": 3,
+      "objects_placed": 3,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 2,
+      "relations": [
+        {
+          "subject_id": "obj_preserved.master_bedroom.bedside_table.0",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_0",
+          "confidence": "HIGH",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.0165 m, wall_confidence 0.9"
+        },
+        {
+          "subject_id": "obj_preserved.master_bedroom.bedside_table.1",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_0",
+          "confidence": "HIGH",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.0412 m, wall_confidence 0.9"
+        }
+      ],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "master_bedroom.bed.0": 0.6813,
+        "master_bedroom.bedside_table.0": 0.0987,
+        "master_bedroom.bedside_table.1": 0.0987
+      },
+      "bridge_warnings": [
+        "master_bedroom.bed.0: footprint reconstruction residual 0.681 m exceeds 0.15 m"
+      ],
+      "hard_violations": [],
+      "hard_by_code": {},
+      "valid": true,
+      "repair": [
+        {
+          "object_id": "obj_preserved.master_bedroom.bedside_table.0",
+          "status": "moved",
+          "distance_moved_m": 0.8,
+          "candidates_tried": 17
+        },
+        {
+          "object_id": "obj_preserved.master_bedroom.bedside_table.1",
+          "status": "moved",
+          "distance_moved_m": 0.4,
+          "candidates_tried": 8
+        }
+      ],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "ALREADY_VALID",
+        "hard_before": 0,
+        "hard_after": 0,
+        "escalation_level_reached": 0,
+        "records": []
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_preserved.master_bedroom.bed.0 (bed): x size 1.61 vs expected 0.68",
+          "obj_preserved.master_bedroom.bedside_table.0 (bedside_table): z size 0.55 vs expected 0.44",
+          "obj_preserved.master_bedroom.bedside_table.1 (bedside_table): z size 0.55 vs expected 0.44",
+          "room room_0c22d0d70b: no interior light"
+        ],
+        "seconds": 2.0,
+        "objects_built": 3
+      },
+      "scene_success": true
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "grounded": 4,
+      "objects_placed": 4,
+      "objects_skipped": 0,
+      "skipped_reasons": {},
+      "relations_emitted": 2,
+      "relations": [
+        {
+          "subject_id": "obj_preserved.living_room_b.tv_unit.0",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_0",
+          "confidence": "LOW",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.0 m, wall_confidence 0.45"
+        },
+        {
+          "subject_id": "obj_preserved.living_room_b.tv_unit.1",
+          "predicate": "AGAINST_WALL",
+          "object_id": "wall_0",
+          "confidence": "LOW",
+          "source": "geometry",
+          "frame": "floor_plan",
+          "note": "wall gap 0.0 m, wall_confidence 0.45"
+        }
+      ],
+      "room_boundary_source": "reconstructed_partial_view",
+      "room_confidence": 0.4,
+      "footprint_reconstruction_error_m": {
+        "living_room_b.sofa.0": 0.0963,
+        "living_room_b.tv_unit.0": 0.0816,
+        "living_room_b.tv_unit.1": 0.0816,
+        "living_room_b.coffee_table.0": 0.253
+      },
+      "bridge_warnings": [
+        "living_room_b.coffee_table.0: footprint reconstruction residual 0.253 m exceeds 0.15 m"
+      ],
+      "hard_violations": [
+        {
+          "code": "COLLIDES_OBJECT",
+          "object_id": "obj_preserved.living_room_b.tv_unit.0",
+          "related_id": "obj_preserved.living_room_b.tv_unit.1"
+        },
+        {
+          "code": "COLLIDES_WALL",
+          "object_id": "obj_preserved.living_room_b.tv_unit.1",
+          "related_id": "wall_0"
+        },
+        {
+          "code": "COLLIDES_OBJECT",
+          "object_id": "obj_preserved.living_room_b.tv_unit.1",
+          "related_id": "obj_preserved.living_room_b.tv_unit.0"
+        }
+      ],
+      "hard_by_code": {
+        "COLLIDES_WALL": 1,
+        "COLLIDES_OBJECT": 2
+      },
+      "valid": false,
+      "repair": [
+        {
+          "object_id": "obj_preserved.living_room_b.tv_unit.0",
+          "status": "moved",
+          "distance_moved_m": 0.18,
+          "candidates_tried": 39
+        },
+        {
+          "object_id": "obj_preserved.living_room_b.tv_unit.1",
+          "status": "unresolved",
+          "distance_moved_m": 0.0,
+          "candidates_tried": 41
+        }
+      ],
+      "clearance_violations": [],
+      "repair_p4": {
+        "terminal_state": "UNREPAIRABLE",
+        "hard_before": 3,
+        "hard_after": 3,
+        "escalation_level_reached": 0,
+        "records": [
+          {
+            "level": 0,
+            "type": "NONE",
+            "subject": "obj_preserved.living_room_b.tv_unit.0",
+            "target": "obj_preserved.living_room_b.tv_unit.1",
+            "cause": "COLLIDES_OBJECT",
+            "outcome": "ESCALATE",
+            "evidence": [
+              "no repair at levels 1-3 found a valid, improving candidate"
+            ]
+          },
+          {
+            "level": 0,
+            "type": "NONE",
+            "subject": "obj_preserved.living_room_b.tv_unit.1",
+            "target": "obj_preserved.living_room_b.tv_unit.0",
+            "cause": "COLLIDES_OBJECT",
+            "outcome": "ESCALATE",
+            "evidence": [
+              "no repair at levels 1-3 found a valid, improving candidate"
+            ]
+          },
+          {
+            "level": 0,
+            "type": "NONE",
+            "subject": "obj_preserved.living_room_b.tv_unit.1",
+            "target": "wall_0",
+            "cause": "COLLIDES_WALL",
+            "outcome": "ESCALATE",
+            "evidence": [
+              "no repair at levels 1-3 found a valid, improving candidate"
+            ]
+          }
+        ]
+      },
+      "blender": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          "obj_hist_neg.living_room_b.coffee_table.0 (coffee_table): x size 1.32 vs expected 0.39",
+          "obj_hist_neg.living_room_b.coffee_table.0 (coffee_table): z size 0.39 vs expected 0.90",
+          "obj_preserved.living_room_b.sofa.0 (sofa): x size 1.93 vs expected 0.71",
+          "obj_preserved.living_room_b.tv_unit.0 (tv_unit): y size 1.89 vs expected 0.68",
+          "obj_preserved.living_room_b.tv_unit.0 (tv_unit): z size 0.68 vs expected 0.52",
+          "obj_preserved.living_room_b.tv_unit.1 (tv_unit): y size 1.89 vs expected 0.68",
+          "obj_preserved.living_room_b.tv_unit.1 (tv_unit): z size 0.68 vs expected 0.52",
+          "room room_17e5ddaf10: no interior light"
+        ],
+        "seconds": 2.0,
+        "objects_built": 4
+      },
+      "scene_success": false
+    }
+  ]
+}

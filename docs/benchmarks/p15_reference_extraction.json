@@ -1,0 +1,1758 @@
+{
+  "_about": "P15 reference extraction. Three prompt variants over the SAME 8 real photographs through the live Gemini provider, scored against ground truth read off the pictures. Four of the eight are mattresses with no frame, so they double as the false-positive control.",
+  "ground_truth": {
+    "ref_04": {
+      "frame_finish_visible": false,
+      "object": "sofa"
+    },
+    "ref_05": {
+      "frame_finish_visible": true,
+      "object": "sofa"
+    },
+    "ref_06": {
+      "frame_finish_visible": true,
+      "object": "sofa"
+    },
+    "ref_07": {
+      "frame_finish_visible": true,
+      "object": "sofa"
+    },
+    "ref_09": {
+      "frame_finish_visible": false,
+      "object": "mattress"
+    },
+    "ref_10": {
+      "frame_finish_visible": false,
+      "object": "mattress"
+    },
+    "ref_11": {
+      "frame_finish_visible": false,
+      "object": "mattress"
+    },
+    "ref_12": {
+      "frame_finish_visible": false,
+      "object": "mattress"
+    }
+  },
+  "images": [
+    "ref_04.jpeg",
+    "ref_05.jpeg",
+    "ref_06.jpeg",
+    "ref_07.jpeg",
+    "ref_09.jpeg",
+    "ref_10.jpeg",
+    "ref_11.jpeg",
+    "ref_12.jpeg"
+  ],
+  "model": "gemini:gemini-3.5-flash-lite",
+  "stack": {
+    "asset_generation": "meshy",
+    "executor": "blender",
+    "spatial": "allure",
+    "vision": "gemini"
+  },
+  "variants": {
+    "A_current": {
+      "correct": 10,
+      "extraction_fidelity": 0.3846,
+      "false_positive_and_unsupported": 0,
+      "images": [
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [],
+              "verdict": "missed"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "textured fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "rounded arms",
+                "segmented back",
+                "patterned inset band",
+                "three-cushion seat"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_04.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [],
+              "verdict": "missed"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "pull-out bed mechanism",
+                "tufted back cushions",
+                "quilted pull-out drawer panel",
+                "pull straps"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_05.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [],
+              "verdict": "missed"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "quilted detailing",
+                "two-tone color blocking",
+                "tufted buttons"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_06.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [],
+              "verdict": "missed"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "tufted fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "tufted backrest",
+                "wooden armrests",
+                "slatted wooden frame sides"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_07.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [],
+              "verdict": "missed"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "quilted fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "thick",
+                "patterned top",
+                "piped edges"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_09.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "blue"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "visual_descriptors": {
+              "value": [
+                "quilted",
+                "thick profile"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_10.jpeg",
+          "object": "mattress",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [],
+              "verdict": "missed"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "quilted fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "thick",
+                "piped edges"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_11.jpeg",
+          "object": "mattress",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [],
+              "verdict": "missed"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "textured",
+                "branded",
+                "striped pattern",
+                "quilted surface",
+                "blue tape binding",
+                "vertical profile view",
+                "rounded corners",
+                "text logo reading Sleepfresh on the side panel"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_12.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        }
+      ],
+      "population": {
+        "color_hex": 0,
+        "color_words": 1,
+        "frame_finish": 0,
+        "material": 1,
+        "pattern": 1,
+        "style_descriptors": 0,
+        "upholstery": 7,
+        "visual_descriptors": 8
+      },
+      "verdicts": {
+        "color_hex": {
+          "correctly_empty": 8
+        },
+        "color_words": {
+          "correct": 1,
+          "missed": 7
+        },
+        "frame_finish": {
+          "acceptable_miss": 1,
+          "correctly_empty": 5,
+          "missed": 2
+        },
+        "material": {
+          "acceptable_miss": 7,
+          "correct": 1
+        },
+        "pattern": {
+          "acceptable_miss": 1,
+          "correct": 1,
+          "missed": 6
+        },
+        "style_descriptors": {
+          "empty": 8
+        },
+        "upholstery": {
+          "correct": 7,
+          "missed": 1
+        },
+        "visual_descriptors": {
+          "present": 8
+        }
+      },
+      "visibly_supported": 26
+    },
+    "B_structured": {
+      "correct": 25,
+      "extraction_fidelity": 0.9259,
+      "false_positive_and_unsupported": 0,
+      "images": [
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "blue",
+                "teal",
+                "green",
+                "grey"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "textured fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "three-seater sofa",
+                "rounded arms",
+                "sectioned backrest",
+                "patterned back insert",
+                "three seat cushions"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_04.jpeg",
+          "object": "sofa",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "light grey"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "missed"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "quilted",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [
+                "modern"
+              ],
+              "verdict": "present"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "pull out sofa bed",
+                "three back cushions",
+                "pull handles",
+                "gold accent trim"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_05.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "brown",
+                "beige"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "wood",
+              "verdict": "correct"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "quilted",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "tufted",
+                "contrasting stripe",
+                "rounded arms",
+                "three seat cushions"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_06.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "sage green",
+                "dark brown"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "dark wood",
+              "verdict": "correct"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "plain",
+              "verdict": "incorrect"
+            },
+            "style_descriptors": {
+              "value": [
+                "mid-century"
+              ],
+              "verdict": "present"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "tufted backrest",
+                "tufted seat",
+                "wooden armrests",
+                "visible wooden frame",
+                "slatted arm details"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_07.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "beige",
+                "grey"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "quilted fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "quilted surface",
+                "thick mattress",
+                "piped edges"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_09.jpeg",
+          "object": "mattress",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "blue"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "quilted",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "cotton",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "thick mattress",
+                "gradient pattern",
+                "piped edges"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_10.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "blue",
+                "navy"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "knit fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "quilted",
+                "piped edge"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_11.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "blue",
+                "light blue",
+                "white"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "knit fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "vertical stripes",
+                "branded border",
+                "piped edges"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_12.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        }
+      ],
+      "population": {
+        "color_hex": 0,
+        "color_words": 8,
+        "frame_finish": 2,
+        "material": 0,
+        "pattern": 8,
+        "style_descriptors": 2,
+        "upholstery": 8,
+        "visual_descriptors": 8
+      },
+      "verdicts": {
+        "color_hex": {
+          "correctly_empty": 8
+        },
+        "color_words": {
+          "correct": 8
+        },
+        "frame_finish": {
+          "correct": 2,
+          "correctly_empty": 5,
+          "missed": 1
+        },
+        "material": {
+          "acceptable_miss": 8
+        },
+        "pattern": {
+          "correct": 7,
+          "incorrect": 1
+        },
+        "style_descriptors": {
+          "empty": 6,
+          "present": 2
+        },
+        "upholstery": {
+          "correct": 8
+        },
+        "visual_descriptors": {
+          "present": 8
+        }
+      },
+      "visibly_supported": 27
+    },
+    "C_part_aware": {
+      "correct": 25,
+      "extraction_fidelity": 0.9615,
+      "false_positive_and_unsupported": 0,
+      "images": [
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "blue",
+                "teal",
+                "green",
+                "grey"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "textured fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "three-seater sofa",
+                "rounded arms",
+                "horizontal geometric accent band on backrest",
+                "paneled backrest",
+                "three separate seat cushions"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_04.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "light grey",
+                "gold"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "gold metal trim",
+              "verdict": "correct"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "quilted",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [
+                "modern",
+                "contemporary"
+              ],
+              "verdict": "present"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "pull out bed sofa",
+                "pull handles",
+                "three back cushions",
+                "gold metal accent trim",
+                "quilted front panel"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_05.jpeg",
+          "object": "sofa",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "dark brown",
+                "beige"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "quilted",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "two-tone",
+                "quilted accent panel",
+                "tufted backrest",
+                "rounded arms",
+                "three seat cushions"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_06.jpeg",
+          "object": "sofa",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "sage green",
+                "dark brown"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "dark wood",
+              "verdict": "correct"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "plain",
+              "verdict": "incorrect"
+            },
+            "style_descriptors": {
+              "value": [
+                "mid-century modern",
+                "transitional"
+              ],
+              "verdict": "present"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "tufted back",
+                "tufted seat",
+                "wooden armrests",
+                "wooden frame",
+                "lattice side detail"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_07.jpeg",
+          "object": "sofa",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "beige",
+                "dark grey"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "quilted fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "thick mattress",
+                "piped edges",
+                "patterned top"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_09.jpeg",
+          "object": "mattress",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "blue",
+                "grey"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "knit fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "quilted surface",
+                "gradient pattern",
+                "dark blue side border"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_10.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "blue",
+                "cream"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "knit fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "quilted surface",
+                "piped edges",
+                "rectangular"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_11.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "blue",
+                "light blue",
+                "white"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "knit fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "branded side border",
+                "piped edges",
+                "quilted surface"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_12.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        }
+      ],
+      "population": {
+        "color_hex": 0,
+        "color_words": 8,
+        "frame_finish": 2,
+        "material": 0,
+        "pattern": 8,
+        "style_descriptors": 2,
+        "upholstery": 8,
+        "visual_descriptors": 8
+      },
+      "verdicts": {
+        "color_hex": {
+          "correctly_empty": 8
+        },
+        "color_words": {
+          "correct": 8
+        },
+        "frame_finish": {
+          "acceptable_miss": 1,
+          "correct": 2,
+          "correctly_empty": 5
+        },
+        "material": {
+          "acceptable_miss": 8
+        },
+        "pattern": {
+          "correct": 7,
+          "incorrect": 1
+        },
+        "style_descriptors": {
+          "empty": 6,
+          "present": 2
+        },
+        "upholstery": {
+          "correct": 8
+        },
+        "visual_descriptors": {
+          "present": 8
+        }
+      },
+      "visibly_supported": 26
+    },
+    "D_production": {
+      "correct": 25,
+      "extraction_fidelity": 1.0,
+      "false_positive_and_unsupported": 0,
+      "images": [
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "blue",
+                "teal",
+                "green",
+                "gray"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "textured fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "three seat cushions",
+                "three back cushions",
+                "rounded arms",
+                "geometric pattern accent band on backrest"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_04.jpeg",
+          "object": "sofa",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "grey",
+                "light grey"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "gold metal trim",
+              "verdict": "correct"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "quilted",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [
+                "contemporary",
+                "functional"
+              ],
+              "verdict": "present"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "pull out bed sofa",
+                "three back cushions",
+                "quilted pull out drawer front",
+                "fabric pull loops",
+                "gold accent trim on arms"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_05.jpeg",
+          "object": "sofa",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "brown",
+                "beige"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "quilted",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "rounded arms",
+                "tufted back cushions",
+                "contrasting panels",
+                "button accents"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_06.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "sage green",
+                "dark brown"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "dark wood",
+              "verdict": "correct"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "style_descriptors": {
+              "value": [
+                "mid-century modern",
+                "transition"
+              ],
+              "verdict": "present"
+            },
+            "upholstery": {
+              "value": "fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "tufted back",
+                "tufted seat",
+                "wooden armrests",
+                "cross pattern on arm sides",
+                "exposed wooden frame"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_07.jpeg",
+          "object": "sofa",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "grey",
+                "beige"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "cotton",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "quilted top",
+                "piped edges",
+                "thick mattress"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_09.jpeg",
+          "object": "mattress",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "blue"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "knit fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "quilted surface",
+                "gradient pattern",
+                "thick mattress"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_10.jpeg",
+          "object": "mattress",
+          "reference_class": "design_reference"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "white",
+                "blue",
+                "navy blue"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "knit fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "thick mattress",
+                "patterned top surface",
+                "dark blue side border",
+                "piped edges"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_11.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        },
+        {
+          "fields": {
+            "color_hex": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "color_words": {
+              "value": [
+                "blue",
+                "light blue",
+                "white"
+              ],
+              "verdict": "correct"
+            },
+            "frame_finish": {
+              "value": "",
+              "verdict": "correctly_empty"
+            },
+            "material": {
+              "value": "",
+              "verdict": "acceptable_miss"
+            },
+            "pattern": {
+              "value": "geometric",
+              "verdict": "correct"
+            },
+            "style_descriptors": {
+              "value": [],
+              "verdict": "empty"
+            },
+            "upholstery": {
+              "value": "knit fabric",
+              "verdict": "correct"
+            },
+            "visual_descriptors": {
+              "value": [
+                "branded side border",
+                "piped edges",
+                "quilted top surface"
+              ],
+              "verdict": "present"
+            }
+          },
+          "file": "ref_12.jpeg",
+          "object": "mattress",
+          "reference_class": "exact_object"
+        }
+      ],
+      "population": {
+        "color_hex": 0,
+        "color_words": 8,
+        "frame_finish": 2,
+        "material": 0,
+        "pattern": 7,
+        "style_descriptors": 2,
+        "upholstery": 8,
+        "visual_descriptors": 8
+      },
+      "verdicts": {
+        "color_hex": {
+          "correctly_empty": 8
+        },
+        "color_words": {
+          "correct": 8
+        },
+        "frame_finish": {
+          "acceptable_miss": 1,
+          "correct": 2,
+          "correctly_empty": 5
+        },
+        "material": {
+          "acceptable_miss": 8
+        },
+        "pattern": {
+          "acceptable_miss": 1,
+          "correct": 7
+        },
+        "style_descriptors": {
+          "empty": 6,
+          "present": 2
+        },
+        "upholstery": {
+          "correct": 8
+        },
+        "visual_descriptors": {
+          "present": 8
+        }
+      },
+      "visibly_supported": 25
+    }
+  }
+}

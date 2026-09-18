@@ -223,10 +223,125 @@ export interface AnalysisPatch {
   item_roles?: Record<string, ItemRole>;
 }
 
+export interface IntentResultDto {
+  constraint_id: string;
+  subject_id: string;
+  target_id: string;
+  constraint_type: string;
+  verdict: "satisfied" | "violated" | "unknown" | "partial";
+  error: number | null;
+  error_kind: string;
+  message: string;
+}
+
+/** planning/spatial_check.json — written by scene_plan after the solver commits. */
+export interface SpatialCheckDto {
+  schema_version: string;
+  repair: {
+    terminal_state: string;
+    hard_before: number;
+    hard_after: number;
+    moved: string[];
+    escalation_level_reached: number;
+  } | null;
+  intent: {
+    satisfied: number;
+    violated: number;
+    unknown: number;
+    partial: number;
+    unsupported_relations: Record<string, number>;
+    results: IntentResultDto[];
+  };
+  consistency: { code: string; severity: string; subject_id: string; object_id: string; message: string }[];
+}
+
+/** What one uploaded reference photo was understood to mean. */
+export type ReferenceClass =
+  | "exact_object"
+  | "design_reference"
+  | "style_reference"
+  | "inspiration_only"
+  | "uncertain";
+
+export interface DesignIntentDto {
+  intent_id: string;
+  reference_class: ReferenceClass;
+  object_category: string;
+  room_hint: string;
+  confidence: number;
+  notes: string;
+  attributes: {
+    color_words: string[];
+    color_hex: string;
+    material: string;
+    upholstery: string;
+    pattern: string;
+    frame_finish: string;
+    style_descriptors: string[];
+    visual_descriptors: string[];
+  };
+  provenance: {
+    input_id: string;
+    filename: string;
+    image_ref: string;
+    crop_ref: string;
+    stage: string;
+    model: string;
+  };
+}
+
+/** planning/design_intent.json — every reference, classified. */
+export interface DesignIntentSetDto {
+  schema_version: string;
+  reference_ids: string[];
+  intents: DesignIntentDto[];
+  conflicts: { object_category: string; attribute: string; values: string[]; message: string }[];
+  /** References that produced no intent — never silently dropped. */
+  unread: string[];
+  warnings: string[];
+}
+
+/** planning/visual_intent_fidelity.json — did the references survive into the scene? */
+export interface VisualIntentFidelityDto {
+  schema_version: string;
+  metrics: {
+    instantiation_fidelity: number | null;
+    appearance_fidelity: number | null;
+    non_instantiation_compliance: number | null;
+    traceability: number | null;
+  };
+  counts: Record<string, number>;
+  rows: {
+    intent_id: string;
+    reference_class: ReferenceClass;
+    object_category: string;
+    expected_instantiated: boolean;
+    instantiated: boolean;
+    rung: string;
+    attribute_match: Record<string, boolean>;
+    traced_object_ids: string[];
+    needs_input: boolean;
+    note: string;
+  }[];
+  resolutions: {
+    object_category: string;
+    rung: "exact_asset" | "compatible_asset" | "generate" | "unresolved";
+    asset_id: string;
+    needs_input: boolean;
+    reason: string;
+    source_intent_ids: string[];
+  }[];
+  unresolved: string[];
+  warnings: string[];
+}
+
 export interface SceneSpecDto {
   scene: { scene_id: string; version: number; name: string; rooms: unknown[]; objects: unknown[] };
-  violations: { code: string; severity: string; message: string }[];
+  violations: { code: string; severity: string; message: string; object_id?: string | null }[];
   asset_plan: { counts: Record<string, number> } | null;
+  spatial_check?: SpatialCheckDto | null;
+  design_intent?: DesignIntentSetDto | null;
+  visual_intent_fidelity?: VisualIntentFidelityDto | null;
 }
 
 export interface BuildDto {
@@ -248,8 +363,12 @@ export class ProjectsApiError extends Error {
 /** Verdict of the isolated second look at one crop. `unchecked` and
  *  `unreadable` both mean nobody has established what the crop shows — they
  *  are not passes, and the review screen treats them as needing eyes. */
+/** `implausible` is the odd one out: the crop may be a perfectly good picture,
+ *  and the objection is that the piece cannot belong to this room — a bath read
+ *  into a living room. The others judge the image; this one judges the label. */
 export type ElementCheck =
-  | "unchecked" | "ok" | "mismatch" | "crowded" | "duplicate" | "unreadable";
+  | "unchecked" | "ok" | "mismatch" | "crowded" | "duplicate" | "unreadable"
+  | "implausible";
 
 export interface SceneElement {
   element_id: string;
@@ -262,6 +381,13 @@ export interface SceneElement {
   placement: string;
   against: string;
   faces: string;
+  /** P22: the render's frame — back = the wall you look at. Anchor, not placement. */
+  wall?: string;
+  /** Room-local metres: x along the back wall, y up, z from the back wall. */
+  position_m?: [number, number, number] | null;
+  /** "read" (the reader answered) | "derived" (estimated from the crop box). */
+  position_source?: string;
+  facing?: string;
   confidence: number;
   crop_ref: string;
   crop_url: string;
@@ -275,7 +401,10 @@ export interface SceneReadingDto {
   reading: {
     elements: SceneElement[];
     surfaces: { room_id: string; wall_color: string; wall_material: string;
-                floor_color: string; floor_material: string; notes: string }[];
+                floor_color: string; floor_material: string; notes: string;
+                /** P22: finish zones per named wall; extent_m = [from_x, to_x, from_y, to_y]. */
+                walls?: { wall: string; material: string; color: string; pattern: string;
+                          extent_m: [number, number, number, number] }[] }[];
     provider: string;
     warnings: string[];
   };
@@ -290,7 +419,84 @@ export interface SceneReadingDto {
     to_generate: number;
     already_generated: number;
     credits_needed: number;
+    /** P17/P18 (aether-backend app/intelligence/schema.py). Optional because
+        a backend older than P17 answers without them, and the screen must
+        still load that project. The frontend never counts or groups on its
+        own: these are the counts. */
+    inventory?: ElementInventoryRow[];
+    inventory_notes?: string[];
+    definitions?: ElementDefinition[];
+    instances?: ElementInstance[];
   };
+}
+
+/** How many of one kind of piece a room was read to hold. */
+export interface ElementInventoryRow {
+  room_id: string;
+  semantic_type: string;
+  read: number;
+  usable: number;
+  /** check name -> rows it removed, e.g. { duplicate: 2 }. */
+  lost_to: Record<string, number>;
+}
+
+/** The canonical identity of a piece: what it IS, never where it sits. */
+export interface ElementDefinition {
+  element_id: string;
+  room_id: string;
+  semantic_type: string;
+  canonical_name: string;
+  material: string;
+  color: string;
+  dimensions_m: [number, number, number] | null;
+  /** "room_type_dims_material_colour" | "unresolved" (no evidence, kept apart). */
+  identity_method: string;
+  instance_count: number;
+  /** The reading rows that fold into this piece, biggest crop first. */
+  source_element_ids: string[];
+  /** Empty until a mesh exists for this piece. */
+  canonical_asset_id: string;
+  /** The client's decision on the pictured piece: true build, false skip, null/absent undecided. */
+  approved?: boolean | null;
+}
+
+/** The canonical picture of one piece (aether-backend ElementImage). */
+export interface ElementImageDto {
+  element_image_id: string;
+  element_id: string;
+  canonical_key: string;
+  image_ref: string;
+  /** Minted by the API; empty when generation failed. */
+  image_url: string;
+  prompt: string;
+  seed: number;
+  /** Crop of the client's own photo it was conditioned on, if any. */
+  reference_ref: string;
+  reference_url: string;
+  reference_scale: number;
+  model: string;
+  checksum: string;
+  version: number;
+  error: string;
+}
+
+/** GET /projects/{id}/element-images: the pre-moodboard inventory and its pictures. */
+export interface ElementImageSetDto {
+  definitions: ElementDefinition[];
+  instances: ElementInstance[];
+  images: ElementImageDto[];
+  provider: string;
+  warnings: string[];
+}
+
+/** One physical occurrence of a definition. */
+export interface ElementInstance {
+  instance_id: string;
+  element_id: string;
+  room_id: string;
+  source_element_id: string;
+  bbox: [number, number, number, number] | null;
+  crop_ref: string;
 }
 
 export interface CreditsDto {

@@ -164,15 +164,32 @@ def wall_segments(placed: list[PlacedRoom]) -> list[WallSeg]:
     return ordered
 
 
-def build_walls_and_openings(placed: list[PlacedRoom]) -> tuple[list[Wall], list[Opening], list[str]]:
-    """Walls + doors (child → parent), an entry door, and one window per room."""
+def build_walls_and_openings(
+    placed: list[PlacedRoom],
+    reserved: Optional[dict[str, list[tuple[float, float]]]] = None,
+) -> tuple[list[Wall], list[Opening], list[str]]:
+    """Walls + doors (child → parent), an entry door, and one window per room.
+
+    `reserved` is wall_id -> spans (metres from the wall's start) that the
+    approved picture has already spoken for, so an opening is not cut where a
+    piece of furniture was seen. Windows go on the longest exterior wall and
+    land near its middle, which is exactly where a television hangs: measured
+    on proj_a25a006c88, a 1.8 m window was cut into the middle of the 5.8 m
+    wall the client's 1.8 m television was read against, leaving 1.85 m clear
+    at either end - too little for the TV once its margins count - so the set
+    moved to another wall and faced the wrong way. The window is invented; the
+    television was seen. The seen thing wins.
+    """
     warnings: list[str] = []
     segs = wall_segments(placed)
     by_id = {p.room_id: p for p in placed}
     height = max((p.height for p in placed), default=3.0)
     walls = [Wall(wall_id=s.wall_id, start=s.start, end=s.end, height=height) for s in segs]
     openings: list[Opening] = []
-    used: dict[str, list[tuple[float, float]]] = {}  # wall_id -> occupied (from, to) ranges
+    # Spans already spoken for. Seeded with what the picture claimed, so the
+    # same `free_span` search that keeps two openings apart also keeps an
+    # opening off the furniture.
+    used: dict[str, list[tuple[float, float]]] = {k: list(v) for k, v in (reserved or {}).items()}
 
     def free_span(seg: WallSeg, width: float) -> Optional[float]:
         """Centre position (from wall start) for an opening of `width` that

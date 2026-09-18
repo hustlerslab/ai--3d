@@ -62,6 +62,21 @@ class Opening(BaseModel):
     sill_height: float = 0.0  # 0 for doors; > 0 for windows
 
 
+class WallFinishZone(BaseModel):
+    """One finish region on one wall face (P22), read from the approved
+    render. `extent` is metres along that room's edge from its left end seen
+    from inside the room, then metres up from the floor; the wall segment it
+    hangs on is the third coordinate. Data for the executor: Blender paints
+    the whole wall in `Wall.material` until it consumes zones."""
+    room_id: str
+    wall_name: str                 # back | left | right | front, in that room's render frame
+    material: str                  # registry material id
+    material_text: str = ""        # what the reader actually said ("zellige tiles")
+    color: str = ""
+    pattern: str = ""
+    extent: tuple[float, float, float, float] = (0.0, 0.0, 0.0, 0.0)  # from_x, to_x, from_y, to_y
+
+
 class Wall(BaseModel):
     wall_id: str = Field(default_factory=lambda: new_id("wall"))
     start: Vec2
@@ -69,6 +84,13 @@ class Wall(BaseModel):
     thickness: float = 0.15
     height: float = 2.8
     material: str = "paint_white"
+    # P5 wall representation: generalized extrusion direction. (0,1,0) is a
+    # vertical wall and reproduces every pre-P5 result exactly; a leaning wall
+    # (measured ~11 deg on a photo-reconstructed room) stores its true up-vector
+    # so height-aware collision checks use the right cross-section.
+    extrusion_direction: Vec3 = (0.0, 1.0, 0.0)
+    # P22: finish zones from the reading. Empty on every scene stored before.
+    finishes: list[WallFinishZone] = []
 
 
 class Room(BaseModel):
@@ -83,6 +105,46 @@ class Room(BaseModel):
     confidence: Confidence = Confidence()
     # architecture read from the photos: cornice, wainscot, panelled_doors, ...
     features: list[str] = []
+
+
+class ObjectVisual(BaseModel):
+    """What the client's own reference said this piece looks like.
+
+    DESCRIPTIVE EVIDENCE, NEVER GEOMETRY. Nothing here is a position, rotation,
+    scale or dimension, and nothing here is a construction or procurement
+    specification - the solver keeps every geometric decision and the designer
+    keeps every execution figure.
+
+    WHY IT IS A SEPARATE BLOCK. `SceneObject.color` and `material_overrides`
+    already carry the two attributes the executor can actually paint: a hex and
+    one registry material id. They are RESOLVED values. This block keeps what
+    the client actually said - "sage green", "quilted", "dark walnut frame" -
+    which the resolved pair cannot express, and which stopped at the plan
+    before P13. Kept deliberately parallel to
+    `app.intelligence.design_intent.VisualAttributes` rather than importing it:
+    `Scene` is the executor-facing contract and imports nothing from the
+    intelligence package, so a provider change can never alter the scene type.
+
+    `style_descriptors` and `visual_descriptors` arrive merged here as
+    `descriptors` - the distinction matters when classifying a reference and
+    not when describing the object it produced.
+    """
+
+    color_words: list[str] = []
+    #: The material WORD the reference used ("linen"), as distinct from the
+    #: registry id in `material_overrides` ("fabric_linen").
+    material: str = ""
+    upholstery: str = ""
+    pattern: str = ""
+    frame_finish: str = ""
+    descriptors: list[str] = []
+    #: Which design intents produced or shaped this object, so
+    #: object_id -> intent_id -> reference is answerable from the scene alone.
+    source_intent_ids: list[str] = []
+
+    def is_empty(self) -> bool:
+        return not any((self.color_words, self.material, self.upholstery, self.pattern,
+                        self.frame_finish, self.descriptors, self.source_intent_ids))
 
 
 SourceStrategy = Literal["local_asset", "local_modified", "procedural", "generated"]
@@ -120,6 +182,9 @@ class SceneObject(BaseModel):
     shape: Optional[str] = None
     # open name from the reading, for the inspector
     name: str = ""
+    # P13: what the client's reference said this looks like. Defaults to an
+    # empty block, so every scene stored before P13 loads unchanged.
+    visual: ObjectVisual = Field(default_factory=ObjectVisual)
 
 
 # ── SceneSpec extensions (plan §4.1) ────────────────────────────────────

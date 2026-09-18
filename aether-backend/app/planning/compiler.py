@@ -26,10 +26,14 @@ from ..scene.schema import (
     InteriorLight,
     LightingSpec,
     ObjectSource,
+    ObjectVisual,
     Room,
     Scene,
     SceneObject,
     SceneStyle,
+    Vec3,
+    Wall,
+    WallFinishZone,
 )
 from ..spatial import geometry as geo
 from ..spatial.validation import object_footprint, validate_object
@@ -72,6 +76,41 @@ _SURFACE_WORDS: list[tuple[tuple[str, ...], str]] = [
     (("ivory", "cream", "beige"), "paint_ivory"),
     (("plaster", "paint", "white", "painted"), "paint_white"),
 ]
+
+
+# The same mechanism as `_SURFACE_WORDS`, for the FRAME/LEG finish of a piece
+# of furniture rather than a room surface. Every id here already exists in the
+# registry and is `applies_to: furniture` - P14 invents no material to make a
+# benchmark pass, and a word that routes to nothing renders nothing.
+# Most specific first, so "dark walnut" beats "walnut" beats "wood".
+_FINISH_WORDS: list[tuple[tuple[str, ...], str]] = [
+    (("walnut",), "veneer_walnut"),
+    (("oak", "ash", "birch", "light wood", "timber", "wood", "wooden"), "veneer_oak"),
+    (("brass", "bronze", "gold", "copper"), "metal_brass"),
+    (("black metal", "matte black", "blackened", "gunmetal", "steel", "chrome",
+      "metal", "iron"), "metal_black"),
+    (("glass",), "glass_clear"),
+]
+
+
+def finish_material_for(text: str) -> str:
+    """Registry material for a described frame/leg finish, or "" for nothing.
+
+    Empty is a real answer and the common one: a finish the registry cannot
+    represent stays metadata, because painting a sofa's legs the wrong species
+    is worse than leaving the catalogue's own look alone.
+    """
+    low = (text or "").lower()
+    if not low.strip():
+        return ""
+    registry = get_material_registry()
+    for words, mid in _FINISH_WORDS:
+        if not any(w in low for w in words):
+            continue
+        rec = registry.get(mid)
+        if rec is not None and "furniture" in rec.applies_to:
+            return mid
+    return ""
 
 
 def material_for(text: str, applies_to: str) -> str:
@@ -122,10 +161,93 @@ def _floor_and_wall_materials(style: StyleSpec) -> tuple[str, str, str]:
     return floor, wet, wall
 
 
+def _is_named_edge(seg, room, wall_name: str) -> bool:
+    """Whether a wall segment lies on the room's named edge, in the render
+    frame the reading uses: back = north (min z), front = south (max z),
+    left = west (min x), right = east (max x)."""
+    axis, c = {"back": ("x", room.z0), "front": ("x", room.z1),
+               "left": ("z", room.x0), "right": ("z", room.x1)}.get(wall_name, (None, None))
+    return axis is not None and seg.axis == axis and abs(seg.c - c) < 0.01
+
+
+def bind_wall_finishes(walls: list[Wall], segs, placed, reading) -> int:
+    """P22: attach the reading's per-wall finish zones to the wall segments
+    that room's named edge became. Additive: `Wall.material` stays the
+    room-wide answer, the zones ride alongside for the executor. A segment
+    shared by two rooms carries both rooms' zones, each tagged with its
+    room, because the slab has two faces even if Blender paints one."""
+    by_room = {s.room_id: s.walls for s in (getattr(reading, "surfaces", None) or []) if s.walls}
+    if not by_room:
+        return 0
+    seg_by_id = {seg.wall_id: seg for seg in segs}
+    bound = 0
+    for room in placed:
+        for fin in by_room.get(room.room_id, []):
+            for w in walls:
+                seg = seg_by_id.get(w.wall_id)
+                if seg is None or room.room_id not in seg.rooms or not _is_named_edge(seg, room, fin.wall):
+                    continue
+                w.finishes.append(WallFinishZone(
+                    room_id=room.room_id, wall_name=fin.wall,
+                    material=material_for(fin.material, "wall") or w.material,
+                    material_text=fin.material, color=fin.color, pattern=fin.pattern,
+                    extent=fin.extent_m))
+                bound += 1
+    return bound
+
+
+def reserved_wall_spans(placed, reading) -> dict[str, list[tuple[float, float]]]:
+    """Where the approved picture already put something on a wall.
+
+    Returned as wall_id -> spans in metres from that wall segment's start, the
+    same coordinate `build_walls_and_openings` cuts openings in, so a window
+    is simply never offered that span. Only pieces the reader MEASURED against
+    a named wall count: a guess is not grounds for moving a window.
+    """
+    out: dict[str, list[tuple[float, float]]] = {}
+    if reading is None:
+        return out
+    segs = wall_segments(placed)
+    by_room = {p.room_id: p for p in placed}
+    for el in getattr(reading, "elements", []) or []:
+        if el.placement != "wall" or not el.wall or el.position_source != "read":
+            continue
+        if el.position_m is None:
+            continue
+        room = by_room.get(el.room_id)
+        if room is None:
+            continue
+        # How wide the piece is along this wall. The reading rarely carries
+        # metric dimensions - they are settled later, from the asset - but the
+        # crop box does, and it is measured from the same picture in the same
+        # frame as the position: the piece spans that fraction of the image,
+        # and the image's width IS the wall's run. Never invented.
+        run = (room.x1 - room.x0) if el.wall in ("back", "front") else (room.z1 - room.z0)
+        if el.dimensions_m is not None and el.dimensions_m[0] > 0:
+            width = float(el.dimensions_m[0])
+        elif el.bbox is not None:
+            width = (float(el.bbox[2]) - float(el.bbox[0])) * run
+        else:
+            continue
+        if width <= 0.05:
+            continue
+        for seg in segs:
+            if room.room_id not in seg.rooms or not _is_named_edge(seg, room, el.wall):
+                continue
+            # The element's own position along this wall, in the segment's
+            # frame: the wall runs along x for the back and front edges, along
+            # z for the left and right ones.
+            world = (room.x0 + el.position_m[0], room.z0 + el.position_m[2])
+            along = (world[0] if seg.axis == "x" else world[1]) - seg.p0
+            half = width / 2 + 0.2          # the piece plus the gap it needs
+            out.setdefault(seg.wall_id, []).append((round(along - half, 3), round(along + half, 3)))
+    return out
+
+
 def compile_scene(project_id: str, analysis: DesignAnalysis, style: StyleSpec, *, name: str,
                   reading=None) -> tuple[Scene, list[str]]:
     placed = layout_rooms(analysis.rooms)
-    walls, openings, warnings = build_walls_and_openings(placed)
+    walls, openings, warnings = build_walls_and_openings(placed, reserved_wall_spans(placed, reading))
     floor, wet, wall_mat = _floor_and_wall_materials(style)
     # The approved render describes what each room is actually made of. Where it
     # does, that beats the style's blanket choice: the style picked one wood for
@@ -137,11 +259,13 @@ def compile_scene(project_id: str, analysis: DesignAnalysis, style: StyleSpec, *
     # takes its room's finish; an interior wall only takes one when both sides
     # agree, because a single slab cannot be panelled on one face and painted on
     # the other in this geometry, and picking a side would be arbitrary.
-    seg_rooms = {seg.wall_id: seg.rooms for seg in wall_segments(placed)}
+    segs = wall_segments(placed)
+    seg_rooms = {seg.wall_id: seg.rooms for seg in segs}
     for w in walls:
         sides = {per_room.get(r, ("", ""))[1] for r in seg_rooms.get(w.wall_id, set())}
         sides.discard("")
         w.material = sides.pop() if len(sides) == 1 else wall_mat
+    bind_wall_finishes(walls, segs, placed, reading)
 
     features = [f for f in analysis.architecture if f in vocab.ARCHITECTURE_FEATURES]
     rooms: list[Room] = []
@@ -316,6 +440,30 @@ def _object_color(item: ObjectPlanItem, decision, palette: list[str]) -> str:
     return decision.color
 
 
+def _object_visual(item: ObjectPlanItem) -> ObjectVisual:
+    """Carry the reference's own words onto the scene object (P13).
+
+    `color` and `material_overrides` hold the two RESOLVED values the executor
+    can paint - a hex and one registry material id. This keeps what was
+    actually said, which those two cannot express: "sage green" rather than
+    #B9BFAE, "quilted" and "dark walnut frame" rather than nothing at all.
+
+    Planner-only items produce an empty block; `style_descriptors` and
+    `visual_descriptors` merge into one `descriptors` list, since the
+    distinction is about classifying a reference, not describing an object.
+    """
+    v = item.visual
+    return ObjectVisual(
+        color_words=list(v.color_words),
+        material=v.material,
+        upholstery=v.upholstery,
+        pattern=v.pattern,
+        frame_finish=v.frame_finish,
+        descriptors=[*v.style_descriptors, *v.visual_descriptors],
+        source_intent_ids=list(item.source_intent_ids),
+    )
+
+
 def _on_segment(p: Vec2, a: Vec2, b: Vec2, tol: float = 1e-3) -> bool:
     return abs(geo.distance(a, p) + geo.distance(p, b) - geo.distance(a, b)) < tol
 
@@ -428,6 +576,22 @@ def _wall_hang_candidates(scene: Scene, room: Room, dims: tuple[float, float, fl
                 ts.append((along(oc) / edge_len, 0.0, o))
         for t in (0.5, 0.35, 0.65, 0.22, 0.78):
             ts.append((t, 1.0, None))
+        # Then a sweep of the whole wall, scored below the preferred five so an
+        # unobstructed wall is placed exactly as before.
+        #
+        # Those five all sit between 22% and 78%, which is the middle of the
+        # wall - and a window is usually in the middle of a wall too. Measured
+        # on proj_a25a006c88: a 1.8 m window centred on a 5.8 m wall put every
+        # one of the five inside the "not over a window" margin, so the
+        # generator offered NOTHING on that wall and the client's television
+        # hung on a different one, facing the wrong way. The wall had 2 m of
+        # clear span at either end; nothing ever looked there.
+        step = 0.25
+        if edge_len > 2 * step:
+            offset = step
+            while offset < edge_len - step:
+                ts.append((offset / edge_len, 2.0, None))
+                offset += step
         for t, base_score, anchor in ts:
             s = along_pt = t * edge_len
             if s - w / 2 < 0.15 or s + w / 2 > edge_len - 0.15:
@@ -602,7 +766,8 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
                         break
             if placement == "wall":
                 mount = "wall"
-                candidates = _wall_hang_candidates(working, room, dims, item.semantic_type)
+                candidates = _prefer_anchor(
+                    _wall_hang_candidates(working, room, dims, item.semantic_type), item, room)
             elif placement == "ceiling":
                 mount = "ceiling"
                 c = geo.polygon_centroid(room.boundary)
@@ -654,6 +819,7 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
                         texture_ref=decision.texture_ref or None,
                         shape=decision.shape or None,
                         name=item.name,
+                        visual=_object_visual(item),
                     )
                     working.objects.append(candidate)
                     if not validate_object(working, candidate):
@@ -677,11 +843,19 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
 # happened to face. Mapping those onto real walls would be inventing a fact, so
 # they are deliberately ignored and the engine's existing order stands.
 #
-# What survives the translation is frame-independent:
+# What survives the translation is frame-independent. `against` says WHERE:
 #   * "centre" / "middle"          - free-standing, not against a wall
 #   * "corner"                     - in a corner
 #   * anything naming a window     - a wall that has one
 #   * the name of another piece    - beside that piece
+#
+# and `faces` says WHICH WAY ROUND:
+#   * the name of another piece    - turned towards it
+#   * anything naming a window     - turned towards the glazing
+#   * "into the room" / "centre"   - turned inward rather than at a wall
+#
+# Both are read off the same render and both are preferences. They rank on
+# separate axes, so a candidate can satisfy one, the other, or both.
 #
 # Nothing here filters: every candidate the engine produced stays in the list,
 # in the same order among equals. A hint only moves matching spots earlier, so
@@ -690,6 +864,11 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
 _CENTRE_WORDS = ("centre", "center", "middle", "central", "free-standing", "freestanding")
 _CORNER_WORDS = ("corner",)
 _WINDOW_WORDS = ("window", "glazing", "french door")
+_INWARD_WORDS = ("room", "centre", "center", "middle", "inward", "inwards", "inside")
+# Cosine of the half-angle that counts as "pointing at". Candidates arrive at
+# 90 degree intervals (wall normals), so 60 degrees admits at most one of them
+# per direction and never the one facing away.
+_FACES_COS = 0.5
 
 
 def _edge_has_window(scene: Scene, room: Room, pos: Vec2) -> bool:
@@ -699,6 +878,50 @@ def _edge_has_window(scene: Scene, room: Room, pos: Vec2) -> bool:
 
 def _near_corner(room: Room, pos: Vec2) -> bool:
     return any(geo.distance(pos, v) <= 1.2 for v in room.boundary)
+
+
+def _points_at(candidate: tuple[Vec2, float], target: Vec2) -> bool:
+    """Does this candidate's forward vector point at `target`?"""
+    pos, rot = candidate[0], candidate[1]
+    vx, vz = target[0] - pos[0], target[1] - pos[1]
+    dist = math.hypot(vx, vz)
+    if dist < 1e-6:                      # standing on it: no direction to judge
+        return False
+    fx, fz = _forward(rot)
+    return (fx * vx + fz * vz) / dist >= _FACES_COS
+
+
+def _faces_rank(candidate: tuple[Vec2, float], item: ObjectPlanItem, scene: Scene, room: Room,
+                placed_by_key: dict[str, SceneObject]) -> int:
+    """0 = this rotation satisfies `faces`, 1 = it does not.
+
+    The other half of the arrangement hint, and until now the unused half: the
+    reader has always answered which way a piece is turned, and nothing read it,
+    so rotation came only from whichever wall the candidate sat against. A sofa
+    "facing the tv" was placed facing whatever the wall normal happened to be.
+
+    Resolves the same frame-independent targets `_hint_rank` does, for the same
+    reason: "faces north" is unusable because the render has no fixed
+    orientation against the floor plan, but "faces the tv" is a fact about two
+    objects and survives the translation.
+    """
+    hint = (item.faces or "").strip().lower()
+    if not hint:
+        return 1
+    # A piece already standing in this room, named in the hint.
+    for obj in placed_by_key.values():
+        name = (obj.semantic_type or "").replace("_", " ")
+        if obj.room_id == room.room_id and name and name in hint:
+            if _points_at(candidate, (obj.position[0], obj.position[2])):
+                return 0
+    if any(w in hint for w in _WINDOW_WORDS):
+        for point in (_window_points(scene, room) if scene is not None else []):
+            if _points_at(candidate, point):
+                return 0
+    if any(w in hint for w in _INWARD_WORDS):
+        if _points_at(candidate, geo.polygon_centroid(room.boundary)):
+            return 0
+    return 1
 
 
 def _hint_rank(candidate: tuple[Vec2, float], item: ObjectPlanItem, scene: Scene, room: Room,
@@ -724,12 +947,214 @@ def _hint_rank(candidate: tuple[Vec2, float], item: ObjectPlanItem, scene: Scene
     return 1
 
 
-def _prefer_hint(candidates: list[tuple[Vec2, float]], item: ObjectPlanItem, scene: Scene,
-                 room: Room, placed_by_key: dict[str, SceneObject]) -> list[tuple[Vec2, float]]:
-    """Re-order, never re-select. Same list, matching spots first."""
-    if not (item.against or "").strip():
+def anchor_world(item: ObjectPlanItem, room: Room) -> Optional[Vec3]:
+    """The reading's render-frame anchor in world metres (P22).
+
+    Room rectangles are axis-aligned, and the reading's frame is bound to
+    them by convention: the picture's back wall is the room's north edge
+    (min z), its left wall the west edge (min x). So room-local (x, y, z) is
+    an offset from the north-west corner. Nothing here is a placement.
+    """
+    if item.anchor_m is None:
+        return None
+    xs = [p[0] for p in room.boundary]
+    zs = [p[1] for p in room.boundary]
+    ax, ay, az = item.anchor_m
+    return (min(xs) + ax, ay, min(zs) + az)
+
+
+#: How close two candidates must be to the pictured spot to count as a tie, in
+#: metres. Below this the named relations ("against the sofa") break the tie;
+#: above it the measured position decides. A knob, not a constant, because the
+#: verification loop in research/placement_loop.py turns it and measures what
+#: happens rather than anyone arguing for a number.
+# Measured, not argued: the verification loop turned this knob across four
+# settings on a real project and 0.01 was the only one that put every piece
+# facing the way the picture showed it (orientation 80% -> 100%, accuracy
+# 93% -> 98%). A wide band let vague text - "against wall", true of nearly
+# every candidate - override a position the reader actually measured.
+ANCHOR_TIE_BAND_M = 0.01
+#: Whether an anchor ESTIMATED from the crop box also leads the named hints.
+#: On: the reasoning for "off" was that an estimate is not more specific than
+#: a stated relation, and the measurement disagreed - a box-derived position
+#: names one spot, while "into the room" names half the room. Evidence is one
+#: project; the loop re-checks it on any other.
+ANCHOR_LEADS_WHEN_DERIVED = True
+
+
+#: Types with a front you can see, and therefore an orientation worth honouring
+#: and worth grading. A rug, a basket or a vase has no front: the reader still
+#: answers "into the room" for them because it answers for everything, and
+#: turning one 180 degrees changes nothing on screen. Counting those as
+#: orientation failures measures the vocabulary, not the room.
+ORIENTED_TYPES: frozenset[str] = frozenset({
+    "sofa", "loveseat", "armchair", "chair", "dining_chair", "bench", "stool",
+    "bar_stool", "rocking_chair", "office_chair", "accent_chair", "sectional",
+    "bed", "desk", "television", "tv_unit", "sideboard", "console", "dresser",
+    "wardrobe", "bookshelf", "fireplace", "vanity", "kitchen_counter",
+})
+
+
+def _rotation_facing(direction: Optional[tuple[float, float]]) -> float:
+    """The quarter turn whose forward best matches the pictured facing.
+
+    Chosen against `_forward` rather than derived, so it cannot drift from
+    whatever yaw convention the placer uses.
+    """
+    if direction is None:
+        return 0.0
+    best, score = 0.0, -2.0
+    for k in range(4):
+        rot = k * math.pi / 2
+        fx, fz = _forward(rot)
+        s = fx * direction[0] + fz * direction[1]
+        if s > score:
+            best, score = rot, s
+    return best
+
+
+#: Which way "into the room" points from each named wall, in the render frame
+#: the plan adopts: back is the north edge (min z), left the west edge (min x).
+_INWARD: dict[str, Vec2] = {"back": (0.0, 1.0), "front": (0.0, -1.0),
+                           "left": (1.0, 0.0), "right": (-1.0, 0.0)}
+
+
+def anchor_spot(item: ObjectPlanItem, room: Room, depth_m: float = 0.0) -> Optional[Vec2]:
+    """Where the piece's CENTRE goes if the picture is taken literally.
+
+    The reader answers with the wall line - "against the back wall" is z = 0 -
+    but z = 0 is where the wall is, and an object centred there has half of
+    itself inside it. So a piece against a named wall is pushed into the room
+    by half its depth. Without this the anchor was both unreachable and
+    unfairly graded: the candidate was rejected for intersecting the wall, and
+    a correctly placed piece still measured half a depth away from its own
+    anchor. Measured before this: placement stuck at 55% across every knob the
+    verification loop turned, because no knob addressed it.
+    """
+    a = anchor_world(item, room)
+    if a is None:
+        return None
+    x, z = a[0], a[2]
+    inward = _INWARD.get(item.wall)
+    if inward is not None and depth_m > 0:
+        x += inward[0] * depth_m / 2.0
+        z += inward[1] * depth_m / 2.0
+    return (round(x, 3), round(z, 3))
+
+
+def _anchor_candidate(item: ObjectPlanItem, room: Room, dims: Optional[tuple[float, float, float]] = None,
+                      ) -> Optional[tuple[Vec2, float]]:
+    """The spot the picture actually put the piece, as a candidate of its own.
+
+    Preference alone could only pick the nearest spot the generator had
+    already produced, and those hug the walls: measured on proj_a25a006c88, a
+    coffee table read at 2.25 m into the room was reordered among wall spots
+    and still came out at 4.08 m, against the far wall. Offering the anchor
+    itself is what makes the read position reachable at all.
+
+    Offered, never imposed: it goes through exactly the same validation as
+    every other candidate, so an anchor that collides, overhangs the room or
+    blocks a doorway is rejected and the generator's own spots take over.
+    """
+    spot = anchor_spot(item, room, dims[2] if dims else 0.0)
+    if spot is None:
+        return None
+    return (spot, _rotation_facing(item.facing_dir))
+
+
+def _prefer_anchor(candidates: list[Candidate], item: ObjectPlanItem, room: Room) -> list[Candidate]:
+    """Order hung spots by how close they are to the pictured one.
+
+    The hung path never read the arrangement evidence at all: a television
+    read against the back wall was hung on whichever wall the generator
+    happened to offer first (measured: the right wall). Reorders only - the
+    height stays the generator's, which keeps art clear of windows and other
+    hung pieces; only the wall and the position along it come from the
+    picture.
+    """
+    a = anchor_world(item, room)
+    if a is None or not candidates:
         return candidates
-    return sorted(candidates, key=lambda c: _hint_rank(c, item, scene, room, placed_by_key))
+
+    xs = [p[0] for p in room.boundary]
+    zs = [p[1] for p in room.boundary]
+    edge = {"back": ("z", min(zs)), "front": ("z", max(zs)),
+            "left": ("x", min(xs)), "right": ("x", max(xs))}.get(item.wall)
+
+    def off_named_wall(c: Candidate) -> int:
+        """0 when this spot is on the wall the reader named.
+
+        Sorting on distance alone hops walls: the client's television was read
+        against the back wall, the window occupies the middle of that wall so
+        the spot beside it lost to a nearer spot round the corner, and the TV
+        hung on the left wall - displacing the picture that belonged there.
+        The wall is the stronger half of the claim; sliding along it to clear a
+        window keeps the piece where it was seen, and 5.8 m of wall has room
+        either side of a 1.8 m window.
+        """
+        if edge is None:
+            return 0
+        axis, value = edge
+        return 0 if abs((c[0][0] if axis == "x" else c[0][1]) - value) <= 0.6 else 1
+
+    return sorted(candidates, key=lambda c: (off_named_wall(c), geo.distance(c[0], (a[0], a[2]))))
+
+
+def _anchor_distance(candidate: tuple[Vec2, float], item: ObjectPlanItem, room: Room,
+                     depth_m: float = 0.0) -> float:
+    spot = anchor_spot(item, room, depth_m)
+    if spot is None:
+        return 0.0
+    return round(geo.distance(candidate[0], spot), 2)
+
+
+def _facing_dir_rank(candidate: tuple[Vec2, float], item: ObjectPlanItem) -> int:
+    """0 = this rotation faces the wall the piece was pictured facing."""
+    if item.facing_dir is None:
+        return 0
+    fx, fz = _forward(candidate[1])
+    dx, dz = item.facing_dir
+    return 0 if fx * dx + fz * dz >= _FACES_COS else 1
+
+
+def _prefer_hint(candidates: list[tuple[Vec2, float]], item: ObjectPlanItem, scene: Scene,
+                 room: Room, placed_by_key: dict[str, SceneObject],
+                 depth_m: float = 0.0) -> list[tuple[Vec2, float]]:
+    """Re-order, never re-select. Same list, matching spots first.
+
+    Position leads and orientation breaks its ties: which wall a piece stands
+    against is a stronger claim than which way round it is, and a candidate that
+    satisfies both should beat one that satisfies either. `sorted` is stable, so
+    candidates matching neither hint keep the engine's own order among
+    themselves.
+
+    Which evidence leads depends on how good it is. A position the reader
+    MEASURED is the most specific thing anyone said about this piece, so it
+    leads: measured live, `against: 'wall'` and `faces: 'into the room'` -
+    true of almost every candidate - were beating an anchor that named one
+    spot, and a floor lamp read against the back wall was placed by
+    `against: 'the tv unit'` instead. Distances within a quarter metre count
+    as a tie, so the named relations still break near-ties, and they lead
+    outright when the anchor was only ESTIMATED from the crop box.
+    """
+    if not ((item.against or "").strip() or (item.faces or "").strip()
+            or item.anchor_m is not None or item.facing_dir is not None):
+        return candidates
+
+    def band(c: tuple[Vec2, float]) -> int:
+        return round(_anchor_distance(c, item, room, depth_m) / max(0.01, ANCHOR_TIE_BAND_M))
+
+    leads = item.anchor_m is not None and (
+        item.anchor_source == "read" or ANCHOR_LEADS_WHEN_DERIVED)
+    if leads:
+        return sorted(candidates, key=lambda c: (band(c),
+                                                 _hint_rank(c, item, scene, room, placed_by_key),
+                                                 _faces_rank(c, item, scene, room, placed_by_key),
+                                                 _facing_dir_rank(c, item)))
+    return sorted(candidates, key=lambda c: (_hint_rank(c, item, scene, room, placed_by_key),
+                                             _faces_rank(c, item, scene, room, placed_by_key),
+                                             band(c),
+                                             _facing_dir_rank(c, item)))
 
 
 def _floor_candidates(working: Scene, room: Room, item: ObjectPlanItem, dims: tuple[float, float, float], n: int,
@@ -759,7 +1184,26 @@ def _floor_candidates(working: Scene, room: Room, item: ObjectPlanItem, dims: tu
         # counters and chimney breasts run along the longest wall, away from the door
         wall_candidates.sort(key=lambda c: _door_distance(working, room, c[0]), reverse=True)
     candidates += wall_candidates
+    # The pictured spot, offered alongside the generator's own. Validation
+    # still decides whether it survives.
+    anchored = _anchor_candidate(item, room, dims)
+    if anchored is not None:
+        candidates.insert(0, anchored)
+    # Every spot, offered FIRST with the way the reader saw the piece turned.
+    #
+    # Until now a piece took the rotation of whatever candidate it landed on,
+    # which is the wall's normal - so an armchair read as facing the
+    # television faced whichever wall it ended up against instead. Measured on
+    # proj_a25a006c88: 8 of 11 pieces ended up turned the way the picture
+    # showed, and the three that did not had simply inherited a wall.
+    #
+    # The originals stay in the list, after these, so a rotation that will not
+    # fit - a wide sofa turned side-on into an alcove - still falls back to a
+    # spot that does rather than failing to place at all.
+    if item.facing_dir is not None and item.semantic_type in ORIENTED_TYPES:
+        wanted = _rotation_facing(item.facing_dir)
+        candidates = [(pos, wanted) for pos, _ in candidates] + candidates
     # Preference pass, last: everything above decided WHICH spots are valid and
     # in what default order; this only moves the ones the approved render
     # points at earlier among them.
-    return _prefer_hint(candidates, item, working, room, placed_by_key)
+    return _prefer_hint(candidates, item, working, room, placed_by_key, dims[2])

@@ -1,0 +1,104 @@
+{
+  "_about": "P5.9/P5.13/P5.14 tilted-wall benchmark",
+  "tilt_sweep": [
+    {
+      "tilt_deg": 0,
+      "short_object": {
+        "old_collides": false,
+        "new_collides": false
+      },
+      "tall_object": {
+        "old_collides": false,
+        "new_collides": false
+      }
+    },
+    {
+      "tilt_deg": 5,
+      "short_object": {
+        "old_collides": false,
+        "new_collides": false
+      },
+      "tall_object": {
+        "old_collides": false,
+        "new_collides": true
+      }
+    },
+    {
+      "tilt_deg": 10,
+      "short_object": {
+        "old_collides": false,
+        "new_collides": false
+      },
+      "tall_object": {
+        "old_collides": false,
+        "new_collides": true
+      }
+    },
+    {
+      "tilt_deg": 11,
+      "short_object": {
+        "old_collides": false,
+        "new_collides": false
+      },
+      "tall_object": {
+        "old_collides": false,
+        "new_collides": true
+      }
+    },
+    {
+      "tilt_deg": 15,
+      "short_object": {
+        "old_collides": false,
+        "new_collides": false
+      },
+      "tall_object": {
+        "old_collides": false,
+        "new_collides": true
+      }
+    },
+    {
+      "tilt_deg": 20,
+      "short_object": {
+        "old_collides": false,
+        "new_collides": true
+      },
+      "tall_object": {
+        "old_collides": false,
+        "new_collides": true
+      }
+    }
+  ],
+  "performance": [
+    {
+      "n_walls": 1,
+      "construct_ms": 0.0118,
+      "collide_all_ms": 0.0341,
+      "collide_per_wall_us": 34.1
+    },
+    {
+      "n_walls": 4,
+      "construct_ms": 0.0205,
+      "collide_all_ms": 0.1464,
+      "collide_per_wall_us": 36.6
+    },
+    {
+      "n_walls": 10,
+      "construct_ms": 0.0467,
+      "collide_all_ms": 0.1524,
+      "collide_per_wall_us": 15.24
+    },
+    {
+      "n_walls": 50,
+      "construct_ms": 0.114,
+      "collide_all_ms": 0.7424,
+      "collide_per_wall_us": 14.85
+    },
+    {
+      "n_walls": 100,
+      "construct_ms": 0.2293,
+      "collide_all_ms": 1.4515,
+      "collide_per_wall_us": 14.51
+    }
+  ],
+  "deterministic": true
+}

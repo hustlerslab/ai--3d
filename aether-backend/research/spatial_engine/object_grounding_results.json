@@ -1,0 +1,4465 @@
+{
+  "_about": "Phase 9. Candidate 3D grounding composed from the frozen floor (Phase 8 do-no-harm), wall gate (Phase 6), extent (Phase 7) and catalogue metadata. Candidate, not final placement. No ground-truth positions exist; the metrics are internal-consistency checks and say so.",
+  "config": {
+    "contact_band_m": [
+      -0.15,
+      0.3
+    ],
+    "occluded_base_m": 0.3,
+    "inside_room_tolerance_m": 0.05,
+    "min_points": 32,
+    "wall_gate": {
+      "name": "phase6_permissive",
+      "min_inlier_fraction": null,
+      "min_extent_fraction": null,
+      "min_height_m": null,
+      "min_width_m": null,
+      "min_enclosure_fraction": 0.8,
+      "min_upper_band_fraction": null,
+      "max_floor_band_fraction": 0.75,
+      "require_reaches_floor": false,
+      "min_largest_component_fraction": null
+    },
+    "floor_config": {
+      "max_candidates": 5,
+      "min_points": 256,
+      "threshold_scale": 0.012,
+      "normal_vertical_min": 0.55,
+      "camera_height_plausible_m": [
+        1.0,
+        2.0
+      ],
+      "camera_height_soft_m": [
+        0.6,
+        2.6
+      ],
+      "contact_band_m": [
+        -0.15,
+        0.3
+      ],
+      "below_depth_multiplier": 3.0,
+      "elevated_ref_extent": 0.03,
+      "elevated_min_gap_m": 0.3,
+      "ambiguity_margin": 0.08,
+      "weights": {
+        "gravity": 1.0,
+        "extent": 1.0,
+        "lower_support": 1.0,
+        "camera_height": 1.5,
+        "object_contact": 1.5,
+        "continuity": 0.5,
+        "below_penalty": 2.0,
+        "elevated_penalty": 1.5
+      }
+    },
+    "production_code_changed": "none"
+  },
+  "host": {
+    "gpu_used_mib_at_start": 286,
+    "ram": {
+      "total_gb": 16.8,
+      "available_gb": 2.6,
+      "load_pct": 84
+    }
+  },
+  "metrics": {
+    "cases": 48,
+    "grounded": 46,
+    "grounded_rate_pct": 95.8,
+    "unknown": 2,
+    "placement_classes": {
+      "FLOOR_STANDING": 48
+    },
+    "support_consistent_of_grounded": 36,
+    "support_consistent_pct": 78.3,
+    "base_occluded_of_grounded": 2,
+    "footprint_inside_room_of_grounded": 44,
+    "footprint_inside_room_pct": 95.7,
+    "visible_within_footprint": {
+      "n": 46,
+      "median": 0.705,
+      "p25": 0.2595,
+      "p75": 0.9748,
+      "min": 0.023,
+      "max": 1.0
+    },
+    "orientation_known_of_grounded": 31,
+    "wall_contact": {
+      "cases": 48,
+      "negatives": 37,
+      "positives": 11,
+      "tn": 24,
+      "fp": 2,
+      "tp": 7,
+      "fn": 3,
+      "unknown_negatives": 11,
+      "unknown_positives": 1,
+      "unknown_rate_negatives_pct": 29.7,
+      "false_wall_rate_decided_pct": 7.7,
+      "false_wall_ci95_decided": [
+        2.1,
+        24.1
+      ],
+      "false_wall_rate_all_pct": 5.4,
+      "no_recall_decided_pct": 92.3,
+      "no_recall_ci95_decided": [
+        75.9,
+        97.9
+      ],
+      "positive_recall_decided_pct": 70.0,
+      "precision_pct": 77.8,
+      "balanced_accuracy_pct": 81.2,
+      "accuracy_decided_pct": 86.1,
+      "coverage_pct": 75.0,
+      "f1_pct": 73.7,
+      "unknown_total": 12
+    },
+    "wall_contact_matches_phase8_do_no_harm": true,
+    "depth_m": {
+      "n": 46,
+      "median": 3.9515,
+      "p25": 3.4772,
+      "p75": 5.2132,
+      "min": 1.496,
+      "max": 11.178
+    },
+    "confidence": {
+      "n": 46,
+      "median": 0.5895,
+      "p25": 0.36,
+      "p75": 0.8968,
+      "min": 0.146,
+      "max": 0.9
+    },
+    "determinism": {
+      "identical_positions": 48,
+      "cases": 48
+    },
+    "latency_ms_per_object_median": 50.01,
+    "latency_ms_per_object_p95": 70.29,
+    "position_error_vs_truth": "NOT TESTED: no ground-truth 3D positions exist",
+    "rotation_error_vs_truth": "NOT TESTED: no ground-truth orientation exists",
+    "footprint_iou_vs_truth": "NOT TESTED: no ground-truth footprints exist",
+    "floor_decisions": {
+      "research/phase1g/scenes/s01_living_room.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.245,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.378
+      },
+      "research/phase1g/scenes/s02_living_room.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 0.89,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 0.886
+      },
+      "research/phase1g/scenes/s03_living_room.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 0.998,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 0.981
+      },
+      "research/phase1g/scenes/s04_bedroom.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.348,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.346
+      },
+      "research/phase1g/scenes/s05_bedroom.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.217,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.216
+      },
+      "research/phase1g/scenes/s06_kitchen.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.314,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.338
+      },
+      "research/phase1g/scenes/s07_kitchen.png": {
+        "status": "fitter floor implausible and no accepted replacement: UNKNOWN",
+        "fitter_camera_height_m": 0.33,
+        "scored_decision": "UNKNOWN",
+        "scored_camera_height_m": null
+      },
+      "research/phase1g/scenes/s08_dining_room.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.385,
+        "scored_decision": "UNKNOWN",
+        "scored_camera_height_m": null
+      },
+      "research/phase1g/scenes/s09_office.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.223,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.206
+      },
+      "research/phase1g/scenes/s10_office.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.452,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.453
+      },
+      "research/phase1g/scenes/s11_lounge.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.523,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.567
+      },
+      "research/phase1g/scenes/s13_living_room.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 0.688,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 0.842
+      },
+      "research/phase1g/scenes/s14_bedroom.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.234,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.226
+      },
+      "research/phase1g/scenes/s15_kitchen.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.216,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 2.384
+      },
+      "research/phase1g/scenes/s16_dining_room.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.126,
+        "scored_decision": "UNKNOWN",
+        "scored_camera_height_m": null
+      },
+      "research/phase1g/scenes/s17_office.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.259,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.26
+      },
+      "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 0.948,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 0.948
+      },
+      "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 0.627,
+        "scored_decision": "UNKNOWN",
+        "scored_camera_height_m": null
+      },
+      "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 1.433,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 1.454
+      },
+      "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 0.967,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 0.966
+      },
+      "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png": {
+        "status": "fitter floor kept",
+        "fitter_camera_height_m": 0.884,
+        "scored_decision": "ROOM_FLOOR",
+        "scored_camera_height_m": 0.884
+      }
+    }
+  },
+  "failure_taxonomy": {
+    "FLOOR_FAILURE": [
+      "s07.bar_stool.0",
+      "s07.bar_stool.1"
+    ]
+  },
+  "per_case": [
+    {
+      "case_id": "s01.armchair.0",
+      "scene_id": "s01",
+      "image_id": "research/phase1g/scenes/s01_living_room.png",
+      "source": "generated",
+      "object_id": "armchair.0",
+      "object_type": "armchair",
+      "object_bucket": "armchair",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.138,
+        -0.9363,
+        -3.8914
+      ],
+      "depth_m": 4.005,
+      "footprint": [
+        [
+          -0.8377,
+          -0.941,
+          -3.768
+        ],
+        [
+          -0.1372,
+          -0.9931,
+          -3.1832
+        ],
+        [
+          -0.1388,
+          -0.8795,
+          -4.5996
+        ],
+        [
+          0.5616,
+          -0.9316,
+          -4.0148
+        ]
+      ],
+      "extent_wdh_m": [
+        0.914,
+        1.088,
+        1.096
+      ],
+      "floor_contact_m": 0.074,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.984,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.4262,
+          "score": 0.93
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.4262,
+        "orientation": "width",
+        "confidence": 0.899
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.4262,
+      "confidence": 0.899,
+      "evidence": [
+        "floor contact p5 0.074 m (band -0.15..0.3)",
+        "dims from registry: 0.914x1.088x1.096 m",
+        "footprint 1.09 m along wall 0, 0.91 m along its normal from rear 1.426 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "s02.ottoman.0",
+      "scene_id": "s02",
+      "image_id": "research/phase1g/scenes/s02_living_room.png",
+      "source": "generated",
+      "object_id": "ottoman.0",
+      "object_type": "ottoman",
+      "object_bucket": "ottoman",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.8822,
+        -0.5598,
+        -4.237
+      ],
+      "depth_m": 4.364,
+      "footprint": [
+        [
+          -1.3881,
+          -0.5655,
+          -4.1903
+        ],
+        [
+          -1.0273,
+          -0.5989,
+          -3.7516
+        ],
+        [
+          -0.7371,
+          -0.5208,
+          -4.7224
+        ],
+        [
+          -0.3763,
+          -0.5542,
+          -4.2837
+        ]
+      ],
+      "extent_wdh_m": [
+        0.842,
+        0.569,
+        0.479
+      ],
+      "floor_contact_m": 0.034,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.989,
+      "orientation_candidates": [
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.6719,
+          "score": 0.978
+        },
+        {
+          "wall_index": 2,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.4656,
+          "score": 0.974
+        },
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.0116,
+          "score": 0.881
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.0116,
+        "orientation": "depth",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.0116,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.034 m (band -0.15..0.3)",
+        "dims from registry: 0.842x0.569x0.479 m",
+        "footprint 0.84 m along wall 0, 0.57 m along its normal from rear 1.012 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s02.coffee_table.0",
+      "scene_id": "s02",
+      "image_id": "research/phase1g/scenes/s02_living_room.png",
+      "source": "generated",
+      "object_id": "coffee_table.0",
+      "object_type": "coffee_table",
+      "object_bucket": "table",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.3436,
+        -0.4812,
+        -5.1684
+      ],
+      "depth_m": 5.202,
+      "footprint": [
+        [
+          0.9839,
+          -0.4479,
+          -5.5576
+        ],
+        [
+          0.148,
+          -0.4248,
+          -5.8903
+        ],
+        [
+          0.5393,
+          -0.5377,
+          -4.4466
+        ],
+        [
+          -0.2966,
+          -0.5146,
+          -4.7793
+        ]
+      ],
+      "extent_wdh_m": [
+        1.2,
+        0.9,
+        0.391
+      ],
+      "floor_contact_m": 0.02,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.779,
+      "orientation_candidates": [
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.9172,
+          "score": 0.991
+        },
+        {
+          "wall_index": 2,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.6818,
+          "score": 0.99
+        },
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.8381,
+          "score": 0.862
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 2,
+        "distance_m": 0.6818,
+        "orientation": "depth",
+        "confidence": 0.814
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 0.6818,
+      "confidence": 0.814,
+      "evidence": [
+        "floor contact p5 0.020 m (band -0.15..0.3)",
+        "dims from registry: 1.2x0.9x0.391 m",
+        "footprint 1.20 m along wall 2, 0.90 m along its normal from rear 0.682 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s03.armchair.0",
+      "scene_id": "s03",
+      "image_id": "research/phase1g/scenes/s03_living_room.png",
+      "source": "generated",
+      "object_id": "armchair.0",
+      "object_type": "armchair",
+      "object_bucket": "armchair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.928,
+        -0.9189,
+        -3.2367
+      ],
+      "depth_m": 3.49,
+      "footprint": [
+        [
+          -0.438,
+          -0.9063,
+          -3.751
+        ],
+        [
+          -1.3502,
+          -0.9048,
+          -3.808
+        ],
+        [
+          -0.5059,
+          -0.933,
+          -2.6654
+        ],
+        [
+          -1.4181,
+          -0.9314,
+          -2.7224
+        ]
+      ],
+      "extent_wdh_m": [
+        0.914,
+        1.088,
+        1.096
+      ],
+      "floor_contact_m": 0.066,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.968,
+      "orientation_candidates": [
+        {
+          "wall_index": 2,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 2.1328,
+          "score": 0.817
+        },
+        {
+          "wall_index": 3,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.9144,
+          "score": 0.804
+        },
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 3.9968,
+          "score": 0.693
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 3,
+        "distance_m": 1.9144,
+        "orientation": "width",
+        "confidence": 0.819
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.9144,
+      "confidence": 0.819,
+      "evidence": [
+        "floor contact p5 0.066 m (band -0.15..0.3)",
+        "dims from registry: 0.914x1.088x1.096 m",
+        "footprint 1.09 m along wall 3, 0.91 m along its normal from rear 1.914 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "s03.armchair.1",
+      "scene_id": "s03",
+      "image_id": "research/phase1g/scenes/s03_living_room.png",
+      "source": "generated",
+      "object_id": "armchair.1",
+      "object_type": "armchair",
+      "object_bucket": "armchair",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.7018,
+        -0.9174,
+        -3.3102
+      ],
+      "depth_m": 3.506,
+      "footprint": [
+        [
+          1.1919,
+          -0.9049,
+          -3.8244
+        ],
+        [
+          0.2796,
+          -0.9033,
+          -3.8815
+        ],
+        [
+          1.124,
+          -0.9315,
+          -2.7389
+        ],
+        [
+          0.2117,
+          -0.9299,
+          -2.7959
+        ]
+      ],
+      "extent_wdh_m": [
+        0.914,
+        1.088,
+        1.096
+      ],
+      "floor_contact_m": 0.226,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.963,
+      "orientation_candidates": [
+        {
+          "wall_index": 2,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.535,
+          "score": 0.795
+        },
+        {
+          "wall_index": 3,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.2923,
+          "score": 0.792
+        },
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 4.0415,
+          "score": 0.777
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 3,
+        "distance_m": 0.2923,
+        "orientation": "width",
+        "confidence": 0.819
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 0.2923,
+      "confidence": 0.819,
+      "evidence": [
+        "floor contact p5 0.226 m (band -0.15..0.3)",
+        "dims from registry: 0.914x1.088x1.096 m",
+        "footprint 1.09 m along wall 3, 0.91 m along its normal from rear 0.292 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "s04.chair.0",
+      "scene_id": "s04",
+      "image_id": "research/phase1g/scenes/s04_bedroom.png",
+      "source": "generated",
+      "object_id": "chair.0",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.6196,
+        -0.7437,
+        -5.5267
+      ],
+      "depth_m": 5.611,
+      "footprint": [
+        [
+          -0.3947,
+          -0.7734,
+          -5.2464
+        ],
+        [
+          -0.8286,
+          -0.7778,
+          -5.2348
+        ],
+        [
+          -0.4107,
+          -0.7097,
+          -5.8186
+        ],
+        [
+          -0.8446,
+          -0.714,
+          -5.807
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": 0.037,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.251,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 0.7568,
+        "orientation": "visible_only",
+        "confidence": 0.536
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 0.7568,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 0.037 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s05.bench.0",
+      "scene_id": "s05",
+      "image_id": "research/phase1g/scenes/s05_bedroom.png",
+      "source": "generated",
+      "object_id": "bench.0",
+      "object_type": "bench",
+      "object_bucket": "other",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -1.1677,
+        -0.6774,
+        -3.2232
+      ],
+      "depth_m": 3.494,
+      "footprint": [
+        [
+          -2.0392,
+          -0.6945,
+          -3.1514
+        ],
+        [
+          -0.6926,
+          -0.8017,
+          -2.4994
+        ],
+        [
+          -1.6428,
+          -0.5532,
+          -3.9469
+        ],
+        [
+          -0.2961,
+          -0.6603,
+          -3.2949
+        ]
+      ],
+      "extent_wdh_m": [
+        1.5,
+        0.9,
+        0.85
+      ],
+      "floor_contact_m": 0.089,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 1.0,
+      "orientation_candidates": [
+        {
+          "wall_index": 2,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.2754,
+          "score": 0.716
+        },
+        {
+          "wall_index": 1,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.5799,
+          "score": 0.711
+        },
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.9576,
+          "score": 0.672
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 2,
+        "distance_m": 1.2754,
+        "orientation": "width",
+        "confidence": 0.639
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.2754,
+      "confidence": 0.639,
+      "evidence": [
+        "floor contact p5 0.089 m (band -0.15..0.3)",
+        "dims from builtin: 1.5x0.9x0.85 m",
+        "footprint 0.90 m along wall 2, 1.50 m along its normal from rear 1.275 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "s05.armchair.0",
+      "scene_id": "s05",
+      "image_id": "research/phase1g/scenes/s05_bedroom.png",
+      "source": "generated",
+      "object_id": "armchair.0",
+      "object_type": "armchair",
+      "object_bucket": "armchair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        1.31,
+        -0.6561,
+        -3.2714
+      ],
+      "depth_m": 3.584,
+      "footprint": [
+        [
+          1.0139,
+          -0.5462,
+          -3.9078
+        ],
+        [
+          0.6227,
+          -0.6906,
+          -3.0945
+        ],
+        [
+          1.9972,
+          -0.6215,
+          -3.4483
+        ],
+        [
+          1.606,
+          -0.766,
+          -2.6349
+        ]
+      ],
+      "extent_wdh_m": [
+        0.914,
+        1.088,
+        1.096
+      ],
+      "floor_contact_m": 0.142,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.93,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.1098,
+          "score": 0.975
+        },
+        {
+          "wall_index": 1,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 3.9461,
+          "score": 0.917
+        },
+        {
+          "wall_index": 2,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 3.7423,
+          "score": 0.917
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.1098,
+        "orientation": "width",
+        "confidence": 0.879
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.1098,
+      "confidence": 0.879,
+      "evidence": [
+        "floor contact p5 0.142 m (band -0.15..0.3)",
+        "dims from registry: 0.914x1.088x1.096 m",
+        "footprint 1.09 m along wall 0, 0.91 m along its normal from rear 1.110 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "s06.bar_stool.0",
+      "scene_id": "s06",
+      "image_id": "research/phase1g/scenes/s06_kitchen.png",
+      "source": "generated",
+      "object_id": "bar_stool.0",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -1.4845,
+        -1.1328,
+        -3.5168
+      ],
+      "depth_m": 3.982,
+      "footprint": [
+        [
+          -1.8036,
+          -1.1256,
+          -3.6193
+        ],
+        [
+          -1.3885,
+          -1.1177,
+          -3.8376
+        ],
+        [
+          -1.5805,
+          -1.1479,
+          -3.196
+        ],
+        [
+          -1.1655,
+          -1.1401,
+          -3.4143
+        ]
+      ],
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": 0.003,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.116,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 2,
+        "distance_m": 0.4888,
+        "orientation": "visible_only",
+        "confidence": 0.534
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 0.4888,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 0.003 m (band -0.15..0.3)",
+        "dims from registry: 0.469x0.479x0.75 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s06.bar_stool.1",
+      "scene_id": "s06",
+      "image_id": "research/phase1g/scenes/s06_kitchen.png",
+      "source": "generated",
+      "object_id": "bar_stool.1",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.8552,
+        -1.1495,
+        -3.2659
+      ],
+      "depth_m": 3.566,
+      "footprint": [
+        [
+          -1.0567,
+          -1.1613,
+          -2.9983
+        ],
+        [
+          -0.5832,
+          -1.161,
+          -3.0705
+        ],
+        [
+          -1.1273,
+          -1.138,
+          -3.4614
+        ],
+        [
+          -0.6538,
+          -1.1378,
+          -3.5336
+        ]
+      ],
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": 0.025,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.285,
+      "orientation_candidates": [
+        {
+          "wall_index": 2,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.2831,
+          "score": 0.996
+        },
+        {
+          "wall_index": 0,
+          "axis": "visible_only",
+          "feasible": false,
+          "gap_m": 2.1646,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 2,
+        "distance_m": 1.2831,
+        "orientation": "depth",
+        "confidence": 0.89
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.2831,
+      "confidence": 0.89,
+      "evidence": [
+        "floor contact p5 0.025 m (band -0.15..0.3)",
+        "dims from registry: 0.469x0.479x0.75 m",
+        "footprint 0.47 m along wall 2, 0.48 m along its normal from rear 1.283 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s06.bar_stool.2",
+      "scene_id": "s06",
+      "image_id": "research/phase1g/scenes/s06_kitchen.png",
+      "source": "generated",
+      "object_id": "bar_stool.2",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.3284,
+        -1.1535,
+        -3.2594
+      ],
+      "depth_m": 3.473,
+      "footprint": [
+        [
+          -0.5241,
+          -1.1655,
+          -2.9876
+        ],
+        [
+          -0.0605,
+          -1.1652,
+          -3.0583
+        ],
+        [
+          -0.5962,
+          -1.1418,
+          -3.4605
+        ],
+        [
+          -0.1326,
+          -1.1415,
+          -3.5312
+        ]
+      ],
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": -0.006,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.209,
+      "orientation_candidates": [
+        {
+          "wall_index": 2,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.808,
+          "score": 0.929
+        },
+        {
+          "wall_index": 0,
+          "axis": "visible_only",
+          "feasible": false,
+          "gap_m": 2.119,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 2,
+        "distance_m": 1.808,
+        "orientation": "width",
+        "confidence": 0.89
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.808,
+      "confidence": 0.89,
+      "evidence": [
+        "floor contact p5 -0.006 m (band -0.15..0.3)",
+        "dims from registry: 0.469x0.479x0.75 m",
+        "footprint 0.48 m along wall 2, 0.47 m along its normal from rear 1.808 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "s06.bar_stool.3",
+      "scene_id": "s06",
+      "image_id": "research/phase1g/scenes/s06_kitchen.png",
+      "source": "generated",
+      "object_id": "bar_stool.3",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.4904,
+        -1.1622,
+        -3.1973
+      ],
+      "depth_m": 3.437,
+      "footprint": [
+        [
+          0.7756,
+          -1.1556,
+          -3.3733
+        ],
+        [
+          0.3203,
+          -1.1469,
+          -3.4857
+        ],
+        [
+          0.6606,
+          -1.1776,
+          -2.9089
+        ],
+        [
+          0.2053,
+          -1.1689,
+          -3.0212
+        ]
+      ],
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": 0.021,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.726,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 2.3468,
+        "orientation": "visible_only",
+        "confidence": 0.494
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 2.3468,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 0.021 m (band -0.15..0.3)",
+        "dims from registry: 0.469x0.479x0.75 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s07.bar_stool.0",
+      "scene_id": "s07",
+      "image_id": "research/phase1g/scenes/s07_kitchen.png",
+      "source": "generated",
+      "object_id": "bar_stool.0",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "unknown",
+      "grounded": false,
+      "failure_reason": "floor hypothesis is UNKNOWN",
+      "failure_category": "FLOOR_FAILURE",
+      "room_position": null,
+      "depth_m": null,
+      "footprint": null,
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": null,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": null,
+      "visible_coverage": null,
+      "orientation_candidates": [],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN"
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.0,
+      "evidence": []
+    },
+    {
+      "case_id": "s07.bar_stool.1",
+      "scene_id": "s07",
+      "image_id": "research/phase1g/scenes/s07_kitchen.png",
+      "source": "generated",
+      "object_id": "bar_stool.1",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "unknown",
+      "grounded": false,
+      "failure_reason": "floor hypothesis is UNKNOWN",
+      "failure_category": "FLOOR_FAILURE",
+      "room_position": null,
+      "depth_m": null,
+      "footprint": null,
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": null,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": null,
+      "visible_coverage": null,
+      "orientation_candidates": [],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN"
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.0,
+      "evidence": []
+    },
+    {
+      "case_id": "s08.dining_table.0",
+      "scene_id": "s08",
+      "image_id": "research/phase1g/scenes/s08_dining_room.png",
+      "source": "generated",
+      "object_id": "dining_table.0",
+      "object_type": "dining_table",
+      "object_bucket": "table",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.4814,
+        -0.9127,
+        -3.4786
+      ],
+      "depth_m": 3.628,
+      "footprint": [
+        [
+          -0.5217,
+          -1.0458,
+          -2.9332
+        ],
+        [
+          0.0489,
+          -0.7421,
+          -3.3979
+        ],
+        [
+          -1.0117,
+          -1.0832,
+          -3.5593
+        ],
+        [
+          -0.4412,
+          -0.7796,
+          -4.024
+        ]
+      ],
+      "extent_wdh_m": [
+        0.796,
+        0.796,
+        0.746
+      ],
+      "floor_contact_m": -0.009,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.243,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.252,
+      "evidence": [
+        "floor contact p5 -0.009 m (band -0.15..0.3)",
+        "dims from registry: 0.796x0.796x0.746 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s08.chair.0",
+      "scene_id": "s08",
+      "image_id": "research/phase1g/scenes/s08_dining_room.png",
+      "source": "generated",
+      "object_id": "chair.0",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.4373,
+        -0.5028,
+        -3.8642
+      ],
+      "depth_m": 3.921,
+      "footprint": [
+        [
+          0.6491,
+          -0.3709,
+          -4.1246
+        ],
+        [
+          0.2392,
+          -0.5074,
+          -4.1655
+        ],
+        [
+          0.6354,
+          -0.4981,
+          -3.563
+        ],
+        [
+          0.2255,
+          -0.6346,
+          -3.6039
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": -0.927,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.055,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.252,
+      "evidence": [
+        "floor contact p5 -0.927 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s09.chair.0",
+      "scene_id": "s09",
+      "image_id": "research/phase1g/scenes/s09_office.png",
+      "source": "generated",
+      "object_id": "chair.0",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.2672,
+        -0.8502,
+        -5.1407
+      ],
+      "depth_m": 5.217,
+      "footprint": [
+        [
+          0.2503,
+          -0.8241,
+          -5.5
+        ],
+        [
+          -0.0744,
+          -0.8609,
+          -5.0256
+        ],
+        [
+          0.6087,
+          -0.8394,
+          -5.2557
+        ],
+        [
+          0.284,
+          -0.8762,
+          -4.7814
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": 0.059,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": false,
+      "visible_coverage": 0.856,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.9352,
+          "score": 0.976
+        },
+        {
+          "wall_index": 3,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.5784,
+          "score": 0.955
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 3,
+        "distance_m": 1.5784,
+        "orientation": "depth",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.5784,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.059 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "footprint 0.43 m along wall 3, 0.58 m along its normal from rear 1.578 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s10.chair.0",
+      "scene_id": "s10",
+      "image_id": "research/phase1g/scenes/s10_office.png",
+      "source": "generated",
+      "object_id": "chair.0",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -3.774,
+        -1.8715,
+        -5.0586
+      ],
+      "depth_m": 6.583,
+      "footprint": [
+        [
+          -3.7777,
+          -1.84,
+          -4.6994
+        ],
+        [
+          -3.4264,
+          -1.8825,
+          -5.1538
+        ],
+        [
+          -4.1216,
+          -1.8605,
+          -4.9633
+        ],
+        [
+          -3.7703,
+          -1.903,
+          -5.4178
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": 0.026,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.11,
+      "orientation_candidates": [
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.4638,
+          "score": 0.925
+        },
+        {
+          "wall_index": 2,
+          "axis": "visible_only",
+          "feasible": false,
+          "gap_m": 4.2318,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 1,
+        "distance_m": 0.4638,
+        "orientation": "depth",
+        "confidence": 0.797
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 0.4638,
+      "confidence": 0.797,
+      "evidence": [
+        "floor contact p5 0.026 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "footprint 0.43 m along wall 1, 0.58 m along its normal from rear 0.464 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s10.chair.1",
+      "scene_id": "s10",
+      "image_id": "research/phase1g/scenes/s10_office.png",
+      "source": "generated",
+      "object_id": "chair.1",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        2.3804,
+        -2.1238,
+        -7.3986
+      ],
+      "depth_m": 8.057,
+      "footprint": [
+        [
+          2.2418,
+          -2.1518,
+          -7.7304
+        ],
+        [
+          2.6622,
+          -2.1456,
+          -7.6226
+        ],
+        [
+          2.0987,
+          -2.102,
+          -7.1746
+        ],
+        [
+          2.5191,
+          -2.0958,
+          -7.0669
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": -0.012,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.117,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 -0.012 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s10.chair.2",
+      "scene_id": "s10",
+      "image_id": "research/phase1g/scenes/s10_office.png",
+      "source": "generated",
+      "object_id": "chair.2",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.9822,
+        -2.4172,
+        -10.8696
+      ],
+      "depth_m": 11.178,
+      "footprint": [
+        [
+          0.7942,
+          -2.4427,
+          -11.1763
+        ],
+        [
+          1.2261,
+          -2.4423,
+          -11.1341
+        ],
+        [
+          0.7384,
+          -2.3922,
+          -10.6052
+        ],
+        [
+          1.1703,
+          -2.3918,
+          -10.563
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": -0.009,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.023,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 -0.009 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s11.ottoman.0",
+      "scene_id": "s11",
+      "image_id": "research/phase1g/scenes/s11_lounge.png",
+      "source": "generated",
+      "object_id": "ottoman.0",
+      "object_type": "ottoman",
+      "object_bucket": "ottoman",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.3374,
+        -0.8638,
+        -4.8919
+      ],
+      "depth_m": 4.979,
+      "footprint": [
+        [
+          -0.1095,
+          -0.9251,
+          -4.4419
+        ],
+        [
+          -0.6737,
+          -0.9172,
+          -4.5147
+        ],
+        [
+          -0.0011,
+          -0.8105,
+          -5.269
+        ],
+        [
+          -0.5654,
+          -0.8026,
+          -5.3418
+        ]
+      ],
+      "extent_wdh_m": [
+        0.842,
+        0.569,
+        0.479
+      ],
+      "floor_contact_m": 0.068,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.531,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 0.068 m (band -0.15..0.3)",
+        "dims from registry: 0.842x0.569x0.479 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s11.armchair.0",
+      "scene_id": "s11",
+      "image_id": "research/phase1g/scenes/s11_lounge.png",
+      "source": "generated",
+      "object_id": "armchair.0",
+      "object_type": "armchair",
+      "object_bucket": "armchair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.5802,
+        -0.5745,
+        -6.9944
+      ],
+      "depth_m": 7.042,
+      "footprint": [
+        [
+          -0.936,
+          -0.66,
+          -6.3854
+        ],
+        [
+          -0.0358,
+          -0.6349,
+          -6.5418
+        ],
+        [
+          -1.1245,
+          -0.5141,
+          -7.447
+        ],
+        [
+          -0.2243,
+          -0.4891,
+          -7.6034
+        ]
+      ],
+      "extent_wdh_m": [
+        0.914,
+        1.088,
+        1.096
+      ],
+      "floor_contact_m": -0.143,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.241,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 -0.143 m (band -0.15..0.3)",
+        "dims from registry: 0.914x1.088x1.096 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s11.armchair.1",
+      "scene_id": "s11",
+      "image_id": "research/phase1g/scenes/s11_lounge.png",
+      "source": "generated",
+      "object_id": "armchair.1",
+      "object_type": "armchair",
+      "object_bucket": "armchair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        1.3283,
+        -0.9201,
+        -4.4382
+      ],
+      "depth_m": 4.723,
+      "footprint": [
+        [
+          1.993,
+          -0.8833,
+          -4.6865
+        ],
+        [
+          1.1958,
+          -0.8251,
+          -5.1298
+        ],
+        [
+          1.4608,
+          -1.0151,
+          -3.7467
+        ],
+        [
+          0.6636,
+          -0.9569,
+          -4.19
+        ]
+      ],
+      "extent_wdh_m": [
+        0.914,
+        1.088,
+        1.096
+      ],
+      "floor_contact_m": 0.03,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.241,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 0.030 m (band -0.15..0.3)",
+        "dims from registry: 0.914x1.088x1.096 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s11.armchair.2",
+      "scene_id": "s11",
+      "image_id": "research/phase1g/scenes/s11_lounge.png",
+      "source": "generated",
+      "object_id": "armchair.2",
+      "object_type": "armchair",
+      "object_bucket": "armchair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.4897,
+        -0.6644,
+        -6.3141
+      ],
+      "depth_m": 6.368,
+      "footprint": [
+        [
+          1.1286,
+          -0.6194,
+          -6.6217
+        ],
+        [
+          0.2938,
+          -0.5717,
+          -6.9907
+        ],
+        [
+          0.6856,
+          -0.757,
+          -5.6375
+        ],
+        [
+          -0.1492,
+          -0.7093,
+          -6.0066
+        ]
+      ],
+      "extent_wdh_m": [
+        0.914,
+        1.088,
+        1.096
+      ],
+      "floor_contact_m": -0.01,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.39,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 -0.010 m (band -0.15..0.3)",
+        "dims from registry: 0.914x1.088x1.096 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s13.armchair.0",
+      "scene_id": "s13",
+      "image_id": "research/phase1g/scenes/s13_living_room.png",
+      "source": "generated",
+      "object_id": "armchair.0",
+      "object_type": "armchair",
+      "object_bucket": "armchair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        1.9252,
+        -0.2237,
+        -5.83
+      ],
+      "depth_m": 6.144,
+      "footprint": [
+        [
+          2.0832,
+          -0.1662,
+          -6.5203
+        ],
+        [
+          1.2705,
+          -0.1796,
+          -6.1023
+        ],
+        [
+          2.5799,
+          -0.2677,
+          -5.5577
+        ],
+        [
+          1.7672,
+          -0.2812,
+          -5.1397
+        ]
+      ],
+      "extent_wdh_m": [
+        0.914,
+        1.088,
+        1.096
+      ],
+      "floor_contact_m": 0.071,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": false,
+      "visible_coverage": 0.944,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 3.944,
+          "score": 0.94
+        },
+        {
+          "wall_index": 3,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 5.2175,
+          "score": 0.933
+        },
+        {
+          "wall_index": 2,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.0671,
+          "score": 0.681
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 2,
+        "distance_m": 0.0671,
+        "orientation": "width",
+        "confidence": 0.442
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": false,
+      "wall_distance": 0.0671,
+      "confidence": 0.884,
+      "evidence": [
+        "floor contact p5 0.071 m (band -0.15..0.3)",
+        "dims from registry: 0.914x1.088x1.096 m",
+        "footprint 1.09 m along wall 2, 0.91 m along its normal from rear 0.067 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "s14.bench.0",
+      "scene_id": "s14",
+      "image_id": "research/phase1g/scenes/s14_bedroom.png",
+      "source": "generated",
+      "object_id": "bench.0",
+      "object_type": "bench",
+      "object_bucket": "other",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.5878,
+        -0.7118,
+        -3.0466
+      ],
+      "depth_m": 3.183,
+      "footprint": [
+        [
+          1.2631,
+          -0.6171,
+          -3.5944
+        ],
+        [
+          0.4151,
+          -0.5602,
+          -3.8906
+        ],
+        [
+          0.7605,
+          -0.8633,
+          -2.2027
+        ],
+        [
+          -0.0875,
+          -0.8064,
+          -2.4989
+        ]
+      ],
+      "extent_wdh_m": [
+        1.5,
+        0.9,
+        0.85
+      ],
+      "floor_contact_m": 0.018,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.977,
+      "orientation_candidates": [
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.283,
+          "score": 0.869
+        },
+        {
+          "wall_index": 3,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.015,
+          "score": 0.755
+        },
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.5534,
+          "score": 0.726
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 1,
+        "distance_m": 0.283,
+        "orientation": "depth",
+        "confidence": 0.691
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 0.283,
+      "confidence": 0.691,
+      "evidence": [
+        "floor contact p5 0.018 m (band -0.15..0.3)",
+        "dims from builtin: 1.5x0.9x0.85 m",
+        "footprint 1.50 m along wall 1, 0.90 m along its normal from rear 0.283 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s15.dining_table.0",
+      "scene_id": "s15",
+      "image_id": "research/phase1g/scenes/s15_kitchen.png",
+      "source": "generated",
+      "object_id": "dining_table.0",
+      "object_type": "dining_table",
+      "object_bucket": "table",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.0673,
+        -0.795,
+        -2.8195
+      ],
+      "depth_m": 2.93,
+      "footprint": [
+        [
+          -0.3272,
+          -0.8714,
+          -2.3261
+        ],
+        [
+          0.432,
+          -0.8345,
+          -2.5626
+        ],
+        [
+          -0.5666,
+          -0.7556,
+          -3.0764
+        ],
+        [
+          0.1926,
+          -0.7187,
+          -3.3129
+        ]
+      ],
+      "extent_wdh_m": [
+        0.796,
+        0.796,
+        0.746
+      ],
+      "floor_contact_m": 0.041,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.192,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 0.041 m (band -0.15..0.3)",
+        "dims from registry: 0.796x0.796x0.746 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "s16.dining_table.0",
+      "scene_id": "s16",
+      "image_id": "research/phase1g/scenes/s16_dining_room.png",
+      "source": "generated",
+      "object_id": "dining_table.0",
+      "object_type": "dining_table",
+      "object_bucket": "table",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.6681,
+        -0.683,
+        -4.8984
+      ],
+      "depth_m": 4.991,
+      "footprint": [
+        [
+          1.0707,
+          -0.6489,
+          -5.2903
+        ],
+        [
+          0.2747,
+          -0.6442,
+          -5.2991
+        ],
+        [
+          1.0614,
+          -0.7218,
+          -4.4976
+        ],
+        [
+          0.2655,
+          -0.7171,
+          -4.5065
+        ]
+      ],
+      "extent_wdh_m": [
+        0.796,
+        0.796,
+        0.746
+      ],
+      "floor_contact_m": -0.501,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.951,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 2.3608,
+          "score": 0.985
+        },
+        {
+          "wall_index": 2,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 2.3254,
+          "score": 0.96
+        },
+        {
+          "wall_index": 3,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.3158,
+          "score": 0.859
+        },
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.3484,
+          "score": 0.85
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 3,
+        "distance_m": 0.3158,
+        "orientation": "depth",
+        "confidence": 0.898
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 0.3158,
+      "confidence": 0.377,
+      "evidence": [
+        "floor contact p5 -0.501 m (band -0.15..0.3)",
+        "dims from registry: 0.796x0.796x0.746 m",
+        "footprint 0.80 m along wall 3, 0.80 m along its normal from rear 0.316 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s16.chair.0",
+      "scene_id": "s16",
+      "image_id": "research/phase1g/scenes/s16_dining_room.png",
+      "source": "generated",
+      "object_id": "chair.0",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        1.1695,
+        -0.6486,
+        -5.299
+      ],
+      "depth_m": 5.465,
+      "footprint": [
+        [
+          1.3899,
+          -0.6235,
+          -5.5834
+        ],
+        [
+          0.9559,
+          -0.621,
+          -5.5882
+        ],
+        [
+          1.3832,
+          -0.6763,
+          -5.0098
+        ],
+        [
+          0.9492,
+          -0.6737,
+          -5.0147
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": -0.311,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.804,
+      "orientation_candidates": [
+        {
+          "wall_index": 1,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.0808,
+          "score": 0.977
+        },
+        {
+          "wall_index": 3,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.0,
+          "score": 0.972
+        },
+        {
+          "wall_index": 0,
+          "axis": "visible_only",
+          "feasible": false,
+          "gap_m": 1.8823,
+          "score": 0.3
+        },
+        {
+          "wall_index": 2,
+          "axis": "visible_only",
+          "feasible": false,
+          "gap_m": 1.8823,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 3,
+        "distance_m": 0.0,
+        "orientation": "width",
+        "confidence": 0.898
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": false,
+      "wall_distance": 0.0,
+      "confidence": 0.377,
+      "evidence": [
+        "floor contact p5 -0.311 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "footprint 0.58 m along wall 3, 0.43 m along its normal from rear 0.000 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "s17.chair.0",
+      "scene_id": "s17",
+      "image_id": "research/phase1g/scenes/s17_office.png",
+      "source": "generated",
+      "object_id": "chair.0",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.2056,
+        -1.4218,
+        -7.0681
+      ],
+      "depth_m": 7.213,
+      "footprint": [
+        [
+          0.1107,
+          -1.4208,
+          -7.2413
+        ],
+        [
+          -0.4592,
+          -1.4315,
+          -7.3242
+        ],
+        [
+          0.0481,
+          -1.4121,
+          -6.812
+        ],
+        [
+          -0.5218,
+          -1.4228,
+          -6.8948
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": 0.012,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.1,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 2.5076,
+          "score": 0.914
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 2.5076,
+        "orientation": "depth",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 2.5076,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.012 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "footprint 0.43 m along wall 0, 0.58 m along its normal from rear 2.508 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s17.chair.1",
+      "scene_id": "s17",
+      "image_id": "research/phase1g/scenes/s17_office.png",
+      "source": "generated",
+      "object_id": "chair.1",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.5741,
+        -1.4167,
+        -7.3793
+      ],
+      "depth_m": 7.536,
+      "footprint": [
+        [
+          0.8903,
+          -1.4157,
+          -7.5526
+        ],
+        [
+          0.3204,
+          -1.4265,
+          -7.6354
+        ],
+        [
+          0.8277,
+          -1.407,
+          -7.1232
+        ],
+        [
+          0.2578,
+          -1.4177,
+          -7.206
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": 0.017,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.495,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.7809,
+          "score": 0.989
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.7809,
+        "orientation": "depth",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.7809,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.017 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "footprint 0.43 m along wall 0, 0.58 m along its normal from rear 1.781 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "s17.chair.2",
+      "scene_id": "s17",
+      "image_id": "research/phase1g/scenes/s17_office.png",
+      "source": "generated",
+      "object_id": "chair.2",
+      "object_type": "chair",
+      "object_bucket": "chair",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -1.3946,
+        -1.4653,
+        -8.177
+      ],
+      "depth_m": 8.423,
+      "footprint": [
+        [
+          -1.6977,
+          -1.4744,
+          -8.3721
+        ],
+        [
+          -1.2905,
+          -1.4715,
+          -8.5222
+        ],
+        [
+          -1.4987,
+          -1.4591,
+          -7.8318
+        ],
+        [
+          -1.0915,
+          -1.4562,
+          -7.9819
+        ]
+      ],
+      "extent_wdh_m": [
+        0.434,
+        0.576,
+        0.973
+      ],
+      "floor_contact_m": 0.013,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.466,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 3.678,
+        "orientation": "visible_only",
+        "confidence": 0.54
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 3.678,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 0.013 m (band -0.15..0.3)",
+        "dims from registry: 0.434x0.576x0.973 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "preserved.living_room_a.sofa.0",
+      "scene_id": "hist_living_room_a",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "source": "historical",
+      "object_id": "living_room_a.sofa.0",
+      "object_type": "sofa",
+      "object_bucket": "sofa",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -1.3552,
+        0.0067,
+        -3.6423
+      ],
+      "depth_m": 3.886,
+      "footprint": [
+        [
+          -1.8397,
+          0.2795,
+          -4.6425
+        ],
+        [
+          -1.7802,
+          -0.2605,
+          -2.614
+        ],
+        [
+          -0.9301,
+          0.2739,
+          -4.6706
+        ],
+        [
+          -0.8706,
+          -0.2662,
+          -2.6421
+        ]
+      ],
+      "extent_wdh_m": [
+        2.1,
+        0.91,
+        0.715
+      ],
+      "floor_contact_m": 0.26,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.998,
+      "orientation_candidates": [
+        {
+          "wall_index": 2,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.0107,
+          "score": 0.988
+        },
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.9633,
+          "score": 0.93
+        },
+        {
+          "wall_index": 1,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.0,
+          "score": 0.485
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 1,
+        "distance_m": 0.0,
+        "orientation": "width",
+        "confidence": 0.426
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": true,
+      "wall_distance": 0.0,
+      "confidence": 0.852,
+      "evidence": [
+        "floor contact p5 0.260 m (band -0.15..0.3)",
+        "dims from registry: 2.1x0.91x0.715 m",
+        "footprint 0.91 m along wall 1, 2.10 m along its normal from rear 0.000 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "preserved.living_room_a.sofa.1",
+      "scene_id": "hist_living_room_a",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "source": "historical",
+      "object_id": "living_room_a.sofa.1",
+      "object_type": "sofa",
+      "object_bucket": "sofa",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.6772,
+        -0.2165,
+        -2.9129
+      ],
+      "depth_m": 2.998,
+      "footprint": [
+        [
+          0.0952,
+          0.0445,
+          -3.863
+        ],
+        [
+          -0.4396,
+          -0.1375,
+          -3.1496
+        ],
+        [
+          1.7941,
+          -0.2955,
+          -2.6763
+        ],
+        [
+          1.2593,
+          -0.4774,
+          -1.9628
+        ]
+      ],
+      "extent_wdh_m": [
+        2.1,
+        0.91,
+        0.715
+      ],
+      "floor_contact_m": 0.195,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 1.0,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.058,
+          "score": 0.834
+        },
+        {
+          "wall_index": 2,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.7398,
+          "score": 0.656
+        },
+        {
+          "wall_index": 1,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.6004,
+          "score": 0.56
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 0,
+        "distance_m": 0.058,
+        "orientation": "depth",
+        "confidence": 0.45
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": true,
+      "wall_distance": 0.058,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.195 m (band -0.15..0.3)",
+        "dims from registry: 2.1x0.91x0.715 m",
+        "footprint 2.10 m along wall 0, 0.91 m along its normal from rear 0.058 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "preserved.living_room_a.side_table.0",
+      "scene_id": "hist_living_room_a",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "source": "historical",
+      "object_id": "living_room_a.side_table.0",
+      "object_type": "side_table",
+      "object_bucket": "table",
+      "category": null,
+      "open_structure": true,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.7868,
+        0.1352,
+        -4.1566
+      ],
+      "depth_m": 4.233,
+      "footprint": [
+        [
+          -0.5884,
+          0.0913,
+          -4.0022
+        ],
+        [
+          -0.9473,
+          0.0864,
+          -3.9642
+        ],
+        [
+          -0.6263,
+          0.184,
+          -4.349
+        ],
+        [
+          -0.9853,
+          0.1791,
+          -4.3111
+        ]
+      ],
+      "extent_wdh_m": [
+        0.361,
+        0.361,
+        0.55
+      ],
+      "floor_contact_m": 0.03,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.337,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 0,
+        "distance_m": 0.0318,
+        "orientation": "visible_only",
+        "confidence": 0.27
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": true,
+      "wall_distance": 0.0318,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 0.030 m (band -0.15..0.3)",
+        "dims from registry: 0.361x0.361x0.55 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "preserved.kitchen.kitchen_counter.0",
+      "scene_id": "hist_kitchen",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "source": "historical",
+      "object_id": "kitchen.kitchen_counter.0",
+      "object_type": "kitchen_counter",
+      "object_bucket": "cabinet",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -1.0468,
+        -0.0498,
+        -3.6936
+      ],
+      "depth_m": 3.839,
+      "footprint": [
+        [
+          -1.5359,
+          -0.01,
+          -3.938
+        ],
+        [
+          -1.5566,
+          -0.0799,
+          -3.4939
+        ],
+        [
+          -0.537,
+          -0.0198,
+          -3.8932
+        ],
+        [
+          -0.5576,
+          -0.0897,
+          -3.4491
+        ]
+      ],
+      "extent_wdh_m": [
+        1.0,
+        0.45,
+        0.9
+      ],
+      "floor_contact_m": -0.783,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.639,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.5506,
+          "score": 0.727
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 0.5506,
+        "orientation": "depth",
+        "confidence": 0.347
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": false,
+      "wall_distance": 0.5506,
+      "confidence": 0.146,
+      "evidence": [
+        "floor contact p5 -0.783 m (band -0.15..0.3)",
+        "dims from family_default: 1.0x0.45x0.9 m",
+        "footprint 1.00 m along wall 0, 0.45 m along its normal from rear 0.551 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "preserved.bathroom.vanity.0",
+      "scene_id": "hist_bathroom",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "source": "historical",
+      "object_id": "bathroom.vanity.0",
+      "object_type": "vanity",
+      "object_bucket": "cabinet",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.3191,
+        -0.6144,
+        -1.3258
+      ],
+      "depth_m": 1.496,
+      "footprint": [
+        [
+          0.1704,
+          -0.8945,
+          -1.3019
+        ],
+        [
+          0.1368,
+          -0.4916,
+          -1.6352
+        ],
+        [
+          -0.775,
+          -0.7372,
+          -1.0164
+        ],
+        [
+          -0.8086,
+          -0.3343,
+          -1.3498
+        ]
+      ],
+      "extent_wdh_m": [
+        1.0,
+        0.524,
+        0.282
+      ],
+      "floor_contact_m": -0.295,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.414,
+      "orientation_candidates": [
+        {
+          "wall_index": null,
+          "axis": "principal",
+          "feasible": null,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": false,
+      "wall_contact": {
+        "decision": "UNKNOWN",
+        "wall_index": null,
+        "distance_m": null,
+        "orientation": null,
+        "confidence": 0.0
+      },
+      "predicted_against_wall": null,
+      "decision": "UNKNOWN",
+      "correct": null,
+      "wall_distance": null,
+      "confidence": 0.36,
+      "evidence": [
+        "floor contact p5 -0.295 m (band -0.15..0.3)",
+        "dims from registry: 1.0x0.524x0.282 m",
+        "no wall survived the gate: footprint anchored to the visible near edge, extended away from the camera; orientation UNKNOWN"
+      ]
+    },
+    {
+      "case_id": "preserved.master_bedroom.bed.0",
+      "scene_id": "hist_master_bedroom",
+      "image_id": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "source": "historical",
+      "object_id": "master_bedroom.bed.0",
+      "object_type": "bed",
+      "object_bucket": "other",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.2795,
+        -0.341,
+        -3.0548
+      ],
+      "depth_m": 3.086,
+      "footprint": [
+        [
+          -0.6853,
+          -0.1593,
+          -3.9883
+        ],
+        [
+          -0.7919,
+          -0.5273,
+          -2.2469
+        ],
+        [
+          1.3509,
+          -0.1547,
+          -3.8626
+        ],
+        [
+          1.2442,
+          -0.5227,
+          -2.1212
+        ]
+      ],
+      "extent_wdh_m": [
+        1.783,
+        2.04,
+        0.678
+      ],
+      "floor_contact_m": 0.181,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.684,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.3619,
+          "score": 0.929
+        },
+        {
+          "wall_index": 3,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.7799,
+          "score": 0.75
+        },
+        {
+          "wall_index": 1,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.5464,
+          "score": 0.741
+        },
+        {
+          "wall_index": 2,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.4729,
+          "score": 0.74
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 0.3619,
+        "orientation": "width",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": false,
+      "wall_distance": 0.3619,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.181 m (band -0.15..0.3)",
+        "dims from registry: 1.783x2.04x0.678 m",
+        "footprint 2.04 m along wall 0, 1.78 m along its normal from rear 0.362 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "preserved.master_bedroom.bedside_table.0",
+      "scene_id": "hist_master_bedroom",
+      "image_id": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "source": "historical",
+      "object_id": "master_bedroom.bedside_table.0",
+      "object_type": "bedside_table",
+      "object_bucket": "table",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.7931,
+        -0.1334,
+        -4.1194
+      ],
+      "depth_m": 4.197,
+      "footprint": [
+        [
+          -1.059,
+          -0.089,
+          -4.35
+        ],
+        [
+          -1.0852,
+          -0.1791,
+          -3.9232
+        ],
+        [
+          -0.5011,
+          -0.0877,
+          -4.3155
+        ],
+        [
+          -0.5272,
+          -0.1779,
+          -3.8887
+        ]
+      ],
+      "extent_wdh_m": [
+        0.559,
+        0.437,
+        0.625
+      ],
+      "floor_contact_m": 0.087,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.99,
+      "orientation_candidates": [
+        {
+          "wall_index": 2,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.1323,
+          "score": 0.91
+        },
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.2117,
+          "score": 0.909
+        },
+        {
+          "wall_index": 3,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 2.6005,
+          "score": 0.905
+        },
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.0165,
+          "score": 0.84
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 0,
+        "distance_m": 0.0165,
+        "orientation": "depth",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": true,
+      "wall_distance": 0.0165,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.087 m (band -0.15..0.3)",
+        "dims from registry: 0.559x0.437x0.625 m",
+        "footprint 0.56 m along wall 0, 0.44 m along its normal from rear 0.017 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "preserved.master_bedroom.bedside_table.1",
+      "scene_id": "hist_master_bedroom",
+      "image_id": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "source": "historical",
+      "object_id": "master_bedroom.bedside_table.1",
+      "object_type": "bedside_table",
+      "object_bucket": "table",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        1.6676,
+        -0.133,
+        -3.9432
+      ],
+      "depth_m": 4.283,
+      "footprint": [
+        [
+          1.4017,
+          -0.0885,
+          -4.1738
+        ],
+        [
+          1.3755,
+          -0.1787,
+          -3.7471
+        ],
+        [
+          1.9596,
+          -0.0872,
+          -4.1394
+        ],
+        [
+          1.9335,
+          -0.1774,
+          -3.7126
+        ]
+      ],
+      "extent_wdh_m": [
+        0.559,
+        0.437,
+        0.625
+      ],
+      "floor_contact_m": 0.039,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.998,
+      "orientation_candidates": [
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 2.7145,
+          "score": 0.974
+        },
+        {
+          "wall_index": 2,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 2.6352,
+          "score": 0.974
+        },
+        {
+          "wall_index": 3,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.1833,
+          "score": 0.972
+        },
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.0412,
+          "score": 0.791
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 0,
+        "distance_m": 0.0412,
+        "orientation": "depth",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": true,
+      "wall_distance": 0.0412,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.039 m (band -0.15..0.3)",
+        "dims from registry: 0.559x0.437x0.625 m",
+        "footprint 0.56 m along wall 0, 0.44 m along its normal from rear 0.041 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "preserved.living_room_b.sofa.0",
+      "scene_id": "hist_living_room_b",
+      "image_id": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "source": "historical",
+      "object_id": "living_room_b.sofa.0",
+      "object_type": "sofa",
+      "object_bucket": "sofa",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -1.3117,
+        -0.3636,
+        -3.8616
+      ],
+      "depth_m": 4.094,
+      "footprint": [
+        [
+          -1.0424,
+          -0.2124,
+          -4.9634
+        ],
+        [
+          -2.3074,
+          -0.4408,
+          -3.3028
+        ],
+        [
+          -0.316,
+          -0.2864,
+          -4.4203
+        ],
+        [
+          -1.581,
+          -0.5149,
+          -2.7597
+        ]
+      ],
+      "extent_wdh_m": [
+        2.1,
+        0.91,
+        0.715
+      ],
+      "floor_contact_m": 0.259,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.954,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 0.2952,
+          "score": 0.865
+        },
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.4231,
+          "score": 0.859
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 0.2952,
+        "orientation": "width",
+        "confidence": 0.45
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": false,
+      "wall_distance": 0.2952,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.259 m (band -0.15..0.3)",
+        "dims from registry: 2.1x0.91x0.715 m",
+        "footprint 0.91 m along wall 0, 2.10 m along its normal from rear 0.295 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "preserved.living_room_b.tv_unit.0",
+      "scene_id": "hist_living_room_b",
+      "image_id": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "source": "historical",
+      "object_id": "living_room_b.tv_unit.0",
+      "object_type": "tv_unit",
+      "object_bucket": "cabinet",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        1.1246,
+        -0.4272,
+        -3.3868
+      ],
+      "depth_m": 3.594,
+      "footprint": [
+        [
+          0.5628,
+          -0.3257,
+          -4.1295
+        ],
+        [
+          0.2496,
+          -0.3823,
+          -3.7183
+        ],
+        [
+          1.9996,
+          -0.4721,
+          -3.0552
+        ],
+        [
+          1.6863,
+          -0.5286,
+          -2.644
+        ]
+      ],
+      "extent_wdh_m": [
+        1.8,
+        0.52,
+        0.68
+      ],
+      "floor_contact_m": 0.639,
+      "base_occluded": true,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 1.0,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.0,
+          "score": 0.675
+        },
+        {
+          "wall_index": 1,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 2.0037,
+          "score": 0.572
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 0,
+        "distance_m": 0.0,
+        "orientation": "depth",
+        "confidence": 0.45
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": true,
+      "wall_distance": 0.0,
+      "confidence": 0.54,
+      "evidence": [
+        "floor contact p5 0.639 m (band -0.15..0.3)",
+        "dims from registry: 1.8x0.52x0.68 m",
+        "footprint 1.80 m along wall 0, 0.52 m along its normal from rear 0.000 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "preserved.living_room_b.tv_unit.1",
+      "scene_id": "hist_living_room_b",
+      "image_id": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "source": "historical",
+      "object_id": "living_room_b.tv_unit.1",
+      "object_type": "tv_unit",
+      "object_bucket": "cabinet",
+      "category": null,
+      "open_structure": false,
+      "ground_truth_against_wall": true,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.6919,
+        -0.3831,
+        -3.7103
+      ],
+      "depth_m": 3.794,
+      "footprint": [
+        [
+          0.1301,
+          -0.2816,
+          -4.453
+        ],
+        [
+          -0.1831,
+          -0.3382,
+          -4.0419
+        ],
+        [
+          1.5669,
+          -0.428,
+          -3.3787
+        ],
+        [
+          1.2537,
+          -0.4846,
+          -2.9675
+        ]
+      ],
+      "extent_wdh_m": [
+        1.8,
+        0.52,
+        0.68
+      ],
+      "floor_contact_m": 0.308,
+      "base_occluded": true,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.679,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 0.0,
+          "score": 0.854
+        },
+        {
+          "wall_index": 1,
+          "axis": "visible_only",
+          "feasible": false,
+          "gap_m": 1.5768,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "YES",
+        "wall_index": 0,
+        "distance_m": 0.0,
+        "orientation": "depth",
+        "confidence": 0.45
+      },
+      "predicted_against_wall": true,
+      "decision": "YES",
+      "correct": true,
+      "wall_distance": 0.0,
+      "confidence": 0.54,
+      "evidence": [
+        "floor contact p5 0.308 m (band -0.15..0.3)",
+        "dims from registry: 1.8x0.52x0.68 m",
+        "footprint 1.80 m along wall 0, 0.52 m along its normal from rear 0.000 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "hist_neg.living_room_a.ottoman.0",
+      "scene_id": "hist_living_room_a",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "source": "historical",
+      "object_id": "living_room_a.ottoman.0",
+      "object_type": "ottoman",
+      "object_bucket": "ottoman",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.5376,
+        -0.4095,
+        -2.1208
+      ],
+      "depth_m": 2.226,
+      "footprint": [
+        [
+          -0.711,
+          -0.2845,
+          -2.5817
+        ],
+        [
+          -1.0454,
+          -0.3983,
+          -2.1356
+        ],
+        [
+          -0.0298,
+          -0.4208,
+          -2.1059
+        ],
+        [
+          -0.3642,
+          -0.5346,
+          -1.6598
+        ]
+      ],
+      "extent_wdh_m": [
+        0.842,
+        0.569,
+        0.479
+      ],
+      "floor_contact_m": 0.136,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.627,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.6021,
+          "score": 0.998
+        },
+        {
+          "wall_index": 1,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 2.3265,
+          "score": 0.959
+        },
+        {
+          "wall_index": 2,
+          "axis": "visible_only",
+          "feasible": false,
+          "gap_m": 2.4429,
+          "score": 0.3
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.6021,
+        "orientation": "depth",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.6021,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.136 m (band -0.15..0.3)",
+        "dims from registry: 0.842x0.569x0.479 m",
+        "footprint 0.84 m along wall 0, 0.57 m along its normal from rear 1.602 m",
+        "alternative orientation: width along normal"
+      ]
+    },
+    {
+      "case_id": "hist_neg.kitchen.bar_stool.0",
+      "scene_id": "hist_kitchen",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "source": "historical",
+      "object_id": "kitchen.bar_stool.0",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.1103,
+        -0.1314,
+        -3.1925
+      ],
+      "depth_m": 3.197,
+      "footprint": [
+        [
+          -0.3388,
+          -0.0926,
+          -3.4346
+        ],
+        [
+          -0.3602,
+          -0.1654,
+          -2.9718
+        ],
+        [
+          0.1397,
+          -0.0973,
+          -3.4132
+        ],
+        [
+          0.1182,
+          -0.1701,
+          -2.9504
+        ]
+      ],
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": -0.749,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.997,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.0053,
+          "score": 0.942
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.0053,
+        "orientation": "width",
+        "confidence": 0.781
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.0053,
+      "confidence": 0.328,
+      "evidence": [
+        "floor contact p5 -0.749 m (band -0.15..0.3)",
+        "dims from registry: 0.469x0.479x0.75 m",
+        "footprint 0.48 m along wall 0, 0.47 m along its normal from rear 1.005 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "hist_neg.kitchen.bar_stool.1",
+      "scene_id": "hist_kitchen",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "source": "historical",
+      "object_id": "kitchen.bar_stool.1",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        0.4672,
+        -0.1402,
+        -3.1467
+      ],
+      "depth_m": 3.184,
+      "footprint": [
+        [
+          0.2387,
+          -0.1014,
+          -3.3888
+        ],
+        [
+          0.2173,
+          -0.1742,
+          -2.926
+        ],
+        [
+          0.7172,
+          -0.1061,
+          -3.3674
+        ],
+        [
+          0.6958,
+          -0.1789,
+          -2.9046
+        ]
+      ],
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": -0.818,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.999,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.0254,
+          "score": 0.917
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.0254,
+        "orientation": "width",
+        "confidence": 0.781
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.0254,
+      "confidence": 0.328,
+      "evidence": [
+        "floor contact p5 -0.818 m (band -0.15..0.3)",
+        "dims from registry: 0.469x0.479x0.75 m",
+        "footprint 0.48 m along wall 0, 0.47 m along its normal from rear 1.025 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "hist_neg.kitchen.bar_stool.2",
+      "scene_id": "hist_kitchen",
+      "image_id": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "source": "historical",
+      "object_id": "kitchen.bar_stool.2",
+      "object_type": "bar_stool",
+      "object_bucket": "bar stool",
+      "category": "B",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        1.1553,
+        -0.1455,
+        -3.125
+      ],
+      "depth_m": 3.335,
+      "footprint": [
+        [
+          0.9268,
+          -0.1067,
+          -3.3671
+        ],
+        [
+          0.9053,
+          -0.1796,
+          -2.9043
+        ],
+        [
+          1.4053,
+          -0.1114,
+          -3.3456
+        ],
+        [
+          1.3838,
+          -0.1843,
+          -2.8828
+        ]
+      ],
+      "extent_wdh_m": [
+        0.469,
+        0.479,
+        0.75
+      ],
+      "floor_contact_m": -0.818,
+      "base_occluded": false,
+      "support_consistent": false,
+      "inside_room": true,
+      "visible_coverage": 0.983,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.0162,
+          "score": 0.867
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.0162,
+        "orientation": "width",
+        "confidence": 0.781
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.0162,
+      "confidence": 0.328,
+      "evidence": [
+        "floor contact p5 -0.818 m (band -0.15..0.3)",
+        "dims from registry: 0.469x0.479x0.75 m",
+        "footprint 0.48 m along wall 0, 0.47 m along its normal from rear 1.016 m",
+        "alternative orientation: depth along normal"
+      ]
+    },
+    {
+      "case_id": "hist_neg.living_room_b.coffee_table.0",
+      "scene_id": "hist_living_room_b",
+      "image_id": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "source": "historical",
+      "object_id": "living_room_b.coffee_table.0",
+      "object_type": "coffee_table",
+      "object_bucket": "table",
+      "category": "A",
+      "open_structure": true,
+      "ground_truth_against_wall": false,
+      "placement_class": "FLOOR_STANDING",
+      "support": "floor",
+      "grounded": true,
+      "failure_reason": null,
+      "failure_category": "NONE",
+      "room_position": [
+        -0.5979,
+        -0.5082,
+        -2.8038
+      ],
+      "depth_m": 2.911,
+      "footprint": [
+        [
+          -0.5956,
+          -0.4063,
+          -3.5468
+        ],
+        [
+          -1.3185,
+          -0.5369,
+          -2.5979
+        ],
+        [
+          0.1227,
+          -0.4795,
+          -3.0096
+        ],
+        [
+          -0.6001,
+          -0.6101,
+          -2.0607
+        ]
+      ],
+      "extent_wdh_m": [
+        1.2,
+        0.9,
+        0.391
+      ],
+      "floor_contact_m": 0.094,
+      "base_occluded": false,
+      "support_consistent": true,
+      "inside_room": true,
+      "visible_coverage": 0.89,
+      "orientation_candidates": [
+        {
+          "wall_index": 0,
+          "axis": "width",
+          "feasible": true,
+          "gap_m": 1.1674,
+          "score": 0.945
+        },
+        {
+          "wall_index": 1,
+          "axis": "depth",
+          "feasible": true,
+          "gap_m": 1.5442,
+          "score": 0.788
+        }
+      ],
+      "orientation_known": true,
+      "wall_contact": {
+        "decision": "NO",
+        "wall_index": 0,
+        "distance_m": 1.1674,
+        "orientation": "width",
+        "confidence": 0.9
+      },
+      "predicted_against_wall": false,
+      "decision": "NO",
+      "correct": true,
+      "wall_distance": 1.1674,
+      "confidence": 0.9,
+      "evidence": [
+        "floor contact p5 0.094 m (band -0.15..0.3)",
+        "dims from registry: 1.2x0.9x0.391 m",
+        "footprint 0.90 m along wall 0, 1.20 m along its normal from rear 1.167 m",
+        "alternative orientation: depth along normal"
+      ]
+    }
+  ]
+}

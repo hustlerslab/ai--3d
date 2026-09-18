@@ -1,0 +1,241 @@
+{
+  "tag": "after",
+  "model": "ollama:qwen2.5vl:3b",
+  "rooms_read": 5,
+  "rooms_failed": 0,
+  "elements_total": 17,
+  "avg_elapsed_s": 15.5,
+  "against": {
+    "wall": 8,
+    "unknown": 8,
+    "named_target": 1
+  },
+  "faces": {
+    "wall": 8,
+    "room": 7,
+    "camera_relative": 1,
+    "vacuous": 1
+  },
+  "graph": {
+    "nodes": 17,
+    "relations": 105,
+    "predicates": {
+      "ABOVE": 11,
+      "ADJACENT_TO": 18,
+      "AGAINST_WALL": 8,
+      "LEFT_OF": 7,
+      "NEAR": 20,
+      "SUPPORTED_BY": 8,
+      "AGAINST": 1,
+      "BELOW": 11,
+      "FACES_ROOM": 7,
+      "OVERLAPS": 2,
+      "RIGHT_OF": 12
+    },
+    "camera_frame": 41,
+    "semantic": 24,
+    "confidence": {
+      "MEDIUM": 82,
+      "LOW": 23
+    },
+    "groups": 0,
+    "conflicts": 0
+  },
+  "plan": {
+    "items": 17,
+    "relation_populated": 15,
+    "support_key_populated": 0,
+    "relation_types": {
+      "against_wall": 8,
+      "beside": 7
+    },
+    "notes": [
+      "spatial graph: 15 relation(s) and 0 support link(s) attached to the object plan",
+      "41 camera-frame relation(s) left in the graph; a render's left is not the room's left"
+    ]
+  },
+  "per_room": [
+    {
+      "room_type": "living_room",
+      "room_id": "living_room_0",
+      "image": "G:/ALLURE INTERIOR/ISHANA/Interior design/aether-backend/data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "status": "ok",
+      "elapsed_s": 10.5,
+      "generation_status": "complete",
+      "salvaged": false,
+      "elements_raw": 5,
+      "elements_coerced": 4,
+      "rejected": 1,
+      "rejection_reasons": [
+        "living_room/couch: unusable box [462, 174, 1148, 516] \u2014 outside the image"
+      ],
+      "with_bbox": 4,
+      "against": {
+        "wall": 2,
+        "named_target": 1,
+        "unknown": 1
+      },
+      "against_samples": [
+        "armchair: 'wall' -> wall",
+        "ottoman: 'armchair' -> named_target",
+        "side_table: 'wall' -> wall",
+        "candle: 'side_table' -> unknown"
+      ],
+      "faces": {
+        "room": 4
+      },
+      "faces_samples": [
+        "armchair: 'into the room' -> room",
+        "ottoman: 'into the room' -> room",
+        "side_table: 'into the room' -> room",
+        "candle: 'into the room' -> room"
+      ],
+      "on_surface": 1
+    },
+    {
+      "room_type": "kitchen",
+      "room_id": "kitchen_1",
+      "image": "G:/ALLURE INTERIOR/ISHANA/Interior design/aether-backend/data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "status": "ok",
+      "elapsed_s": 10.9,
+      "generation_status": "complete",
+      "salvaged": false,
+      "elements_raw": 7,
+      "elements_coerced": 2,
+      "rejected": 5,
+      "rejection_reasons": [
+        "kitchen/black bar stool: unusable box [867, 423, 1090, 728] \u2014 outside the image",
+        "kitchen/kitchen counter: unusable box [0, 364, 1146, 728] \u2014 outside the image",
+        "kitchen/kitchen island: unusable box [0, 364, 1146, 728] \u2014 outside the image",
+        "kitchen: ignored 'window' - surfaces are materials, not meshes",
+        "kitchen: ignored 'window' - surfaces are materials, not meshes"
+      ],
+      "with_bbox": 2,
+      "against": {
+        "unknown": 2
+      },
+      "against_samples": [
+        "bar_stool: 'kitchen island' -> unknown",
+        "bar_stool: 'kitchen island' -> unknown"
+      ],
+      "faces": {
+        "room": 2
+      },
+      "faces_samples": [
+        "bar_stool: 'into the room' -> room",
+        "bar_stool: 'into the room' -> room"
+      ],
+      "on_surface": 0
+    },
+    {
+      "room_type": "bathroom",
+      "room_id": "bathroom_2",
+      "image": "G:/ALLURE INTERIOR/ISHANA/Interior design/aether-backend/data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "status": "ok",
+      "elapsed_s": 13.4,
+      "generation_status": "complete",
+      "salvaged": false,
+      "elements_raw": 1,
+      "elements_coerced": 1,
+      "rejected": 0,
+      "rejection_reasons": [],
+      "with_bbox": 1,
+      "against": {
+        "wall": 1
+      },
+      "against_samples": [
+        "bathtub: 'wall' -> wall"
+      ],
+      "faces": {
+        "room": 1
+      },
+      "faces_samples": [
+        "bathtub: 'into the room' -> room"
+      ],
+      "on_surface": 0
+    },
+    {
+      "room_type": "master_bedroom",
+      "room_id": "master_bedroom_3",
+      "image": "G:/ALLURE INTERIOR/ISHANA/Interior design/aether-backend/data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "status": "ok",
+      "elapsed_s": 16.0,
+      "generation_status": "complete",
+      "salvaged": false,
+      "elements_raw": 7,
+      "elements_coerced": 3,
+      "rejected": 4,
+      "rejection_reasons": [
+        "master_bedroom/bed: unusable box [259, 225, 1114, 625] \u2014 outside the image",
+        "master_bedroom/bedside table: unusable box [950, 292, 1113, 414] \u2014 outside the image",
+        "master_bedroom/rug: unusable box [60, 492, 1147, 728] \u2014 outside the image",
+        "master_bedroom: ignored 'wall' - surfaces are materials, not meshes"
+      ],
+      "with_bbox": 3,
+      "against": {
+        "unknown": 1,
+        "wall": 2
+      },
+      "against_samples": [
+        "side_table: 'bed' -> unknown",
+        "wall_art: 'wall' -> wall",
+        "floor_lamp: 'wall' -> wall"
+      ],
+      "faces": {
+        "camera_relative": 1,
+        "wall": 2
+      },
+      "faces_samples": [
+        "side_table: 'front' -> camera_relative",
+        "wall_art: 'wall' -> wall",
+        "floor_lamp: 'wall' -> wall"
+      ],
+      "on_surface": 0
+    },
+    {
+      "room_type": "living_room",
+      "room_id": "living_room_4",
+      "image": "G:/ALLURE INTERIOR/ISHANA/Interior design/aether-backend/data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "status": "ok",
+      "elapsed_s": 26.7,
+      "generation_status": "complete",
+      "salvaged": false,
+      "elements_raw": 12,
+      "elements_coerced": 7,
+      "rejected": 5,
+      "rejection_reasons": [
+        "living_room/low oak sideboard: unusable box [274, 550, 1148, 728] \u2014 outside the image",
+        "living_room/rug: unusable box [0, 424, 1124, 728] \u2014 outside the image",
+        "living_room/tv_unit: unusable box [468, 324, 1148, 476] \u2014 outside the image",
+        "living_room/tv: unusable box [745, 126, 1062, 326] \u2014 outside the image",
+        "living_room/wall_art: unusable box [1, 36, 89, 188] \u2014 mixes 0-1000 with fractions [1.0]"
+      ],
+      "with_bbox": 7,
+      "against": {
+        "unknown": 4,
+        "wall": 3
+      },
+      "against_samples": [
+        "other: 'low oak sideboard' -> unknown",
+        "candle: 'tv_unit' -> unknown",
+        "candle: 'tv_unit' -> unknown",
+        "candle: 'tv_unit' -> unknown",
+        "wall_art: 'wall' -> wall",
+        "wall_art: 'wall' -> wall"
+      ],
+      "faces": {
+        "vacuous": 1,
+        "wall": 6
+      },
+      "faces_samples": [
+        "other: 'floor' -> vacuous",
+        "candle: 'wall' -> wall",
+        "candle: 'wall' -> wall",
+        "candle: 'wall' -> wall",
+        "wall_art: 'wall' -> wall",
+        "wall_art: 'wall' -> wall"
+      ],
+      "on_surface": 7
+    }
+  ]
+}

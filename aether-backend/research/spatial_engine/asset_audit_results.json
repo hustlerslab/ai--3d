@@ -1,0 +1,2689 @@
+{
+  "_about": "Phase 10 asset spatial audit. Registry untouched.",
+  "summary": {
+    "total": 58,
+    "accepted": 58,
+    "rejected": 0,
+    "by_issue": {
+      "MOUNT_DISAGREES_WITH_VOCAB": 8
+    },
+    "by_mount": {
+      "ceiling": 2,
+      "floor": 43,
+      "surface": 5,
+      "wall": 8
+    },
+    "by_provider": {
+      "meshy": 30,
+      "polyhaven": 28
+    },
+    "licenses": [
+      "CC0-1.0",
+      "meshy-commercial"
+    ],
+    "tolerances": {
+      "dims_m": 0.02,
+      "pivot_m": 0.02
+    }
+  },
+  "assets": [
+    {
+      "asset_id": "ph_sofa_02",
+      "semantic_type": "sofa",
+      "mount": "floor",
+      "record_dims_m": [
+        1.8072,
+        0.7095,
+        0.8178
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.8072,
+        0.7095,
+        0.8178
+      ],
+      "measured_bbox_min_m": [
+        -0.9036,
+        -0.0,
+        -0.4089
+      ],
+      "measured_bbox_max_m": [
+        0.9036,
+        0.7095,
+        0.4089
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 2728,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_sofa_03",
+      "semantic_type": "sofa",
+      "mount": "floor",
+      "record_dims_m": [
+        2.7312,
+        1.1183,
+        0.9251
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.7312,
+        1.1183,
+        0.9251
+      ],
+      "measured_bbox_min_m": [
+        -1.3656,
+        0.0,
+        -0.4625
+      ],
+      "measured_bbox_max_m": [
+        1.3656,
+        1.1183,
+        0.4625
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 8004,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_lounge_chair",
+      "semantic_type": "armchair",
+      "mount": "floor",
+      "record_dims_m": [
+        1.0086,
+        1.1691,
+        1.1903
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.0086,
+        1.1691,
+        1.1903
+      ],
+      "measured_bbox_min_m": [
+        -0.5043,
+        -0.0,
+        -0.5952
+      ],
+      "measured_bbox_max_m": [
+        0.5043,
+        1.1691,
+        0.5952
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 6148,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_modern_armchair",
+      "semantic_type": "armchair",
+      "mount": "floor",
+      "record_dims_m": [
+        0.8203,
+        1.0229,
+        0.9866
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.8203,
+        1.0229,
+        0.9866
+      ],
+      "measured_bbox_min_m": [
+        -0.4102,
+        -0.0,
+        -0.4933
+      ],
+      "measured_bbox_max_m": [
+        0.4102,
+        1.0229,
+        0.4933
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 8916,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_ottoman",
+      "semantic_type": "ottoman",
+      "mount": "floor",
+      "record_dims_m": [
+        0.8846,
+        0.6243,
+        0.6211
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.8846,
+        0.6243,
+        0.6211
+      ],
+      "measured_bbox_min_m": [
+        -0.4423,
+        -0.0,
+        -0.3106
+      ],
+      "measured_bbox_max_m": [
+        0.4423,
+        0.6243,
+        0.3106
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 4240,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_dining_chair",
+      "semantic_type": "chair",
+      "mount": "floor",
+      "record_dims_m": [
+        0.4336,
+        0.9734,
+        0.5764
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.4336,
+        0.9734,
+        0.5764
+      ],
+      "measured_bbox_min_m": [
+        -0.2168,
+        0.0,
+        -0.2882
+      ],
+      "measured_bbox_max_m": [
+        0.2168,
+        0.9734,
+        0.2882
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 22013,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_coffee_table_round",
+      "semantic_type": "coffee_table",
+      "mount": "floor",
+      "record_dims_m": [
+        1.3013,
+        0.491,
+        1.3013
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.3013,
+        0.491,
+        1.3013
+      ],
+      "measured_bbox_min_m": [
+        -0.6507,
+        -0.0,
+        -0.6507
+      ],
+      "measured_bbox_max_m": [
+        0.6507,
+        0.491,
+        0.6507
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 4044,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_coffee_table_01",
+      "semantic_type": "coffee_table",
+      "mount": "floor",
+      "record_dims_m": [
+        1.2018,
+        0.39,
+        0.6
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.2018,
+        0.39,
+        0.6
+      ],
+      "measured_bbox_min_m": [
+        -0.6009,
+        -0.0,
+        -0.3
+      ],
+      "measured_bbox_max_m": [
+        0.6009,
+        0.39,
+        0.3
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 4504,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_coffee_table_02",
+      "semantic_type": "coffee_table",
+      "mount": "floor",
+      "record_dims_m": [
+        1.1991,
+        0.3692,
+        1.1997
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.1991,
+        0.3692,
+        1.1997
+      ],
+      "measured_bbox_min_m": [
+        -0.5996,
+        0.0,
+        -0.5998
+      ],
+      "measured_bbox_max_m": [
+        0.5996,
+        0.3693,
+        0.5998
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 13645,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_side_table",
+      "semantic_type": "bedside_table",
+      "mount": "floor",
+      "record_dims_m": [
+        0.55,
+        0.5507,
+        0.45
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.55,
+        0.5507,
+        0.45
+      ],
+      "measured_bbox_min_m": [
+        -0.275,
+        -0.0,
+        -0.225
+      ],
+      "measured_bbox_max_m": [
+        0.275,
+        0.5507,
+        0.225
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 2756,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_classic_nightstand",
+      "semantic_type": "bedside_table",
+      "mount": "floor",
+      "record_dims_m": [
+        0.5678,
+        0.7,
+        0.4242
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.5678,
+        0.7,
+        0.4242
+      ],
+      "measured_bbox_min_m": [
+        -0.2839,
+        -0.0,
+        -0.2121
+      ],
+      "measured_bbox_max_m": [
+        0.2839,
+        0.7,
+        0.2121
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 2002,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_wooden_cabinet",
+      "semantic_type": "tv_unit",
+      "mount": "floor",
+      "record_dims_m": [
+        2.44,
+        0.6801,
+        0.52
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.44,
+        0.6801,
+        0.52
+      ],
+      "measured_bbox_min_m": [
+        -1.22,
+        -0.0,
+        -0.26
+      ],
+      "measured_bbox_max_m": [
+        1.22,
+        0.6801,
+        0.26
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 24976,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_drawer_cabinet",
+      "semantic_type": "sideboard",
+      "mount": "floor",
+      "record_dims_m": [
+        1.1411,
+        1.8813,
+        0.4881
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.1411,
+        1.8813,
+        0.4881
+      ],
+      "measured_bbox_min_m": [
+        -0.5705,
+        0.0,
+        -0.244
+      ],
+      "measured_bbox_max_m": [
+        0.5705,
+        1.8813,
+        0.244
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 26406,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_steel_shelves",
+      "semantic_type": "bookshelf",
+      "mount": "floor",
+      "record_dims_m": [
+        2.3511,
+        2.3118,
+        0.7212
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.3511,
+        2.3118,
+        0.7212
+      ],
+      "measured_bbox_min_m": [
+        -1.1755,
+        -0.0,
+        -0.3606
+      ],
+      "measured_bbox_max_m": [
+        1.1755,
+        2.3118,
+        0.3606
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 8396,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_display_shelves",
+      "semantic_type": "bookshelf",
+      "mount": "floor",
+      "record_dims_m": [
+        1.0778,
+        1.5562,
+        0.3715
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.0778,
+        1.5562,
+        0.3715
+      ],
+      "measured_bbox_min_m": [
+        -0.5389,
+        0.0,
+        -0.1858
+      ],
+      "measured_bbox_max_m": [
+        0.5389,
+        1.5562,
+        0.1858
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 3174,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_round_dining_table",
+      "semantic_type": "dining_table",
+      "mount": "floor",
+      "record_dims_m": [
+        0.7962,
+        0.746,
+        0.7962
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.7962,
+        0.746,
+        0.7962
+      ],
+      "measured_bbox_min_m": [
+        -0.3981,
+        -0.0,
+        -0.3981
+      ],
+      "measured_bbox_max_m": [
+        0.3981,
+        0.746,
+        0.3981
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 4254,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_classic_bed",
+      "semantic_type": "bed",
+      "mount": "floor",
+      "record_dims_m": [
+        1.4938,
+        1.5338,
+        2.04
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.4938,
+        1.5338,
+        2.04
+      ],
+      "measured_bbox_min_m": [
+        -0.7469,
+        -0.0,
+        -1.02
+      ],
+      "measured_bbox_max_m": [
+        0.7469,
+        1.5338,
+        1.02
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 18745,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_ornate_mirror",
+      "semantic_type": "mirror",
+      "mount": "wall",
+      "record_dims_m": [
+        0.4865,
+        0.7442,
+        0.026
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.4865,
+        0.7442,
+        0.026
+      ],
+      "measured_bbox_min_m": [
+        -0.2432,
+        -0.0,
+        -0.013
+      ],
+      "measured_bbox_max_m": [
+        0.2432,
+        0.7442,
+        0.013
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "wall",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 14246,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_pendant_lamp",
+      "semantic_type": "pendant_lamp",
+      "mount": "ceiling",
+      "record_dims_m": [
+        0.4316,
+        0.9516,
+        0.4317
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.4316,
+        0.9516,
+        0.4317
+      ],
+      "measured_bbox_min_m": [
+        -0.2158,
+        0.0,
+        -0.2158
+      ],
+      "measured_bbox_max_m": [
+        0.2158,
+        0.9516,
+        0.2158
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "ceiling",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 5602,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_chandelier",
+      "semantic_type": "chandelier",
+      "mount": "ceiling",
+      "record_dims_m": [
+        0.7804,
+        1.0406,
+        0.7855
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.7804,
+        1.0406,
+        0.7855
+      ],
+      "measured_bbox_min_m": [
+        -0.3902,
+        0.0,
+        -0.3927
+      ],
+      "measured_bbox_max_m": [
+        0.3902,
+        1.0406,
+        0.3927
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "ceiling",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 29301,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_diya_lantern",
+      "semantic_type": "lantern",
+      "mount": "floor",
+      "record_dims_m": [
+        0.123,
+        0.3808,
+        0.123
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.123,
+        0.3808,
+        0.123
+      ],
+      "measured_bbox_min_m": [
+        -0.0615,
+        -0.0,
+        -0.0615
+      ],
+      "measured_bbox_max_m": [
+        0.0615,
+        0.3808,
+        0.0615
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 12742,
+      "issues": [
+        {
+          "code": "MOUNT_DISAGREES_WITH_VOCAB",
+          "severity": "warn",
+          "message": "record mount 'floor' vs vocab 'surface'"
+        }
+      ],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_plant_01",
+      "semantic_type": "plant",
+      "mount": "floor",
+      "record_dims_m": [
+        0.5874,
+        1.3502,
+        0.6336
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.5874,
+        1.3502,
+        0.6336
+      ],
+      "measured_bbox_min_m": [
+        -0.2937,
+        0.0,
+        -0.3168
+      ],
+      "measured_bbox_max_m": [
+        0.2937,
+        1.3502,
+        0.3168
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 176226,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_plant_02",
+      "semantic_type": "plant",
+      "mount": "floor",
+      "record_dims_m": [
+        0.7012,
+        0.8412,
+        0.6574
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.7012,
+        0.8412,
+        0.6574
+      ],
+      "measured_bbox_min_m": [
+        -0.3506,
+        -0.0,
+        -0.3287
+      ],
+      "measured_bbox_max_m": [
+        0.3506,
+        0.8412,
+        0.3287
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 69806,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_vase_01",
+      "semantic_type": "vase",
+      "mount": "floor",
+      "record_dims_m": [
+        0.2036,
+        0.4003,
+        0.2036
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.2036,
+        0.4003,
+        0.2036
+      ],
+      "measured_bbox_min_m": [
+        -0.1018,
+        -0.0,
+        -0.1018
+      ],
+      "measured_bbox_max_m": [
+        0.1018,
+        0.4003,
+        0.1018
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 10296,
+      "issues": [
+        {
+          "code": "MOUNT_DISAGREES_WITH_VOCAB",
+          "severity": "warn",
+          "message": "record mount 'floor' vs vocab 'surface'"
+        }
+      ],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_wooden_elephant",
+      "semantic_type": "sculpture",
+      "mount": "floor",
+      "record_dims_m": [
+        0.1092,
+        0.0962,
+        0.0576
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.1092,
+        0.0962,
+        0.0576
+      ],
+      "measured_bbox_min_m": [
+        -0.0546,
+        0.0,
+        -0.0288
+      ],
+      "measured_bbox_max_m": [
+        0.0546,
+        0.0962,
+        0.0288
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 2752,
+      "issues": [
+        {
+          "code": "MOUNT_DISAGREES_WITH_VOCAB",
+          "severity": "warn",
+          "message": "record mount 'floor' vs vocab 'surface'"
+        }
+      ],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_marble_bust",
+      "semantic_type": "sculpture",
+      "mount": "floor",
+      "record_dims_m": [
+        0.2717,
+        0.5149,
+        0.2997
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.2717,
+        0.5149,
+        0.2997
+      ],
+      "measured_bbox_min_m": [
+        -0.1359,
+        0.0,
+        -0.1499
+      ],
+      "measured_bbox_max_m": [
+        0.1359,
+        0.5149,
+        0.1499
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 17456,
+      "issues": [
+        {
+          "code": "MOUNT_DISAGREES_WITH_VOCAB",
+          "severity": "warn",
+          "message": "record mount 'floor' vs vocab 'surface'"
+        }
+      ],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_art_frame_01",
+      "semantic_type": "wall_art",
+      "mount": "wall",
+      "record_dims_m": [
+        0.594,
+        0.841,
+        0.0157
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.594,
+        0.841,
+        0.0157
+      ],
+      "measured_bbox_min_m": [
+        -0.297,
+        0.0,
+        -0.0079
+      ],
+      "measured_bbox_max_m": [
+        0.297,
+        0.841,
+        0.0079
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "wall",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 2586,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "ph_throw_pillows",
+      "semantic_type": "pillows",
+      "mount": "floor",
+      "record_dims_m": [
+        1.0216,
+        0.4502,
+        0.6275
+      ],
+      "normalization_strategy": "unit_heuristic",
+      "source_provider": "polyhaven",
+      "license": "CC0-1.0",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.0216,
+        0.4502,
+        0.6275
+      ],
+      "measured_bbox_min_m": [
+        -0.5108,
+        -0.0,
+        -0.3137
+      ],
+      "measured_bbox_max_m": [
+        0.5108,
+        0.4502,
+        0.3137
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 6362,
+      "issues": [
+        {
+          "code": "MOUNT_DISAGREES_WITH_VOCAB",
+          "severity": "warn",
+          "message": "record mount 'floor' vs vocab 'surface'"
+        }
+      ],
+      "accepted": true
+    },
+    {
+      "asset_id": "gen_modern_bed",
+      "semantic_type": "bed",
+      "mount": "floor",
+      "record_dims_m": [
+        1.5134,
+        0.6779,
+        2.05
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.5134,
+        0.6779,
+        2.05
+      ],
+      "measured_bbox_min_m": [
+        -0.7567,
+        -0.0,
+        -1.025
+      ],
+      "measured_bbox_max_m": [
+        0.7567,
+        0.6779,
+        1.025
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 28824,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_living_room_sofa_blue_sofa_turquoise",
+      "semantic_type": "sofa",
+      "mount": "floor",
+      "record_dims_m": [
+        2.1,
+        0.7147,
+        0.8953
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.1,
+        0.7147,
+        0.8953
+      ],
+      "measured_bbox_min_m": [
+        -1.05,
+        -0.0,
+        -0.4477
+      ],
+      "measured_bbox_max_m": [
+        1.05,
+        0.7147,
+        0.4477
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30727,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_living_room_sofa_sofa_striped_turquoise",
+      "semantic_type": "sofa",
+      "mount": "floor",
+      "record_dims_m": [
+        2.0693,
+        0.9511,
+        2.1
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.0693,
+        0.9511,
+        2.1
+      ],
+      "measured_bbox_min_m": [
+        -1.0346,
+        0.0,
+        -1.05
+      ],
+      "measured_bbox_max_m": [
+        1.0346,
+        0.9511,
+        1.05
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30259,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_living_room_pillows_orange_pillow_throw",
+      "semantic_type": "pillows",
+      "mount": "surface",
+      "record_dims_m": [
+        0.45,
+        0.2548,
+        0.1275
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.45,
+        0.2548,
+        0.1275
+      ],
+      "measured_bbox_min_m": [
+        -0.225,
+        0.0,
+        -0.0638
+      ],
+      "measured_bbox_max_m": [
+        0.225,
+        0.2548,
+        0.0638
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30634,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_master_bedroom_vase_flowers_vase",
+      "semantic_type": "vase",
+      "mount": "surface",
+      "record_dims_m": [
+        0.1678,
+        0.4,
+        0.173
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.1678,
+        0.4,
+        0.173
+      ],
+      "measured_bbox_min_m": [
+        -0.0839,
+        -0.0,
+        -0.0865
+      ],
+      "measured_bbox_max_m": [
+        0.0839,
+        0.4,
+        0.0865
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 31129,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_bathroom_mirror_mirror_wall",
+      "semantic_type": "mirror",
+      "mount": "wall",
+      "record_dims_m": [
+        1.2,
+        0.399,
+        0.8185
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.2,
+        0.399,
+        0.8185
+      ],
+      "measured_bbox_min_m": [
+        -0.6,
+        -0.0,
+        -0.4093
+      ],
+      "measured_bbox_max_m": [
+        0.6,
+        0.399,
+        0.4093
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "wall",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 26040,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_second_bedroom_bed_bed",
+      "semantic_type": "bed",
+      "mount": "floor",
+      "record_dims_m": [
+        2.05,
+        0.6452,
+        1.7205
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.05,
+        0.6452,
+        1.7205
+      ],
+      "measured_bbox_min_m": [
+        -1.025,
+        -0.0,
+        -0.8603
+      ],
+      "measured_bbox_max_m": [
+        1.025,
+        0.6452,
+        0.8603
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 27895,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_master_bedroom_rug_rug",
+      "semantic_type": "rug",
+      "mount": "floor",
+      "record_dims_m": [
+        2.1114,
+        0.6926,
+        2.4
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.1114,
+        0.6926,
+        2.4
+      ],
+      "measured_bbox_min_m": [
+        -1.0557,
+        -0.0,
+        -1.2
+      ],
+      "measured_bbox_max_m": [
+        1.0557,
+        0.6926,
+        1.2
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30709,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_second_bedroom_rug_rug",
+      "semantic_type": "rug",
+      "mount": "floor",
+      "record_dims_m": [
+        2.3788,
+        0.0696,
+        2.4
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.3788,
+        0.0696,
+        2.4
+      ],
+      "measured_bbox_min_m": [
+        -1.1894,
+        0.0,
+        -1.2
+      ],
+      "measured_bbox_max_m": [
+        1.1894,
+        0.0696,
+        1.2
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 29777,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_living_room_sofa_0_7x0_5",
+      "semantic_type": "sofa",
+      "mount": "floor",
+      "record_dims_m": [
+        2.1,
+        0.7147,
+        0.8953
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.1,
+        0.7147,
+        0.8953
+      ],
+      "measured_bbox_min_m": [
+        -1.05,
+        -0.0,
+        -0.4477
+      ],
+      "measured_bbox_max_m": [
+        1.05,
+        0.7147,
+        0.4477
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30727,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_living_room_ottoman_0_3x0_7",
+      "semantic_type": "ottoman",
+      "mount": "floor",
+      "record_dims_m": [
+        0.8,
+        0.3329,
+        0.5175
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.8,
+        0.3329,
+        0.5175
+      ],
+      "measured_bbox_min_m": [
+        -0.4,
+        0.0,
+        -0.2587
+      ],
+      "measured_bbox_max_m": [
+        0.4,
+        0.3329,
+        0.2587
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 31167,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_living_room_side_table_0_3x0_4",
+      "semantic_type": "side_table",
+      "mount": "floor",
+      "record_dims_m": [
+        0.3608,
+        0.55,
+        0.3608
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.3608,
+        0.55,
+        0.3608
+      ],
+      "measured_bbox_min_m": [
+        -0.1804,
+        0.0,
+        -0.1804
+      ],
+      "measured_bbox_max_m": [
+        0.1804,
+        0.55,
+        0.1804
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 26616,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_living_room_pillows_0_2x0_3",
+      "semantic_type": "pillows",
+      "mount": "surface",
+      "record_dims_m": [
+        0.45,
+        0.2548,
+        0.1275
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.45,
+        0.2548,
+        0.1275
+      ],
+      "measured_bbox_min_m": [
+        -0.225,
+        0.0,
+        -0.0638
+      ],
+      "measured_bbox_max_m": [
+        0.225,
+        0.2548,
+        0.0638
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30634,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_master_bedroom_bed_0_5x0_5",
+      "semantic_type": "bed",
+      "mount": "floor",
+      "record_dims_m": [
+        1.7826,
+        0.8651,
+        2.05
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.7826,
+        0.8651,
+        2.05
+      ],
+      "measured_bbox_min_m": [
+        -0.8913,
+        -0.0,
+        -1.025
+      ],
+      "measured_bbox_max_m": [
+        0.8913,
+        0.8651,
+        1.025
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30151,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_second_bedroom_bed_0_3x0_7",
+      "semantic_type": "bed",
+      "mount": "floor",
+      "record_dims_m": [
+        2.05,
+        0.6452,
+        1.7205
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.05,
+        0.6452,
+        1.7205
+      ],
+      "measured_bbox_min_m": [
+        -1.025,
+        -0.0,
+        -0.8603
+      ],
+      "measured_bbox_max_m": [
+        1.025,
+        0.6452,
+        0.8603
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 27895,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_second_bedroom_rug_0_7x0_9",
+      "semantic_type": "rug",
+      "mount": "floor",
+      "record_dims_m": [
+        2.3788,
+        0.0696,
+        2.4
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.3788,
+        0.0696,
+        2.4
+      ],
+      "measured_bbox_min_m": [
+        -1.1894,
+        0.0,
+        -1.2
+      ],
+      "measured_bbox_max_m": [
+        1.1894,
+        0.0696,
+        1.2
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 29777,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_bathroom_mirror_0_3x0_3",
+      "semantic_type": "mirror",
+      "mount": "wall",
+      "record_dims_m": [
+        1.2,
+        0.399,
+        0.8185
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.2,
+        0.399,
+        0.8185
+      ],
+      "measured_bbox_min_m": [
+        -0.6,
+        -0.0,
+        -0.4093
+      ],
+      "measured_bbox_max_m": [
+        0.6,
+        0.399,
+        0.4093
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "wall",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 26040,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_bathroom_other_0_7x0_5",
+      "semantic_type": "other",
+      "mount": "wall",
+      "record_dims_m": [
+        0.5853,
+        0.6,
+        0.1818
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.5853,
+        0.6,
+        0.1818
+      ],
+      "measured_bbox_min_m": [
+        -0.2926,
+        0.0,
+        -0.0909
+      ],
+      "measured_bbox_max_m": [
+        0.2926,
+        0.6,
+        0.0909
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30550,
+      "issues": [
+        {
+          "code": "MOUNT_DISAGREES_WITH_VOCAB",
+          "severity": "warn",
+          "message": "record mount 'wall' vs vocab 'floor'"
+        }
+      ],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_kitchen_other_0_6x0_2",
+      "semantic_type": "other",
+      "mount": "wall",
+      "record_dims_m": [
+        0.6,
+        0.4325,
+        0.0372
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.6,
+        0.4325,
+        0.0372
+      ],
+      "measured_bbox_min_m": [
+        -0.3,
+        0.0,
+        -0.0186
+      ],
+      "measured_bbox_max_m": [
+        0.3,
+        0.4325,
+        0.0186
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 28052,
+      "issues": [
+        {
+          "code": "MOUNT_DISAGREES_WITH_VOCAB",
+          "severity": "warn",
+          "message": "record mount 'wall' vs vocab 'floor'"
+        }
+      ],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_bathroom_vanity_0_4x0_8",
+      "semantic_type": "vanity",
+      "mount": "floor",
+      "record_dims_m": [
+        1.0,
+        0.2822,
+        0.5243
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.0,
+        0.2822,
+        0.5243
+      ],
+      "measured_bbox_min_m": [
+        -0.5,
+        0.0,
+        -0.2622
+      ],
+      "measured_bbox_max_m": [
+        0.5,
+        0.2822,
+        0.2622
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 27207,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_kitchen_bar_stool_0_6x0_8",
+      "semantic_type": "bar_stool",
+      "mount": "floor",
+      "record_dims_m": [
+        0.4688,
+        0.75,
+        0.4981
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.4688,
+        0.75,
+        0.4981
+      ],
+      "measured_bbox_min_m": [
+        -0.2344,
+        0.0,
+        -0.2491
+      ],
+      "measured_bbox_max_m": [
+        0.2344,
+        0.75,
+        0.2491
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30105,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_kitchen_bar_stool_0_9x0_8",
+      "semantic_type": "bar_stool",
+      "mount": "floor",
+      "record_dims_m": [
+        0.7079,
+        0.75,
+        0.4786
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.7079,
+        0.75,
+        0.4786
+      ],
+      "measured_bbox_min_m": [
+        -0.3539,
+        0.0,
+        -0.2393
+      ],
+      "measured_bbox_max_m": [
+        0.3539,
+        0.75,
+        0.2393
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30744,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_master_bedroom_pillows_0_2x0_3",
+      "semantic_type": "pillows",
+      "mount": "surface",
+      "record_dims_m": [
+        0.4427,
+        0.2518,
+        0.45
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.4427,
+        0.2518,
+        0.45
+      ],
+      "measured_bbox_min_m": [
+        -0.2213,
+        -0.0,
+        -0.225
+      ],
+      "measured_bbox_max_m": [
+        0.2213,
+        0.2518,
+        0.225
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "surface",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30119,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_3cb09794_kitchen_bar_stool_0_5x0_8",
+      "semantic_type": "bar_stool",
+      "mount": "floor",
+      "record_dims_m": [
+        0.451,
+        0.75,
+        0.3813
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.451,
+        0.75,
+        0.3813
+      ],
+      "measured_bbox_min_m": [
+        -0.2255,
+        0.0,
+        -0.1906
+      ],
+      "measured_bbox_max_m": [
+        0.2255,
+        0.75,
+        0.1906
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30412,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_b681f48c_living_room_coffee_table_0_3x0_7",
+      "semantic_type": "coffee_table",
+      "mount": "floor",
+      "record_dims_m": [
+        1.1,
+        0.3923,
+        0.4655
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.1,
+        0.3923,
+        0.4655
+      ],
+      "measured_bbox_min_m": [
+        -0.55,
+        -0.0,
+        -0.2328
+      ],
+      "measured_bbox_max_m": [
+        0.55,
+        0.3923,
+        0.2328
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 27349,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_b681f48c_living_room_tv_unit_0_8x0_3",
+      "semantic_type": "tv_unit",
+      "mount": "surface",
+      "record_dims_m": [
+        1.8,
+        1.448,
+        0.4431
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.8,
+        1.448,
+        0.4431
+      ],
+      "measured_bbox_min_m": [
+        -0.9,
+        -0.0,
+        -0.2215
+      ],
+      "measured_bbox_max_m": [
+        0.9,
+        1.448,
+        0.2215
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 21775,
+      "issues": [
+        {
+          "code": "MOUNT_DISAGREES_WITH_VOCAB",
+          "severity": "warn",
+          "message": "record mount 'surface' vs vocab 'floor'"
+        }
+      ],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_b681f48c_living_room_sofa_0_2x0_5",
+      "semantic_type": "sofa",
+      "mount": "floor",
+      "record_dims_m": [
+        2.1,
+        0.6541,
+        1.2563
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        2.1,
+        0.6541,
+        1.2563
+      ],
+      "measured_bbox_min_m": [
+        -1.05,
+        0.0,
+        -0.6281
+      ],
+      "measured_bbox_max_m": [
+        1.05,
+        0.6541,
+        0.6281
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 28723,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_b681f48c_living_room_tv_unit_0_7x0_5",
+      "semantic_type": "tv_unit",
+      "mount": "floor",
+      "record_dims_m": [
+        1.8,
+        0.5636,
+        1.1121
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        1.8,
+        0.5636,
+        1.1121
+      ],
+      "measured_bbox_min_m": [
+        -0.9,
+        0.0,
+        -0.5561
+      ],
+      "measured_bbox_max_m": [
+        0.9,
+        0.5636,
+        0.5561
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "floor",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 26775,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_b681f48c_living_room_wall_art_0_0x0_2",
+      "semantic_type": "wall_art",
+      "mount": "wall",
+      "record_dims_m": [
+        0.6151,
+        0.9,
+        0.149
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.6151,
+        0.9,
+        0.149
+      ],
+      "measured_bbox_min_m": [
+        -0.3075,
+        0.0,
+        -0.0745
+      ],
+      "measured_bbox_max_m": [
+        0.3075,
+        0.9,
+        0.0745
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "wall",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 29774,
+      "issues": [],
+      "accepted": true
+    },
+    {
+      "asset_id": "el_b681f48c_living_room_wall_art_0_1x0_2",
+      "semantic_type": "wall_art",
+      "mount": "wall",
+      "record_dims_m": [
+        0.6159,
+        0.9,
+        0.5749
+      ],
+      "normalization_strategy": "expected_dimensions",
+      "source_provider": "meshy",
+      "license": "meshy-commercial",
+      "registry_valid": true,
+      "existing_issues": [],
+      "measured_size_m": [
+        0.6159,
+        0.9,
+        0.5749
+      ],
+      "measured_bbox_min_m": [
+        -0.308,
+        -0.0,
+        -0.2875
+      ],
+      "measured_bbox_max_m": [
+        0.308,
+        0.9,
+        0.2875
+      ],
+      "dims_error_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_error_m": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "vocab_placement": "wall",
+      "forward_axis": "UNVERIFIED: -Z assumed by normalisation; not checkable from geometry",
+      "triangles": 30224,
+      "issues": [],
+      "accepted": true
+    }
+  ]
+}

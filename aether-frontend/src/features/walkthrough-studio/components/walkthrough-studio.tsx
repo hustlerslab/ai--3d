@@ -31,19 +31,21 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { StatusPill } from "@/components/shared/status-pill";
 import { DESIGNERS } from "@/lib/mock/designers";
 
 import * as api from "@/features/studio/api/projects-api";
 import { AnalysisReview } from "@/features/studio/components/analysis-review";
+import { ElementImagesReview } from "@/features/studio/components/element-images-review";
 import { ElementReview } from "@/features/studio/components/element-review";
-import type { CreditsDto, SceneReadingDto } from "@/features/studio/types";
+import { SpatialCheckPanel } from "@/features/studio/components/spatial-check";
+import type { BuildDto, CreditsDto, SceneReadingDto, SceneSpecDto } from "@/features/studio/types";
 import { JobProgress } from "@/features/studio/components/job-progress";
 import { ProjectHistory } from "@/features/studio/components/project-history";
 import { useJob } from "@/features/studio/hooks/use-job";
-import { ProjectsApiError, type AnalysisDto, type AnalysisPatch, type ProjectDetail, type ProjectRecord, type RoomHint, type Vertical } from "@/features/studio/types";
+import { ProjectsApiError, type AnalysisDto, type AnalysisPatch, type ElementImageSetDto, type ProjectDetail, type ProjectRecord, type RoomHint, type Vertical } from "@/features/studio/types";
 import {
   coerceRoomType,
   defaultRoomType,
@@ -74,6 +76,8 @@ interface StepDef {
 const STEPS: StepDef[] = [
   { id: "project", title: "Create Project", badge: null },
   { id: "describe", title: "Upload & Describe", badge: null },
+  // Element-first, inside one step: the pieces are decided and pictured
+  // BEFORE any room is painted, then the room is painted from that decision.
   { id: "moodboard", title: "Generate Moodboard", badge: "free" },
   { id: "refine", title: "Review & Refine", badge: null },
   // Confirming what gets built and seeing it in 3D are two different jobs, and
@@ -203,6 +207,9 @@ export function WalkthroughStudio() {
   // Step 3/4 — analysis + scene plan
   const analyzeJob = useJob();
   const [analysis, setAnalysis] = useState<AnalysisDto | null>(null);
+  const elementImagesJob = useJob();
+  const [elementImages, setElementImages] = useState<ElementImageSetDto | null>(null);
+  const [savingElementDecisions, setSavingElementDecisions] = useState(false);
   const [savingAnalysis, setSavingAnalysis] = useState(false);
   // Redrawing one room: a different seed, same brief and style (ADR-002 §1).
   const repaintJob = useJob();
@@ -218,6 +225,8 @@ export function WalkthroughStudio() {
   const elementsJob = useJob();
   const [credits, setCredits] = useState<CreditsDto | null>(null);
   const [sceneId, setSceneId] = useState<string | null>(null);
+  const [sceneSpec, setSceneSpec] = useState<SceneSpecDto | null>(null);
+  const [buildReport, setBuildReport] = useState<BuildDto["report"]>(null);
 
   // Step 5/6 — render lane
   const buildJob = useJob();
@@ -248,13 +257,42 @@ export function WalkthroughStudio() {
   const next = useCallback(() => goTo(Math.min(stepIndex + 1, STEPS.length - 1)), [goTo, stepIndex]);
   const back = useCallback(() => setStepIndex((i) => Math.max(0, i - 1)), []);
 
-  /** Has the client actually confirmed anything to build?
-   *
-   *  This is what opens the Plan step. Approval is the whole gate — a piece
-   *  nobody ticked is not built (ADR-003 §5) — so moving on before any
-   *  decision exists would land on an empty room and read as a broken step. */
-  const confirmedAnything = (sceneReading?.summary.approved ?? 0) > 0;
+  /** Step 4 asks only about the pieces the painted room ADDED: rows the
+   *  element pictures did not cover, so nobody has decided on them yet.
+   *  Pieces approved or skipped on the element screen carry their decision
+   *  onto the reading (backend `_carry_element_decisions`) and are not asked
+   *  about twice. Null when there is nothing left to decide. */
+  /** Step 4 runs four jobs back to back; any one of them in flight means the
+   *  space is still being made, and the button must not start a second run. */
+  const planningSpace = planJob.running || elementsJob.running || buildJob.running;
+  /** The server's count of pieces that would be generated, never one of ours. */
+  const toGenerate = sceneReading?.summary.to_generate ?? 0;
 
+  const undecidedExtras = useMemo(() => {
+    if (!sceneReading) return null;
+    const extras = sceneReading.reading.elements.filter((e) => e.approved === null || e.approved === undefined);
+    return extras.length ? { ...sceneReading, reading: { ...sceneReading.reading, elements: extras } } : null;
+  }, [sceneReading]);
+
+  /** Everything the backend derives for ONE project. Called on every path
+   *  that changes the project — open, create, start over — so no step can
+   *  show a previous project's furniture. Stated here once rather than as a
+   *  list each caller has to keep complete. */
+  const clearDerived = useCallback(() => {
+    setAnalysis(null);
+    setElementImages(null);
+    setSceneReading(null);
+    setSceneSpec(null);
+    setSceneId(null);
+    setBuildPreviewUrl(null);
+    setBuildReport(null);
+    setTour(null);
+    setAnalysisEditedSincePlan(false);
+    // A finished job belongs to the project it ran for. Left in place it would
+    // both block the next project's auto-run and show as that project's progress.
+    for (const j of [analyzeJob, elementImagesJob, repaintJob, planJob, elementsJob, buildJob, previewJob, finalJob, filmJob]) j.reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset callbacks are stable
+  }, []);
 
   /* ── Resume a project after a reload ──────────────────────────────── */
 
@@ -275,19 +313,24 @@ export function WalkthroughStudio() {
   const openProject = useCallback(
     async (projectId: string) => {
       const d = await refreshDetail(projectId);
+      clearDerived();
       setProjectName(d.project.name);
       setVision(d.project.description);
       setVertical(d.project.vertical);
       setUploadedCount(d.inputs.filter((i) => i.kind === "reference").length);
       setSceneId(d.project.scene_ids.length ? d.project.scene_ids[d.project.scene_ids.length - 1] : null);
+      setSceneSpec(d.checkpoints.scene_spec ? await api.getSceneSpec(projectId).catch(() => null) : null);
       setAnalysis(d.checkpoints.analysis ? await api.getAnalysis(projectId).catch(() => null) : null);
 
       let previewUrl: string | null = null;
+      let report: BuildDto["report"] = null;
       if (d.checkpoints.scene_blend) {
         const b = await api.getBuild(projectId).catch(() => null);
         previewUrl = b?.files.preview ?? null;
+        report = b?.report ?? null;
       }
       setBuildPreviewUrl(previewUrl);
+      setBuildReport(report);
 
       let pkg: TourPackage | null = null;
       if (d.checkpoints.preview || d.checkpoints.outputs) pkg = await getTour(projectId).catch(() => null);
@@ -299,6 +342,8 @@ export function WalkthroughStudio() {
       setSceneReading(
         d.checkpoints.scene_reading ? await api.getSceneReading(projectId).catch(() => null) : null,
       );
+      // 404 until the pieces have been pictured; that is the "not yet" answer.
+      setElementImages(await api.getElementImages(projectId).catch(() => null));
 
       try {
         window.sessionStorage.setItem(STORAGE_KEY, projectId);
@@ -307,7 +352,7 @@ export function WalkthroughStudio() {
       }
       goToStep(stepForStage(d.project.stage, Boolean(pkg)));
     },
-    [refreshDetail, goToStep],
+    [refreshDetail, goToStep, clearDerived],
   );
 
   /** Open a project chosen from the history, surfacing a failure rather than
@@ -364,14 +409,11 @@ export function WalkthroughStudio() {
     setPhotos([]);
     setUploadedCount(0);
     setUploadProgress(0);
-    setAnalysis(null);
-    setSceneId(null);
-    setBuildPreviewUrl(null);
-    setTour(null);
+    clearDerived();
     setEngineError(null);
     setMaxReached(0);
     setStepIndex(0);
-  }, []);
+  }, [clearDerived]);
 
   useEffect(() => {
     let stored: string | null = null;
@@ -421,6 +463,8 @@ export function WalkthroughStudio() {
       const preset = SPACE_PRESETS[spaceType];
       const body = { name: projectName.trim(), description: preset?.hint ?? "", vertical };
       const p = project ? await api.updateProject(project.project_id, body) : await api.createProject(body);
+      // A brand-new project starts from nothing, whatever was on screen before.
+      if (!project) clearDerived();
       setProject(p);
       remember(p);
       setRoomRows((preset?.rooms ?? []).map((r) => ({ ...r, type: coerceRoomType(vertical, r.type) })));
@@ -430,7 +474,7 @@ export function WalkthroughStudio() {
     } finally {
       setCreating(false);
     }
-  }, [projectName, spaceType, vertical, project, verticalLocked, next]);
+  }, [projectName, spaceType, vertical, project, verticalLocked, next, clearDerived]);
 
   /* ── Step 2: photos + vision ────────────────────────────────────────── */
 
@@ -503,11 +547,51 @@ export function WalkthroughStudio() {
     [project, analyzeJob, refreshDetail],
   );
 
+  /** The moodboard step has two phases. Phase A: the pieces, pictured one by
+   *  one, each approved or skipped. Phase B, reached only by approving them:
+   *  the room painted from that decision. A painted room is the evidence
+   *  that phase A happened, so it is also what a reload resumes on. */
+  const roomPainted = Boolean(analysis?.moodboard?.scene_url);
+
+  /* ── Element-first: picture the pieces before painting any room ──────── */
+  const runElements = useCallback(
+    async (force = false) => {
+      if (!project) return;
+      // Analysis, crops and style only - no room is painted here. The
+      // checkpoints make the moodboard step's later run of the same job cheap.
+      const read = await analyzeJob.run(() => api.analyze(project.project_id, force, false));
+      if (read?.status !== "SUCCEEDED") return;
+      const job = await elementImagesJob.run(() => api.elementImages(project.project_id, force));
+      if (job?.status === "SUCCEEDED") {
+        setElementImages(await api.getElementImages(project.project_id).catch(() => null));
+        await refreshDetail(project.project_id);
+      }
+    },
+    [project, analyzeJob, elementImagesJob, refreshDetail],
+  );
+
   useEffect(() => {
-    if (step.id === "moodboard" && project && !analysis && !analyzeJob.running && !analyzeJob.job) {
-      void runAnalyze(false);
+    if (step.id === "moodboard" && project && !roomPainted && !elementImages
+        && !elementImagesJob.running && !elementImagesJob.job && !analyzeJob.running) {
+      void runElements(false);
     }
-  }, [step.id, project, analysis, analyzeJob.running, analyzeJob.job, runAnalyze]);
+  }, [step.id, project, roomPainted, elementImages, elementImagesJob.running,
+      elementImagesJob.job, analyzeJob.running, runElements]);
+
+  /** The client's Build/Skip per pictured piece. Saved on the backend, which
+   *  echoes the set back; what is shown afterwards is what was stored. */
+  const saveElementDecisions = useCallback(
+    async (decisions: Record<string, boolean>) => {
+      if (!project) return;
+      setSavingElementDecisions(true);
+      try {
+        setElementImages(await api.reviewElementImages(project.project_id, decisions));
+      } finally {
+        setSavingElementDecisions(false);
+      }
+    },
+    [project],
+  );
 
   const repaintRoom = useCallback(
     async (roomId: string) => {
@@ -543,26 +627,85 @@ export function WalkthroughStudio() {
 
   /* ── Step 4: scene plan ─────────────────────────────────────────────── */
 
-  const runPlan = useCallback(async () => {
+  /** Never throws into the page: an unreachable vendor shows as "unavailable"
+   *  beside the button rather than stopping someone planning a room. */
+  const refreshCredits = useCallback(async () => {
+    setCredits(await api.getCredits().catch(() => null));
+  }, []);
+
+  useEffect(() => {
+    void refreshCredits();
+  }, [refreshCredits]);
+
+  /** Step 4's one action: plan the space, build the approved pieces in 3D,
+   *  and assemble the result in Blender.
+   *
+   *  Four jobs the backend already has, run in order, because "plan the
+   *  space" should produce the space - not a layout of catalog stand-ins the
+   *  client then has to ask for a second time on two more screens. Each job
+   *  is idempotent and checkpointed, so pressing it again resumes rather than
+   *  repeats, and a failure part-way keeps everything earned so far.
+   *
+   *  The spend is authorised before this runs, not by this: only pieces
+   *  someone ticked are generated (ADR-003 §5), and the button states the
+   *  cost using the server's own quote.
+   *
+   *  It chains in the browser, the way the confirm-and-plan step it replaces
+   *  did. A closed tab stops the chain between jobs - the jobs themselves
+   *  keep running on the backend and are picked up again by id. */
+  const runPlanSpace = useCallback(async () => {
     if (!project) return;
+    setBuildPreviewUrl(null);
+    setBuildReport(null);
+    setTour(null);
+
+    // 1 — the layout: rooms, coordinates and orientation from the moodboard.
     const force = analysisEditedSincePlan && Boolean(sceneId);
-    const job = await planJob.run(() => api.scenePlan(project.project_id, force));
-    if (job?.status === "SUCCEEDED") {
-      const spec = await api.getSceneSpec(project.project_id);
-      setSceneId(spec.scene.scene_id);
-      setAnalysisEditedSincePlan(false);
-      setBuildPreviewUrl(null);
-      setTour(null);
-      // Read-back is optional in the pipeline, so a project whose provider
-      // cannot do it simply has nothing to review rather than an error.
-      try {
-        setSceneReading(await api.getSceneReading(project.project_id));
-      } catch {
-        setSceneReading(null);
+    const planned = await planJob.run(() => api.scenePlan(project.project_id, force));
+    if (planned?.status !== "SUCCEEDED") return;
+    setAnalysisEditedSincePlan(false);
+    // Read-back is optional in the pipeline, so a project whose provider
+    // cannot do it simply has nothing to review rather than an error.
+    let reading = await api.getSceneReading(project.project_id).catch(() => null);
+    setSceneReading(reading);
+
+    // 2 — Meshy: one mesh per approved piece, shared by all its instances.
+    if ((reading?.summary.to_generate ?? 0) > 0) {
+      const generated = await elementsJob.run(() => api.generateElements(project.project_id));
+      await refreshCredits();
+      if (generated?.status === "SUCCEEDED") {
+        // 3 — re-plan, because the layout was solved BEFORE those meshes
+        //     existed and still points at catalog stand-ins. Without this the
+        //     pieces are generated, paid for, and never appear.
+        const replanned = await planJob.run(() => api.scenePlan(project.project_id, true));
+        if (replanned?.status !== "SUCCEEDED") return;
+        reading = await api.getSceneReading(project.project_id).catch(() => null);
+        setSceneReading(reading);
       }
+      // A failed generation is not a reason to have no space: the layout still
+      // stands with catalog pieces, and the job's own panel says what broke.
+    }
+
+    const spec = await api.getSceneSpec(project.project_id).catch(() => null);
+    if (spec) {
+      setSceneId(spec.scene.scene_id);
+      setSceneSpec(spec);
+      // Show the space as soon as it exists; Blender assembles below it.
+      goToStep("planspace");
+    }
+    await refreshDetail(project.project_id);
+
+    // 4 — Blender: walls, materials and every placed piece, at the positions
+    //     and rotations the solver settled, rendered to a still.
+    const assembled = await buildJob.run(() => api.build(project.project_id, { preview: true, force: true }));
+    if (assembled?.status === "SUCCEEDED") {
+      const b = await api.getBuild(project.project_id).catch(() => null);
+      setBuildPreviewUrl(b?.files.preview ?? null);
+      setBuildReport(b?.report ?? null);
       await refreshDetail(project.project_id);
     }
-  }, [project, planJob, analysisEditedSincePlan, sceneId, refreshDetail]);
+  }, [project, planJob, elementsJob, buildJob, analysisEditedSincePlan, sceneId,
+      refreshCredits, refreshDetail, goToStep]);
 
   const saveElementReview = useCallback(
     async (decisions: Record<string, boolean>) => {
@@ -577,16 +720,6 @@ export function WalkthroughStudio() {
     [project],
   );
 
-  /** Never throws into the page: an unreachable vendor shows as "unavailable"
-   *  beside the button rather than stopping someone planning a room. */
-  const refreshCredits = useCallback(async () => {
-    setCredits(await api.getCredits().catch(() => null));
-  }, []);
-
-  useEffect(() => {
-    void refreshCredits();
-  }, [refreshCredits]);
-
   /** The paid step. Re-reads both the reading and the balance afterwards, so
    *  the cost shown is what the server says was spent rather than what the
    *  client assumed. */
@@ -599,43 +732,22 @@ export function WalkthroughStudio() {
     }
     await refreshCredits();
   }, [project, elementsJob, refreshCredits, refreshDetail]);
-  /** Leaving step 4 IS the commitment: build what was confirmed, then show it.
-   *
-   *  The generation is awaited rather than fired off, so the Plan step is
-   *  never entered with meshes still arriving — that was how a room full of
-   *  loading placeholders got mistaken for a finished one. Advancing anyway on
-   *  failure is deliberate: the plan still stands with catalog pieces, and the
-   *  job's own error panel says what went wrong. */
-  const confirmAndPlan = useCallback(async () => {
-    if (!project) return;
-    if ((sceneReading?.summary.to_generate ?? 0) > 0) {
-      await runGenerateElements();
-    }
-    // Re-plan, because the scene was laid out BEFORE those meshes existed and
-    // therefore still points at catalog stand-ins. Without this the pieces are
-    // generated, paid for, and never appear: a fresh project spent 180 credits
-    // on six meshes and the 3D plan showed none of them.
-    //
-    // Forced, and safe to force: `force` rebuilds the plan only — re-reading
-    // the moodboard is `force_read`, kept separate precisely because it would
-    // discard the approvals just given.
-    const planned = await planJob.run(() => api.scenePlan(project.project_id, true));
-    if (planned?.status === "SUCCEEDED") {
-      const spec = await api.getSceneSpec(project.project_id).catch(() => null);
-      if (spec) setSceneId(spec.scene.scene_id);
-      await refreshDetail(project.project_id);
-    }
-    next();
-  }, [project, sceneReading, runGenerateElements, planJob, refreshDetail, next]);
 
   /* ── Step 5: build + preview panoramas ──────────────────────────────── */
 
   const runRender = useCallback(async () => {
     if (!project) return;
+    // Drop the previous render BEFORE starting a new one. Left in place, a failed
+    // build showed the last successful preview and tour beside a red failure
+    // panel, which reads as "it worked" to everyone who does not study the panel.
+    setBuildPreviewUrl(null);
+    setBuildReport(null);
+    setTour(null);
     const built = await buildJob.run(() => api.build(project.project_id, { preview: true, force: true }));
     if (built?.status !== "SUCCEEDED") return;
     const b = await api.getBuild(project.project_id).catch(() => null);
     if (b?.files.preview) setBuildPreviewUrl(b.files.preview);
+    setBuildReport(b?.report ?? null);
     const pv = await previewJob.run(() => api.preview(project.project_id, { force: true }));
     if (pv?.status === "SUCCEEDED") {
       setTour(await getTour(project.project_id));
@@ -861,10 +973,23 @@ export function WalkthroughStudio() {
         ) : null}
 
         {step.id === "moodboard" ? (
-          <StepShell title="Your moodboard" subtitle="Allure reads your photos and vision and composes a direction — rooms, palette, materials and light. This step is free; regenerate as often as you like.">
-            {analyzeJob.running || (!analysis && analyzeJob.job) ? (
-              <JobProgress title="Reading your photos and composing a direction" job={analyzeJob.job} events={analyzeJob.events} error={analyzeJob.error} onRetry={() => void runAnalyze(true)} />
-            ) : analysis ? (
+          <StepShell
+            title={roomPainted ? "Your moodboard" : "The pieces your room will hold"}
+            subtitle={roomPainted
+              ? "The room Allure painted from the pieces you approved — rooms, palette, materials and light. This step is free; regenerate as often as you like."
+              : "Before any room is painted, Allure decides what goes in it from your photos and your brief, and pictures each piece on its own. Approve the pieces, and the room is painted from them. This step is free."}
+          >
+            {analyzeJob.running || elementImagesJob.running
+              || (!elementImages && !roomPainted && (analyzeJob.job || elementImagesJob.job)) ? (
+              <JobProgress
+                title={elementImagesJob.running ? "Picturing each piece"
+                  : elementImages ? "Painting the room from your pieces" : "Reading your photos and brief"}
+                job={elementImagesJob.running ? elementImagesJob.job : (analyzeJob.job ?? elementImagesJob.job)}
+                events={elementImagesJob.running ? elementImagesJob.events : (analyzeJob.job ? analyzeJob.events : elementImagesJob.events)}
+                error={analyzeJob.error ?? elementImagesJob.error}
+                onRetry={() => void (elementImages ? runAnalyze(true) : runElements(true))}
+              />
+            ) : roomPainted && analysis ? (
               <>
                 <AnalysisReview
                   data={analysis}
@@ -875,40 +1000,62 @@ export function WalkthroughStudio() {
                   <RefreshCw className="size-3.5" /> Regenerate
                 </button>
               </>
-            ) : (
-              <div className="flex flex-col items-center gap-4 py-10">
-                <Sparkles className="size-6 text-gold" />
-                <button type="button" onClick={() => void runAnalyze(false)} className="flex items-center gap-2 rounded-md bg-gold px-4 py-2 body-sm font-medium text-ink hover:opacity-90">
-                  <Sparkles className="size-4" /> Generate moodboard
+            ) : elementImages ? (
+              <>
+                <ElementImagesReview
+                  data={elementImages}
+                  onSave={saveElementDecisions}
+                  onContinue={() => runAnalyze(false)}
+                  saving={savingElementDecisions}
+                  continuing={analyzeJob.running}
+                />
+                {analyzeJob.error ? (
+                  <JobProgress title="Painting the room" job={analyzeJob.job} events={analyzeJob.events} error={analyzeJob.error} onRetry={() => void runAnalyze(true)} compact />
+                ) : null}
+                <button type="button" onClick={() => void runElements(true)} className="flex w-fit items-center gap-1.5 rounded-md border px-3 py-1.5 body-sm text-ink-muted hover:bg-muted">
+                  <RefreshCw className="size-3.5" /> Picture the pieces again
                 </button>
-              </div>
-            )}
-            <NavRow onBack={back} onNext={next} nextDisabled={!analysis || analyzeJob.running} nextLabel="Looks right — review it" />
+              </>
+            ) : null}
+            <NavRow onBack={back} onNext={next} nextDisabled={!roomPainted || analyzeJob.running} nextLabel="Looks right — review it" />
           </StepShell>
         ) : null}
 
         {step.id === "refine" ? (
-          <StepShell title="Review and refine" subtitle="Correct room sizes, add must-haves, then plan the space: the layout and furniture appear in 3D within seconds, and you can edit any of it before rendering.">
+          <StepShell title="Review and refine" subtitle="The moodboard is settled. Correct the room sizes if they are off, then plan the space: every approved piece is built in 3D, placed at the position and angle it was pictured, and assembled in Blender.">
             {analysis ? (
               <AnalysisReview
                 data={analysis}
                 onSave={saveAnalysis}
                 saving={savingAnalysis}
-                onRepaintRoom={repaintRoom}
-                repaintingRoom={repaintingRoom}
+                roomsOnly
               />
             ) : null}
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => void runPlan()}
-                  disabled={!analysis || planJob.running || savingAnalysis}
+                  onClick={() => void runPlanSpace()}
+                  disabled={!analysis || planningSpace || savingAnalysis}
                   className="flex items-center gap-2 rounded-md bg-gold px-4 py-2 body-sm font-medium text-ink hover:opacity-90 disabled:opacity-40"
                 >
-                  {planJob.running ? <Loader2 className="size-4 animate-spin" /> : <Box className="size-4" />}
-                  {sceneId ? (analysisEditedSincePlan ? "Re-plan the space" : "Plan again") : "Plan the space"}
+                  {planningSpace ? <Loader2 className="size-4 animate-spin" /> : <Box className="size-4" />}
+                  {planJob.running
+                    ? "Planning the layout…"
+                    : elementsJob.running
+                      ? "Building the pieces in 3D…"
+                      : buildJob.running
+                        ? "Assembling in Blender…"
+                        : sceneId ? "Plan the space again" : "Plan the space"}
                 </button>
+                {/* The server's own quote, never a number counted here. What
+                    it costs is said before it is spent, on the button that
+                    spends it. */}
+                {!planningSpace && toGenerate > 0 ? (
+                  <span className="caption text-ink-muted tabular">
+                    Builds {toGenerate} piece{toGenerate === 1 ? "" : "s"} · {sceneReading!.summary.credits_needed} credits
+                  </span>
+                ) : null}
                 {sceneId && analysisEditedSincePlan ? <span className="caption text-ink-muted">Your corrections haven&apos;t been applied to the 3D plan yet.</span> : null}
                 {/* Planning is free; building the confirmed pieces is not.
                     The balance sits on this step because this is where the
@@ -923,30 +1070,39 @@ export function WalkthroughStudio() {
                 ) : null}
               </div>
               {planJob.job || planJob.error ? (
-                <JobProgress title="Planning rooms, furniture and materials" job={planJob.job} events={planJob.events} error={planJob.error} onRetry={() => void runPlan()} compact={Boolean(sceneId) && !planJob.running} />
+                <JobProgress title="Planning rooms, furniture and materials" job={planJob.job} events={planJob.events} error={planJob.error} onRetry={() => void runPlanSpace()} compact={Boolean(sceneId) && !planJob.running} />
               ) : null}
-              {sceneReading && !planJob.running ? (
-                <ElementReview
-                  data={sceneReading}
-                  onSave={saveElementReview}
-                  saving={savingReview}
-                  credits={credits}
-                  onGenerate={runGenerateElements}
-                  generating={elementsJob.running}
-                />
+              {elementsJob.job || elementsJob.error ? (
+                <JobProgress title="Building the approved pieces in 3D" job={elementsJob.job} events={elementsJob.events} error={elementsJob.error} onRetry={() => void runGenerateElements()} compact={!elementsJob.running} />
+              ) : null}
+              {buildJob.job || buildJob.error ? (
+                <JobProgress title="Assembling the space in Blender" job={buildJob.job} events={buildJob.events} error={buildJob.error} onRetry={() => void runPlanSpace()} compact={!buildJob.running} />
+              ) : null}
+              {undecidedExtras && !planJob.running ? (
+                <div className="flex flex-col gap-2">
+                  <p className="body-sm text-ink-soft">
+                    The painted room added {undecidedExtras.reading.elements.length} piece
+                    {undecidedExtras.reading.elements.length === 1 ? "" : "s"} you have not decided on. The pieces you
+                    approved earlier stay approved; only these are asked here.
+                  </p>
+                  <ElementReview
+                    data={undecidedExtras}
+                    onSave={saveElementReview}
+                    saving={savingReview}
+                    credits={credits}
+                    onGenerate={runGenerateElements}
+                    generating={elementsJob.running}
+                  />
+                </div>
               ) : null}
             </div>
+            {/* The button above does the work; this only walks to the space
+                it produced, and only once there is one to walk to. */}
             <NavRow
               onBack={back}
-              onNext={confirmAndPlan}
-              nextDisabled={!confirmedAnything || planJob.running || elementsJob.running}
-              nextLabel={
-                elementsJob.running
-                  ? "Building…"
-                  : confirmedAnything
-                    ? `Build ${sceneReading?.summary.to_generate ?? 0} and plan the space`
-                    : "Confirm at least one piece first"
-              }
+              onNext={next}
+              nextDisabled={!sceneId || planningSpace}
+              nextLabel={sceneId ? "See the 3D space" : "Plan the space first"}
             />
           </StepShell>
         ) : null}
@@ -954,12 +1110,12 @@ export function WalkthroughStudio() {
         {step.id === "planspace" ? (
           <StepShell
             title="Plan your 3D space"
-            subtitle="The pieces you confirmed are built as 3D models and placed in the rooms. Free — nothing is rendered yet, so move things about until the layout is right."
+            subtitle="Every approved piece, built in 3D and placed where it was pictured. Walk around it below; the Blender assembly appears underneath when it is done."
           >
             <div className="flex flex-col gap-3">
               {elementsJob.job || elementsJob.error ? (
                 <JobProgress
-                  title="Building the confirmed pieces in 3D"
+                  title="Building the approved pieces in 3D"
                   job={elementsJob.job}
                   events={elementsJob.events}
                   error={elementsJob.error}
@@ -968,15 +1124,46 @@ export function WalkthroughStudio() {
                 />
               ) : null}
               {sceneId && !planJob.running && !elementsJob.running ? (
-                <Walkthrough3DView key={sceneId} sceneId={sceneId} />
+                <>
+                  {sceneSpec ? <SpatialCheckPanel spec={sceneSpec} /> : null}
+                  <Walkthrough3DView key={sceneId} sceneId={sceneId} />
+                </>
               ) : null}
-              {!sceneId && !planJob.running && !elementsJob.running ? (
+              {/* Blender's own assembly of the same scene: the walls and their
+                  finishes, and every piece at the position and angle the
+                  solver settled. It runs as part of planning, so its progress
+                  and its result belong on the step that shows the space. */}
+              {buildJob.job || buildJob.error ? (
+                <JobProgress
+                  title="Assembling the space in Blender"
+                  job={buildJob.job}
+                  events={buildJob.events}
+                  error={buildJob.error}
+                  onRetry={() => void runRender()}
+                  compact={!buildJob.running}
+                />
+              ) : null}
+              {buildPreviewUrl && !buildJob.running ? (
+                <figure className="flex flex-col gap-1">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={api.fileUrl(buildPreviewUrl)} alt="The space assembled in Blender"
+                       className="w-full rounded-md border" />
+                  <figcaption className="caption text-ink-muted">
+                    Assembled in Blender from the plan
+                    {buildReport ? (buildReport.ok
+                      ? " · validation ok"
+                      : ` · ${buildReport.errors.length} validation error(s)`) : ""}
+                    {buildReport?.warnings.length ? ` · ${buildReport.warnings.length} warning(s)` : ""}
+                  </figcaption>
+                </figure>
+              ) : null}
+              {!sceneId && !planningSpace ? (
                 <div className="rounded-md border border-dashed px-4 py-6 text-center body-sm text-ink-muted">
-                  No 3D plan yet. Go back a step and confirm the pieces you want built.
+                  No 3D plan yet. Go back a step and press Plan the space.
                 </div>
               ) : null}
             </div>
-            <NavRow onBack={back} onNext={next} nextDisabled={!sceneId || elementsJob.running} nextLabel="Happy with the plan — render it" />
+            <NavRow onBack={back} onNext={next} nextDisabled={!sceneId || planningSpace} nextLabel="Happy with the plan — render the tour" />
           </StepShell>
         ) : null}
 
@@ -999,6 +1186,13 @@ export function WalkthroughStudio() {
               {buildPreviewUrl && !buildJob.running ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={api.fileUrl(buildPreviewUrl)} alt="Build preview" className="w-full rounded-md border" />
+              ) : null}
+              {buildReport && !buildJob.running ? (
+                <p className="caption text-ink-muted">
+                  Blender validation: {buildReport.ok ? "ok" : `${buildReport.errors.length} error(s)`}
+                  {buildReport.warnings.length ? ` · ${buildReport.warnings.length} warning(s)` : ""}
+                  {buildReport.errors.slice(0, 3).map((e) => ` · ${e}`).join("")}
+                </p>
               ) : null}
               {previewJob.job || previewJob.error ? (
                 <JobProgress title="Rendering the 360° tour" job={previewJob.job} events={previewJob.events} error={previewJob.error} onRetry={() => void runRender()} />
@@ -1047,7 +1241,17 @@ export function WalkthroughStudio() {
             ) : experienceMode === "film" ? (
               tour ? <div className="flex justify-center rounded-lg bg-black"><FilmPlayer pkg={tour} className="max-h-[560px] w-full rounded-lg" /></div> : null
             ) : (
-              <Walkthrough3DView key={sceneId ?? "seed"} sceneId={sceneId ?? undefined} />
+              // Never fall back to the viewer's demo apartment here. Its default
+              // sceneId is the seed scene, so `sceneId ?? undefined` used to render
+              // someone else's demo flat inside this client's project, unlabelled
+              // and indistinguishable from their own design.
+              sceneId ? (
+                <Walkthrough3DView key={sceneId} sceneId={sceneId} />
+              ) : (
+                <p className="body-sm text-ink-muted">
+                  No 3D scene has been generated for this project yet. Plan the space, then generate the 3D space.
+                </p>
+              )
             )}
             <NavRow onBack={back} onNext={next} nextLabel="Save & share" />
           </StepShell>

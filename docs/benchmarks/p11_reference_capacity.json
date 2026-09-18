@@ -1,0 +1,72 @@
+{
+  "_about": "P11: measured Gemini capacity for reference images on the analyze_input payload. Sets the evidence for the production reference limit, replacing the hardcoded 6.",
+  "measured_at": "2026-09-16T14:25:23+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "project": "proj_553cb09794",
+  "references_available": 8,
+  "counts_tried": [
+    6,
+    8,
+    10,
+    12
+  ],
+  "max_ok": 12,
+  "results": [
+    {
+      "n_images": 6,
+      "payload_mb": 0.86,
+      "latency_s": 9.78,
+      "http_status": 200,
+      "ok": true,
+      "prompt_tokens": 7814,
+      "output_tokens": 1784,
+      "total_tokens": 9598,
+      "finish_reason": "STOP",
+      "valid_json": true,
+      "rooms": 5,
+      "spotted_objects": 6
+    },
+    {
+      "n_images": 8,
+      "payload_mb": 1.1,
+      "latency_s": 11.25,
+      "http_status": 200,
+      "ok": true,
+      "prompt_tokens": 9967,
+      "output_tokens": 2165,
+      "total_tokens": 12132,
+      "finish_reason": "STOP",
+      "valid_json": true,
+      "rooms": 5,
+      "spotted_objects": 8
+    },
+    {
+      "n_images": 10,
+      "payload_mb": 1.39,
+      "latency_s": 6.42,
+      "http_status": 200,
+      "ok": true,
+      "prompt_tokens": 12160,
+      "output_tokens": 1580,
+      "total_tokens": 13740,
+      "finish_reason": "STOP",
+      "valid_json": true,
+      "rooms": 5,
+      "spotted_objects": 5
+    },
+    {
+      "n_images": 12,
+      "payload_mb": 1.62,
+      "latency_s": 4.31,
+      "http_status": 200,
+      "ok": true,
+      "prompt_tokens": 14338,
+      "output_tokens": 801,
+      "total_tokens": 15139,
+      "finish_reason": "STOP",
+      "valid_json": true,
+      "rooms": 5,
+      "spotted_objects": 1
+    }
+  ]
+}

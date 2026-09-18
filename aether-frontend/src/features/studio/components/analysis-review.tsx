@@ -25,6 +25,7 @@ export function AnalysisReview({
   onRepaintRoom,
   repaintingRoom = null,
   saving = false,
+  roomsOnly = false,
 }: {
   data: AnalysisDto;
   onSave?: (patch: AnalysisPatch) => Promise<void>;
@@ -32,6 +33,8 @@ export function AnalysisReview({
   onRepaintRoom?: (roomId: string) => Promise<void>;
   repaintingRoom?: string | null;
   saving?: boolean;
+  /** Step 4: the moodboard is settled; only the rooms (dimensions) may change. */
+  roomsOnly?: boolean;
 }) {
   const { analysis, style, moodboard, provider } = data;
   const [rooms, setRooms] = useState<RoomAnalysis[]>(analysis.rooms);
@@ -90,6 +93,7 @@ export function AnalysisReview({
 
   return (
     <div className="flex flex-col gap-5">
+      {roomsOnly ? null : (<>
       {/* moodboard strip */}
       <div className="flex flex-col gap-3 rounded-lg border border-gold/40 bg-gold/5 p-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -217,6 +221,7 @@ export function AnalysisReview({
           </div>
         </div>
       </div>
+      </>)}
 
       {/* rooms */}
       <div className="flex flex-col gap-2">
@@ -292,6 +297,7 @@ export function AnalysisReview({
         </div>
       </div>
 
+      {roomsOnly ? null : (<>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="flex flex-col gap-1.5">
           <p className="body-sm font-medium text-ink-soft">Must-haves and constraints</p>
@@ -385,6 +391,7 @@ export function AnalysisReview({
           {[...new Set([...analysis.warnings, ...(style?.warnings ?? [])])].map((w) => <li key={w}>{w}</li>)}
         </ul>
       ) : null}
+      </>)}
 
       {editable ? (
         <div className="flex items-center gap-3">

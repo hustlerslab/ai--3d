@@ -1,0 +1,178 @@
+{
+  "_about": "P12 live benchmark. Drives the real HTTP routes, job runner and scene_plan handler. Vision provider is the deterministic MockProvider except case 10, which uses real photographs and the real model. Executor boundary is build_manifest; Blender itself is covered by the frozen blender_e2e benchmark.",
+  "cases": [
+    {
+      "detail": {
+        "classes": {
+          "exact_object": 1
+        },
+        "design_intent_result": {
+          "classified": 1,
+          "conflicts": 0,
+          "needs_input": 0,
+          "references": 1,
+          "unread": 0
+        },
+        "provenance": {
+          "crop_ref": "",
+          "filename": "exact_sage_linen_sofa.jpg",
+          "image_ref": "C:\\Users\\user\\AppData\\Local\\Temp\\p12_0j4q4l50\\data\\projects\\proj_42333cab4a\\input\\references\\ref_01.jpg",
+          "input_id": "in_e3070c1a01",
+          "model": "mock",
+          "stage": "reference_classification"
+        },
+        "sofas_in_scene": 1
+      },
+      "name": "case01_exact_object",
+      "ok": true
+    },
+    {
+      "detail": {
+        "classes": {
+          "design_reference": 1
+        },
+        "sofa_hints": [
+          {
+            "color_hint": "",
+            "material_hint": "velvet",
+            "style_notes": "warm"
+          }
+        ],
+        "sofas_in_scene": 1
+      },
+      "name": "case02_design_reference",
+      "ok": true
+    },
+    {
+      "detail": {
+        "classes": {
+          "style_reference": 1
+        },
+        "intent_added_items": []
+      },
+      "name": "case03_style_reference",
+      "ok": true
+    },
+    {
+      "detail": {
+        "chandeliers_in_scene": 0,
+        "classes": {
+          "inspiration_only": 1
+        },
+        "non_instantiation_compliance": 1.0
+      },
+      "name": "case04_inspiration_only",
+      "ok": true
+    },
+    {
+      "detail": {
+        "distinct_provenance": 3,
+        "intents": 3,
+        "sofa_hints": [
+          {
+            "material_hint": "linen"
+          }
+        ],
+        "sofas_in_scene": 1
+      },
+      "name": "case05_multiple_references",
+      "ok": true
+    },
+    {
+      "detail": {
+        "conflicts": [
+          "2 references disagree on material for sofa: leather, linen"
+        ],
+        "sofa_hints": [
+          {
+            "material_hint": "fabric"
+          }
+        ],
+        "unresolved": [
+          {
+            "object_category": "sofa",
+            "reason": "references disagree or were not classified with confidence; a human must choose"
+          }
+        ]
+      },
+      "name": "case06_conflict",
+      "ok": true
+    },
+    {
+      "detail": {
+        "generation_requests": [],
+        "resolution_rungs": [
+          "unresolved"
+        ],
+        "unresolved": [
+          {
+            "object_category": "dining_table",
+            "reason": "no compatible registry asset and generation is unavailable"
+          }
+        ]
+      },
+      "name": "case07_missing_asset",
+      "ok": true
+    },
+    {
+      "detail": {
+        "distinct": 1,
+        "runs": 20
+      },
+      "name": "case08_determinism",
+      "ok": true
+    },
+    {
+      "detail": {
+        "rows": [
+          {
+            "accounted": 6,
+            "classified": 6,
+            "reference_ids": 6,
+            "result_references": 6,
+            "unread": 0,
+            "uploaded": 6
+          },
+          {
+            "accounted": 8,
+            "classified": 8,
+            "reference_ids": 8,
+            "result_references": 8,
+            "unread": 0,
+            "uploaded": 8
+          },
+          {
+            "accounted": 10,
+            "classified": 10,
+            "reference_ids": 10,
+            "result_references": 10,
+            "unread": 0,
+            "uploaded": 10
+          },
+          {
+            "accounted": 12,
+            "classified": 12,
+            "reference_ids": 12,
+            "result_references": 12,
+            "unread": 0,
+            "uploaded": 12
+          }
+        ]
+      },
+      "name": "case09_reference_limit",
+      "ok": true
+    },
+    {
+      "detail": {
+        "skipped": "no real Gemini key supplied; real-model case not run"
+      },
+      "name": "case10_real_photographs_real_model",
+      "ok": true
+    }
+  ],
+  "executor": "blender (no Unreal integration exists in this repository)",
+  "generator": "meshy (no Hunyuan3D integration exists in this repository)",
+  "passed": 10,
+  "provider": "mock (case 10: gemini)",
+  "total": 10
+}

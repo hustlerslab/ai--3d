@@ -1,0 +1,1020 @@
+{
+  "_about": "Gate Q8: can qwen2.5vl:3b specify the element inventory element-first requires, from the brief alone?",
+  "results": [
+    {
+      "brief": "A living room with one sofa, two matching armchairs, and one coffee table.",
+      "distinct_inventories": 1,
+      "repeatable": true,
+      "runs": [
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 1,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 2,
+          "seconds": 2.7,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 3,
+          "seconds": 2.7,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 4,
+          "seconds": 2.7,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 2,
+            "coffee_table": 1,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 5,
+          "seconds": 2.7,
+          "status": "OK",
+          "valid": true
+        }
+      ],
+      "scenario": "s1_two_chairs"
+    },
+    {
+      "brief": "A living room containing a single three-seat sofa with four cushions on it, and one rug underneath.",
+      "distinct_inventories": 3,
+      "repeatable": false,
+      "runs": [
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 3,
+          "elements_found": 2,
+          "expected": {
+            "pillow": 4,
+            "rug": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [
+            "pillow"
+          ],
+          "produced": {
+            "rug": 1,
+            "sofa": 1
+          },
+          "relations": 2,
+          "run": 1,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 3,
+          "elements_found": 2,
+          "expected": {
+            "pillow": 4,
+            "rug": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [
+            "pillow"
+          ],
+          "produced": {
+            "rug": 1,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 2,
+          "seconds": 2.0,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 3,
+          "elements_found": 2,
+          "expected": {
+            "pillow": 4,
+            "rug": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [
+            "rug"
+          ],
+          "produced": {
+            "pillow": 4,
+            "sofa": 1
+          },
+          "relations": 2,
+          "run": 3,
+          "seconds": 3.4,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 3,
+          "elements_found": 2,
+          "expected": {
+            "pillow": 4,
+            "rug": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [
+            "rug"
+          ],
+          "produced": {
+            "pillow": 4,
+            "sofa": 1
+          },
+          "relations": 2,
+          "run": 4,
+          "seconds": 3.9,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "pillow": 4,
+            "rug": 1,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "pillow": 4,
+            "rug": 1,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 5,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        }
+      ],
+      "scenario": "s2_four_pillows"
+    },
+    {
+      "brief": "A bedroom with one double bed and two nightstands, one on each side of the bed.",
+      "distinct_inventories": 1,
+      "repeatable": true,
+      "runs": [
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "relations": 3,
+          "run": 1,
+          "seconds": 3.6,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "relations": 1,
+          "run": 2,
+          "seconds": 2.4,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "relations": 1,
+          "run": 3,
+          "seconds": 2.4,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "relations": 1,
+          "run": 4,
+          "seconds": 2.4,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bed": 1,
+            "nightstand": 2
+          },
+          "relations": 1,
+          "run": 5,
+          "seconds": 2.4,
+          "status": "OK",
+          "valid": true
+        }
+      ],
+      "scenario": "s3_symmetric_bedroom"
+    },
+    {
+      "brief": "A kitchen with one island and three bar stools along it.",
+      "distinct_inventories": 1,
+      "repeatable": true,
+      "runs": [
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "relations": 2,
+          "run": 1,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "relations": 1,
+          "run": 2,
+          "seconds": 2.4,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "relations": 2,
+          "run": 3,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "relations": 2,
+          "run": 4,
+          "seconds": 3.1,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bar_stool": 3,
+            "kitchen_island": 1
+          },
+          "relations": 2,
+          "run": 5,
+          "seconds": 3.1,
+          "status": "OK",
+          "valid": true
+        }
+      ],
+      "scenario": "s4_three_stools"
+    },
+    {
+      "brief": "A study with one desk, one desk chair, and one separate reading armchair.",
+      "distinct_inventories": 1,
+      "repeatable": true,
+      "runs": [
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "relations": 0,
+          "run": 1,
+          "seconds": 2.8,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "relations": 0,
+          "run": 2,
+          "seconds": 2.8,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "relations": 0,
+          "run": 3,
+          "seconds": 2.8,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "relations": 0,
+          "run": 4,
+          "seconds": 2.8,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "armchair": 1,
+            "desk": 1,
+            "desk_chair": 1
+          },
+          "relations": 0,
+          "run": 5,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        }
+      ],
+      "scenario": "s5_two_different_chairs"
+    },
+    {
+      "brief": "A living room with one sofa, one coffee table, and a pair of floor lamps.",
+      "distinct_inventories": 1,
+      "repeatable": true,
+      "runs": [
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 1,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 2,
+          "seconds": 2.9,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 3,
+          "seconds": 2.8,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 4,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "coffee_table": 1,
+            "floor_lamp": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 5,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        }
+      ],
+      "scenario": "s6_lamps_pair"
+    },
+    {
+      "brief": "A small entry with one console table, one mirror and one bench.",
+      "distinct_inventories": 1,
+      "repeatable": true,
+      "runs": [
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "relations": 0,
+          "run": 1,
+          "seconds": 3.0,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "relations": 0,
+          "run": 2,
+          "seconds": 2.8,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "relations": 0,
+          "run": 3,
+          "seconds": 2.8,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "relations": 0,
+          "run": 4,
+          "seconds": 2.7,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 3,
+          "elements_expected": 3,
+          "elements_found": 3,
+          "expected": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "bench": 1,
+            "console_table": 1,
+            "mirror": 1
+          },
+          "relations": 0,
+          "run": 5,
+          "seconds": 2.7,
+          "status": "OK",
+          "valid": true
+        }
+      ],
+      "scenario": "s7_singletons"
+    },
+    {
+      "brief": "A living room with one sage green linen sofa and two walnut side tables.",
+      "distinct_inventories": 1,
+      "repeatable": true,
+      "runs": [
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 1,
+          "seconds": 2.2,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 2,
+          "seconds": 2.2,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 3,
+          "seconds": 2.1,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 4,
+          "seconds": 2.2,
+          "status": "OK",
+          "valid": true
+        },
+        {
+          "count_errors": {},
+          "counts_correct": 2,
+          "elements_expected": 2,
+          "elements_found": 2,
+          "expected": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "extra_elements": [],
+          "invalid_relations": 0,
+          "missing": [],
+          "produced": {
+            "side_table": 2,
+            "sofa": 1
+          },
+          "relations": 0,
+          "run": 5,
+          "seconds": 2.2,
+          "status": "OK",
+          "valid": true
+        }
+      ],
+      "scenario": "s8_attributes"
+    }
+  ],
+  "summary": {
+    "common_hallucinations": [],
+    "count_accuracy": 0.9619,
+    "element_recall": 0.9619,
+    "generations_fully_correct": 36,
+    "hallucinated_elements": 0,
+    "invalid_relations": 0,
+    "median_seconds": 2.8,
+    "missing_elements": 4,
+    "model": "qwen2.5vl:3b",
+    "relations_produced": 22,
+    "repeatable_scenarios": 7,
+    "runs_per_scenario": 5,
+    "scenarios": 8,
+    "total_generations": 40,
+    "valid_json_rate": 1.0
+  }
+}

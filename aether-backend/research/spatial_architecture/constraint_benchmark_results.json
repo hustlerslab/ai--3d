@@ -1,0 +1,464 @@
+{
+  "_about": "P8 intent/constraint layer benchmark. P0-P7 benchmarks are separate, unmodified scripts.",
+  "performance": [
+    {
+      "n_objects": 5,
+      "n_constraints_requested": 10,
+      "n_constraints_compiled": 10,
+      "compile_ms": 0.3201,
+      "evaluate_ms": 0.247,
+      "n_results": 10
+    },
+    {
+      "n_objects": 10,
+      "n_constraints_requested": 25,
+      "n_constraints_compiled": 25,
+      "compile_ms": 0.2495,
+      "evaluate_ms": 0.2209,
+      "n_results": 25
+    },
+    {
+      "n_objects": 20,
+      "n_constraints_requested": 50,
+      "n_constraints_compiled": 50,
+      "compile_ms": 0.4539,
+      "evaluate_ms": 0.5181,
+      "n_results": 50
+    },
+    {
+      "n_objects": 20,
+      "n_constraints_requested": 100,
+      "n_constraints_compiled": 100,
+      "compile_ms": 0.5821,
+      "evaluate_ms": 0.5044,
+      "n_results": 100
+    }
+  ],
+  "deterministic": true,
+  "adversarial_pass": 30,
+  "adversarial_total": 30,
+  "adversarial": [
+    {
+      "name": "faces",
+      "actual": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_opposite",
+      "actual": {
+        "verdicts": [
+          "violated"
+        ],
+        "error": 180
+      },
+      "expected": {
+        "verdicts": [
+          "violated"
+        ],
+        "error": 180
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_90deg",
+      "actual": {
+        "verdicts": [
+          "violated"
+        ],
+        "error": 90
+      },
+      "expected": {
+        "verdicts": [
+          "violated"
+        ],
+        "error": 90
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_same_position",
+      "actual": {
+        "verdicts": [
+          "unknown"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "unknown"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "against_wall",
+      "actual": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "against_wall_diagonal_wall",
+      "actual": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "support",
+      "actual": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "inside",
+      "actual": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "near_no_distance",
+      "actual": {
+        "verdicts": [
+          "unknown"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "unknown"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "explicit_distance",
+      "actual": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "between",
+      "actual": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "satisfied"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "centered_on_wall_unsupported",
+      "actual": {
+        "unsupported": 1
+      },
+      "expected": {
+        "unsupported": 1
+      },
+      "pass": true
+    },
+    {
+      "name": "contradictory_orientation",
+      "actual": {
+        "conflict_codes": [
+          "CONFLICTING_ORIENTATION"
+        ]
+      },
+      "expected": {
+        "conflict_codes": [
+          "CONFLICTING_ORIENTATION"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "hard_soft_conflict_independence",
+      "actual": {
+        "soft_verdict": "violated",
+        "hard_violation_count": 0
+      },
+      "expected": {
+        "soft_verdict": "violated",
+        "hard_violation_count": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "user_vs_model_precedence",
+      "actual": {
+        "highest_precedence_source": "user",
+        "conflict_detected": true
+      },
+      "expected": {
+        "highest_precedence_source": "user",
+        "conflict_detected": true
+      },
+      "pass": true
+    },
+    {
+      "name": "observation_vs_intent_not_merged",
+      "actual": {
+        "n_constraints": 2,
+        "scene_unchanged_object_count": 1
+      },
+      "expected": {
+        "n_constraints": 2,
+        "scene_unchanged_object_count": 1
+      },
+      "pass": true
+    },
+    {
+      "name": "stale_constraint",
+      "actual": {
+        "before": "satisfied",
+        "after": "violated"
+      },
+      "expected": {
+        "before": "satisfied",
+        "after": "violated"
+      },
+      "pass": true
+    },
+    {
+      "name": "post_repair_reevaluation",
+      "actual": {
+        "terminal_state": "ALREADY_VALID",
+        "before": "satisfied",
+        "after": "satisfied"
+      },
+      "expected": {
+        "terminal_state": "ALREADY_VALID",
+        "before": "satisfied",
+        "after": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "missing_target",
+      "actual": {
+        "verdicts": [
+          "unknown"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "unknown"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "duplicate_object_labels",
+      "actual": {
+        "n_constraints": 2,
+        "distinct_ids": 2,
+        "verdicts": [
+          "satisfied",
+          "satisfied"
+        ]
+      },
+      "expected": {
+        "n_constraints": 2,
+        "distinct_ids": 2,
+        "verdicts": [
+          "satisfied",
+          "satisfied"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "camera_frame_predicate_unsupported",
+      "actual": {
+        "unsupported": 1
+      },
+      "expected": {
+        "unsupported": 1
+      },
+      "pass": true
+    },
+    {
+      "name": "large_unit_mismatch_no_crash",
+      "actual": {
+        "verdicts": [
+          "violated"
+        ],
+        "crashed": false
+      },
+      "expected": {
+        "verdicts": [
+          "violated"
+        ],
+        "crashed": false
+      },
+      "pass": true
+    },
+    {
+      "name": "unsupported_relation",
+      "actual": {
+        "unsupported": 1
+      },
+      "expected": {
+        "unsupported": 1
+      },
+      "pass": true
+    },
+    {
+      "name": "unknown_geometry_missing_room",
+      "actual": {
+        "verdicts": [
+          "unknown"
+        ]
+      },
+      "expected": {
+        "verdicts": [
+          "unknown"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "user_asserted_priority",
+      "actual": {
+        "priority": 0
+      },
+      "expected": {
+        "priority": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "model_inferred_priority",
+      "actual": {
+        "priority": 4
+      },
+      "expected": {
+        "priority": 4
+      },
+      "pass": true
+    },
+    {
+      "name": "shared_asset_distinct_constraints",
+      "actual": {
+        "distinct_subjects": 2
+      },
+      "expected": {
+        "distinct_subjects": 2
+      },
+      "pass": true
+    },
+    {
+      "name": "multiple_constraints_same_object",
+      "actual": {
+        "n_constraints": 3,
+        "n_results": 3
+      },
+      "expected": {
+        "n_constraints": 3,
+        "n_results": 3
+      },
+      "pass": true
+    },
+    {
+      "name": "impossible_wall_capacity",
+      "actual": {
+        "conflict_codes": [
+          "INFEASIBLE_WALL_CAPACITY"
+        ]
+      },
+      "expected": {
+        "conflict_codes": [
+          "INFEASIBLE_WALL_CAPACITY"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "deterministic_repeated_compilation",
+      "actual": {
+        "distinct_orderings": 1
+      },
+      "expected": {
+        "distinct_orderings": 1
+      },
+      "pass": true
+    }
+  ],
+  "brief_demo": {
+    "compiler_notes": [
+      "sofa: relation <- facing(tv_unit) (from constraint_13fcdffbdc1a59d9)"
+    ],
+    "solver_warnings": [],
+    "regenerated_notes": [],
+    "objects_placed": 5,
+    "hard_violations": 0,
+    "constraint_verdicts": {
+      "constraint_cc646d0b78165b51": "satisfied",
+      "constraint_783b4afc783e523d": "partial",
+      "constraint_30b831a60fcfebe1": "violated",
+      "constraint_486ac144502895ba": "violated"
+    },
+    "constraint_messages": {
+      "constraint_cc646d0b78165b51": "angular error 0.0 deg (tolerance 60.0 deg)",
+      "constraint_783b4afc783e523d": "on the segment but 1.400 m off-axis (tolerance 0.300 m)",
+      "constraint_30b831a60fcfebe1": "actual 2.83 m vs requested 1.20 m +/- 0.30 m",
+      "constraint_486ac144502895ba": "actual 3.62 m vs requested 1.20 m +/- 0.30 m"
+    }
+  },
+  "photo_demo": {
+    "p7_relation_status": "derived",
+    "p7_relation_kind": "derived_geometry",
+    "p8_constraint_verdict": "satisfied",
+    "p8_constraint_error_m": 0.125,
+    "note": "model hypothesis and P7's own geometry-sourced relation are evaluated independently and AGREE here by measurement, not by being merged into one object"
+  }
+}

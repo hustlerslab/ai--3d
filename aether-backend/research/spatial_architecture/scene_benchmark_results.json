@@ -1,0 +1,271 @@
+{
+  "_about": "P7 SpatialScene/relation/consistency layer benchmark. P1-P6 benchmarks are separate, unmodified scripts.",
+  "performance": [
+    {
+      "n_objects": 5,
+      "n_relations": 5,
+      "recompute_ms": 0.1282,
+      "consistency_ms": 0.0556,
+      "serialize_ms": 0.3005,
+      "findings": 0,
+      "changes": 5,
+      "json_bytes": 9312
+    },
+    {
+      "n_objects": 10,
+      "n_relations": 10,
+      "recompute_ms": 0.2231,
+      "consistency_ms": 0.0316,
+      "serialize_ms": 0.3394,
+      "findings": 0,
+      "changes": 10,
+      "json_bytes": 17091
+    },
+    {
+      "n_objects": 20,
+      "n_relations": 20,
+      "recompute_ms": 0.2304,
+      "consistency_ms": 0.0646,
+      "serialize_ms": 0.5182,
+      "findings": 0,
+      "changes": 20,
+      "json_bytes": 32677
+    },
+    {
+      "n_objects": 50,
+      "n_relations": 50,
+      "recompute_ms": 0.6981,
+      "consistency_ms": 0.0715,
+      "serialize_ms": 1.0641,
+      "findings": 0,
+      "changes": 50,
+      "json_bytes": 79425
+    },
+    {
+      "n_objects": 100,
+      "n_relations": 100,
+      "recompute_ms": 3.0295,
+      "consistency_ms": 0.4542,
+      "serialize_ms": 4.0144,
+      "findings": 37,
+      "changes": 100,
+      "json_bytes": 158934
+    }
+  ],
+  "deterministic": true,
+  "adversarial_pass": 22,
+  "adversarial_total": 22,
+  "adversarial": [
+    {
+      "name": "against_wall_holds_unmoved",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "against_wall_holds_after_jitter",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "against_wall_broken_after_move",
+      "expected": [
+        "CONTRADICTED_RELATION"
+      ],
+      "found": [
+        "CONTRADICTED_RELATION"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "against_wall_still_true_after_sliding",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "orphan_subject",
+      "expected": [
+        "ORPHAN_REFERENCE"
+      ],
+      "found": [
+        "ORPHAN_REFERENCE"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "orphan_object_wall",
+      "expected": [
+        "ORPHAN_REFERENCE"
+      ],
+      "found": [
+        "ORPHAN_REFERENCE"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "duplicate_relation",
+      "expected": [
+        "DUPLICATE_RELATION"
+      ],
+      "found": [
+        "DUPLICATE_RELATION"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "multiple_wall_claims_real_corner",
+      "expected": [
+        "MULTIPLE_WALL_CLAIMS"
+      ],
+      "found": [
+        "MULTIPLE_WALL_CLAIMS"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "stale_relation_no_rule",
+      "expected": [
+        "STALE_RELATION"
+      ],
+      "found": [
+        "STALE_RELATION"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "unsupported_hypothesis",
+      "expected": [
+        "UNSUPPORTED_HYPOTHESIS"
+      ],
+      "found": [
+        "UNSUPPORTED_HYPOTHESIS"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "same_category_duplicates_distinct_relations",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "repair_style_move_breaks_relation",
+      "expected": [
+        "CONTRADICTED_RELATION"
+      ],
+      "found": [
+        "CONTRADICTED_RELATION"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "camera_frame_relation_no_false_positive",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "object_outside_room_out_of_scope",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "containment_non_circular",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "circular_containment",
+      "expected": [
+        "CIRCULAR_CONTAINMENT"
+      ],
+      "found": [
+        "CIRCULAR_CONTAINMENT"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "conflicting_faces",
+      "expected": [
+        "CONFLICTING_FACES"
+      ],
+      "found": [
+        "CONFLICTING_FACES"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "stated_hint_vs_measured_geometry_disagree",
+      "expected": [
+        "CONTRADICTED_RELATION"
+      ],
+      "found": [
+        "CONTRADICTED_RELATION"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "shared_asset_distinct_object_identity",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "missing_asset_metadata_no_finding",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "deterministic_serialization_round_trip",
+      "expected": [],
+      "found": [],
+      "round_trip_ok": true,
+      "pass": true
+    },
+    {
+      "name": "orphan_after_object_removed",
+      "expected": [
+        "ORPHAN_REFERENCE"
+      ],
+      "found": [
+        "ORPHAN_REFERENCE"
+      ],
+      "round_trip_ok": true,
+      "pass": true
+    }
+  ],
+  "demonstration_scene": {
+    "objects": 3,
+    "walls": 2,
+    "relations": 3,
+    "changes_on_recompute": [
+      "rel_1ebf7511b382214f: AGAINST_WALL independently verified true (gap 0.025 m) -> SUPPORTED"
+    ],
+    "consistency_findings": 0
+  }
+}

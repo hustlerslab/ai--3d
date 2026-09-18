@@ -1,0 +1,79 @@
+{
+  "_about": "Phase 0b ground truth. Five real moodboard renders from two real projects, labelled by eye. Object identification only - no bounding boxes, per Phase 0b scope. Names are canonical semantic_type slugs so vocab.canonical_type() can normalise both systems onto them.",
+  "_labels_excluded_from_scoring": [
+    "window",
+    "door",
+    "wall",
+    "floor",
+    "ceiling"
+  ],
+  "_why_excluded": "scene_reading_prompt() explicitly forbids boxing a window, doorway, wall, floor or ceiling as an element - they are rebuilt as geometry. Scoring them would penalise the reader for obeying its own instructions, so they are removed from the detector's label list too and from every count. This keeps the comparison fair in both directions.",
+  "_specks_excluded": "Taps, knobs, switches and soap dishes are skipped by the reader by instruction and are not in ground truth.",
+  "images": [
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "source": "proj_553cb09794",
+      "expected_objects": [
+        "sofa",
+        "ottoman",
+        "side_table",
+        "pillows",
+        "rug",
+        "curtains"
+      ],
+      "note": "Two distinct sofas (striped sectional left, blue-and-striped right). Counted once: Phase 0b scores identification, not instance count."
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "room_type": "kitchen",
+      "source": "proj_553cb09794",
+      "expected_objects": [
+        "kitchen_counter",
+        "bar_stool",
+        "plant",
+        "wall_shelf"
+      ],
+      "note": "Three black bar stools, a white island counter, a floating shelf on the back wall, a potted plant far left. Extractor hood and coffee machine deliberately omitted - neither has a semantic_type in vocab."
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "room_type": "bathroom",
+      "source": "proj_553cb09794",
+      "expected_objects": [
+        "mirror",
+        "vanity"
+      ],
+      "note": "No toilet and no bathtub are present in this render - a real absence, confirmed by eye, not a miss by either system. The shower alcove is architecture, not an element. Towels ARE visible on a rail but `towel` is not a semantic_type in vocab at all, so neither system could score it and it is left out rather than counted as a miss for both."
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "room_type": "master_bedroom",
+      "source": "proj_5db681f48c (archived)",
+      "expected_objects": [
+        "bed",
+        "pillows",
+        "bedside_table",
+        "rug",
+        "wall_art",
+        "plant"
+      ],
+      "note": "Platform bed, two wooden bedside tables, white shag rug, framed art on the left wall with trailing foliage above it."
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "source": "proj_5db681f48c (archived)",
+      "expected_objects": [
+        "sofa",
+        "pillows",
+        "coffee_table",
+        "tv_unit",
+        "rug",
+        "wall_art",
+        "vase"
+      ],
+      "note": "vocab.canonical_type() folds both the television and the media console onto tv_unit, so they score as one label. Known coarseness of the existing vocabulary, not a benchmark artefact."
+    }
+  ]
+}

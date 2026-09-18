@@ -1,0 +1,332 @@
+{
+  "adversarial": [
+    {
+      "case": "wall_dead_end",
+      "n_objects": 2,
+      "greedy": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "shelf_1"
+        ],
+        "nodes_explored": 20,
+        "latency_ms": 0.795
+      },
+      "bounded_backtracking": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "shelf_1"
+        ],
+        "nodes_explored": 52,
+        "latency_ms": 1.688
+      },
+      "dfs": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 320,
+        "latency_ms": 10.695
+      },
+      "beam_5": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "shelf_1"
+        ],
+        "nodes_explored": 112,
+        "latency_ms": 4.006
+      },
+      "greedy_then_repair": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "shelf_1"
+        ],
+        "nodes_explored": 20,
+        "latency_ms": 0.783
+      }
+    },
+    {
+      "case": "regular_baseline",
+      "n_objects": 4,
+      "greedy": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 4,
+        "latency_ms": 0.257
+      },
+      "bounded_backtracking": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 4,
+        "latency_ms": 0.251
+      },
+      "dfs": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 4,
+        "latency_ms": 0.247
+      },
+      "beam_5": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 214,
+        "latency_ms": 31.528
+      },
+      "greedy_then_repair": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 4,
+        "latency_ms": 0.532
+      }
+    }
+  ],
+  "scaling": [
+    {
+      "case": "n5",
+      "n_objects": 5,
+      "greedy": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 9,
+        "latency_ms": 0.38
+      },
+      "bounded_backtracking": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 9,
+        "latency_ms": 0.371
+      },
+      "dfs": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 9,
+        "latency_ms": 0.365
+      },
+      "beam_5": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 126,
+        "latency_ms": 10.813
+      },
+      "greedy_then_repair": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 9,
+        "latency_ms": 0.727
+      }
+    },
+    {
+      "case": "n10",
+      "n_objects": 10,
+      "greedy": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 24,
+        "latency_ms": 1.129
+      },
+      "bounded_backtracking": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 24,
+        "latency_ms": 1.182
+      },
+      "dfs": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 24,
+        "latency_ms": 1.406
+      },
+      "beam_5": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 276,
+        "latency_ms": 82.596
+      },
+      "greedy_then_repair": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 24,
+        "latency_ms": 4.565
+      }
+    },
+    {
+      "case": "n15",
+      "n_objects": 15,
+      "greedy": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 45,
+        "latency_ms": 5.136
+      },
+      "bounded_backtracking": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 45,
+        "latency_ms": 4.098
+      },
+      "dfs": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 45,
+        "latency_ms": 3.847
+      },
+      "beam_5": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 426,
+        "latency_ms": 137.096
+      },
+      "greedy_then_repair": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 45,
+        "latency_ms": 5.107
+      }
+    },
+    {
+      "case": "n20",
+      "n_objects": 20,
+      "greedy": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 69,
+        "latency_ms": 5.536
+      },
+      "bounded_backtracking": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "box_16",
+          "box_17",
+          "box_18",
+          "box_19"
+        ],
+        "nodes_explored": 67,
+        "latency_ms": 4.36
+      },
+      "dfs": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 69,
+        "latency_ms": 6.872
+      },
+      "beam_5": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 576,
+        "latency_ms": 294.166
+      },
+      "greedy_then_repair": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [],
+        "nodes_explored": 69,
+        "latency_ms": 12.201
+      }
+    },
+    {
+      "case": "n30",
+      "n_objects": 30,
+      "greedy": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "box_28"
+        ],
+        "nodes_explored": 126,
+        "latency_ms": 15.086
+      },
+      "bounded_backtracking": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "box_16",
+          "box_17",
+          "box_18",
+          "box_19",
+          "box_20",
+          "box_21",
+          "box_22",
+          "box_23",
+          "box_24",
+          "box_25",
+          "box_26",
+          "box_27",
+          "box_28",
+          "box_29"
+        ],
+        "nodes_explored": 67,
+        "latency_ms": 3.956
+      },
+      "dfs": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "box_28",
+          "box_29"
+        ],
+        "nodes_explored": 5020,
+        "latency_ms": 469.02
+      },
+      "beam_5": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "box_28"
+        ],
+        "nodes_explored": 876,
+        "latency_ms": 475.223
+      },
+      "greedy_then_repair": {
+        "hard": 0,
+        "soft_deficit": 0,
+        "unplaced": [
+          "box_28"
+        ],
+        "nodes_explored": 126,
+        "latency_ms": 16.818
+      }
+    }
+  ],
+  "determinism": {
+    "wall_dead_end": {
+      "greedy": true,
+      "bounded_backtracking": true,
+      "dfs": true,
+      "beam_5": true,
+      "greedy_then_repair": true
+    },
+    "n15": {
+      "greedy": true,
+      "bounded_backtracking": true,
+      "dfs": true,
+      "beam_5": true,
+      "greedy_then_repair": true
+    }
+  }
+}

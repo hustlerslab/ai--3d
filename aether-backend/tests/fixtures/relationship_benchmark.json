@@ -1,0 +1,1032 @@
+{
+  "_about": "Phase 1c relationship ground truth. Hand-annotated by eye from the SAME five renders as tests/fixtures/geometry_benchmark.json, but built independently of it as relation evidence: the geometry fixture answers 'where is the box', this one answers 'what is this piece related to'. Object ids and pixel boxes ARE reused from the geometry fixture, because re-placing the same boxes by eye a second time would add error without adding information.",
+  "_verdicts": "TRUE = the render shows this relation and the target can be named with confidence. UNKNOWN = the camera does not allow confidence, EXCLUDED from accuracy scoring. FALSE would be a relation the render contradicts; none were annotated, because every query here was written by looking at the picture first and asking what is actually there, not by proposing relations and testing them.",
+  "_answers": "target is an object id, or one of the non-object answers the candidate list offers: 'wall', 'window', 'open_room', 'unknown'. also_acceptable lists targets that point a piece in the SAME direction as the strict answer - a sofa turned toward the television is turned toward the console beneath it and the coffee table in front of it, and the compiler cannot tell those three apart. Scored both ways: strict and lenient.",
+  "_negative_controls": "Queries whose correct answer names no object at all ('unknown', 'open_room'). These are the hallucination probes: a model that invents a plausible support or a plausible target fails here and nowhere else.",
+  "image_size": [
+    704,
+    448
+  ],
+  "rooms": [
+    {
+      "room_key": "living_room_a",
+      "room_type": "living_room",
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "scene": "Two sofas facing each other across a large upholstered ottoman. A small wooden side table stands between their near ends against the back wall; a white curtain panel hangs behind. A sisal rug covers the floor.",
+      "objects": [
+        {
+          "id": "living_room_a.sofa.0",
+          "type": "sofa",
+          "bbox": [
+            0,
+            55,
+            195,
+            240
+          ],
+          "desc": "striped green sectional, left, runs off frame"
+        },
+        {
+          "id": "living_room_a.sofa.1",
+          "type": "sofa",
+          "bbox": [
+            287,
+            97,
+            704,
+            292
+          ],
+          "desc": "blue and striped, right"
+        },
+        {
+          "id": "living_room_a.pillows.0",
+          "type": "pillows",
+          "bbox": [
+            62,
+            84,
+            140,
+            146
+          ],
+          "desc": "tan cushion"
+        },
+        {
+          "id": "living_room_a.ottoman.0",
+          "type": "ottoman",
+          "bbox": [
+            33,
+            186,
+            368,
+            424
+          ],
+          "desc": "large striped ottoman, centre"
+        },
+        {
+          "id": "living_room_a.side_table.0",
+          "type": "side_table",
+          "bbox": [
+            190,
+            112,
+            272,
+            215
+          ],
+          "desc": "small wooden table"
+        },
+        {
+          "id": "living_room_a.curtains.0",
+          "type": "curtains",
+          "bbox": [
+            298,
+            55,
+            350,
+            133
+          ],
+          "desc": "white panel"
+        },
+        {
+          "id": "living_room_a.rug.0",
+          "type": "rug",
+          "bbox": [
+            0,
+            262,
+            704,
+            448
+          ],
+          "desc": "woven sisal"
+        }
+      ],
+      "relations": [
+        {
+          "source": "living_room_a.sofa.0",
+          "relation": "faces",
+          "target": "living_room_a.sofa.1",
+          "also_acceptable": [
+            "living_room_a.ottoman.0"
+          ],
+          "verdict": "TRUE",
+          "note": "the two sofas are turned toward each other across the ottoman"
+        },
+        {
+          "source": "living_room_a.sofa.1",
+          "relation": "faces",
+          "target": "living_room_a.sofa.0",
+          "also_acceptable": [
+            "living_room_a.ottoman.0"
+          ],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_a.sofa.0",
+          "relation": "against",
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "backs onto the left wall"
+        },
+        {
+          "source": "living_room_a.sofa.1",
+          "relation": "against",
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "backs onto the curtained wall"
+        },
+        {
+          "source": "living_room_a.pillows.0",
+          "relation": "supported_by",
+          "target": "living_room_a.sofa.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        }
+      ],
+      "binary_relations": [
+        {
+          "source": "living_room_a.sofa.0",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "backs onto the left wall"
+        },
+        {
+          "source": "living_room_a.sofa.1",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "backs onto the curtained wall"
+        },
+        {
+          "source": "living_room_a.side_table.0",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "stands against the back wall between the sofa ends"
+        },
+        {
+          "source": "living_room_a.ottoman.0",
+          "chain": "against",
+          "wall": false,
+          "adjacent_object": true,
+          "target": "living_room_a.sofa.0",
+          "also_acceptable": [
+            "living_room_a.sofa.1"
+          ],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL for wall detection - sits in open floor between the two sofas"
+        },
+        {
+          "source": "living_room_a.sofa.0",
+          "chain": "faces",
+          "orientation_visible": true,
+          "faces_object": true,
+          "target": "living_room_a.sofa.1",
+          "also_acceptable": [
+            "living_room_a.ottoman.0"
+          ],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_a.sofa.1",
+          "chain": "faces",
+          "orientation_visible": true,
+          "faces_object": true,
+          "target": "living_room_a.sofa.0",
+          "also_acceptable": [
+            "living_room_a.ottoman.0"
+          ],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_a.ottoman.0",
+          "chain": "faces",
+          "orientation_visible": false,
+          "faces_object": null,
+          "target": null,
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL - an upholstered block has no front, so no facing direction exists to find"
+        },
+        {
+          "source": "living_room_a.side_table.0",
+          "chain": "faces",
+          "orientation_visible": false,
+          "faces_object": null,
+          "target": null,
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL - a side table has no front"
+        },
+        {
+          "source": "living_room_a.pillows.0",
+          "chain": "supported_by",
+          "supported": true,
+          "target": "living_room_a.sofa.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        }
+      ]
+    },
+    {
+      "room_key": "kitchen",
+      "room_type": "kitchen",
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "scene": "A white kitchen. The left counter run carries the sink and stands under a large garden window. A second run - the island, with the hob and an extractor over it - crosses the middle of the frame with three black bar stools pulled up to its near side. A dark counter is cut off in the bottom-left foreground. A potted plant sits on the left counter; a white floating shelf spans the back wall.",
+      "objects": [
+        {
+          "id": "kitchen.kitchen_counter.0",
+          "type": "kitchen_counter",
+          "bbox": [
+            0,
+            228,
+            272,
+            410
+          ],
+          "desc": "left run with the sink, under the window"
+        },
+        {
+          "id": "kitchen.kitchen_counter.1",
+          "type": "kitchen_counter",
+          "bbox": [
+            264,
+            224,
+            704,
+            340
+          ],
+          "desc": "the island, with the hob"
+        },
+        {
+          "id": "kitchen.kitchen_counter.2",
+          "type": "kitchen_counter",
+          "bbox": [
+            0,
+            276,
+            150,
+            448
+          ],
+          "desc": "dark counter, foreground, cut off"
+        },
+        {
+          "id": "kitchen.bar_stool.0",
+          "type": "bar_stool",
+          "bbox": [
+            272,
+            262,
+            372,
+            425
+          ],
+          "desc": "black, left of the three"
+        },
+        {
+          "id": "kitchen.bar_stool.1",
+          "type": "bar_stool",
+          "bbox": [
+            400,
+            258,
+            505,
+            448
+          ],
+          "desc": "black, middle"
+        },
+        {
+          "id": "kitchen.bar_stool.2",
+          "type": "bar_stool",
+          "bbox": [
+            545,
+            258,
+            660,
+            448
+          ],
+          "desc": "black, right"
+        },
+        {
+          "id": "kitchen.plant.0",
+          "type": "plant",
+          "bbox": [
+            0,
+            175,
+            58,
+            232
+          ],
+          "desc": "potted, far left"
+        },
+        {
+          "id": "kitchen.wall_shelf.0",
+          "type": "wall_shelf",
+          "bbox": [
+            368,
+            138,
+            590,
+            152
+          ],
+          "desc": "white floating shelf"
+        }
+      ],
+      "relations": [
+        {
+          "source": "kitchen.bar_stool.0",
+          "relation": "faces",
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "pulled up to the island"
+        },
+        {
+          "source": "kitchen.bar_stool.1",
+          "relation": "faces",
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "kitchen.bar_stool.2",
+          "relation": "faces",
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "kitchen.kitchen_counter.0",
+          "relation": "against",
+          "target": "wall",
+          "also_acceptable": [
+            "window"
+          ],
+          "verdict": "TRUE",
+          "note": "runs along the window wall; 'window' is the same edge"
+        },
+        {
+          "source": "kitchen.kitchen_counter.1",
+          "relation": "against",
+          "target": "unknown",
+          "also_acceptable": [],
+          "verdict": "UNKNOWN",
+          "note": "an island is freestanding, but its far end leaves the frame - the render cannot settle whether it meets a wall"
+        },
+        {
+          "source": "kitchen.kitchen_counter.2",
+          "relation": "against",
+          "target": "unknown",
+          "also_acceptable": [],
+          "verdict": "UNKNOWN",
+          "note": "cut off by the frame edge"
+        },
+        {
+          "source": "kitchen.plant.0",
+          "relation": "supported_by",
+          "target": "kitchen.kitchen_counter.0",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "stands on the left counter, not on the floor"
+        }
+      ],
+      "binary_relations": [
+        {
+          "source": "kitchen.kitchen_counter.0",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "runs along the window wall"
+        },
+        {
+          "source": "kitchen.kitchen_counter.1",
+          "chain": "against",
+          "wall": null,
+          "adjacent_object": null,
+          "target": null,
+          "also_acceptable": [],
+          "verdict": "UNKNOWN",
+          "note": "UNCHANGED from Phase 1C - reads as a run against the back wall with a breakfast-bar overhang, but the far end leaves the frame"
+        },
+        {
+          "source": "kitchen.kitchen_counter.2",
+          "chain": "against",
+          "wall": null,
+          "adjacent_object": null,
+          "target": null,
+          "also_acceptable": [],
+          "verdict": "UNKNOWN",
+          "note": "UNCHANGED from Phase 1C - cut off by the frame edge"
+        },
+        {
+          "source": "kitchen.bar_stool.0",
+          "chain": "against",
+          "wall": false,
+          "adjacent_object": true,
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL for wall detection - stands in open floor"
+        },
+        {
+          "source": "kitchen.bar_stool.1",
+          "chain": "against",
+          "wall": false,
+          "adjacent_object": true,
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL for wall detection"
+        },
+        {
+          "source": "kitchen.bar_stool.2",
+          "chain": "against",
+          "wall": false,
+          "adjacent_object": true,
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL for wall detection"
+        },
+        {
+          "source": "kitchen.bar_stool.0",
+          "chain": "faces",
+          "orientation_visible": true,
+          "faces_object": true,
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "pulled up to the counter"
+        },
+        {
+          "source": "kitchen.bar_stool.1",
+          "chain": "faces",
+          "orientation_visible": true,
+          "faces_object": true,
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "kitchen.bar_stool.2",
+          "chain": "faces",
+          "orientation_visible": true,
+          "faces_object": true,
+          "target": "kitchen.kitchen_counter.1",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "kitchen.plant.0",
+          "chain": "supported_by",
+          "supported": true,
+          "target": "kitchen.kitchen_counter.0",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "stands on the left counter, not on the floor"
+        }
+      ]
+    },
+    {
+      "room_key": "bathroom",
+      "room_type": "bathroom",
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "scene": "A dark-timber bathroom. One long white vanity with an integrated basin runs down the left wall under a full-width mirror. A towel rail and a shower recess are beyond it.",
+      "objects": [
+        {
+          "id": "bathroom.mirror.0",
+          "type": "mirror",
+          "bbox": [
+            0,
+            28,
+            434,
+            268
+          ],
+          "desc": "full-width wall mirror"
+        },
+        {
+          "id": "bathroom.vanity.0",
+          "type": "vanity",
+          "bbox": [
+            0,
+            270,
+            508,
+            448
+          ],
+          "desc": "white countertop, basin and the cabinet under it"
+        }
+      ],
+      "relations": [
+        {
+          "source": "bathroom.vanity.0",
+          "relation": "against",
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "runs the full length of the left wall"
+        }
+      ],
+      "binary_relations": [
+        {
+          "source": "bathroom.vanity.0",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "runs the full length of the left wall"
+        }
+      ]
+    },
+    {
+      "room_key": "master_bedroom",
+      "room_type": "master_bedroom",
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "scene": "A platform bed centred against a full-height timber feature wall, a matching bedside table at each side, two pillows at the head, a white shag rug beneath. On the left wall hangs a framed panel with trailing foliage above it. Nothing stands opposite the bed.",
+      "objects": [
+        {
+          "id": "master_bedroom.bed.0",
+          "type": "bed",
+          "bbox": [
+            152,
+            140,
+            682,
+            378
+          ],
+          "desc": "platform frame and mattress"
+        },
+        {
+          "id": "master_bedroom.pillows.0",
+          "type": "pillows",
+          "bbox": [
+            288,
+            132,
+            420,
+            178
+          ],
+          "desc": "left pillow"
+        },
+        {
+          "id": "master_bedroom.pillows.1",
+          "type": "pillows",
+          "bbox": [
+            430,
+            138,
+            540,
+            180
+          ],
+          "desc": "right pillow"
+        },
+        {
+          "id": "master_bedroom.bedside_table.0",
+          "type": "bedside_table",
+          "bbox": [
+            176,
+            188,
+            262,
+            250
+          ],
+          "desc": "left"
+        },
+        {
+          "id": "master_bedroom.bedside_table.1",
+          "type": "bedside_table",
+          "bbox": [
+            590,
+            185,
+            680,
+            258
+          ],
+          "desc": "right"
+        },
+        {
+          "id": "master_bedroom.rug.0",
+          "type": "rug",
+          "bbox": [
+            58,
+            305,
+            704,
+            448
+          ],
+          "desc": "white shag"
+        },
+        {
+          "id": "master_bedroom.wall_art.0",
+          "type": "wall_art",
+          "bbox": [
+            30,
+            20,
+            140,
+            150
+          ],
+          "desc": "framed panel, left wall"
+        },
+        {
+          "id": "master_bedroom.plant.0",
+          "type": "plant",
+          "bbox": [
+            48,
+            0,
+            130,
+            90
+          ],
+          "desc": "trailing foliage, hanging above the frame"
+        }
+      ],
+      "relations": [
+        {
+          "source": "master_bedroom.bed.0",
+          "relation": "faces",
+          "target": "open_room",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL - nothing stands opposite the bed; naming a bedside table or the wall art is a hallucination"
+        },
+        {
+          "source": "master_bedroom.bed.0",
+          "relation": "against",
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "headboard wall"
+        },
+        {
+          "source": "master_bedroom.pillows.0",
+          "relation": "supported_by",
+          "target": "master_bedroom.bed.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "master_bedroom.pillows.1",
+          "relation": "supported_by",
+          "target": "master_bedroom.bed.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "master_bedroom.plant.0",
+          "relation": "supported_by",
+          "target": "unknown",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL - the foliage hangs on the wall above the frame. No piece in this room supports it, and the bedside tables are the tempting wrong answer"
+        }
+      ],
+      "binary_relations": [
+        {
+          "source": "master_bedroom.bed.0",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "headboard wall"
+        },
+        {
+          "source": "master_bedroom.bedside_table.0",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "against the same timber wall as the bed"
+        },
+        {
+          "source": "master_bedroom.bedside_table.1",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "against the same timber wall as the bed"
+        },
+        {
+          "source": "master_bedroom.bed.0",
+          "chain": "faces",
+          "orientation_visible": true,
+          "faces_object": false,
+          "target": null,
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL - orientation is plain (headboard at the wall) but nothing stands opposite it, so it faces no object"
+        },
+        {
+          "source": "master_bedroom.pillows.0",
+          "chain": "supported_by",
+          "supported": true,
+          "target": "master_bedroom.bed.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "master_bedroom.pillows.1",
+          "chain": "supported_by",
+          "supported": true,
+          "target": "master_bedroom.bed.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "master_bedroom.plant.0",
+          "chain": "supported_by",
+          "supported": false,
+          "target": null,
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL - trailing foliage hanging on the wall, held up by nothing in the room"
+        }
+      ]
+    },
+    {
+      "room_key": "living_room_b",
+      "room_type": "living_room",
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "scene": "A white sectional along the left and back walls, a dark coffee table in front of it on a grey shag rug, and a wall-hung television on the timber wall opposite with a long white media console beneath it. Two framed prints hang on the black wall behind the sofa; two dark vessels stand on the coffee table.",
+      "objects": [
+        {
+          "id": "living_room_b.sofa.0",
+          "type": "sofa",
+          "bbox": [
+            0,
+            130,
+            310,
+            275
+          ],
+          "desc": "white sectional"
+        },
+        {
+          "id": "living_room_b.pillows.0",
+          "type": "pillows",
+          "bbox": [
+            205,
+            163,
+            262,
+            205
+          ],
+          "desc": "grey cushion, right end"
+        },
+        {
+          "id": "living_room_b.pillows.1",
+          "type": "pillows",
+          "bbox": [
+            0,
+            168,
+            40,
+            220
+          ],
+          "desc": "grey cushion, left end"
+        },
+        {
+          "id": "living_room_b.coffee_table.0",
+          "type": "coffee_table",
+          "bbox": [
+            62,
+            236,
+            348,
+            372
+          ],
+          "desc": "dark rectangular table"
+        },
+        {
+          "id": "living_room_b.tv_unit.0",
+          "type": "tv_unit",
+          "bbox": [
+            455,
+            72,
+            650,
+            200
+          ],
+          "desc": "the television itself, on the timber wall"
+        },
+        {
+          "id": "living_room_b.tv_unit.1",
+          "type": "tv_unit",
+          "bbox": [
+            288,
+            200,
+            680,
+            262
+          ],
+          "desc": "the long white media console beneath it"
+        },
+        {
+          "id": "living_room_b.rug.0",
+          "type": "rug",
+          "bbox": [
+            0,
+            250,
+            560,
+            448
+          ],
+          "desc": "grey shag"
+        },
+        {
+          "id": "living_room_b.wall_art.0",
+          "type": "wall_art",
+          "bbox": [
+            0,
+            20,
+            55,
+            95
+          ],
+          "desc": "framed print, left"
+        },
+        {
+          "id": "living_room_b.wall_art.1",
+          "type": "wall_art",
+          "bbox": [
+            70,
+            25,
+            130,
+            100
+          ],
+          "desc": "framed print, right"
+        },
+        {
+          "id": "living_room_b.vase.0",
+          "type": "vase",
+          "bbox": [
+            175,
+            228,
+            205,
+            258
+          ],
+          "desc": "small dark vessel"
+        },
+        {
+          "id": "living_room_b.vase.1",
+          "type": "vase",
+          "bbox": [
+            228,
+            218,
+            262,
+            255
+          ],
+          "desc": "larger dark vessel"
+        }
+      ],
+      "relations": [
+        {
+          "source": "living_room_b.sofa.0",
+          "relation": "faces",
+          "target": "living_room_b.tv_unit.0",
+          "also_acceptable": [
+            "living_room_b.tv_unit.1",
+            "living_room_b.coffee_table.0"
+          ],
+          "verdict": "TRUE",
+          "note": "two objects share the semantic type tv_unit here on purpose - this is the duplicate-label case the id contract is meant to survive"
+        },
+        {
+          "source": "living_room_b.sofa.0",
+          "relation": "against",
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.tv_unit.0",
+          "relation": "against",
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "hung on the timber wall"
+        },
+        {
+          "source": "living_room_b.tv_unit.1",
+          "relation": "against",
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "the console runs along the same wall"
+        },
+        {
+          "source": "living_room_b.vase.0",
+          "relation": "supported_by",
+          "target": "living_room_b.coffee_table.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.vase.1",
+          "relation": "supported_by",
+          "target": "living_room_b.coffee_table.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.pillows.0",
+          "relation": "supported_by",
+          "target": "living_room_b.sofa.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.pillows.1",
+          "relation": "supported_by",
+          "target": "living_room_b.sofa.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        }
+      ],
+      "binary_relations": [
+        {
+          "source": "living_room_b.sofa.0",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.tv_unit.0",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "hung on the timber wall"
+        },
+        {
+          "source": "living_room_b.tv_unit.1",
+          "chain": "against",
+          "wall": true,
+          "adjacent_object": null,
+          "target": "wall",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "the console runs along the same wall"
+        },
+        {
+          "source": "living_room_b.coffee_table.0",
+          "chain": "against",
+          "wall": false,
+          "adjacent_object": true,
+          "target": "living_room_b.sofa.0",
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL for wall detection - stands mid-room on the rug, its placement set by the sofa"
+        },
+        {
+          "source": "living_room_b.sofa.0",
+          "chain": "faces",
+          "orientation_visible": true,
+          "faces_object": true,
+          "target": "living_room_b.tv_unit.0",
+          "also_acceptable": [
+            "living_room_b.tv_unit.1",
+            "living_room_b.coffee_table.0"
+          ],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.coffee_table.0",
+          "chain": "faces",
+          "orientation_visible": false,
+          "faces_object": null,
+          "target": null,
+          "also_acceptable": [],
+          "verdict": "TRUE",
+          "note": "NEGATIVE CONTROL - a coffee table has no front"
+        },
+        {
+          "source": "living_room_b.vase.0",
+          "chain": "supported_by",
+          "supported": true,
+          "target": "living_room_b.coffee_table.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.vase.1",
+          "chain": "supported_by",
+          "supported": true,
+          "target": "living_room_b.coffee_table.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.pillows.0",
+          "chain": "supported_by",
+          "supported": true,
+          "target": "living_room_b.sofa.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        },
+        {
+          "source": "living_room_b.pillows.1",
+          "chain": "supported_by",
+          "supported": true,
+          "target": "living_room_b.sofa.0",
+          "also_acceptable": [],
+          "verdict": "TRUE"
+        }
+      ]
+    }
+  ],
+  "_binary_about": "Phase 1D binary chain ground truth, ADDED alongside the Phase 1C `relations` array without altering it. Each entry decomposes one relation into the yes/no steps of the chain: a null step means the chain stopped before reaching it, NOT that the answer is unknown. Entries marked NEGATIVE CONTROL are the ones whose correct answer at some step is NO - the capability Phase 1C could not demonstrate in 78 of 78 queries."
+}

@@ -1,0 +1,18 @@
+"""Compatibility shim. `constraint_evaluator` was migrated to `app.planning.constraint_evaluator` in the
+research-to-production pass (docs/production/research_to_production.md).
+The canonical implementation is production code; this module re-exports it so
+research benchmarks and historical reproductions keep importing from here.
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+import app.planning.constraint_evaluator as _canonical  # noqa: E402
+
+globals().update({k: v for k, v in vars(_canonical).items() if not k.startswith("__")})
+del _canonical

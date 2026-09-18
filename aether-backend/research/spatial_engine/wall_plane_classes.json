@@ -1,0 +1,89 @@
+{
+  "_about": "Phase 6 manual plane classification. Every candidate plane in 14 of the 21 benchmark images was classified BY EYE from an overlay of its pixel support painted over the source image (wall_quality_benchmark.py --features). The wall-contact LABEL of any object was not consulted; the question asked of each plane was only 'what surface is this pixel support lying on?'. Planes whose support was a misfit (ceiling stripes, depth read through glass, slivers) are UNKNOWN. The nine images not classified were not inspected and carry no entry; the benchmark reports them as UNCLASSIFIED, never as a guessed class.",
+  "classes": ["ROOM_BOUNDING_WALL", "INTERIOR_ARCHITECTURAL_PARTITION", "FURNITURE_FIXTURE_PLANE", "UNKNOWN"],
+  "images_inspected": 14,
+  "planes_classified": 56,
+
+  "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png:0": "ROOM_BOUNDING_WALL",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png:1": "UNKNOWN",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png:2": "FURNITURE_FIXTURE_PLANE",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png:3": "ROOM_BOUNDING_WALL",
+
+  "research/phase1g/scenes/s07_kitchen.png:0": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s07_kitchen.png:1": "FURNITURE_FIXTURE_PLANE",
+  "research/phase1g/scenes/s07_kitchen.png:2": "UNKNOWN",
+  "research/phase1g/scenes/s07_kitchen.png:3": "UNKNOWN",
+
+  "research/phase1g/scenes/s17_office.png:0": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s17_office.png:1": "INTERIOR_ARCHITECTURAL_PARTITION",
+  "research/phase1g/scenes/s17_office.png:2": "INTERIOR_ARCHITECTURAL_PARTITION",
+  "research/phase1g/scenes/s17_office.png:3": "UNKNOWN",
+
+  "research/phase1g/scenes/s16_dining_room.png:0": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s16_dining_room.png:1": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s16_dining_room.png:2": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s16_dining_room.png:3": "ROOM_BOUNDING_WALL",
+
+  "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png:0": "ROOM_BOUNDING_WALL",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png:1": "ROOM_BOUNDING_WALL",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png:2": "FURNITURE_FIXTURE_PLANE",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png:3": "UNKNOWN",
+
+  "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png:0": "ROOM_BOUNDING_WALL",
+  "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png:1": "ROOM_BOUNDING_WALL",
+  "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png:2": "FURNITURE_FIXTURE_PLANE",
+  "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png:3": "ROOM_BOUNDING_WALL",
+
+  "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png:0": "ROOM_BOUNDING_WALL",
+  "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png:1": "ROOM_BOUNDING_WALL",
+  "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png:2": "FURNITURE_FIXTURE_PLANE",
+  "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png:3": "UNKNOWN",
+
+  "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png:0": "UNKNOWN",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png:1": "ROOM_BOUNDING_WALL",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png:2": "UNKNOWN",
+  "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png:3": "ROOM_BOUNDING_WALL",
+
+  "research/phase1g/scenes/s01_living_room.png:0": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s01_living_room.png:1": "FURNITURE_FIXTURE_PLANE",
+  "research/phase1g/scenes/s01_living_room.png:2": "UNKNOWN",
+  "research/phase1g/scenes/s01_living_room.png:3": "UNKNOWN",
+
+  "research/phase1g/scenes/s02_living_room.png:0": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s02_living_room.png:1": "UNKNOWN",
+  "research/phase1g/scenes/s02_living_room.png:2": "FURNITURE_FIXTURE_PLANE",
+  "research/phase1g/scenes/s02_living_room.png:3": "UNKNOWN",
+
+  "research/phase1g/scenes/s05_bedroom.png:0": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s05_bedroom.png:1": "UNKNOWN",
+  "research/phase1g/scenes/s05_bedroom.png:2": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s05_bedroom.png:3": "ROOM_BOUNDING_WALL",
+
+  "research/phase1g/scenes/s06_kitchen.png:0": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s06_kitchen.png:1": "UNKNOWN",
+  "research/phase1g/scenes/s06_kitchen.png:2": "ROOM_BOUNDING_WALL",
+  "research/phase1g/scenes/s06_kitchen.png:3": "FURNITURE_FIXTURE_PLANE",
+
+  "research/phase1g/scenes/s09_office.png:0": "UNKNOWN",
+  "research/phase1g/scenes/s09_office.png:1": "FURNITURE_FIXTURE_PLANE",
+  "research/phase1g/scenes/s09_office.png:2": "FURNITURE_FIXTURE_PLANE",
+  "research/phase1g/scenes/s09_office.png:3": "ROOM_BOUNDING_WALL",
+
+  "research/phase1g/scenes/s10_office.png:0": "UNKNOWN",
+  "research/phase1g/scenes/s10_office.png:1": "UNKNOWN",
+  "research/phase1g/scenes/s10_office.png:2": "UNKNOWN",
+  "research/phase1g/scenes/s10_office.png:3": "UNKNOWN",
+
+  "_notes": {
+    "moodboard_room_kitchen:2": "the island's front face, between the stool legs; the plane both the stools and the counter 'touch'",
+    "moodboard_room_kitchen:floor": "camera 0.63 m above the fitted floor: the floor plane is the countertop, not the floor",
+    "s07_kitchen:1": "the navy island's front face plus a ceiling strip",
+    "s07_kitchen:floor": "camera 0.33 m above the fitted floor: the floor plane is the countertop",
+    "s17_office:1,2": "the glazed meeting-pod partition; tall and very wide, but ~40% of the scene lies beyond it",
+    "s16_dining_room:3": "the panelled right-hand wall itself; the chair beside the bench genuinely stands within centimetres of it",
+    "moodboard_room_living_room(proj_553):0": "the back wall, visible only above the sofas because their boxes are excluded from fitting; 0.5 m tall for that reason, not because it is furniture",
+    "moodboard_room_bathroom": "mirror sends depth through the glass; two ceiling misfits; wall evidence poor throughout",
+    "s09_office:3": "the back of the built-in bookcase, coplanar with the wall; classed as wall",
+    "s10_office": "all four planes are vertical planes seen edge-on, cutting the ceiling in diagonal stripes; none is a wall"
+  }
+}

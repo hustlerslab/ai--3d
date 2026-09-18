@@ -1,0 +1,231 @@
+{
+  "_about": "P13 attribute propagation on the real scene_plan path. PRESERVED is measured at the scene and the manifest; RENDERED is a separate axis taken from VISUAL_ATTRIBUTE_CONTRACT and never conflated with preservation.",
+  "cases": [
+    {
+      "detail": {
+        "executor": "preserved_metadata_only",
+        "manifest_color_words": [
+          "sage"
+        ],
+        "rendered_color_hex": "#b7a186",
+        "scene_color_words": [
+          "sage"
+        ]
+      },
+      "name": "case01_colour_word",
+      "ok": true
+    },
+    {
+      "detail": {
+        "executor": "preserved_metadata_only",
+        "honest_note": "preserved and traceable; Blender has no pattern synthesis",
+        "manifest_pattern": "quilted",
+        "scene_pattern": "quilted"
+      },
+      "name": "case02_pattern",
+      "ok": true
+    },
+    {
+      "detail": {
+        "executor": "conditionally_rendered",
+        "honest_note": "one material slot per object; a distinct frame material cannot render",
+        "manifest_frame_finish": "dark walnut",
+        "scene_frame_finish": "dark walnut"
+      },
+      "name": "case03_frame_finish",
+      "ok": true
+    },
+    {
+      "detail": {
+        "executor": "conditionally_rendered",
+        "manifest_descriptors": [
+          "contemporary",
+          "minimal"
+        ],
+        "scene_descriptors": [
+          "contemporary",
+          "minimal"
+        ]
+      },
+      "name": "case04_descriptors",
+      "ok": true
+    },
+    {
+      "detail": {
+        "manifest_mirrors_scene": true,
+        "scene_visual": {
+          "color_words": [
+            "sage",
+            "walnut"
+          ],
+          "descriptors": [
+            "contemporary"
+          ],
+          "frame_finish": "sage linen dark walnut",
+          "material": "linen",
+          "pattern": "quilted",
+          "source_intent_ids": [
+            "di_dbc9e532814aff42"
+          ],
+          "upholstery": "walnut"
+        },
+        "survived": {
+          "color_words": true,
+          "descriptors": true,
+          "frame_finish": true,
+          "material": true,
+          "pattern": true
+        }
+      },
+      "name": "case05_combined",
+      "ok": true
+    },
+    {
+      "detail": {
+        "audit_trail": [
+          "sofa: enriched the planner's own item (material_hint='linen' (was 'fabric'), visual.material='linen')"
+        ],
+        "plan_material_hint": [
+          "linen"
+        ],
+        "scene_material": "linen",
+        "sofa_count": 1
+      },
+      "name": "case06_explicit_beats_inferred",
+      "ok": true
+    },
+    {
+      "detail": {
+        "conflicts": [
+          "2 references disagree on material for sofa: leather, linen"
+        ],
+        "scene_material": "",
+        "unresolved": [
+          {
+            "object_category": "sofa",
+            "reason": "references disagree or were not classified with confidence; a human must choose"
+          }
+        ]
+      },
+      "name": "case07_conflict_stays_explicit",
+      "ok": true
+    },
+    {
+      "detail": {
+        "after": {
+          "color_words": [
+            "sage",
+            "walnut"
+          ],
+          "descriptors": [],
+          "frame_finish": "sage linen dark walnut",
+          "material": "linen",
+          "pattern": "quilted",
+          "source_intent_ids": [
+            "di_ca460efeb7d25c21"
+          ],
+          "upholstery": "walnut"
+        },
+        "before": {
+          "color_words": [
+            "sage",
+            "walnut"
+          ],
+          "descriptors": [],
+          "frame_finish": "sage linen dark walnut",
+          "material": "linen",
+          "pattern": "quilted",
+          "source_intent_ids": [
+            "di_ca460efeb7d25c21"
+          ],
+          "upholstery": "walnut"
+        }
+      },
+      "name": "case08_save_reload",
+      "ok": true
+    },
+    {
+      "detail": {
+        "after": {
+          "color_words": [
+            "sage"
+          ],
+          "descriptors": [],
+          "frame_finish": "",
+          "material": "linen",
+          "pattern": "quilted",
+          "source_intent_ids": [
+            "di_1294e42b3198f03b"
+          ],
+          "upholstery": ""
+        },
+        "before": {
+          "color_words": [
+            "sage"
+          ],
+          "descriptors": [],
+          "frame_finish": "",
+          "material": "linen",
+          "pattern": "quilted",
+          "source_intent_ids": [
+            "di_1294e42b3198f03b"
+          ],
+          "upholstery": ""
+        },
+        "patched_color": "#123456"
+      },
+      "name": "case09_patch_preserves",
+      "ok": true
+    },
+    {
+      "detail": {
+        "distinct_visual": 1,
+        "runs": 20,
+        "sofa_counts": [
+          1
+        ]
+      },
+      "name": "case10_retry_checkpoint_deterministic",
+      "ok": true
+    }
+  ],
+  "executor_contract": {
+    "color_hex": {
+      "executor": "preserved_and_rendered",
+      "how": "tinted into the object's material at strength 0.85 (apply_materials.for_object)",
+      "scene_field": "color"
+    },
+    "color_words": {
+      "executor": "preserved_metadata_only",
+      "how": "no colour-word to hex resolution exists in the repository; the rendered colour channel is color_hex. Resolving words against the material registry's own base_colors is a scoped future step, deliberately not invented here",
+      "scene_field": "visual.color_words"
+    },
+    "descriptors": {
+      "executor": "conditionally_rendered",
+      "how": "P14: a descriptor that names a structural part AND resolves to an existing registry material ('wooden frame', 'gold accent trim') supplies the frame finish and is painted by `import_assets._apply_frame_finish`, recorded as `finish.source == 'descriptor'` and never counted as a stated frame_finish. MEASURED on 8 real photographs: 2 of 8 carry frame evidence this way. The surface-quality words (matte/satin/glossy) are resolved to `finish.roughness` in the manifest but NO Blender script reads that key, so they are carried, not applied - and they appear in 0 of the 8 measured references. Everything else ('luxurious', 'contemporary', 'rounded') has no defensible mapping and stays semantic metadata; it still influences asset SELECTION upstream through style_notes",
+      "scene_field": "visual.descriptors"
+    },
+    "frame_finish": {
+      "executor": "conditionally_rendered",
+      "how": "P14: resolved by `compiler.finish_material_for` to a material that already exists and is applies_to=furniture (veneer_walnut, veneer_oak, metal_brass, metal_black, glass_clear), then painted by `import_assets._apply_frame_finish` onto the trim meshes `_apply_upholstery` deliberately skips. Requires the asset to have more than one material region: MEASURED at 10 of 58 registry assets, so most pieces report metadata_only. Per-object state is in the manifest's `finish.state`. MEASURED on 8 real photographs: Gemini populates this field 0 times, so a stated frame finish is currently rare and the descriptor route below carries it instead",
+      "scene_field": "visual.frame_finish"
+    },
+    "material": {
+      "executor": "preserved_and_rendered",
+      "how": "resolved to a registry material id in material_overrides['primary'] with its PBR maps",
+      "scene_field": "visual.material"
+    },
+    "pattern": {
+      "executor": "preserved_metadata_only",
+      "how": "no procedural pattern or texture synthesis exists; 'quilted' cannot become geometry or a map, so it is carried as metadata rather than faked",
+      "scene_field": "visual.pattern"
+    },
+    "upholstery": {
+      "executor": "preserved_and_rendered",
+      "how": "same channel as material - it is preferred over material when both are stated",
+      "scene_field": "visual.upholstery"
+    }
+  },
+  "passed": 10,
+  "total": 10
+}

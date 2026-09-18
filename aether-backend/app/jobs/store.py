@@ -119,6 +119,21 @@ class JobStore:
         )
         return None if row is None else _row_to_job(row)
 
+    def active_of_type(self, project_id: str, type: str) -> Optional[Job]:
+        """The job of this type already in flight for this project, if any.
+
+        `latest_of_type` cannot answer this: it returns the newest row whatever
+        its status, so a long-finished SUCCEEDED job looks identical to a
+        running one. P16 needs the distinction to stop a double-clicked
+        Generate from queueing the same work twice.
+        """
+        row = self._db.one(
+            "SELECT * FROM jobs WHERE project_id = ? AND type = ? "
+            "AND status IN ('QUEUED','RUNNING','RETRYING') ORDER BY created_at ASC LIMIT 1",
+            (project_id, type),
+        )
+        return None if row is None else _row_to_job(row)
+
     def unfinished(self) -> list[Job]:
         rows = self._db.query(
             "SELECT * FROM jobs WHERE status IN ('QUEUED','RUNNING','RETRYING') ORDER BY created_at ASC"

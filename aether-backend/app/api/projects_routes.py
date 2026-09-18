@@ -330,6 +330,9 @@ async def add_inputs(
 
 class AnalyzeBody(BaseModel):
     force: bool = False
+    #: False for the element-first entry: analysis, crops and style without
+    #: painting rooms, so pieces can be pictured before any room exists.
+    paint: bool = True
 
 
 class RoomPatch(BaseModel):
@@ -370,8 +373,86 @@ def analyze_project(project_id: str, body: AnalyzeBody = AnalyzeBody()) -> dict:
 
     if not build_input_bundle(project_id).has_content:
         return _error("NO_INPUTS", "Add a description, dimensions or reference photos before analysing.", 422)
-    job = get_runner().enqueue(project_id, "analyze", {"force": body.force})
+    job = get_runner().enqueue(project_id, "analyze", {"force": body.force, "paint": body.paint})
     return {"success": True, "job": job.model_dump(mode="json")}
+
+
+# ── Element images (element-first, stage 1) ─────────────────────────────
+
+
+class ElementImagesBody(BaseModel):
+    force: bool = False
+
+
+@router.post("/projects/{project_id}/element-images")
+def element_images_project(project_id: str, body: ElementImagesBody = ElementImagesBody()) -> dict:
+    """One isolated picture per canonical piece, decided from the photos and
+    the brief before any room is painted. Local GPU, no per-image cost."""
+    get_project_store().get(project_id)
+    root = project_dir(project_id)
+    if not (root / "analysis" / "style_spec.json").exists():
+        return _error("ANALYSIS_REQUIRED", "Run /analyze first.", 409)
+    job = get_runner().enqueue(project_id, "element_images", {"force": body.force})
+    return {"success": True, "job": job.model_dump(mode="json")}
+
+
+@router.get("/projects/{project_id}/element-images")
+def get_element_images(project_id: str) -> dict:
+    get_project_store().get(project_id)
+    root = project_dir(project_id)
+    data = _read(root / "planning" / "element_images.json")
+    if data is None:
+        latest = get_job_store().latest_of_type(project_id, "element_images")
+        return _error(
+            "ELEMENT_IMAGES_NOT_READY",
+            "No element images yet. POST /element-images first."
+            + (f" Latest job: {latest.status.value}." if latest else ""),
+            404,
+        )
+    return ok(_element_images_payload(project_id, data))
+
+
+class ElementDecisionsBody(BaseModel):
+    """{element_id: true|false} — the client confirming or leaving out a
+    pictured piece, BEFORE any room is painted. Keyed by the canonical element
+    id, which is content-addressed and survives a re-run."""
+    decisions: dict[str, bool]
+
+
+@router.patch("/projects/{project_id}/element-images")
+def review_element_images(project_id: str, body: ElementDecisionsBody) -> dict:
+    from ..intelligence.schema import ElementImageSet
+
+    get_project_store().get(project_id)
+    path = project_dir(project_id) / "planning" / "element_images.json"
+    data = _read(path)
+    if data is None:
+        return _error("ELEMENT_IMAGES_NOT_READY", "Nothing to review yet.", 404)
+    images = ElementImageSet.model_validate(data)
+    known = {d.element_id for d in images.definitions}
+    unknown = sorted(set(body.decisions) - known)
+    if unknown:
+        return _error("UNKNOWN_ELEMENT",
+                      f"No such element(s): {', '.join(unknown)}. Re-fetch and review again.", 409)
+    for d in images.definitions:
+        if d.element_id in body.decisions:
+            d.approved = body.decisions[d.element_id]
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(images.model_dump_json(indent=2), encoding="utf-8")
+    tmp.replace(path)
+    return ok(_element_images_payload(project_id, images.model_dump(mode="json")))
+
+
+def _element_images_payload(project_id: str, data: dict) -> dict:
+    """URLs are minted here, not stored: only the API knows how files are
+    served. Every read of the element images goes through this, for GET and
+    PATCH alike, so the two answers cannot drift."""
+    for im in data.get("images", []):
+        ref = im.get("image_ref") or ""
+        im["image_url"] = f"/files/projects/{project_id}/{ref}" if ref and not im.get("error") else ""
+        crop = im.get("reference_ref") or ""
+        im["reference_url"] = f"/files/projects/{project_id}/{crop}" if crop else ""
+    return data
 
 
 @router.post("/projects/{project_id}/moodboard/rooms/{room_id}/repaint")
@@ -532,6 +613,13 @@ def patch_analysis(project_id: str, body: AnalysisPatchBody) -> dict:
 
 class ScenePlanBody(BaseModel):
     force: bool = False
+    #: Re-read the approved moodboard as well, which `force` deliberately does
+    #: not (it costs a vision call per room). The handler has honoured this
+    #: since the read was checkpointed, but nothing could set it: the body
+    #: carried only `force`, so the reading was frozen at whatever the first
+    #: read produced and no later fix to the reader could reach an existing
+    #: project. Found while verifying the render-frame anchors live.
+    force_read: bool = False
 
 
 class ElementReviewBody(BaseModel):
@@ -617,8 +705,17 @@ def _review_summary(data: dict, project_id: str = "") -> dict:
     gets spent, not an estimate of it.
     """
     from ..intelligence.schema import SceneReading
-    from ..intelligence.scene_reading import approved_for_generation, distinct_shapes
-    from ..jobs.handlers.generate_elements import CREDITS_PER_PIECE, _glb_rel
+    from ..intelligence.scene_reading import (approved_for_generation, distinct_shapes,
+                                              element_inventory, inventory_notes,
+                                              resolve_elements)
+    from ..jobs.handlers.generate_elements import CREDITS_PER_PIECE, _glb_rel, storage_key
+
+    # Recomputed, not read from the stored field: a reading written before the
+    # field existed still gets a count, and a reading the human has just edited
+    # gets the count that reflects the edit rather than the one from the read.
+    parsed = SceneReading.model_validate(data)
+    inventory = element_inventory(parsed)
+    definitions, instances = resolve_elements(parsed)
 
     els = [e for e in data.get("elements", []) if e.get("crop_ref")]
     approved = [e for e in els if e.get("approved") is True]
@@ -628,8 +725,9 @@ def _review_summary(data: dict, project_id: str = "") -> dict:
     if project_id and approved:
         ready, _ = approved_for_generation(SceneReading.model_validate(data))
         root = project_dir(project_id)
-        for key in distinct_shapes(ready):
-            if (root / _glb_rel(key)).is_file():
+        for key, members in distinct_shapes(ready).items():
+            disk = storage_key(lambda rel: (root / rel).is_file(), key, members)
+            if (root / _glb_rel(disk)).is_file():
                 reused += 1
             else:
                 to_generate += 1
@@ -644,6 +742,20 @@ def _review_summary(data: dict, project_id: str = "") -> dict:
         "to_generate": to_generate,
         "already_generated": reused,
         "credits_needed": to_generate * CREDITS_PER_PIECE,
+        # How many of each piece the room was read to hold, and what the review
+        # screen should say when fewer than that survived the checks. Three bar
+        # stools reaching the plan as one used to be invisible here.
+        "inventory": [row.model_dump() for row in inventory],
+        "inventory_notes": inventory_notes(inventory),
+        # What the pieces ARE, independent of where they sit: one definition
+        # per canonical piece with its instance count, so the screen can say
+        # "Bar Stool - 3 instances - 1 asset" instead of listing three stools.
+        "definitions": [d.model_dump() for d in definitions],
+        # One row per physical occurrence, each naming its definition and the
+        # reading row (and crop) it came from. The review screen shows three
+        # stools as three instances of one piece because these say so; it
+        # never counts or groups anything itself.
+        "instances": [i.model_dump() for i in instances],
     }
 
 
@@ -653,7 +765,8 @@ def scene_plan_project(project_id: str, body: ScenePlanBody = ScenePlanBody()) -
     root = project_dir(project_id)
     if not (root / "analysis" / "style_spec.json").exists():
         return _error("ANALYSIS_REQUIRED", "Run POST /analyze before planning the scene.", 409)
-    job = get_runner().enqueue(project_id, "scene_plan", {"force": body.force})
+    job = get_runner().enqueue(project_id, "scene_plan",
+                               {"force": body.force, "force_read": body.force_read})
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
@@ -755,6 +868,11 @@ def get_scene_spec(project_id: str) -> dict:
             "violations": [v.model_dump() for v in violations],
             "object_plan": _read(root / "planning" / "object_plan.json"),
             "asset_plan": _read(root / "planning" / "asset_plan.json"),
+            "spatial_check": _read(root / "planning" / "spatial_check.json"),
+            # What the client's own reference photos asked for, and how much of
+            # it survived into this scene. Null until a plan has run.
+            "design_intent": _read(root / "planning" / "design_intent.json"),
+            "visual_intent_fidelity": _read(root / "planning" / "visual_intent_fidelity.json"),
             "scene_specs": store.list_scene_specs(project_id),
         }
     )

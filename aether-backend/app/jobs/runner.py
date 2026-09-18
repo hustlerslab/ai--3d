@@ -86,6 +86,22 @@ class JobRunner:
     def enqueue(self, project_id: str, type: str, params: Optional[dict[str, Any]] = None) -> Job:
         spec = get_spec(type)
         self.projects.get(project_id)  # raises ProjectNotFound
+
+        # P16 idempotency. A double-clicked "Generate 3D space" used to queue the
+        # work twice: the render lane has one worker so those merely serialised,
+        # but the `ai` lane has two, and two concurrent `scene_plan` jobs for one
+        # project write the same planning files. Hand back the job already in
+        # flight instead - the client polls a job id, so it cannot tell the
+        # difference and ends up watching the run that is actually happening.
+        #
+        # Deliberately per (project, type) and in-flight ONLY: a finished job
+        # never blocks a re-run, so `force` and genuine retries are unaffected.
+        active = self.jobs.active_of_type(project_id, type)
+        if active is not None:
+            log.info("job.enqueue.deduped project=%s type=%s existing=%s status=%s",
+                     project_id, type, active.job_id, active.status)
+            return active
+
         job = self.jobs.create(
             project_id=project_id,
             type=type,
@@ -191,10 +207,22 @@ class JobRunner:
         if spec.stage_running is not None:
             self.projects.set_stage(job.project_id, spec.stage_running)
 
+        # P16 observability: one line per job transition, carrying the two ids
+        # needed to follow a single generation across the whole pipeline. The
+        # per-project `events` table already records stage and status; this is
+        # the server-side half, so a log file alone is enough to trace a run.
+        # Ids only - never a brief, an image, a prompt or a key.
+        log.info("job.start project=%s job=%s type=%s lane=%s attempt=%d/%d",
+                 job.project_id, job_id, job.type, job.lane, attempt, job.max_attempts)
+
         t0 = time.monotonic()
         try:
             result = spec.handler(ctx) or {}
             duration_ms = int((time.monotonic() - t0) * 1000)
+            log.info("job.succeeded project=%s job=%s type=%s ms=%d %s",
+                     job.project_id, job_id, job.type, duration_ms,
+                     " ".join(f"{k}={result[k]}" for k in ("scene_id", "scene_version")
+                              if isinstance(result, dict) and k in result))
             self.jobs.update(job_id, status=JobStatus.SUCCEEDED, result=result, finished_at=_now())
             self.jobs.add_event(
                 job.project_id, job.type, "succeeded", job_id=job_id, duration_ms=duration_ms
@@ -205,6 +233,9 @@ class JobRunner:
             duration_ms = int((time.monotonic() - t0) * 1000)
             error = f"{type(exc).__name__}: {exc}"
             ctx.log.error("attempt %d failed: %s\n%s", attempt, error, traceback.format_exc())
+            log.error("job.failed project=%s job=%s type=%s attempt=%d/%d ms=%d reason=%s",
+                      job.project_id, job_id, job.type, attempt, job.max_attempts,
+                      duration_ms, error)
             if attempt < job.max_attempts and not self._stopping.is_set():
                 self.jobs.update(job_id, status=JobStatus.RETRYING, error=error)
                 self.jobs.add_event(

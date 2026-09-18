@@ -1,0 +1,219 @@
+{
+  "_about": "P2.8 adversarial clearance benchmark - synthetic ground truth, not real photos. See clearance_benchmark.py module docstring for scope.",
+  "cases_total": 10,
+  "cases_passed": 10,
+  "all_deterministic": true,
+  "all_pass": true,
+  "results": [
+    {
+      "case": "collision_but_ok_clearance",
+      "expected": {
+        "collision_hard": 2,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 2,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 0.21,
+      "validator_latency_ms": 0.11
+    },
+    {
+      "case": "no_collision_bad_clearance",
+      "expected": {
+        "collision_hard": 0,
+        "clearance_soft": 1,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 0,
+        "clearance_soft": 1,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 0.1,
+      "validator_latency_ms": 0.08
+    },
+    {
+      "case": "adequate_clearance",
+      "expected": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 0.07,
+      "validator_latency_ms": 0.06
+    },
+    {
+      "case": "wardrobe_unusable",
+      "expected": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 1,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 1,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 0.07,
+      "validator_latency_ms": 0.06
+    },
+    {
+      "case": "blocked_doorway",
+      "expected": {
+        "collision_hard": 1,
+        "clearance_soft": 0,
+        "functional_soft": 1,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 1,
+        "clearance_soft": 0,
+        "functional_soft": 1,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 0.2,
+      "validator_latency_ms": 0.13
+    },
+    {
+      "case": "bed_circulation_blocked",
+      "expected": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 1,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 1,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 436.65,
+      "validator_latency_ms": 454.8
+    },
+    {
+      "case": "narrow_but_passable_corridor",
+      "expected": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 1
+      },
+      "measured": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 1
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 1331.73,
+      "validator_latency_ms": 2377.08
+    },
+    {
+      "case": "open_plan_no_false_positives",
+      "expected": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 2701.55,
+      "validator_latency_ms": 2827.85
+    },
+    {
+      "case": "dense_room_combined_violations",
+      "expected": {
+        "collision_hard": 2,
+        "clearance_soft": 1,
+        "functional_soft": 1,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 2,
+        "clearance_soft": 1,
+        "functional_soft": 1,
+        "circulation_hard": 0,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 4265.78,
+      "validator_latency_ms": 4477.38
+    },
+    {
+      "case": "impossible_room",
+      "expected": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 1,
+        "circulation_soft": 0
+      },
+      "measured": {
+        "collision_hard": 0,
+        "clearance_soft": 0,
+        "functional_soft": 0,
+        "circulation_hard": 1,
+        "circulation_soft": 0
+      },
+      "pass": true,
+      "deterministic": true,
+      "latency_ms": 2.37,
+      "validator_latency_ms": 2.69
+    }
+  ]
+}

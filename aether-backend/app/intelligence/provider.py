@@ -53,15 +53,57 @@ class ResilientProvider:
     def read_scene_elements(self, image, room, style, vertical) -> dict:
         """Optional capability. No mock fallback: an empty reading tells the
         caller nothing was read, which is honest, where a mock-invented list of
-        furniture would be fabricated detail presented as observation."""
+        furniture would be fabricated detail presented as observation.
+
+        A FAILED call is reported as `_error`, not as emptiness. The two are
+        different facts - "this room genuinely has nothing in it" versus "the
+        model timed out" - and collapsing both into `{}` hid a real outage: with
+        no `read_scene_elements` on the local provider at all, every project
+        read zero elements and the feed said only "the reader returned nothing".
+        `coerce_room_reading` reads `elements` and `surfaces`, so the key is
+        inert everywhere except the warning an operator actually sees.
+        """
         read = getattr(self.primary, "read_scene_elements", None)
         if not callable(read):
-            return {}
+            return {"_error": f"{self.label} cannot read renders: no read_scene_elements"}
         try:
             return read(image, room, style, vertical) or {}
-        except Exception:                                  # noqa: BLE001
+        except Exception as exc:                           # noqa: BLE001
             log.exception("read_scene_elements failed on %s", self.label)
-            return {}
+            return {"_error": f"{type(exc).__name__}: {exc}"}
+
+    def classify_reference(self, image, description: str, vertical, filename: str = "") -> dict:
+        """Optional capability (ADR-001 pins the Protocol to three methods):
+        P11/P12 reference classification.
+
+        A FAILED call is reported as `_error`, never as an empty answer. The
+        caller turns `_error` into an `unread` reference with the reason
+        attached, which is the whole point - a photograph the system could not
+        read must be visible, not absent.
+
+        Source follows `_run`'s own rule: with no primary at all the operator
+        SELECTED the deterministic provider, so it is the provider rather than
+        a degradation. But a real primary that FAILS is never papered over with
+        it - that substitution would present a guess as a reading of the
+        client's photograph, which is the fabricated evidence this whole phase
+        exists to prevent.
+        """
+        source = self.primary if self.primary is not None else self.fallback
+        classify = getattr(source, "classify_reference", None)
+        if not callable(classify):
+            return {"_error": f"{self.label} cannot classify references: no classify_reference"}  # noqa: E501
+        try:
+            return classify(image, description, vertical, filename=filename) or {}
+        except TypeError:
+            # A provider written against the original three-argument form.
+            try:
+                return classify(image, description, vertical) or {}
+            except Exception as exc:                       # noqa: BLE001
+                log.exception("classify_reference failed on %s", self.label)
+                return {"_error": f"{type(exc).__name__}: {exc}"}
+        except Exception as exc:                           # noqa: BLE001
+            log.exception("classify_reference failed on %s", self.label)
+            return {"_error": f"{type(exc).__name__}: {exc}"}
 
     def check_element_crop(self, crop, room_type, vertical) -> dict:
         """Optional capability. No mock fallback, and a failure is NOT a pass:

@@ -1,0 +1,991 @@
+{
+  "elements": [
+    {
+      "name": "low oak sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "left wall"
+    },
+    {
+      "name": "freestanding bath",
+      "semantic_type": "bathroom",
+      "bbox": [1, 374, 576, 617],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [0, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sofa",
+      "semantic_type": "sofa",
+      "bbox": [2, 224, 503, 480],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "tv_unit",
+      "semantic_type": "tv_unit",
+      "bbox": [466, 322, 1147, 478],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "sideboard",
+      "semantic_type": "sideboard",
+      "bbox": [277, 550, 1147, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name": "tv",
+      "semantic_type": "tv",
+      "bbox": [743, 125, 1064, 328],
+      "against": "wall",
+      "faces": "wall"
+    },
+    {
+      "name": "rug",
+      "semantic_type": "rug",
+      "bbox": [2, 422, 1125, 728],
+      "against": "floor",
+      "faces": "floor"
+    },
+    {
+      "name

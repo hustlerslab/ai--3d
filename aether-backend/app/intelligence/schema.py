@@ -7,6 +7,7 @@ from typing import Any, Literal, Optional
 from pydantic import BaseModel, Field, field_validator
 
 from ..projects.schema import RoomHint, Vertical
+from .design_intent import VisualAttributes
 
 SCHEMA_VERSION = "1.1"
 
@@ -157,6 +158,14 @@ class DesignAnalysis(BaseModel):
     confidence: float = Field(default=0.5, ge=0, le=1)
     provider: str = "mock"
     warnings: list[str] = []
+    #: The reference input ids this analysis was actually computed from, so a
+    #: cached artifact can be told apart from a current one. Without it the
+    #: analyze job reused `design_analysis.json` forever: a project analysed
+    #: when the Gemini cap was 6 kept showing "only the first 6 of 8 references
+    #: were sent" long after the cap became 12, because nothing re-ran.
+    #: Empty means "written before this field existed" - treated as unknown,
+    #: and therefore stale. Same mechanism as DesignIntentSet.reference_ids.
+    reference_ids: list[str] = []
     created_at: str = Field(default_factory=_now)
 
     def room(self, room_id: str) -> Optional[RoomAnalysis]:
@@ -269,7 +278,13 @@ class MoodboardSpec(BaseModel):
 # ── Reading the generated scene (moodboard → 3D) ─────────────────────────
 
 
-ElementCheck = Literal["unchecked", "ok", "mismatch", "crowded", "duplicate", "unreadable"]
+# `implausible` is the semantic verdict, separate from the visual ones above:
+# the crop may be a perfectly good picture of a bath, and the objection is
+# that it is in a living room. Additive - old readings parse unchanged, so
+# no schema_version bump - and it reuses the field the review panel already
+# renders rather than adding a parallel warning channel.
+ElementCheck = Literal["unchecked", "ok", "mismatch", "crowded", "duplicate",
+                       "unreadable", "implausible"]
 """Verdict of the isolated second look at one crop.
 
 `ok` the crop shows what it claims; `mismatch` it shows something else;
@@ -327,6 +342,39 @@ class SceneElement(BaseModel):
     # share a `shape_key` share one asset: three identical bar stools are one
     # generation and three placements, not three generations.
     asset_id: str = ""
+    # P22: where the piece sits, in the RENDER'S frame. The picture is taken
+    # from the front wall looking at the back wall, so BACK is the far wall,
+    # LEFT and RIGHT are the picture's own, FRONT is behind the camera. The
+    # plan adopts that frame per room (back = the room rectangle's north edge,
+    # left = west), which is what lets these become metres deterministically.
+    # An anchor for the solver, which still decides the real position; never
+    # a placement in itself.
+    wall: str = ""                 # back | left | right | front | "" (free-standing or unknown)
+    #: (x along the back wall from the left corner, y above the floor, z from
+    #: the back wall towards the camera), metres, room-local. None if unread.
+    position_m: Optional[tuple[float, float, float]] = None
+    #: "read" (the reader answered the frame fields) | "derived" (computed from
+    #: the crop box, ordinal not metric) | "" (no box, so no anchor at all).
+    #: Every boxed element carries an anchor; this says how good it is.
+    position_source: str = ""
+    facing: str = ""               # back | left | right | front | up | down | a named piece
+    #: unit (dx, dz) in the room frame when `facing` names a wall; None otherwise
+    facing_dir: Optional[tuple[float, float]] = None
+
+
+class WallFinish(BaseModel):
+    """One finish zone on one named wall (P22). A client may want tiles on
+    the back wall to waist height and paint above, or a different tile beside
+    the bath: a room-wide `wall_material` cannot say that. `extent_m` is
+    metres along the wall from its left end seen from inside the room, then
+    metres up from the floor; the wall itself is the third coordinate, bound
+    to a `wall_id` when the scene is compiled.
+    """
+    wall: str                      # back | left | right | front
+    material: str = ""
+    color: str = ""
+    pattern: str = ""              # "herringbone", "vertical panelling"; "" when plain
+    extent_m: tuple[float, float, float, float] = (0.0, 0.0, 0.0, 0.0)  # from_x, to_x, from_y, to_y
 
 
 class RoomSurfaces(BaseModel):
@@ -345,6 +393,123 @@ class RoomSurfaces(BaseModel):
     floor_color: str = ""
     floor_material: str = ""
     notes: str = ""
+    #: P22: per-wall finish zones. Empty when the reader saw one plain finish;
+    #: `wall_material` above stays the room-wide answer either way.
+    walls: list[WallFinish] = []
+
+
+class ElementInventory(BaseModel):
+    """How many of one kind of piece a room was read to contain.
+
+    The reading represents three bar stools as three rows, and downstream that
+    multiplicity is only ever implied by `len(...)`. Nothing states the number,
+    so nothing can notice when it drops: measured, three stools whose boxes each
+    ran to the image edge came out of `mark_duplicates` as ONE usable element,
+    and the two that vanished left no trace at all.
+
+    This is that number, written down. Derived, never authored - no model is
+    asked how many there are, the rows are counted.
+    """
+
+    room_id: str
+    semantic_type: str
+    #: Rows the reading produced for this (room, type).
+    read: int = 0
+    #: Rows that survive `trustworthy()` and can therefore reach the plan.
+    usable: int = 0
+    #: Rows lost, by the check that lost them, so a shortfall can be explained.
+    lost_to: dict[str, int] = {}
+
+    @property
+    def discrepant(self) -> bool:
+        return self.usable != self.read
+
+
+class ElementDefinition(BaseModel):
+    """The canonical identity of a piece: what it IS, not where it is.
+
+    Three black bar stools along a counter are one definition with three
+    instances, and cost one generation between them. The production key used
+    to include the box centre, so those three stools were three identities and
+    three Meshy purchases - 90 credits where 30 would do. Measured on the real
+    project (research/element-first/identity-ablation.json).
+
+    No field here is a position. `element_id` is content-addressed from the
+    identity evidence, so re-reading the moodboard yields the same id for the
+    same piece as long as the evidence agrees.
+    """
+
+    element_id: str
+    room_id: str
+    semantic_type: str
+    canonical_name: str = ""
+    material: str = ""
+    color: str = ""
+    dimensions_m: Optional[tuple[float, float, float]] = None
+    #: Which evidence the identity was decided on. `"unresolved"` means the
+    #: piece had no positive evidence and deliberately kept its own identity.
+    identity_method: str = ""
+    instance_count: int = 1
+    #: The reading rows that fold into this definition, biggest crop first.
+    source_element_ids: list[str] = []
+    canonical_asset_id: str = ""
+    #: The client's decision on the pictured piece: None until they look, then
+    #: true (build it) or false (leave it out). Decided BEFORE the room is
+    #: painted, and carried onto the matching moodboard reading rows so the
+    #: same piece is not asked about twice.
+    approved: Optional[bool] = None
+
+
+class ElementInstance(BaseModel):
+    """One physical occurrence of a definition. Carries the evidence that is
+    about THIS copy - where it was seen - and nothing that is about the kind."""
+
+    instance_id: str
+    element_id: str
+    room_id: str
+    source_element_id: str
+    bbox: Optional[tuple[float, float, float, float]] = None
+    crop_ref: str = ""
+
+
+class ElementImage(BaseModel):
+    """The canonical picture of one piece: isolated, neutral background, one
+    per definition, reused for the moodboard reference, for Meshy, and for the
+    review screen. Generated once and identified by content, so the same piece
+    gets the same image on every run - the seed is derived from the element id,
+    never drawn at random."""
+
+    element_image_id: str
+    element_id: str
+    canonical_key: str
+    #: Project-relative PNG, e.g. planning/element_images/cel_ab12cd34ef.png
+    image_ref: str = ""
+    prompt: str = ""
+    negative_prompt: str = ""
+    seed: int = 0
+    #: Crop of the client's own photo the render was conditioned on, if any.
+    reference_ref: str = ""
+    reference_scale: float = 0.0
+    model: str = ""
+    checksum: str = ""
+    version: int = 1
+    #: Non-empty when generation failed; the definition still exists.
+    error: str = ""
+
+
+class ElementImageSet(BaseModel):
+    """The pre-moodboard inventory and its pictures: what the room will hold,
+    decided BEFORE any room is painted. Definitions here come from the object
+    plan (the client's photographed pieces plus the brief), not from a render."""
+
+    schema_version: str = SCHEMA_VERSION
+    version: int = 1
+    definitions: list[ElementDefinition] = []
+    instances: list[ElementInstance] = []
+    images: list[ElementImage] = []
+    provider: str = ""
+    warnings: list[str] = []
+    created_at: str = Field(default_factory=_now)
 
 
 class SceneReading(BaseModel):
@@ -354,6 +519,15 @@ class SceneReading(BaseModel):
     version: int = 1
     elements: list[SceneElement] = []
     surfaces: list[RoomSurfaces] = []
+    #: Canonical identities and their instances, derived from `elements` by
+    #: `resolve_elements()`. Empty on readings written before these existed.
+    definitions: list[ElementDefinition] = []
+    instances: list[ElementInstance] = []
+    #: Per (room, semantic_type) instance counts. Empty on readings written
+    #: before this field existed, which is why nothing may read empty as "zero
+    #: of everything": it means "not counted", and `element_inventory()`
+    #: recomputes it from the elements on demand.
+    inventory: list[ElementInventory] = []
     provider: str = "mock"
     warnings: list[str] = []
     created_at: str = Field(default_factory=_now)
@@ -388,6 +562,119 @@ class AgentOutput(BaseModel):
 # ── Object plan (stages 6–7) ─────────────────────────────────────────────
 
 RelationType = Literal["in_front_of", "beside", "facing", "under", "around", "against_wall"]
+
+
+# ── spatial graph ────────────────────────────────────────────────────────
+#
+# What the moodboard implies about ARRANGEMENT, before anything decides metres.
+# Built from the reading (what each piece is, and the words the reader used for
+# how it sits) plus optional image geometry. Deliberately not coordinates: a
+# render has no depth and does not obey the room's real size, so turning boxes
+# into positions here would be inventing facts the picture cannot support.
+
+#: Predicates that survive the translation out of a single 2D view.
+#:
+#: CENTERED_ON and ALIGNED_WITH are deliberately absent. Both need a wall or an
+#: axis to be centred on or aligned to, and neither exists yet at this stage -
+#: emitting them would mean guessing which wall, which is the coordinate
+#: solver's job and the exact mistake this layer exists to avoid.
+SpatialPredicate = Literal[
+    # frame-independent: true wherever the camera stood
+    "NEAR", "ADJACENT_TO", "OVERLAPS", "ON_TOP_OF", "SUPPORTED_BY",
+    "FACES", "FACES_ROOM", "AGAINST", "AGAINST_WALL", "GROUPED_WITH",
+    # camera-frame: see SpatialRelation.frame
+    "LEFT_OF", "RIGHT_OF", "ABOVE", "BELOW",
+]
+
+#: Camera-frame predicates, listed once so a consumer can filter on the set
+#: rather than re-deriving which ones are frame-dependent.
+CAMERA_FRAME_PREDICATES = frozenset({"LEFT_OF", "RIGHT_OF", "ABOVE", "BELOW"})
+
+SpatialConfidence = Literal["HIGH", "MEDIUM", "LOW", "UNKNOWN"]
+SpatialSource = Literal["semantic", "geometry", "semantic+geometry", "placement"]
+
+
+class SpatialNode(BaseModel):
+    """One piece, as the arrangement layer sees it."""
+
+    node_id: str                        # == SceneElement.element_id
+    plan_key: str = ""                  # "<room>.<type>.<n>", set once planned
+    semantic_type: str
+    name: str = ""
+    room_id: str
+    #: Did image geometry corroborate this piece? A node without it is still a
+    #: real node - the reader saw it - but every relation drawn from it is
+    #: capped at LOW, because nothing independent confirmed where it sits.
+    geometry_confirmed: bool = False
+    source_confidence: SpatialConfidence = "LOW"
+
+
+class SpatialRelation(BaseModel):
+    subject_id: str
+    predicate: SpatialPredicate
+    object_id: str = ""                 # empty for AGAINST_WALL
+    confidence: SpatialConfidence = "LOW"
+    source: SpatialSource = "semantic"
+    #: "floor_plan" survives any camera; "camera" does not. LEFT_OF from two
+    #: bounding boxes says the pieces are side by side FROM WHERE THE CAMERA
+    #: STOOD - useful as ordering, never as a direction in the room. Phase 0a
+    #: removed exactly this confusion from the placement hints ("left wall" is
+    #: discarded), so it is marked here rather than smuggled back in unlabelled.
+    frame: Literal["floor_plan", "camera"] = "floor_plan"
+    note: str = ""
+
+
+class SpatialGroup(BaseModel):
+    """A cluster that belongs together - a seating area, a dining set.
+
+    Membership only. Which wall the group sits against, and how its members are
+    spaced, is the coordinate solver's decision.
+    """
+
+    group_id: str
+    group_type: str                     # "seating", "dining", "sleeping", "workstation"
+    room_id: str
+    members: list[str] = Field(default_factory=list)      # node_ids
+    confidence: SpatialConfidence = "LOW"
+    source: SpatialSource = "semantic"
+
+
+class SpatialConflict(BaseModel):
+    """Semantics and geometry disagreed. Both kept, neither silently dropped."""
+
+    subject_id: str
+    predicate: SpatialPredicate
+    object_id: str = ""
+    semantic_evidence: str = ""
+    geometry_evidence: str = ""
+    resolution: Literal["unresolved", "semantic_preferred", "geometry_preferred"] = "unresolved"
+
+
+class UnmatchedDetection(BaseModel):
+    """Geometry saw something the reader did not name.
+
+    Recorded, never promoted. A detector that can add objects to the plan can
+    add furniture nobody approved, and Phase 0b measured this one proposing 20
+    false positives against the reader's 6-8.
+    """
+
+    label: str
+    bbox: tuple[float, float, float, float]
+    room_id: str = ""
+    score: float = 0.0
+
+
+class SpatialGraph(BaseModel):
+    schema_version: str = "1.0"
+    version: int = 1
+    provider: str = ""                  # who read the scene, for traceability
+    created_at: str = ""
+    nodes: list[SpatialNode] = Field(default_factory=list)
+    relations: list[SpatialRelation] = Field(default_factory=list)
+    groups: list[SpatialGroup] = Field(default_factory=list)
+    conflicts: list[SpatialConflict] = Field(default_factory=list)
+    unmatched_detections: list[UnmatchedDetection] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
 
 
 class ObjectRelation(BaseModel):
@@ -428,8 +715,26 @@ class ObjectPlanItem(BaseModel):
     style_notes: str = ""
     material_hint: str = ""            # fabric | wood | metal | glass | stone
     color_hint: str = ""
+    # P13: the full typed appearance a reference stated, carried intact to the
+    # scene. The three hint fields above are the LOSSY projection the asset
+    # ladder consumes (one material bucket, one hex); this keeps the client's
+    # own words - "sage green", "quilted", "dark walnut" - which that
+    # projection cannot express. Empty for planner-only items.
+    visual: VisualAttributes = Field(default_factory=VisualAttributes)
+    # Which design intents created or shaped this item, so the finished scene
+    # can answer "which uploaded photo is this?" without a side artifact.
+    source_intent_ids: list[str] = []
     from_photo: bool = False
     unique: bool = False               # a custom piece: candidate for generation
+    # P22: the reading's render-frame anchor, room-local metres, and the way
+    # the piece was pictured facing. The solver prefers the valid spot nearest
+    # the anchor and the rotation that matches; it never places AT it.
+    anchor_m: Optional[tuple[float, float, float]] = None
+    #: "read" | "derived" - see SceneElement.position_source. A measured
+    #: position outranks the vague text hints; an estimated one does not.
+    anchor_source: str = ""
+    wall: str = ""
+    facing_dir: Optional[tuple[float, float]] = None
 
 
 class ObjectPlan(BaseModel):

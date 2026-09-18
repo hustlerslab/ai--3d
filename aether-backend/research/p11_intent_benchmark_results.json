@@ -1,0 +1,156 @@
+{
+  "_about": "P11 visual-intent regression. Runs the production chain on the deterministic mock provider. Executor is Blender (this repo has no Unreal integration); scenario 10 measures traceability into the manifest that crosses that boundary.",
+  "passed": 10,
+  "scenarios": [
+    {
+      "detail": {
+        "hints_carried": [
+          {
+            "color_hint": "",
+            "material_hint": "linen",
+            "style_notes": "warm"
+          }
+        ],
+        "notes": [
+          "sofa: enriched the planner's own item (material_hint='linen' (was 'fabric'), visual.color_words=['sage'], visual.material='linen')"
+        ],
+        "sofa_plan_items": 1,
+        "sofas_in_scene": 1
+      },
+      "name": "s01_exact_reference_appears_in_3d",
+      "ok": true
+    },
+    {
+      "detail": {
+        "prompt": "sofa, sage, linen",
+        "rung": "generate",
+        "stated": {
+          "color_words": [
+            "sage"
+          ],
+          "material": "linen"
+        }
+      },
+      "name": "s02_colour_material_reference_reaches_the_asset",
+      "ok": true
+    },
+    {
+      "detail": {
+        "merged_categories": [],
+        "plan_changes_from_intent": [],
+        "style_words": [
+          "japandi"
+        ]
+      },
+      "name": "s03_style_only_reference_creates_no_object",
+      "ok": true
+    },
+    {
+      "detail": {
+        "instantiate": false,
+        "intent_class": "inspiration_only",
+        "plan_changes_from_intent": []
+      },
+      "name": "s04_inspiration_only_is_never_instantiated",
+      "ok": true
+    },
+    {
+      "detail": {
+        "merged": {
+          "color_words": [
+            "sage"
+          ],
+          "material": "linen",
+          "style_descriptors": [
+            "japandi"
+          ],
+          "upholstery": "tufted"
+        },
+        "order_independent": true
+      },
+      "name": "s05_multiple_references_merge_deterministically",
+      "ok": true
+    },
+    {
+      "detail": {
+        "conflict": "2 references disagree on material for sofa: linen, velvet",
+        "material_after_merge": "",
+        "needs_input": true,
+        "rung": "unresolved"
+      },
+      "name": "s06_conflicting_references_stay_uncertain",
+      "ok": true
+    },
+    {
+      "detail": {
+        "prompt": "sofa, sage green, tufted, linen",
+        "rung": "generate",
+        "without_generator": {
+          "needs_input": true,
+          "rung": "compatible_asset"
+        }
+      },
+      "name": "s07_missing_asset_falls_back_to_generation",
+      "ok": true
+    },
+    {
+      "detail": {
+        "placed": 1,
+        "position_decided_by": "place_objects",
+        "request": {
+          "attributes": {
+            "color_words": [
+              "sage"
+            ],
+            "material": "linen"
+          },
+          "category": "sofa",
+          "reference_image": "/p/input/references/exact_sage_linen_sofa.jpg",
+          "sources": [
+            "di_6bf7dd6be4066f2a"
+          ]
+        }
+      },
+      "name": "s08_generated_asset_carries_metadata_and_is_placed",
+      "ok": true
+    },
+    {
+      "detail": {
+        "distinct_results": 1,
+        "runs": 20
+      },
+      "name": "s09_refresh_is_deterministic",
+      "ok": true
+    },
+    {
+      "detail": {
+        "compliance_violations": [],
+        "counts": {
+          "compatible_assets": 0,
+          "conflicts": 0,
+          "exact_assets": 0,
+          "expected_objects": 1,
+          "generated": 1,
+          "intents": 3,
+          "needs_input": 0,
+          "scene_objects": 46,
+          "stated_attributes": 2,
+          "unread_references": 0
+        },
+        "manifest_objects": 46,
+        "metrics": {
+          "appearance_fidelity": 1.0,
+          "instantiation_fidelity": 1.0,
+          "non_instantiation_compliance": 1.0,
+          "traceability": 0.0217
+        },
+        "traced_categories": [
+          "sofa"
+        ]
+      },
+      "name": "s10_attributes_traceable_into_the_executor",
+      "ok": true
+    }
+  ],
+  "total": 10
+}

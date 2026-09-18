@@ -1,0 +1,104 @@
+{
+  "_about": "Phase 2 Step 1. Models measured one at a time and unloaded between runs. BLOCKED entries record the reason, never a guess.",
+  "host": {
+    "gpu_used_mib_at_start": 163,
+    "ram": {
+      "total_gb": 16.8,
+      "available_gb": 3.5,
+      "load_pct": 79
+    },
+    "image": "research/phase1g/scenes/s01_living_room.png",
+    "resolution": "704x448"
+  },
+  "licences": [
+    {
+      "model": "MoGe-2",
+      "checkpoint": "Ruicheng/moge-2-vitl",
+      "code_licence": "MIT (vendored DINOv2 under Apache-2.0)",
+      "checkpoint_licence": "MIT (stated on the Hugging Face model card)",
+      "commercial_use": "PERMITTED",
+      "source": "https://github.com/microsoft/MoGe , https://huggingface.co/Ruicheng/moge-2-vitl"
+    },
+    {
+      "model": "UniDepthV2",
+      "checkpoint": "not fetched",
+      "code_licence": "Creative Commons BY-NC 4.0",
+      "checkpoint_licence": "not separately stated",
+      "commercial_use": "PROHIBITED - non-commercial licence",
+      "source": "https://github.com/lpiccinelli-eth/UniDepth",
+      "blocked": "TWO independent blockers. (1) LICENCE: CC BY-NC 4.0 forbids commercial use, and Allure is a commercial product, so a good score would not be usable. (2) PLATFORM: the repository requires Linux and compiles custom CUDA ops; this host is Windows. Not run, not estimated."
+    },
+    {
+      "model": "Depth Anything V2 Small",
+      "checkpoint": "depth-anything/Depth-Anything-V2-Small-hf",
+      "code_licence": "Apache-2.0",
+      "checkpoint_licence": "Apache-2.0 (Small only; Base/Large/Giant are CC-BY-NC-4.0)",
+      "commercial_use": "PERMITTED",
+      "source": "https://github.com/DepthAnything/Depth-Anything-V2"
+    }
+  ],
+  "models": [
+    {
+      "name": "MoGe-2",
+      "version": "Ruicheng/moge-2-vitl",
+      "status": "ok",
+      "load_s": 11.5,
+      "cold_inference_s": 3.66,
+      "warm_median_s": 0.707,
+      "warm_p95_s": 0.749,
+      "determinism_max_abs_diff": 0.0,
+      "peak_vram_reserved_mib": 2636,
+      "vram_used_while_loaded_mib": 2783,
+      "cpu_ram_delta_gb": 1.4,
+      "output_resolution": "704x448",
+      "output_type": "dense point map + depth + intrinsics",
+      "dense_point_map": true,
+      "metric": true,
+      "units": "metres",
+      "intrinsics_predicted": true,
+      "fov_deg": 58.666,
+      "fov_source": "predicted",
+      "valid_fraction": 1.0,
+      "coordinate_frame": "canonical: +X right, +Y up, -Z forward, metres",
+      "source_frame": "OpenCV: +X right, +Y down, +Z forward (measured on a benchmark image, not assumed)",
+      "notes": [
+        "intrinsics converted from normalised to pixel units here",
+        "Y and Z negated to reach the canonical frame"
+      ],
+      "vram_after_unload_mib": 163
+    },
+    {
+      "name": "DepthAnythingV2-Small",
+      "version": "depth-anything/Depth-Anything-V2-Small-hf",
+      "status": "ok",
+      "load_s": 7.18,
+      "cold_inference_s": 0.6,
+      "warm_median_s": 0.217,
+      "warm_p95_s": 0.238,
+      "determinism_max_abs_diff": 0.0,
+      "peak_vram_reserved_mib": 404,
+      "vram_used_while_loaded_mib": 551,
+      "cpu_ram_delta_gb": -0.4,
+      "output_resolution": "704x448",
+      "output_type": "dense point map",
+      "dense_point_map": true,
+      "metric": false,
+      "units": "relative",
+      "intrinsics_predicted": false,
+      "fov_deg": 60.0,
+      "fov_source": "assumed",
+      "valid_fraction": 0.9953,
+      "coordinate_frame": "canonical: +X right, +Y up, -Z forward, UNSCALED",
+      "source_frame": "affine-invariant inverse depth; no frame of its own",
+      "notes": [
+        "affine ambiguity d = a/Z + b is NOT resolved; distances are comparable within one image only"
+      ],
+      "vram_after_unload_mib": 163
+    },
+    {
+      "name": "UniDepthV2",
+      "status": "BLOCKED",
+      "blocker": "TWO independent blockers. (1) LICENCE: CC BY-NC 4.0 forbids commercial use, and Allure is a commercial product, so a good score would not be usable. (2) PLATFORM: the repository requires Linux and compiles custom CUDA ops; this host is Windows. Not run, not estimated."
+    }
+  ]
+}

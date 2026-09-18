@@ -29,6 +29,24 @@ _SENTENCE = re.compile(r"(?<=[.!?])\s+|\n+")
 _CONSTRAINT_HINTS = ("no ", "not ", "avoid", "must", "keep", "budget", "don't", "without", "only", "need")
 
 
+#: Vocabulary the filename-driven mock classifier recognises. Small and
+#: explicit: a fixture says what it means in its own name.
+_MOCK_COLOR_WORDS = frozenset({
+    "white", "ivory", "cream", "beige", "sage", "green", "olive", "blue", "navy", "teal",
+    "grey", "gray", "charcoal", "black", "brown", "tan", "terracotta", "rust", "mustard",
+    "pink", "blush", "brass", "gold", "walnut", "oak"})
+_MOCK_MATERIAL_WORDS = frozenset({
+    "linen", "velvet", "boucle", "leather", "cotton", "wool", "jute", "cane", "rattan",
+    "oak", "walnut", "teak", "marble", "granite", "brass", "steel", "glass", "ceramic"})
+_MOCK_PATTERN_WORDS = frozenset({
+    "quilted", "tufted", "striped", "floral", "checked", "geometric", "plain", "ribbed"})
+#: Words that may describe a frame/leg finish when the name also says "frame".
+_MOCK_FINISH_QUALIFIERS = frozenset({"dark", "light", "matte", "brushed", "polished", "raw"})
+_MOCK_STYLE_WORDS = frozenset({
+    "japandi", "scandinavian", "minimal", "minimalist", "midcentury", "industrial",
+    "bohemian", "boho", "coastal", "traditional", "contemporary", "rustic", "luxe"})
+
+
 class MockProvider:
     name = "mock"
 
@@ -69,6 +87,64 @@ class MockProvider:
         )
 
     # ── stage 5/6: style ─────────────────────────────────────────────────
+    # Optional P11 capability (ADR-001 pins the Protocol to three methods).
+    # Deterministic and filename-driven: the mock cannot see an image, so it
+    # reads the intent a fixture ENCODES in the name rather than inventing a
+    # classification it has no evidence for. A name that says nothing yields
+    # `uncertain`, which is the honest answer and the one that cannot silently
+    # create furniture.
+    def classify_reference(self, image, description: str, vertical, filename: str = "") -> dict:
+        from pathlib import Path
+
+        # The client's own filename when we have it: on disk every upload is
+        # `ref_NN.ext`, which says nothing.
+        stem = Path(filename or str(image)).stem.lower()
+        words = [w for w in re.split(r"[^a-z0-9]+", stem) if w]
+
+        def said(*keys: str) -> bool:
+            return any(k in words for k in keys)
+
+        category = vocab.canonical_type(stem.replace("_", " "))
+        if category == "other":
+            category = ""
+
+        if said("exact", "own", "owned"):
+            reference_class = "exact_object"
+        elif said("style", "palette", "mood", "moodboard"):
+            reference_class = "style_reference"
+        elif said("inspo", "inspiration"):
+            reference_class = "inspiration_only"
+        elif category:
+            reference_class = "design_reference"
+        else:
+            reference_class = "uncertain"
+
+        colors = [w for w in words if w in _MOCK_COLOR_WORDS]
+        materials = [w for w in words if w in _MOCK_MATERIAL_WORDS]
+        patterns = [w for w in words if w in _MOCK_PATTERN_WORDS]
+        # A frame finish only when the name actually says "frame": the words
+        # before it that describe a finish. "dark_walnut_frame" -> "dark walnut".
+        frame_finish = ""
+        if "frame" in words:
+            before = words[: words.index("frame")]
+            frame_finish = " ".join(
+                w for w in before
+                if w in _MOCK_FINISH_QUALIFIERS or w in _MOCK_MATERIAL_WORDS or w in _MOCK_COLOR_WORDS)
+        return {
+            "reference_class": reference_class,
+            "object_name": stem.replace("_", " "),
+            "object_category": category,
+            "room_hint": next((w for w in ("living", "bedroom", "kitchen", "bathroom") if w in words), ""),
+            "color_words": colors,
+            "material": materials[0] if materials else "",
+            "upholstery": materials[1] if len(materials) > 1 else "",
+            "pattern": patterns[0] if patterns else "",
+            "frame_finish": frame_finish,
+            "style_descriptors": [w for w in words if w in _MOCK_STYLE_WORDS],
+            "confidence": 0.2 if reference_class == "uncertain" else 0.85,
+            "notes": "mock classification derived from the filename; no image was read",
+        }
+
     def create_style_spec(self, analysis: DesignAnalysis, bundle: InputBundle) -> StyleSpec:
         lower = bundle.description.lower()
         tags = _style_tags(lower, analysis.keywords, bundle.vertical)

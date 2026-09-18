@@ -324,6 +324,25 @@ def texture_summary(doc: GltfDocument) -> dict[str, Any]:
 # ── Packing to a single GLB ───────────────────────────────────────────────
 
 
+def material_slots(doc: GltfDocument) -> list[str]:
+    """Names of the distinct materials the mesh primitives actually use.
+
+    Read, never assumed: P14's frame finish can only be painted onto a piece
+    whose geometry is already split into more than one material region, and
+    the measured registry is 48 single-slot assets out of 58. A primitive with
+    no material contributes nothing, so an untextured box reports zero.
+    """
+    materials = doc.json.get("materials", [])
+    used: set[int] = set()
+    for mesh in doc.json.get("meshes", []):
+        for prim in mesh.get("primitives", []):
+            index = prim.get("material")
+            if isinstance(index, int):
+                used.add(index)
+    return [str(materials[i].get("name", "") or f"material_{i}")
+            for i in sorted(used) if i < len(materials)]
+
+
 def pack_glb(doc: GltfDocument, root_transform: Optional[dict] = None) -> bytes:
     """Rewrite the document as a self-contained GLB.
 

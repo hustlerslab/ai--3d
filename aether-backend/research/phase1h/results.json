@@ -1,0 +1,913 @@
+{
+  "results": {
+    "negatives_all": {
+      "n": 64,
+      "yes_truth": 0,
+      "no_truth": 64,
+      "tp": 0,
+      "tn": 55,
+      "fp": 9,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 85.9,
+      "yes_precision": 0.0,
+      "yes_recall": null,
+      "f1": null,
+      "no_precision": 100.0,
+      "no_recall": 85.9,
+      "false_wall_rate": 14.1,
+      "false_wall_ci95": [
+        7.6,
+        24.6
+      ],
+      "no_recall_ci95": [
+        75.4,
+        92.4
+      ]
+    },
+    "category_A": {
+      "n": 34,
+      "yes_truth": 0,
+      "no_truth": 34,
+      "tp": 0,
+      "tn": 30,
+      "fp": 4,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 88.2,
+      "yes_precision": 0.0,
+      "yes_recall": null,
+      "f1": null,
+      "no_precision": 100.0,
+      "no_recall": 88.2,
+      "false_wall_rate": 11.8,
+      "false_wall_ci95": [
+        4.7,
+        26.6
+      ],
+      "no_recall_ci95": [
+        73.4,
+        95.3
+      ]
+    },
+    "category_B": {
+      "n": 30,
+      "yes_truth": 0,
+      "no_truth": 30,
+      "tp": 0,
+      "tn": 25,
+      "fp": 5,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 83.3,
+      "yes_precision": 0.0,
+      "yes_recall": null,
+      "f1": null,
+      "no_precision": 100.0,
+      "no_recall": 83.3,
+      "false_wall_rate": 16.7,
+      "false_wall_ci95": [
+        7.3,
+        33.6
+      ],
+      "no_recall_ci95": [
+        66.4,
+        92.7
+      ]
+    },
+    "positives_descriptive_only": {
+      "n": 22,
+      "yes_truth": 22,
+      "no_truth": 0,
+      "tp": 20,
+      "tn": 0,
+      "fp": 0,
+      "fn": 2,
+      "unanswered": 0,
+      "accuracy": 90.9,
+      "yes_precision": 100.0,
+      "yes_recall": 90.9,
+      "f1": 95.2,
+      "no_precision": 0.0,
+      "no_recall": null,
+      "false_wall_rate": null,
+      "false_wall_ci95": null,
+      "no_recall_ci95": null
+    },
+    "all_cases_descriptive_only": {
+      "n": 86,
+      "yes_truth": 22,
+      "no_truth": 64,
+      "tp": 20,
+      "tn": 55,
+      "fp": 9,
+      "fn": 2,
+      "unanswered": 0,
+      "accuracy": 87.2,
+      "yes_precision": 69.0,
+      "yes_recall": 90.9,
+      "f1": 78.5,
+      "no_precision": 96.5,
+      "no_recall": 85.9,
+      "false_wall_rate": 14.1,
+      "false_wall_ci95": [
+        7.6,
+        24.6
+      ],
+      "no_recall_ci95": [
+        75.4,
+        92.4
+      ]
+    }
+  },
+  "stability": {
+    "negatives_all": {
+      "cases": 32,
+      "stable": 29,
+      "flipped": 3,
+      "agreement_pct": 90.6
+    },
+    "category_A": {
+      "cases": 17,
+      "stable": 17,
+      "flipped": 0,
+      "agreement_pct": 100.0
+    },
+    "category_B": {
+      "cases": 15,
+      "stable": 12,
+      "flipped": 3,
+      "agreement_pct": 80.0
+    },
+    "positives": {
+      "cases": 11,
+      "stable": 9,
+      "flipped": 2,
+      "agreement_pct": 81.8
+    },
+    "all_cases": {
+      "cases": 43,
+      "stable": 38,
+      "flipped": 5,
+      "agreement_pct": 88.4
+    }
+  },
+  "per_case": [
+    {
+      "case_id": "s01.armchair.0",
+      "scene_id": "s01",
+      "object_type": "armchair",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s02.ottoman.0",
+      "scene_id": "s02",
+      "object_type": "ottoman",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s02.coffee_table.0",
+      "scene_id": "s02",
+      "object_type": "coffee_table",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s03.armchair.0",
+      "scene_id": "s03",
+      "object_type": "armchair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s03.armchair.1",
+      "scene_id": "s03",
+      "object_type": "armchair",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s04.chair.0",
+      "scene_id": "s04",
+      "object_type": "chair",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s05.bench.0",
+      "scene_id": "s05",
+      "object_type": "bench",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s05.armchair.0",
+      "scene_id": "s05",
+      "object_type": "armchair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s06.bar_stool.0",
+      "scene_id": "s06",
+      "object_type": "bar_stool",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s06.bar_stool.1",
+      "scene_id": "s06",
+      "object_type": "bar_stool",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s06.bar_stool.2",
+      "scene_id": "s06",
+      "object_type": "bar_stool",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s06.bar_stool.3",
+      "scene_id": "s06",
+      "object_type": "bar_stool",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s07.bar_stool.0",
+      "scene_id": "s07",
+      "object_type": "bar_stool",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": true,
+      "answers": [
+        false,
+        true
+      ],
+      "stable": false
+    },
+    {
+      "case_id": "s07.bar_stool.1",
+      "scene_id": "s07",
+      "object_type": "bar_stool",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": true,
+      "answers": [
+        false,
+        true
+      ],
+      "stable": false
+    },
+    {
+      "case_id": "s08.dining_table.0",
+      "scene_id": "s08",
+      "object_type": "dining_table",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s08.chair.0",
+      "scene_id": "s08",
+      "object_type": "chair",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s09.chair.0",
+      "scene_id": "s09",
+      "object_type": "chair",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s10.chair.0",
+      "scene_id": "s10",
+      "object_type": "chair",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": true,
+      "answers": [
+        false,
+        true
+      ],
+      "stable": false
+    },
+    {
+      "case_id": "s10.chair.1",
+      "scene_id": "s10",
+      "object_type": "chair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s10.chair.2",
+      "scene_id": "s10",
+      "object_type": "chair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s11.ottoman.0",
+      "scene_id": "s11",
+      "object_type": "ottoman",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s11.armchair.0",
+      "scene_id": "s11",
+      "object_type": "armchair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s11.armchair.1",
+      "scene_id": "s11",
+      "object_type": "armchair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s11.armchair.2",
+      "scene_id": "s11",
+      "object_type": "armchair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s13.armchair.0",
+      "scene_id": "s13",
+      "object_type": "armchair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s14.bench.0",
+      "scene_id": "s14",
+      "object_type": "bench",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s15.dining_table.0",
+      "scene_id": "s15",
+      "object_type": "dining_table",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s16.dining_table.0",
+      "scene_id": "s16",
+      "object_type": "dining_table",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s16.chair.0",
+      "scene_id": "s16",
+      "object_type": "chair",
+      "category": "B",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s17.chair.0",
+      "scene_id": "s17",
+      "object_type": "chair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s17.chair.1",
+      "scene_id": "s17",
+      "object_type": "chair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "s17.chair.2",
+      "scene_id": "s17",
+      "object_type": "chair",
+      "category": "A",
+      "origin": "phase1g",
+      "truth": false,
+      "run1": false,
+      "run2": false,
+      "answers": [
+        false,
+        false
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.living_room_a.sofa.0",
+      "scene_id": "hist_living_room_a",
+      "object_type": "sofa",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": false,
+      "run2": true,
+      "answers": [
+        false,
+        true
+      ],
+      "stable": false
+    },
+    {
+      "case_id": "preserved.living_room_a.sofa.1",
+      "scene_id": "hist_living_room_a",
+      "object_type": "sofa",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.living_room_a.side_table.0",
+      "scene_id": "hist_living_room_a",
+      "object_type": "side_table",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": false,
+      "run2": true,
+      "answers": [
+        false,
+        true
+      ],
+      "stable": false
+    },
+    {
+      "case_id": "preserved.kitchen.kitchen_counter.0",
+      "scene_id": "hist_kitchen",
+      "object_type": "kitchen_counter",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.bathroom.vanity.0",
+      "scene_id": "hist_bathroom",
+      "object_type": "vanity",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.master_bedroom.bed.0",
+      "scene_id": "hist_master_bedroom",
+      "object_type": "bed",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.master_bedroom.bedside_table.0",
+      "scene_id": "hist_master_bedroom",
+      "object_type": "bedside_table",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.master_bedroom.bedside_table.1",
+      "scene_id": "hist_master_bedroom",
+      "object_type": "bedside_table",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.living_room_b.sofa.0",
+      "scene_id": "hist_living_room_b",
+      "object_type": "sofa",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.living_room_b.tv_unit.0",
+      "scene_id": "hist_living_room_b",
+      "object_type": "tv_unit",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    },
+    {
+      "case_id": "preserved.living_room_b.tv_unit.1",
+      "scene_id": "hist_living_room_b",
+      "object_type": "tv_unit",
+      "category": null,
+      "origin": "preserved_phase1d",
+      "truth": true,
+      "run1": true,
+      "run2": true,
+      "answers": [
+        true,
+        true
+      ],
+      "stable": true
+    }
+  ],
+  "false_walls": [
+    {
+      "case_id": "s02.coffee_table.0",
+      "scene_id": "s02",
+      "object_type": "coffee_table",
+      "category": "A",
+      "run1": true,
+      "run2": true,
+      "wall_visible": true,
+      "wall_backed_mass": false,
+      "occlusion": "none",
+      "annotation_notes": "black drum table standing clear on the floor, space on all sides"
+    },
+    {
+      "case_id": "s07.bar_stool.0",
+      "scene_id": "s07",
+      "object_type": "bar_stool",
+      "category": "B",
+      "run1": false,
+      "run2": true,
+      "wall_visible": true,
+      "wall_backed_mass": true,
+      "occlusion": "feet reach the lower frame edge",
+      "annotation_notes": "at the navy island, with the wall-backed counter run beyond it"
+    },
+    {
+      "case_id": "s07.bar_stool.1",
+      "scene_id": "s07",
+      "object_type": "bar_stool",
+      "category": "B",
+      "run1": false,
+      "run2": true,
+      "wall_visible": true,
+      "wall_backed_mass": true,
+      "occlusion": "feet reach the lower frame edge",
+      "annotation_notes": "as bar_stool.0"
+    },
+    {
+      "case_id": "s10.chair.0",
+      "scene_id": "s10",
+      "object_type": "chair",
+      "category": "B",
+      "run1": false,
+      "run2": true,
+      "wall_visible": true,
+      "wall_backed_mass": true,
+      "occlusion": "none",
+      "annotation_notes": "task chair at a desk run that follows the window wall"
+    },
+    {
+      "case_id": "s13.armchair.0",
+      "scene_id": "s13",
+      "object_type": "armchair",
+      "category": "A",
+      "run1": true,
+      "run2": true,
+      "wall_visible": true,
+      "wall_backed_mass": false,
+      "occlusion": "none",
+      "annotation_notes": "red leather lounge chair standing free on the boards, floor visible all round, concrete wall well beyond it"
+    },
+    {
+      "case_id": "s16.chair.0",
+      "scene_id": "s16",
+      "object_type": "chair",
+      "category": "B",
+      "run1": true,
+      "run2": true,
+      "wall_visible": true,
+      "wall_backed_mass": true,
+      "occlusion": "none",
+      "annotation_notes": "chair in front of the bench seat that runs along the panelled wall"
+    }
+  ],
+  "history_reference": {
+    "1e": {
+      "negative_objects": 5,
+      "false_wall_rate": 50.0,
+      "no_recall": 50.0,
+      "tn": 5,
+      "fp": 5
+    },
+    "1f": {
+      "negative_objects": 5,
+      "false_wall_rate": 35.0,
+      "no_recall": 65.0,
+      "tn": 13,
+      "fp": 7
+    }
+  },
+  "reliability": {
+    "queries": 86,
+    "valid_json": 86,
+    "failed": 0,
+    "status": {
+      "complete": 86
+    }
+  },
+  "latency": {
+    "all": {
+      "mean": 1.93,
+      "median": 0.9,
+      "p95": 4.43,
+      "worst": 21.61
+    },
+    "cold_first_query_s": 21.61
+  },
+  "caveats": [
+    "The 32 negatives are generated SD 1.5 images from the project's own provider; the 11 positives are historical images. Positive-vs-negative metrics are source-domain confounded and are descriptive only.",
+    "Negatives were described to the model by frame position computed from their bounding box; positives kept their original prose descriptions. That is a second, independent confound on any cross-class comparison."
+  ]
+}

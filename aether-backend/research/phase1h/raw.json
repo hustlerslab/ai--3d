@@ -1,0 +1,1512 @@
+{
+  "environment": {
+    "gpu_before": {
+      "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+      "vram_total_mib": 6144,
+      "vram_used_mib": 4591,
+      "vram_free_mib": 1411
+    },
+    "ram_before": {
+      "total_gb": 16.8,
+      "available_gb": 3.1,
+      "load_pct": 81
+    },
+    "temperature": 0.2,
+    "num_ctx": 16384,
+    "num_predict": 8192,
+    "image_max_px": 768,
+    "prompt": "phase1d _wall_a, imported unmodified",
+    "quantisation": "Q4_K_M",
+    "desc_source": {
+      "phase1g_negatives": "computed from bbox: position in frame plus an ordinal within same-type siblings. Never from annotations.json.",
+      "preserved_positives": "original fixture desc, identical to Phase 1e/1f"
+    }
+  },
+  "model_load": {
+    "load_s": 16.7,
+    "residency": {
+      "total_gb": 6.17,
+      "vram_gb": 3.47,
+      "cpu_gb": 2.7,
+      "on_gpu_pct": 56.3
+    },
+    "gpu_after": {
+      "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+      "vram_total_mib": 6144,
+      "vram_used_mib": 4641,
+      "vram_free_mib": 1361
+    }
+  },
+  "ram_after": {
+    "total_gb": 16.8,
+    "available_gb": 2.4,
+    "load_pct": 85
+  },
+  "gpu_after": {
+    "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_total_mib": 6144,
+    "vram_used_mib": 4752,
+    "vram_free_mib": 1250
+  },
+  "dataset": {
+    "cases": 43,
+    "positives": 11,
+    "negatives": 32,
+    "category_A": 17,
+    "category_B": 15,
+    "scenes": 16,
+    "source": "research/phase1g/dataset.json, unmodified"
+  },
+  "prompt_inputs": [
+    {
+      "case_id": "s01.armchair.0",
+      "desc": "centre of the frame, in the foreground",
+      "type": "armchair",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "s02.ottoman.0",
+      "desc": "left of the frame, in the foreground",
+      "type": "ottoman",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "s02.coffee_table.0",
+      "desc": "centre of the frame",
+      "type": "coffee_table",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "s03.armchair.0",
+      "desc": "first from the left, in the foreground",
+      "type": "armchair",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "s03.armchair.1",
+      "desc": "second from the left, in the foreground",
+      "type": "armchair",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "s04.chair.0",
+      "desc": "centre of the frame",
+      "type": "chair",
+      "room_type": "bedroom"
+    },
+    {
+      "case_id": "s05.bench.0",
+      "desc": "left of the frame, in the foreground",
+      "type": "bench",
+      "room_type": "bedroom"
+    },
+    {
+      "case_id": "s05.armchair.0",
+      "desc": "right of the frame",
+      "type": "armchair",
+      "room_type": "bedroom"
+    },
+    {
+      "case_id": "s06.bar_stool.0",
+      "desc": "first from the left, in the foreground",
+      "type": "bar_stool",
+      "room_type": "kitchen"
+    },
+    {
+      "case_id": "s06.bar_stool.1",
+      "desc": "second from the left, in the foreground",
+      "type": "bar_stool",
+      "room_type": "kitchen"
+    },
+    {
+      "case_id": "s06.bar_stool.2",
+      "desc": "third from the left, in the foreground",
+      "type": "bar_stool",
+      "room_type": "kitchen"
+    },
+    {
+      "case_id": "s06.bar_stool.3",
+      "desc": "fourth from the left, in the foreground",
+      "type": "bar_stool",
+      "room_type": "kitchen"
+    },
+    {
+      "case_id": "s07.bar_stool.0",
+      "desc": "first from the left, in the foreground",
+      "type": "bar_stool",
+      "room_type": "kitchen"
+    },
+    {
+      "case_id": "s07.bar_stool.1",
+      "desc": "second from the left, in the foreground",
+      "type": "bar_stool",
+      "room_type": "kitchen"
+    },
+    {
+      "case_id": "s08.dining_table.0",
+      "desc": "centre of the frame, in the foreground",
+      "type": "dining_table",
+      "room_type": "dining_room"
+    },
+    {
+      "case_id": "s08.chair.0",
+      "desc": "centre of the frame, in the foreground",
+      "type": "chair",
+      "room_type": "dining_room"
+    },
+    {
+      "case_id": "s09.chair.0",
+      "desc": "centre of the frame, in the foreground",
+      "type": "chair",
+      "room_type": "office"
+    },
+    {
+      "case_id": "s10.chair.0",
+      "desc": "first from the left, in the foreground",
+      "type": "chair",
+      "room_type": "office"
+    },
+    {
+      "case_id": "s10.chair.1",
+      "desc": "third from the left, in the foreground",
+      "type": "chair",
+      "room_type": "office"
+    },
+    {
+      "case_id": "s10.chair.2",
+      "desc": "second from the left, in the foreground",
+      "type": "chair",
+      "room_type": "office"
+    },
+    {
+      "case_id": "s11.ottoman.0",
+      "desc": "centre of the frame, in the foreground",
+      "type": "ottoman",
+      "room_type": "lounge"
+    },
+    {
+      "case_id": "s11.armchair.0",
+      "desc": "first from the left",
+      "type": "armchair",
+      "room_type": "lounge"
+    },
+    {
+      "case_id": "s11.armchair.1",
+      "desc": "third from the left, in the foreground",
+      "type": "armchair",
+      "room_type": "lounge"
+    },
+    {
+      "case_id": "s11.armchair.2",
+      "desc": "second from the left, in the foreground",
+      "type": "armchair",
+      "room_type": "lounge"
+    },
+    {
+      "case_id": "s13.armchair.0",
+      "desc": "right of the frame",
+      "type": "armchair",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "s14.bench.0",
+      "desc": "centre of the frame, in the foreground",
+      "type": "bench",
+      "room_type": "bedroom"
+    },
+    {
+      "case_id": "s15.dining_table.0",
+      "desc": "centre of the frame, in the foreground",
+      "type": "dining_table",
+      "room_type": "kitchen"
+    },
+    {
+      "case_id": "s16.dining_table.0",
+      "desc": "centre of the frame, in the foreground",
+      "type": "dining_table",
+      "room_type": "dining_room"
+    },
+    {
+      "case_id": "s16.chair.0",
+      "desc": "right of the frame, in the foreground",
+      "type": "chair",
+      "room_type": "dining_room"
+    },
+    {
+      "case_id": "s17.chair.0",
+      "desc": "second from the left, in the foreground",
+      "type": "chair",
+      "room_type": "office"
+    },
+    {
+      "case_id": "s17.chair.1",
+      "desc": "third from the left, in the foreground",
+      "type": "chair",
+      "room_type": "office"
+    },
+    {
+      "case_id": "s17.chair.2",
+      "desc": "first from the left, in the foreground",
+      "type": "chair",
+      "room_type": "office"
+    },
+    {
+      "case_id": "preserved.living_room_a.sofa.0",
+      "desc": "striped green sectional, left, runs off frame",
+      "type": "sofa",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "preserved.living_room_a.sofa.1",
+      "desc": "blue and striped, right",
+      "type": "sofa",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "preserved.living_room_a.side_table.0",
+      "desc": "small wooden table",
+      "type": "side_table",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "preserved.kitchen.kitchen_counter.0",
+      "desc": "left run with the sink, under the window",
+      "type": "kitchen_counter",
+      "room_type": "kitchen"
+    },
+    {
+      "case_id": "preserved.bathroom.vanity.0",
+      "desc": "white countertop, basin and the cabinet under it",
+      "type": "vanity",
+      "room_type": "bathroom"
+    },
+    {
+      "case_id": "preserved.master_bedroom.bed.0",
+      "desc": "platform frame and mattress",
+      "type": "bed",
+      "room_type": "master_bedroom"
+    },
+    {
+      "case_id": "preserved.master_bedroom.bedside_table.0",
+      "desc": "left",
+      "type": "bedside_table",
+      "room_type": "master_bedroom"
+    },
+    {
+      "case_id": "preserved.master_bedroom.bedside_table.1",
+      "desc": "right",
+      "type": "bedside_table",
+      "room_type": "master_bedroom"
+    },
+    {
+      "case_id": "preserved.living_room_b.sofa.0",
+      "desc": "white sectional",
+      "type": "sofa",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "preserved.living_room_b.tv_unit.0",
+      "desc": "the television itself, on the timber wall",
+      "type": "tv_unit",
+      "room_type": "living_room"
+    },
+    {
+      "case_id": "preserved.living_room_b.tv_unit.1",
+      "desc": "the long white media console beneath it",
+      "type": "tv_unit",
+      "room_type": "living_room"
+    }
+  ],
+  "runs": [
+    {
+      "n": 32,
+      "yes_truth": 0,
+      "no_truth": 32,
+      "tp": 0,
+      "tn": 29,
+      "fp": 3,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 90.6,
+      "yes_precision": 0.0,
+      "yes_recall": null,
+      "f1": null,
+      "no_precision": 100.0,
+      "no_recall": 90.6,
+      "false_wall_rate": 9.4,
+      "false_wall_ci95": [
+        3.2,
+        24.2
+      ],
+      "no_recall_ci95": [
+        75.8,
+        96.8
+      ],
+      "run": 1,
+      "rows": [
+        {
+          "source": "armchair.0",
+          "room": "s01",
+          "elapsed_s": 21.61,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s01.armchair.0",
+          "scene_id": "s01",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "ottoman.0",
+          "room": "s02",
+          "elapsed_s": 4.31,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s02.ottoman.0",
+          "scene_id": "s02",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "left of the frame, in the foreground"
+        },
+        {
+          "source": "coffee_table.0",
+          "room": "s02",
+          "elapsed_s": 0.87,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s02.coffee_table.0",
+          "scene_id": "s02",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame"
+        },
+        {
+          "source": "armchair.0",
+          "room": "s03",
+          "elapsed_s": 4.3,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s03.armchair.0",
+          "scene_id": "s03",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "armchair.1",
+          "room": "s03",
+          "elapsed_s": 0.89,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s03.armchair.1",
+          "scene_id": "s03",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s04",
+          "elapsed_s": 4.29,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s04.chair.0",
+          "scene_id": "s04",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame"
+        },
+        {
+          "source": "bench.0",
+          "room": "s05",
+          "elapsed_s": 4.31,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s05.bench.0",
+          "scene_id": "s05",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "left of the frame, in the foreground"
+        },
+        {
+          "source": "armchair.0",
+          "room": "s05",
+          "elapsed_s": 0.89,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s05.armchair.0",
+          "scene_id": "s05",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "right of the frame"
+        },
+        {
+          "source": "bar_stool.0",
+          "room": "s06",
+          "elapsed_s": 4.32,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s06.bar_stool.0",
+          "scene_id": "s06",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.1",
+          "room": "s06",
+          "elapsed_s": 0.97,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s06.bar_stool.1",
+          "scene_id": "s06",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.2",
+          "room": "s06",
+          "elapsed_s": 0.95,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s06.bar_stool.2",
+          "scene_id": "s06",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "third from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.3",
+          "room": "s06",
+          "elapsed_s": 0.88,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s06.bar_stool.3",
+          "scene_id": "s06",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "fourth from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.0",
+          "room": "s07",
+          "elapsed_s": 4.38,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s07.bar_stool.0",
+          "scene_id": "s07",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.1",
+          "room": "s07",
+          "elapsed_s": 0.9,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s07.bar_stool.1",
+          "scene_id": "s07",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "dining_table.0",
+          "room": "s08",
+          "elapsed_s": 4.4,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s08.dining_table.0",
+          "scene_id": "s08",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s08",
+          "elapsed_s": 0.84,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s08.chair.0",
+          "scene_id": "s08",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s09",
+          "elapsed_s": 4.34,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s09.chair.0",
+          "scene_id": "s09",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s10",
+          "elapsed_s": 4.38,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s10.chair.0",
+          "scene_id": "s10",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "chair.1",
+          "room": "s10",
+          "elapsed_s": 0.88,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s10.chair.1",
+          "scene_id": "s10",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "third from the left, in the foreground"
+        },
+        {
+          "source": "chair.2",
+          "room": "s10",
+          "elapsed_s": 0.91,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s10.chair.2",
+          "scene_id": "s10",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "ottoman.0",
+          "room": "s11",
+          "elapsed_s": 4.47,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s11.ottoman.0",
+          "scene_id": "s11",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "armchair.0",
+          "room": "s11",
+          "elapsed_s": 0.91,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s11.armchair.0",
+          "scene_id": "s11",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left"
+        },
+        {
+          "source": "armchair.1",
+          "room": "s11",
+          "elapsed_s": 0.89,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s11.armchair.1",
+          "scene_id": "s11",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "third from the left, in the foreground"
+        },
+        {
+          "source": "armchair.2",
+          "room": "s11",
+          "elapsed_s": 0.89,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s11.armchair.2",
+          "scene_id": "s11",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "armchair.0",
+          "room": "s13",
+          "elapsed_s": 4.42,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s13.armchair.0",
+          "scene_id": "s13",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "right of the frame"
+        },
+        {
+          "source": "bench.0",
+          "room": "s14",
+          "elapsed_s": 4.37,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s14.bench.0",
+          "scene_id": "s14",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "dining_table.0",
+          "room": "s15",
+          "elapsed_s": 4.43,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s15.dining_table.0",
+          "scene_id": "s15",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "dining_table.0",
+          "room": "s16",
+          "elapsed_s": 4.43,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s16.dining_table.0",
+          "scene_id": "s16",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s16",
+          "elapsed_s": 0.88,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s16.chair.0",
+          "scene_id": "s16",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "right of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s17",
+          "elapsed_s": 4.41,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s17.chair.0",
+          "scene_id": "s17",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "chair.1",
+          "room": "s17",
+          "elapsed_s": 0.86,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s17.chair.1",
+          "scene_id": "s17",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "third from the left, in the foreground"
+        },
+        {
+          "source": "chair.2",
+          "room": "s17",
+          "elapsed_s": 0.84,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s17.chair.2",
+          "scene_id": "s17",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "living_room_a.sofa.0",
+          "room": "hist_living_room_a",
+          "elapsed_s": 4.42,
+          "answer": false,
+          "status": "complete",
+          "case_id": "preserved.living_room_a.sofa.0",
+          "scene_id": "hist_living_room_a",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "striped green sectional, left, runs off frame"
+        },
+        {
+          "source": "living_room_a.sofa.1",
+          "room": "hist_living_room_a",
+          "elapsed_s": 0.88,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_a.sofa.1",
+          "scene_id": "hist_living_room_a",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "blue and striped, right"
+        },
+        {
+          "source": "living_room_a.side_table.0",
+          "room": "hist_living_room_a",
+          "elapsed_s": 0.86,
+          "answer": false,
+          "status": "complete",
+          "case_id": "preserved.living_room_a.side_table.0",
+          "scene_id": "hist_living_room_a",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "small wooden table"
+        },
+        {
+          "source": "kitchen.kitchen_counter.0",
+          "room": "hist_kitchen",
+          "elapsed_s": 4.39,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.kitchen.kitchen_counter.0",
+          "scene_id": "hist_kitchen",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "left run with the sink, under the window"
+        },
+        {
+          "source": "bathroom.vanity.0",
+          "room": "hist_bathroom",
+          "elapsed_s": 4.42,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.bathroom.vanity.0",
+          "scene_id": "hist_bathroom",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "white countertop, basin and the cabinet under it"
+        },
+        {
+          "source": "master_bedroom.bed.0",
+          "room": "hist_master_bedroom",
+          "elapsed_s": 4.48,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.master_bedroom.bed.0",
+          "scene_id": "hist_master_bedroom",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "platform frame and mattress"
+        },
+        {
+          "source": "master_bedroom.bedside_table.0",
+          "room": "hist_master_bedroom",
+          "elapsed_s": 0.89,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.master_bedroom.bedside_table.0",
+          "scene_id": "hist_master_bedroom",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "left"
+        },
+        {
+          "source": "master_bedroom.bedside_table.1",
+          "room": "hist_master_bedroom",
+          "elapsed_s": 0.91,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.master_bedroom.bedside_table.1",
+          "scene_id": "hist_master_bedroom",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "right"
+        },
+        {
+          "source": "living_room_b.sofa.0",
+          "room": "hist_living_room_b",
+          "elapsed_s": 4.47,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_b.sofa.0",
+          "scene_id": "hist_living_room_b",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "white sectional"
+        },
+        {
+          "source": "living_room_b.tv_unit.0",
+          "room": "hist_living_room_b",
+          "elapsed_s": 0.87,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_b.tv_unit.0",
+          "scene_id": "hist_living_room_b",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "the television itself, on the timber wall"
+        },
+        {
+          "source": "living_room_b.tv_unit.1",
+          "room": "hist_living_room_b",
+          "elapsed_s": 0.85,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_b.tv_unit.1",
+          "scene_id": "hist_living_room_b",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "the long white media console beneath it"
+        }
+      ],
+      "latency": {
+        "mean": 3.0,
+        "median": 0.97,
+        "p95": 4.47,
+        "worst": 21.61
+      },
+      "first_query_s": 21.61,
+      "failed": 0
+    },
+    {
+      "n": 32,
+      "yes_truth": 0,
+      "no_truth": 32,
+      "tp": 0,
+      "tn": 26,
+      "fp": 6,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 81.2,
+      "yes_precision": 0.0,
+      "yes_recall": null,
+      "f1": null,
+      "no_precision": 100.0,
+      "no_recall": 81.2,
+      "false_wall_rate": 18.8,
+      "false_wall_ci95": [
+        8.9,
+        35.3
+      ],
+      "no_recall_ci95": [
+        64.7,
+        91.1
+      ],
+      "run": 2,
+      "rows": [
+        {
+          "source": "armchair.0",
+          "room": "s01",
+          "elapsed_s": 0.66,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s01.armchair.0",
+          "scene_id": "s01",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "ottoman.0",
+          "room": "s02",
+          "elapsed_s": 0.93,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s02.ottoman.0",
+          "scene_id": "s02",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "left of the frame, in the foreground"
+        },
+        {
+          "source": "coffee_table.0",
+          "room": "s02",
+          "elapsed_s": 0.85,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s02.coffee_table.0",
+          "scene_id": "s02",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame"
+        },
+        {
+          "source": "armchair.0",
+          "room": "s03",
+          "elapsed_s": 0.96,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s03.armchair.0",
+          "scene_id": "s03",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "armchair.1",
+          "room": "s03",
+          "elapsed_s": 0.9,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s03.armchair.1",
+          "scene_id": "s03",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s04",
+          "elapsed_s": 0.66,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s04.chair.0",
+          "scene_id": "s04",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame"
+        },
+        {
+          "source": "bench.0",
+          "room": "s05",
+          "elapsed_s": 0.88,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s05.bench.0",
+          "scene_id": "s05",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "left of the frame, in the foreground"
+        },
+        {
+          "source": "armchair.0",
+          "room": "s05",
+          "elapsed_s": 0.88,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s05.armchair.0",
+          "scene_id": "s05",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "right of the frame"
+        },
+        {
+          "source": "bar_stool.0",
+          "room": "s06",
+          "elapsed_s": 0.94,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s06.bar_stool.0",
+          "scene_id": "s06",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.1",
+          "room": "s06",
+          "elapsed_s": 0.87,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s06.bar_stool.1",
+          "scene_id": "s06",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.2",
+          "room": "s06",
+          "elapsed_s": 0.86,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s06.bar_stool.2",
+          "scene_id": "s06",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "third from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.3",
+          "room": "s06",
+          "elapsed_s": 0.85,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s06.bar_stool.3",
+          "scene_id": "s06",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "fourth from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.0",
+          "room": "s07",
+          "elapsed_s": 0.98,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s07.bar_stool.0",
+          "scene_id": "s07",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "bar_stool.1",
+          "room": "s07",
+          "elapsed_s": 0.92,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s07.bar_stool.1",
+          "scene_id": "s07",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "dining_table.0",
+          "room": "s08",
+          "elapsed_s": 0.96,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s08.dining_table.0",
+          "scene_id": "s08",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s08",
+          "elapsed_s": 0.9,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s08.chair.0",
+          "scene_id": "s08",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s09",
+          "elapsed_s": 0.7,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s09.chair.0",
+          "scene_id": "s09",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s10",
+          "elapsed_s": 0.92,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s10.chair.0",
+          "scene_id": "s10",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "chair.1",
+          "room": "s10",
+          "elapsed_s": 0.83,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s10.chair.1",
+          "scene_id": "s10",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "third from the left, in the foreground"
+        },
+        {
+          "source": "chair.2",
+          "room": "s10",
+          "elapsed_s": 0.85,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s10.chair.2",
+          "scene_id": "s10",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "ottoman.0",
+          "room": "s11",
+          "elapsed_s": 0.93,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s11.ottoman.0",
+          "scene_id": "s11",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "armchair.0",
+          "room": "s11",
+          "elapsed_s": 0.89,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s11.armchair.0",
+          "scene_id": "s11",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left"
+        },
+        {
+          "source": "armchair.1",
+          "room": "s11",
+          "elapsed_s": 0.94,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s11.armchair.1",
+          "scene_id": "s11",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "third from the left, in the foreground"
+        },
+        {
+          "source": "armchair.2",
+          "room": "s11",
+          "elapsed_s": 0.89,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s11.armchair.2",
+          "scene_id": "s11",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "armchair.0",
+          "room": "s13",
+          "elapsed_s": 0.68,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s13.armchair.0",
+          "scene_id": "s13",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "right of the frame"
+        },
+        {
+          "source": "bench.0",
+          "room": "s14",
+          "elapsed_s": 0.66,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s14.bench.0",
+          "scene_id": "s14",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "dining_table.0",
+          "room": "s15",
+          "elapsed_s": 0.67,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s15.dining_table.0",
+          "scene_id": "s15",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "dining_table.0",
+          "room": "s16",
+          "elapsed_s": 0.97,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s16.dining_table.0",
+          "scene_id": "s16",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "centre of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s16",
+          "elapsed_s": 0.91,
+          "answer": true,
+          "status": "complete",
+          "case_id": "s16.chair.0",
+          "scene_id": "s16",
+          "category": "B",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "right of the frame, in the foreground"
+        },
+        {
+          "source": "chair.0",
+          "room": "s17",
+          "elapsed_s": 0.94,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s17.chair.0",
+          "scene_id": "s17",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "second from the left, in the foreground"
+        },
+        {
+          "source": "chair.1",
+          "room": "s17",
+          "elapsed_s": 0.87,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s17.chair.1",
+          "scene_id": "s17",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "third from the left, in the foreground"
+        },
+        {
+          "source": "chair.2",
+          "room": "s17",
+          "elapsed_s": 0.87,
+          "answer": false,
+          "status": "complete",
+          "case_id": "s17.chair.2",
+          "scene_id": "s17",
+          "category": "A",
+          "origin": "phase1g",
+          "truth": false,
+          "prompt_desc": "first from the left, in the foreground"
+        },
+        {
+          "source": "living_room_a.sofa.0",
+          "room": "hist_living_room_a",
+          "elapsed_s": 0.9,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_a.sofa.0",
+          "scene_id": "hist_living_room_a",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "striped green sectional, left, runs off frame"
+        },
+        {
+          "source": "living_room_a.sofa.1",
+          "room": "hist_living_room_a",
+          "elapsed_s": 0.9,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_a.sofa.1",
+          "scene_id": "hist_living_room_a",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "blue and striped, right"
+        },
+        {
+          "source": "living_room_a.side_table.0",
+          "room": "hist_living_room_a",
+          "elapsed_s": 0.84,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_a.side_table.0",
+          "scene_id": "hist_living_room_a",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "small wooden table"
+        },
+        {
+          "source": "kitchen.kitchen_counter.0",
+          "room": "hist_kitchen",
+          "elapsed_s": 0.68,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.kitchen.kitchen_counter.0",
+          "scene_id": "hist_kitchen",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "left run with the sink, under the window"
+        },
+        {
+          "source": "bathroom.vanity.0",
+          "room": "hist_bathroom",
+          "elapsed_s": 0.66,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.bathroom.vanity.0",
+          "scene_id": "hist_bathroom",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "white countertop, basin and the cabinet under it"
+        },
+        {
+          "source": "master_bedroom.bed.0",
+          "room": "hist_master_bedroom",
+          "elapsed_s": 0.94,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.master_bedroom.bed.0",
+          "scene_id": "hist_master_bedroom",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "platform frame and mattress"
+        },
+        {
+          "source": "master_bedroom.bedside_table.0",
+          "room": "hist_master_bedroom",
+          "elapsed_s": 0.85,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.master_bedroom.bedside_table.0",
+          "scene_id": "hist_master_bedroom",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "left"
+        },
+        {
+          "source": "master_bedroom.bedside_table.1",
+          "room": "hist_master_bedroom",
+          "elapsed_s": 0.86,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.master_bedroom.bedside_table.1",
+          "scene_id": "hist_master_bedroom",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "right"
+        },
+        {
+          "source": "living_room_b.sofa.0",
+          "room": "hist_living_room_b",
+          "elapsed_s": 0.94,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_b.sofa.0",
+          "scene_id": "hist_living_room_b",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "white sectional"
+        },
+        {
+          "source": "living_room_b.tv_unit.0",
+          "room": "hist_living_room_b",
+          "elapsed_s": 0.84,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_b.tv_unit.0",
+          "scene_id": "hist_living_room_b",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "the television itself, on the timber wall"
+        },
+        {
+          "source": "living_room_b.tv_unit.1",
+          "room": "hist_living_room_b",
+          "elapsed_s": 0.84,
+          "answer": true,
+          "status": "complete",
+          "case_id": "preserved.living_room_b.tv_unit.1",
+          "scene_id": "hist_living_room_b",
+          "category": null,
+          "origin": "preserved_phase1d",
+          "truth": true,
+          "prompt_desc": "the long white media console beneath it"
+        }
+      ],
+      "latency": {
+        "mean": 0.86,
+        "median": 0.88,
+        "p95": 0.96,
+        "worst": 0.98
+      },
+      "first_query_s": 0.66,
+      "failed": 0
+    }
+  ]
+}

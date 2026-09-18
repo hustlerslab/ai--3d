@@ -1,0 +1,339 @@
+{
+  "_about": "Which identity key merges the three stools without merging the two beds?",
+  "cases": {
+    "golden_chairs_different_upholstery": {
+      "K1_centre_production": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 3
+      },
+      "K2_room_type": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 3
+      },
+      "K3_type_only": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 3
+      },
+      "K4_room_type_dims": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 3
+      },
+      "K5_room_type_dims_visual": {
+        "assets_generated": 3,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 3,
+        "ideal_groups": 3
+      },
+      "K5c_conservative": {
+        "assets_generated": 3,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 3,
+        "ideal_groups": 3
+      }
+    },
+    "golden_no_evidence_pair": {
+      "K1_centre_production": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 2
+      },
+      "K2_room_type": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 2
+      },
+      "K3_type_only": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 2
+      },
+      "K4_room_type_dims": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 2
+      },
+      "K5_room_type_dims_visual": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 2
+      },
+      "K5c_conservative": {
+        "assets_generated": 2,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 2,
+        "ideal_groups": 2
+      }
+    },
+    "golden_six_matching_chairs": {
+      "K1_centre_production": {
+        "assets_generated": 6,
+        "assets_wasted": 5,
+        "false_merges": 0,
+        "false_splits": 5,
+        "groups": 6,
+        "ideal_groups": 1
+      },
+      "K2_room_type": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      },
+      "K3_type_only": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      },
+      "K4_room_type_dims": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      },
+      "K5_room_type_dims_visual": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      },
+      "K5c_conservative": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      }
+    },
+    "golden_three_stools": {
+      "K1_centre_production": {
+        "assets_generated": 3,
+        "assets_wasted": 2,
+        "false_merges": 0,
+        "false_splits": 2,
+        "groups": 3,
+        "ideal_groups": 1
+      },
+      "K2_room_type": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      },
+      "K3_type_only": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      },
+      "K4_room_type_dims": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      },
+      "K5_room_type_dims_visual": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      },
+      "K5c_conservative": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 1
+      }
+    },
+    "golden_two_beds_two_rooms": {
+      "K1_centre_production": {
+        "assets_generated": 2,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 2,
+        "ideal_groups": 2
+      },
+      "K2_room_type": {
+        "assets_generated": 2,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 2,
+        "ideal_groups": 2
+      },
+      "K3_type_only": {
+        "assets_generated": 1,
+        "assets_wasted": 0,
+        "false_merges": 1,
+        "false_splits": 0,
+        "groups": 1,
+        "ideal_groups": 2
+      },
+      "K4_room_type_dims": {
+        "assets_generated": 2,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 2,
+        "ideal_groups": 2
+      },
+      "K5_room_type_dims_visual": {
+        "assets_generated": 2,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 2,
+        "ideal_groups": 2
+      },
+      "K5c_conservative": {
+        "assets_generated": 2,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 2,
+        "ideal_groups": 2
+      }
+    },
+    "real_project": {
+      "K1_centre_production": {
+        "assets_generated": 26,
+        "assets_wasted": 3,
+        "false_merges": 0,
+        "false_splits": 3,
+        "groups": 26,
+        "ideal_groups": 23
+      },
+      "K2_room_type": {
+        "assets_generated": 23,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 23,
+        "ideal_groups": 23
+      },
+      "K3_type_only": {
+        "assets_generated": 18,
+        "assets_wasted": 0,
+        "false_merges": 5,
+        "false_splits": 0,
+        "groups": 18,
+        "ideal_groups": 23
+      },
+      "K4_room_type_dims": {
+        "assets_generated": 23,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 23,
+        "ideal_groups": 23
+      },
+      "K5_room_type_dims_visual": {
+        "assets_generated": 23,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 23,
+        "ideal_groups": 23
+      },
+      "K5c_conservative": {
+        "assets_generated": 23,
+        "assets_wasted": 0,
+        "false_merges": 0,
+        "false_splits": 0,
+        "groups": 23,
+        "ideal_groups": 23
+      }
+    }
+  },
+  "keys": {
+    "K1_centre_production": {
+      "assets_wasted": 10,
+      "false_merges": 2,
+      "false_splits": 10
+    },
+    "K2_room_type": {
+      "assets_wasted": 0,
+      "false_merges": 2,
+      "false_splits": 0
+    },
+    "K3_type_only": {
+      "assets_wasted": 0,
+      "false_merges": 8,
+      "false_splits": 0
+    },
+    "K4_room_type_dims": {
+      "assets_wasted": 0,
+      "false_merges": 2,
+      "false_splits": 0
+    },
+    "K5_room_type_dims_visual": {
+      "assets_wasted": 0,
+      "false_merges": 1,
+      "false_splits": 0
+    },
+    "K5c_conservative": {
+      "assets_wasted": 0,
+      "false_merges": 0,
+      "false_splits": 0
+    }
+  },
+  "rule": "fewest false merges, then fewest false splits; never the reverse",
+  "selected": "K5c_conservative"
+}

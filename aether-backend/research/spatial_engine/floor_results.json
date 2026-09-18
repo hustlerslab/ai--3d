@@ -1,0 +1,1978 @@
+{
+  "_about": "Phase 8. Floor as a scored hypothesis with UNKNOWN. No ground-truth floor exists; proxies are camera-height plausibility, object contact, the two eye-verified countertop floors, and wall perpendicularity. The test that matters is downstream: Phase 7 re-run unchanged on the corrected floor.",
+  "config": {
+    "max_candidates": 5,
+    "min_points": 256,
+    "threshold_scale": 0.012,
+    "normal_vertical_min": 0.55,
+    "camera_height_plausible_m": [
+      1.0,
+      2.0
+    ],
+    "camera_height_soft_m": [
+      0.6,
+      2.6
+    ],
+    "contact_band_m": [
+      -0.15,
+      0.3
+    ],
+    "below_depth_multiplier": 3.0,
+    "elevated_ref_extent": 0.03,
+    "elevated_min_gap_m": 0.3,
+    "ambiguity_margin": 0.08,
+    "weights": {
+      "gravity": 1.0,
+      "extent": 1.0,
+      "lower_support": 1.0,
+      "camera_height": 1.5,
+      "object_contact": 1.5,
+      "continuity": 0.5,
+      "below_penalty": 2.0,
+      "elevated_penalty": 1.5
+    },
+    "wall_gate": {
+      "name": "phase6_permissive",
+      "min_inlier_fraction": null,
+      "min_extent_fraction": null,
+      "min_height_m": null,
+      "min_width_m": null,
+      "min_enclosure_fraction": 0.8,
+      "min_upper_band_fraction": null,
+      "max_floor_band_fraction": 0.75,
+      "require_reaches_floor": false,
+      "min_largest_component_fraction": null
+    },
+    "production_code_changed": "none"
+  },
+  "host": {
+    "gpu_used_mib_at_start": 286,
+    "ram": {
+      "total_gb": 16.8,
+      "available_gb": 0.7,
+      "load_pct": 95
+    }
+  },
+  "control_reproduction": {
+    "phase7_primary_stored": {
+      "tp": 7,
+      "tn": 25,
+      "fp": 3,
+      "fn": 3,
+      "unknown_total": 10
+    },
+    "measured": {
+      "tp": 7,
+      "tn": 25,
+      "fp": 3,
+      "fn": 3,
+      "unknown_total": 10
+    },
+    "reproduced": true
+  },
+  "per_image": {
+    "research/phase1g/scenes/s01_living_room.png": {
+      "image": "research/phase1g/scenes/s01_living_room.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.245,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.35,
+        "rank_among_candidates": null,
+        "candidate_category": null
+      },
+      "candidates": [
+        {
+          "index": 2,
+          "score": 0.9255,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.378,
+          "extent": 0.1027,
+          "below": 0.0013,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.6101,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.302,
+          "extent": 0.1819,
+          "below": 0.0658,
+          "contact": 0.0,
+          "elevated_m": 0.076
+        },
+        {
+          "index": 3,
+          "score": 0.2732,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.547,
+          "extent": 0.094,
+          "below": 0.3049,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 0,
+          "score": -0.1543,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -0.67,
+          "extent": 0.2716,
+          "below": 0.7,
+          "contact": 0.0,
+          "elevated_m": 2.048
+        },
+        {
+          "index": 4,
+          "score": -0.1936,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 0.414,
+          "extent": 0.0646,
+          "below": 0.4386,
+          "contact": 0.0,
+          "elevated_m": 0.964
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9255,
+        "confidence": 0.963,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.378,
+        "provenance": "candidate 2 of 5: gravity 0.9734; extent 0.1027; lower 1.0; camera 1.378 m (score 1.0); contact 1.0 of 1; below 0.0013; elevated 0.0 m; continuity 0.7323",
+        "warnings": [],
+        "same_as_baseline": false,
+        "plausible": true,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 10.4,
+        "offset_to_baseline_m": 0.133,
+        "usable_wall_angle_to_floor_deg": [
+          82.3,
+          79.6
+        ],
+        "accepted_conservative": false
+      }
+    },
+    "research/phase1g/scenes/s02_living_room.png": {
+      "image": "research/phase1g/scenes/s02_living_room.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 0.89,
+        "plausible": false,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.724,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.9292,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 0.886,
+          "extent": 0.3405,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.4421,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.043,
+          "extent": 0.0478,
+          "below": 0.1981,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.2501,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 5.117,
+          "extent": 0.5789,
+          "below": 0.0,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": -0.3123,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -1.915,
+          "extent": 0.0099,
+          "below": 0.2247,
+          "contact": 0.0,
+          "elevated_m": 2.801
+        },
+        {
+          "index": 4,
+          "score": -0.3905,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -7.619,
+          "extent": 0.0102,
+          "below": 0.9099,
+          "contact": 0.0,
+          "elevated_m": 8.505
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9292,
+        "confidence": 0.965,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 0.886,
+        "provenance": "candidate 0 of 5: gravity 0.9969; extent 0.3405; lower 1.0; camera 0.886 m (score 0.715); contact 1.0 of 2; below 0.0; elevated 0.0 m; continuity 0.9404",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": false,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.06,
+        "offset_to_baseline_m": 0.004,
+        "usable_wall_angle_to_floor_deg": [
+          89.4,
+          81.9,
+          82.4
+        ]
+      }
+    },
+    "research/phase1g/scenes/s03_living_room.png": {
+      "image": "research/phase1g/scenes/s03_living_room.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 0.998,
+        "plausible": false,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.483,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.9891,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 0.981,
+          "extent": 0.1865,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": 0.2236,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.413,
+          "extent": 0.0735,
+          "below": 0.2503,
+          "contact": 0.5,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.2123,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.599,
+          "extent": 0.0985,
+          "below": 0.3628,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.1905,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.658,
+          "extent": 0.0854,
+          "below": 0.5313,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": 0.1376,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.129,
+          "extent": 0.0656,
+          "below": 0.806,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9891,
+        "confidence": 0.995,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 0.981,
+        "provenance": "candidate 0 of 5: gravity 0.9998; extent 0.1865; lower 1.0; camera 0.981 m (score 0.953); contact 1.0 of 2; below 0.0; elevated 0.0 m; continuity 1.0",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": false,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.3,
+        "offset_to_baseline_m": 0.017,
+        "usable_wall_angle_to_floor_deg": [
+          86.6,
+          84.3,
+          89.0,
+          87.9
+        ]
+      }
+    },
+    "research/phase1g/scenes/s04_bedroom.png": {
+      "image": "research/phase1g/scenes/s04_bedroom.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.348,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.414,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.9991,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.346,
+          "extent": 0.2208,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.3632,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.527,
+          "extent": 0.1578,
+          "below": 0.384,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": 0.2388,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.008,
+          "extent": 0.0627,
+          "below": 0.2848,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.236,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.087,
+          "extent": 0.0906,
+          "below": 0.4667,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": -0.2159,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -1.443,
+          "extent": 0.0896,
+          "below": 0.8595,
+          "contact": 0.0,
+          "elevated_m": 2.789
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9991,
+        "confidence": 1.0,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.346,
+        "provenance": "candidate 0 of 5: gravity 0.9939; extent 0.2208; lower 1.0; camera 1.346 m (score 1.0); contact 1.0 of 1; below 0.0; elevated 0.0 m; continuity 1.0",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.03,
+        "offset_to_baseline_m": 0.002,
+        "usable_wall_angle_to_floor_deg": [
+          87.9,
+          87.8
+        ]
+      }
+    },
+    "research/phase1g/scenes/s05_bedroom.png": {
+      "image": "research/phase1g/scenes/s05_bedroom.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.217,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.71,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.9977,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.216,
+          "extent": 0.3201,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.4733,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.904,
+          "extent": 0.0753,
+          "below": 0.1587,
+          "contact": 0.5,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.2302,
+          "category": "ELEVATED_ARCHITECTURAL_SURFACE",
+          "camera_height_m": 1.012,
+          "extent": 0.1,
+          "below": 0.4176,
+          "contact": 0.0,
+          "elevated_m": 0.204
+        },
+        {
+          "index": 4,
+          "score": 0.1352,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.404,
+          "extent": 0.0756,
+          "below": 0.4668,
+          "contact": 0.5,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": -0.3071,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -4.787,
+          "extent": 0.0923,
+          "below": 0.7103,
+          "contact": 0.0,
+          "elevated_m": 6.003
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9977,
+        "confidence": 0.999,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.216,
+        "provenance": "candidate 0 of 5: gravity 0.9851; extent 0.3201; lower 1.0; camera 1.216 m (score 1.0); contact 1.0 of 2; below 0.0; elevated 0.0 m; continuity 1.0",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.02,
+        "offset_to_baseline_m": 0.001,
+        "usable_wall_angle_to_floor_deg": [
+          87.8,
+          87.3,
+          88.7,
+          89.1
+        ]
+      }
+    },
+    "research/phase1g/scenes/s06_kitchen.png": {
+      "image": "research/phase1g/scenes/s06_kitchen.png",
+      "kitchen": true,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.314,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.283,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 2,
+          "score": 0.9467,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.338,
+          "extent": 0.1254,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": -0.0868,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 0.474,
+          "extent": 0.1137,
+          "below": 0.3425,
+          "contact": 0.0,
+          "elevated_m": 0.864
+        },
+        {
+          "index": 0,
+          "score": -0.1541,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -0.954,
+          "extent": 0.2484,
+          "below": 0.7338,
+          "contact": 0.0,
+          "elevated_m": 2.292
+        },
+        {
+          "index": 3,
+          "score": -0.2768,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -5.337,
+          "extent": 0.0954,
+          "below": 0.7939,
+          "contact": 0.0,
+          "elevated_m": 6.675
+        },
+        {
+          "index": 4,
+          "score": -0.2944,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -2.81,
+          "extent": 0.0664,
+          "below": 0.6753,
+          "contact": 0.0,
+          "elevated_m": 4.148
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9467,
+        "confidence": 0.973,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.338,
+        "provenance": "candidate 2 of 5: gravity 0.9985; extent 0.1254; lower 1.0; camera 1.338 m (score 1.0); contact 1.0 of 4; below 0.0; elevated 0.0 m; continuity 0.6382",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.34,
+        "offset_to_baseline_m": 0.024,
+        "usable_wall_angle_to_floor_deg": [
+          88.6,
+          83.4,
+          89.6
+        ]
+      }
+    },
+    "research/phase1g/scenes/s07_kitchen.png": {
+      "image": "research/phase1g/scenes/s07_kitchen.png",
+      "kitchen": true,
+      "eye_verified_countertop_floor": true,
+      "baseline": {
+        "camera_height_m": 0.33,
+        "plausible": false,
+        "object_contact": 0.0,
+        "floor_inlier_fraction": 0.228,
+        "rank_among_candidates": 3,
+        "candidate_category": "IMPLAUSIBLE_DEPTH"
+      },
+      "candidates": [
+        {
+          "index": 3,
+          "score": 0.6539,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.917,
+          "extent": 0.0877,
+          "below": 0.1621,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.2741,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.78,
+          "extent": 0.0939,
+          "below": 0.3415,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.2278,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 0.469,
+          "extent": 0.1107,
+          "below": 0.2362,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 0,
+          "score": 0.0768,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -1.31,
+          "extent": 0.2968,
+          "below": 0.6912,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": -0.0411,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -4.749,
+          "extent": 0.0824,
+          "below": 0.7053,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        }
+      ],
+      "selection": {
+        "decision": "UNKNOWN",
+        "score": null,
+        "confidence": 0.0,
+        "category": "UNKNOWN",
+        "camera_height_m": null,
+        "provenance": "no candidate classed ROOM_FLOOR",
+        "warnings": [
+          "every horizontal plane looks elevated or has scene points beneath it"
+        ],
+        "same_as_baseline": null
+      }
+    },
+    "research/phase1g/scenes/s08_dining_room.png": {
+      "image": "research/phase1g/scenes/s08_dining_room.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.385,
+        "plausible": true,
+        "object_contact": 0.5,
+        "floor_inlier_fraction": 0.208,
+        "rank_among_candidates": null,
+        "candidate_category": null
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.1931,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 3.684,
+          "extent": 0.1416,
+          "below": 0.3167,
+          "contact": 0.5,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": 0.1735,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.198,
+          "extent": 0.0643,
+          "below": 0.4119,
+          "contact": 0.5,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": 0.1052,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 3.813,
+          "extent": 0.09,
+          "below": 0.2077,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.0253,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 3.307,
+          "extent": 0.1037,
+          "below": 0.4768,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": -0.0453,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 2.972,
+          "extent": 0.0864,
+          "below": 0.6302,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        }
+      ],
+      "selection": {
+        "decision": "UNKNOWN",
+        "score": null,
+        "confidence": 0.0,
+        "category": "UNKNOWN",
+        "camera_height_m": null,
+        "provenance": "no candidate classed ROOM_FLOOR",
+        "warnings": [
+          "every horizontal plane looks elevated or has scene points beneath it"
+        ],
+        "same_as_baseline": null
+      }
+    },
+    "research/phase1g/scenes/s09_office.png": {
+      "image": "research/phase1g/scenes/s09_office.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.223,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.405,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.9996,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.206,
+          "extent": 0.2005,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.2005,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 3.931,
+          "extent": 0.0762,
+          "below": 0.27,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.1165,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 5.131,
+          "extent": 0.1128,
+          "below": 0.1782,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": -0.0498,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 3.271,
+          "extent": 0.0695,
+          "below": 0.4851,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": -0.1947,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 0.577,
+          "extent": 0.063,
+          "below": 0.8216,
+          "contact": 0.0,
+          "elevated_m": 0.629
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9996,
+        "confidence": 1.0,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.206,
+        "provenance": "candidate 0 of 5: gravity 0.9976; extent 0.2005; lower 1.0; camera 1.206 m (score 1.0); contact 1.0 of 1; below 0.0; elevated 0.0 m; continuity 1.0",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.21,
+        "offset_to_baseline_m": 0.017,
+        "usable_wall_angle_to_floor_deg": [
+          88.8,
+          88.4,
+          77.5,
+          89.4
+        ]
+      }
+    },
+    "research/phase1g/scenes/s10_office.png": {
+      "image": "research/phase1g/scenes/s10_office.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.452,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.58,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 1,
+          "score": 0.9994,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.453,
+          "extent": 0.3075,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": 0.5913,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.455,
+          "extent": 0.0289,
+          "below": 0.0023,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.4149,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.038,
+          "extent": 0.0503,
+          "below": 0.1386,
+          "contact": 0.0,
+          "elevated_m": 0.415
+        },
+        {
+          "index": 3,
+          "score": -0.0513,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 0.674,
+          "extent": 0.0309,
+          "below": 0.3758,
+          "contact": 0.0,
+          "elevated_m": 0.779
+        },
+        {
+          "index": 0,
+          "score": -0.1506,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -1.21,
+          "extent": 0.5269,
+          "below": 0.4659,
+          "contact": 0.0,
+          "elevated_m": 2.663
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9994,
+        "confidence": 1.0,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.453,
+        "provenance": "candidate 1 of 5: gravity 0.9962; extent 0.3075; lower 1.0; camera 1.453 m (score 1.0); contact 1.0 of 3; below 0.0; elevated 0.0 m; continuity 0.9999",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.02,
+        "offset_to_baseline_m": 0.001,
+        "usable_wall_angle_to_floor_deg": [
+          74.2,
+          71.1,
+          75.2
+        ]
+      }
+    },
+    "research/phase1g/scenes/s11_lounge.png": {
+      "image": "research/phase1g/scenes/s11_lounge.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.523,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.734,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.8435,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.567,
+          "extent": 0.3987,
+          "below": 0.0015,
+          "contact": 0.75,
+          "elevated_m": 0.203
+        },
+        {
+          "index": 4,
+          "score": 0.7254,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.77,
+          "extent": 0.0403,
+          "below": 0.0,
+          "contact": 0.75,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.448,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.07,
+          "extent": 0.1198,
+          "below": 0.0062,
+          "contact": 0.0,
+          "elevated_m": 0.7
+        },
+        {
+          "index": 1,
+          "score": -0.1614,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -2.245,
+          "extent": 0.3036,
+          "below": 0.6451,
+          "contact": 0.0,
+          "elevated_m": 4.015
+        },
+        {
+          "index": 3,
+          "score": -0.2384,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -1.711,
+          "extent": 0.0829,
+          "below": 0.6076,
+          "contact": 0.0,
+          "elevated_m": 3.481
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.8435,
+        "confidence": 0.922,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.567,
+        "provenance": "candidate 0 of 5: gravity 0.9889; extent 0.3987; lower 0.7455; camera 1.567 m (score 1.0); contact 0.75 of 4; below 0.0015; elevated 0.203 m; continuity 0.9434",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 0.75,
+        "angle_to_baseline_deg": 0.72,
+        "offset_to_baseline_m": 0.044,
+        "usable_wall_angle_to_floor_deg": [
+          72.9
+        ]
+      }
+    },
+    "research/phase1g/scenes/s13_living_room.png": {
+      "image": "research/phase1g/scenes/s13_living_room.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 0.688,
+        "plausible": false,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.828,
+        "rank_among_candidates": null,
+        "candidate_category": null
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.8606,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 0.842,
+          "extent": 0.4603,
+          "below": 0.0141,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.3119,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 0.806,
+          "extent": 0.1154,
+          "below": 0.1497,
+          "contact": 0.0,
+          "elevated_m": 0.036
+        },
+        {
+          "index": 3,
+          "score": 0.1809,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.48,
+          "extent": 0.0622,
+          "below": 0.3208,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.168,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.237,
+          "extent": 0.0764,
+          "below": 0.2627,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": -0.2996,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -0.361,
+          "extent": 0.0486,
+          "below": 0.752,
+          "contact": 0.0,
+          "elevated_m": 1.203
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.8606,
+        "confidence": 0.93,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 0.842,
+        "provenance": "candidate 0 of 5: gravity 0.9857; extent 0.4603; lower 0.8797; camera 0.842 m (score 0.604); contact 1.0 of 1; below 0.0141; elevated 0.0 m; continuity 0.8332",
+        "warnings": [],
+        "same_as_baseline": false,
+        "plausible": false,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 4.29,
+        "offset_to_baseline_m": 0.154,
+        "usable_wall_angle_to_floor_deg": [
+          86.0,
+          88.2,
+          88.6,
+          83.6
+        ],
+        "accepted_conservative": false
+      }
+    },
+    "research/phase1g/scenes/s14_bedroom.png": {
+      "image": "research/phase1g/scenes/s14_bedroom.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.234,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.49,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.9976,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.226,
+          "extent": 0.2493,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.2735,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.291,
+          "extent": 0.1059,
+          "below": 0.3873,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": 0.2185,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.838,
+          "extent": 0.0667,
+          "below": 0.3691,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.1538,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 3.279,
+          "extent": 0.0794,
+          "below": 0.0787,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": 0.1468,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 2.694,
+          "extent": 0.0578,
+          "below": 0.3505,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9976,
+        "confidence": 0.999,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.226,
+        "provenance": "candidate 0 of 5: gravity 0.985; extent 0.2493; lower 1.0; camera 1.226 m (score 1.0); contact 1.0 of 1; below 0.0; elevated 0.0 m; continuity 0.9994",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.18,
+        "offset_to_baseline_m": 0.008,
+        "usable_wall_angle_to_floor_deg": [
+          87.6,
+          85.7,
+          88.6,
+          88.1
+        ]
+      }
+    },
+    "research/phase1g/scenes/s15_kitchen.png": {
+      "image": "research/phase1g/scenes/s15_kitchen.png",
+      "kitchen": true,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.216,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.707,
+        "rank_among_candidates": 1,
+        "candidate_category": "ELEVATED_ARCHITECTURAL_SURFACE"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.7674,
+          "category": "ELEVATED_ARCHITECTURAL_SURFACE",
+          "camera_height_m": 1.216,
+          "extent": 0.3108,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 1.168
+        },
+        {
+          "index": 3,
+          "score": 0.4694,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 2.384,
+          "extent": 0.0717,
+          "below": 0.1275,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.1861,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.098,
+          "extent": 0.0824,
+          "below": 0.2312,
+          "contact": 0.0,
+          "elevated_m": 0.286
+        },
+        {
+          "index": 4,
+          "score": -0.062,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.101,
+          "extent": 0.0555,
+          "below": 0.6616,
+          "contact": 0.0,
+          "elevated_m": 1.283
+        },
+        {
+          "index": 1,
+          "score": -0.2087,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -1.321,
+          "extent": 0.0987,
+          "below": 0.8467,
+          "contact": 0.0,
+          "elevated_m": 3.705
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.4694,
+        "confidence": 0.735,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 2.384,
+        "provenance": "candidate 3 of 5: gravity 0.8204; extent 0.0717; lower 0.2882; camera 2.384 m (score 0.359); contact 1.0 of 1; below 0.1275; elevated 0.0 m; continuity 0.5516",
+        "warnings": [],
+        "same_as_baseline": false,
+        "plausible": false,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 26.36,
+        "offset_to_baseline_m": 1.168,
+        "usable_wall_angle_to_floor_deg": [
+          69.1,
+          74.0,
+          72.9,
+          75.1
+        ],
+        "accepted_conservative": false
+      }
+    },
+    "research/phase1g/scenes/s16_dining_room.png": {
+      "image": "research/phase1g/scenes/s16_dining_room.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.126,
+        "plausible": true,
+        "object_contact": 0.0,
+        "floor_inlier_fraction": 0.199,
+        "rank_among_candidates": null,
+        "candidate_category": null
+      },
+      "candidates": [
+        {
+          "index": 4,
+          "score": 0.209,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.683,
+          "extent": 0.0626,
+          "below": 0.6382,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.1748,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.096,
+          "extent": 0.0782,
+          "below": 0.6638,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.1119,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.306,
+          "extent": 0.0874,
+          "below": 0.4786,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 0,
+          "score": 0.0694,
+          "category": "ELEVATED_ARCHITECTURAL_SURFACE",
+          "camera_height_m": 2.543,
+          "extent": 0.1003,
+          "below": 0.3761,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": 0.0463,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 2.899,
+          "extent": 0.0763,
+          "below": 0.2565,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        }
+      ],
+      "selection": {
+        "decision": "UNKNOWN",
+        "score": null,
+        "confidence": 0.0,
+        "category": "UNKNOWN",
+        "camera_height_m": null,
+        "provenance": "no candidate classed ROOM_FLOOR",
+        "warnings": [
+          "every horizontal plane looks elevated or has scene points beneath it"
+        ],
+        "same_as_baseline": null
+      }
+    },
+    "research/phase1g/scenes/s17_office.png": {
+      "image": "research/phase1g/scenes/s17_office.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.259,
+        "plausible": true,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.546,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 1,
+          "score": 0.9999,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.26,
+          "extent": 0.2796,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": -0.0898,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 0.249,
+          "extent": 0.0517,
+          "below": 0.2891,
+          "contact": 0.0,
+          "elevated_m": 1.011
+        },
+        {
+          "index": 2,
+          "score": -0.104,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 0.025,
+          "extent": 0.0661,
+          "below": 0.3601,
+          "contact": 0.0,
+          "elevated_m": 1.235
+        },
+        {
+          "index": 0,
+          "score": -0.1535,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -1.377,
+          "extent": 0.4214,
+          "below": 0.5491,
+          "contact": 0.0,
+          "elevated_m": 2.637
+        },
+        {
+          "index": 3,
+          "score": -0.2317,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -0.763,
+          "extent": 0.0625,
+          "below": 0.4625,
+          "contact": 0.0,
+          "elevated_m": 2.023
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9999,
+        "confidence": 1.0,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.26,
+        "provenance": "candidate 1 of 5: gravity 0.9996; extent 0.2796; lower 1.0; camera 1.26 m (score 1.0); contact 1.0 of 3; below 0.0; elevated 0.0 m; continuity 1.0",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.02,
+        "offset_to_baseline_m": 0.001,
+        "usable_wall_angle_to_floor_deg": [
+          87.4,
+          86.4,
+          70.0
+        ]
+      }
+    },
+    "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png": {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 0.948,
+        "plausible": false,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.97,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.9648,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 0.948,
+          "extent": 0.5028,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": 0.3112,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.678,
+          "extent": 0.0504,
+          "below": 0.2057,
+          "contact": 0.25,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": -0.2668,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -3.157,
+          "extent": 0.3693,
+          "below": 0.787,
+          "contact": 0.0,
+          "elevated_m": 4.105
+        },
+        {
+          "index": 3,
+          "score": -0.3933,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -4.774,
+          "extent": 0.0272,
+          "below": 0.9492,
+          "contact": 0.0,
+          "elevated_m": 5.722
+        },
+        {
+          "index": 4,
+          "score": -0.3975,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -2.996,
+          "extent": 0.0233,
+          "below": 0.7479,
+          "contact": 0.0,
+          "elevated_m": 3.944
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9648,
+        "confidence": 0.982,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 0.948,
+        "provenance": "candidate 0 of 5: gravity 0.9663; extent 0.5028; lower 1.0; camera 0.948 m (score 0.87); contact 1.0 of 4; below 0.0; elevated 0.0 m; continuity 1.0",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": false,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.0,
+        "offset_to_baseline_m": 0.0,
+        "usable_wall_angle_to_floor_deg": [
+          89.5,
+          89.3,
+          88.9
+        ]
+      }
+    },
+    "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png": {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "kitchen": true,
+      "eye_verified_countertop_floor": true,
+      "baseline": {
+        "camera_height_m": 0.627,
+        "plausible": false,
+        "object_contact": 0.0,
+        "floor_inlier_fraction": 0.425,
+        "rank_among_candidates": null,
+        "candidate_category": null
+      },
+      "candidates": [
+        {
+          "index": 1,
+          "score": 0.3996,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 3.365,
+          "extent": 0.1426,
+          "below": 0.0897,
+          "contact": 0.75,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": 0.2625,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.294,
+          "extent": 0.0899,
+          "below": 0.3576,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 0,
+          "score": 0.0829,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 2.952,
+          "extent": 0.149,
+          "below": 0.3393,
+          "contact": 0.25,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": -0.0652,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -4.349,
+          "extent": 0.1425,
+          "below": 0.6899,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": -0.0791,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -4.097,
+          "extent": 0.1167,
+          "below": 0.6027,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        }
+      ],
+      "selection": {
+        "decision": "UNKNOWN",
+        "score": null,
+        "confidence": 0.0,
+        "category": "UNKNOWN",
+        "camera_height_m": null,
+        "provenance": "no candidate classed ROOM_FLOOR",
+        "warnings": [
+          "every horizontal plane looks elevated or has scene points beneath it"
+        ],
+        "same_as_baseline": null
+      }
+    },
+    "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png": {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 1.433,
+        "plausible": true,
+        "object_contact": 0.0,
+        "floor_inlier_fraction": 0.23,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 2,
+          "score": 0.4617,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 1.454,
+          "extent": 0.0845,
+          "below": 0.1135,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.2044,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.272,
+          "extent": 0.0947,
+          "below": 0.2621,
+          "contact": 0.0,
+          "elevated_m": 0.182
+        },
+        {
+          "index": 3,
+          "score": 0.1488,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.217,
+          "extent": 0.0969,
+          "below": 0.3652,
+          "contact": 0.0,
+          "elevated_m": 0.237
+        },
+        {
+          "index": 0,
+          "score": -0.157,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -0.95,
+          "extent": 0.2803,
+          "below": 0.746,
+          "contact": 0.0,
+          "elevated_m": 2.404
+        },
+        {
+          "index": 4,
+          "score": -0.2903,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -1.347,
+          "extent": 0.0622,
+          "below": 0.4444,
+          "contact": 0.0,
+          "elevated_m": 2.801
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.4617,
+        "confidence": 0.512,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 1.454,
+        "provenance": "candidate 2 of 5: gravity 0.6052; extent 0.0845; lower 0.7452; camera 1.454 m (score 1.0); contact 0.0 of 1; below 0.1135; elevated 0.0 m; continuity 0.6875",
+        "warnings": [
+          "only 0% of objects rest on it"
+        ],
+        "same_as_baseline": true,
+        "plausible": true,
+        "object_contact": 0.0,
+        "angle_to_baseline_deg": 1.06,
+        "offset_to_baseline_m": 0.021,
+        "usable_wall_angle_to_floor_deg": [
+          75.9,
+          85.5
+        ]
+      }
+    },
+    "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png": {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 0.967,
+        "plausible": false,
+        "object_contact": 1.0,
+        "floor_inlier_fraction": 0.829,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.9769,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 0.966,
+          "extent": 0.35,
+          "below": 0.0,
+          "contact": 1.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.1904,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.079,
+          "extent": 0.0906,
+          "below": 0.3107,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": 0.1374,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.834,
+          "extent": 0.0582,
+          "below": 0.4411,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": -0.0897,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 2.522,
+          "extent": 0.0312,
+          "below": 0.2917,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": -0.2801,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -4.164,
+          "extent": 0.2886,
+          "below": 0.7022,
+          "contact": 0.0,
+          "elevated_m": 5.13
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.9769,
+        "confidence": 0.988,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 0.966,
+        "provenance": "candidate 0 of 5: gravity 0.9786; extent 0.35; lower 1.0; camera 0.966 m (score 0.914); contact 1.0 of 3; below 0.0; elevated 0.0 m; continuity 1.0",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": false,
+        "object_contact": 1.0,
+        "angle_to_baseline_deg": 0.03,
+        "offset_to_baseline_m": 0.001,
+        "usable_wall_angle_to_floor_deg": [
+          89.0,
+          89.4,
+          89.3,
+          89.5
+        ]
+      }
+    },
+    "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png": {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "kitchen": false,
+      "eye_verified_countertop_floor": false,
+      "baseline": {
+        "camera_height_m": 0.884,
+        "plausible": false,
+        "object_contact": 0.5,
+        "floor_inlier_fraction": 0.933,
+        "rank_among_candidates": 1,
+        "candidate_category": "ROOM_FLOOR"
+      },
+      "candidates": [
+        {
+          "index": 0,
+          "score": 0.8163,
+          "category": "ROOM_FLOOR",
+          "camera_height_m": 0.884,
+          "extent": 0.481,
+          "below": 0.0,
+          "contact": 0.5,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 1,
+          "score": 0.1951,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.71,
+          "extent": 0.0798,
+          "below": 0.55,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 3,
+          "score": 0.1244,
+          "category": "FURNITURE_SURFACE",
+          "camera_height_m": 1.806,
+          "extent": 0.0497,
+          "below": 0.4537,
+          "contact": 0.0,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 4,
+          "score": 0.068,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": 2.71,
+          "extent": 0.0491,
+          "below": 0.1849,
+          "contact": 0.25,
+          "elevated_m": 0.0
+        },
+        {
+          "index": 2,
+          "score": -0.316,
+          "category": "IMPLAUSIBLE_DEPTH",
+          "camera_height_m": -3.414,
+          "extent": 0.0714,
+          "below": 0.8207,
+          "contact": 0.0,
+          "elevated_m": 4.298
+        }
+      ],
+      "selection": {
+        "decision": "ROOM_FLOOR",
+        "score": 0.8163,
+        "confidence": 0.908,
+        "category": "ROOM_FLOOR",
+        "camera_height_m": 0.884,
+        "provenance": "candidate 0 of 5: gravity 0.9907; extent 0.481; lower 1.0; camera 0.884 m (score 0.71); contact 0.5 of 4; below 0.0; elevated 0.0 m; continuity 1.0",
+        "warnings": [],
+        "same_as_baseline": true,
+        "plausible": false,
+        "object_contact": 0.5,
+        "angle_to_baseline_deg": 0.0,
+        "offset_to_baseline_m": 0.0,
+        "usable_wall_angle_to_floor_deg": [
+          89.5,
+          87.0
+        ]
+      }
+    }
+  },
+  "metrics": {
+    "images": 21,
+    "floor_unknown": 4,
+    "floor_unknown_images": [
+      "research/phase1g/scenes/s07_kitchen.png",
+      "research/phase1g/scenes/s08_dining_room.png",
+      "research/phase1g/scenes/s16_dining_room.png",
+      "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png"
+    ],
+    "baseline_camera_height_plausible": 13,
+    "selected_camera_height_plausible": 10,
+    "selected_differs_from_baseline": 3,
+    "baseline_object_contact_mean": 0.762,
+    "selected_object_contact_mean": 0.897,
+    "baseline_rank_histogram": {
+      "None": 5,
+      "1": 15,
+      "3": 1
+    },
+    "countertop_false_floor": {
+      "research/phase1g/scenes/s07_kitchen.png": {
+        "baseline_camera_height_m": 0.33,
+        "decision": "UNKNOWN",
+        "selected_camera_height_m": null,
+        "countertop_rejected": true,
+        "fixed": false,
+        "baseline_plane_category": "IMPLAUSIBLE_DEPTH"
+      },
+      "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png": {
+        "baseline_camera_height_m": 0.627,
+        "decision": "UNKNOWN",
+        "selected_camera_height_m": null,
+        "countertop_rejected": true,
+        "fixed": false,
+        "baseline_plane_category": null
+      }
+    },
+    "countertop_false_floor_rate_after": 0.0,
+    "table_false_floor": "NOT TESTED: no table-as-floor case exists in the benchmark",
+    "angular_error_vs_truth": "NOT TESTED: no ground-truth floor plane exists",
+    "offset_error_vs_truth": "NOT TESTED: no ground-truth floor plane exists",
+    "selected_wall_angle_to_floor_deg": {
+      "n": 52,
+      "median": 87.5,
+      "min": 69.1,
+      "max": 89.6
+    },
+    "latency_ms_per_image_median": 3328.0,
+    "latency_ms_per_image_p95": 6138.9
+  },
+  "corrected_images": [
+    "research/phase1g/scenes/s01_living_room.png",
+    "research/phase1g/scenes/s13_living_room.png",
+    "research/phase1g/scenes/s15_kitchen.png"
+  ],
+  "conservative_accepted_images": [],
+  "downstream_phase7": {
+    "baseline_floor": {
+      "metrics": {
+        "cases": 48,
+        "negatives": 37,
+        "positives": 11,
+        "tn": 25,
+        "fp": 3,
+        "tp": 7,
+        "fn": 3,
+        "unknown_negatives": 9,
+        "unknown_positives": 1,
+        "unknown_rate_negatives_pct": 24.3,
+        "false_wall_rate_decided_pct": 10.7,
+        "false_wall_ci95_decided": [
+          3.7,
+          27.2
+        ],
+        "false_wall_rate_all_pct": 8.1,
+        "no_recall_decided_pct": 89.3,
+        "no_recall_ci95_decided": [
+          72.8,
+          96.3
+        ],
+        "positive_recall_decided_pct": 70.0,
+        "precision_pct": 70.0,
+        "balanced_accuracy_pct": 79.6,
+        "accuracy_decided_pct": 84.2,
+        "coverage_pct": 79.2,
+        "f1_pct": 70.0,
+        "unknown_total": 10,
+        "accuracy_all_pct": 66.7
+      },
+      "separation_auc": 0.8929
+    },
+    "corrected_floor": {
+      "metrics": {
+        "cases": 48,
+        "negatives": 37,
+        "positives": 11,
+        "tn": 25,
+        "fp": 3,
+        "tp": 7,
+        "fn": 3,
+        "unknown_negatives": 9,
+        "unknown_positives": 1,
+        "unknown_rate_negatives_pct": 24.3,
+        "false_wall_rate_decided_pct": 10.7,
+        "false_wall_ci95_decided": [
+          3.7,
+          27.2
+        ],
+        "false_wall_rate_all_pct": 8.1,
+        "no_recall_decided_pct": 89.3,
+        "no_recall_ci95_decided": [
+          72.8,
+          96.3
+        ],
+        "positive_recall_decided_pct": 70.0,
+        "precision_pct": 70.0,
+        "balanced_accuracy_pct": 79.6,
+        "accuracy_decided_pct": 84.2,
+        "coverage_pct": 79.2,
+        "f1_pct": 70.0,
+        "unknown_total": 10,
+        "accuracy_all_pct": 66.7
+      },
+      "separation_auc": 0.875
+    },
+    "conservative_floor": {
+      "metrics": {
+        "cases": 48,
+        "negatives": 37,
+        "positives": 11,
+        "tn": 25,
+        "fp": 3,
+        "tp": 7,
+        "fn": 3,
+        "unknown_negatives": 9,
+        "unknown_positives": 1,
+        "unknown_rate_negatives_pct": 24.3,
+        "false_wall_rate_decided_pct": 10.7,
+        "false_wall_ci95_decided": [
+          3.7,
+          27.2
+        ],
+        "false_wall_rate_all_pct": 8.1,
+        "no_recall_decided_pct": 89.3,
+        "no_recall_ci95_decided": [
+          72.8,
+          96.3
+        ],
+        "positive_recall_decided_pct": 70.0,
+        "precision_pct": 70.0,
+        "balanced_accuracy_pct": 79.6,
+        "accuracy_decided_pct": 84.2,
+        "coverage_pct": 79.2,
+        "f1_pct": 70.0,
+        "unknown_total": 10,
+        "accuracy_all_pct": 66.7
+      },
+      "separation_auc": 0.8929
+    },
+    "decision_flips": []
+  }
+}

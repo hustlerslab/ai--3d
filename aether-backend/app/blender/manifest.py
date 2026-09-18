@@ -10,9 +10,11 @@ from __future__ import annotations
 
 import json
 import math
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Optional
 
+from ..assets import gltf
 from ..assets.registry import get_registry
 from ..catalog.catalog import get_item
 from ..core.config import get_settings
@@ -70,6 +72,119 @@ def _material_entry(material_id: str) -> Optional[dict[str, Any]]:
     }
 
 
+#: Descriptors with a deterministic, already-existing executor mechanism. A
+#: material's `roughness` is a real PBR input `apply_materials` already sets, so
+#: "matte" and "glossy" can be honoured exactly. Everything else a client might
+#: say - "luxurious", "elegant", "contemporary" - has no defensible mapping and
+#: stays semantic metadata rather than being invented into a material change.
+_FINISH_ROUGHNESS = {
+    "matte": 0.95, "flat": 0.95,
+    "satin": 0.55,
+    "glossy": 0.12, "gloss": 0.12, "polished": 0.12, "lacquered": 0.12,
+}
+
+
+@lru_cache(maxsize=256)
+def _separable_regions(glb_path: str) -> int:
+    """How many distinct material regions this asset's geometry really has.
+
+    Read from the file, cached per path. One region means the piece is a single
+    skin and a frame finish has nowhere to go - true of 48 of the 58 assets in
+    the measured registry - so the caller reports `metadata_only` instead of
+    painting the whole sofa walnut.
+    """
+    try:
+        return len(gltf.material_slots(gltf.load(Path(glb_path))))
+    except Exception:                                          # noqa: BLE001
+        return 0
+
+
+#: Structural parts a frame finish can legitimately describe. Measured need:
+#: real Gemini populates `frame_finish` on 0 of 8 real photographs and puts the
+#: same information in `visual_descriptors` instead ("wooden frame", "gold
+#: accent trim"). Reading it there is not invention - it is the model's own
+#: evidence in a different field - but it is only read when the descriptor
+#: names a part we actually paint, so a whole-object phrase like "glass coffee
+#: table" can never repaint a piece's trim.
+_FRAME_PARTS = ("frame", "leg", "feet", "foot", "trim", "base", "arm", "rail",
+                "edge", "border", "piping", "accent", "handle", "knob")
+
+
+def _descriptor_finish(descriptors) -> tuple[str, str]:
+    """(descriptor, material_id) for the first descriptor that both names a
+    structural part and resolves to a material the registry already has."""
+    from ..planning.compiler import finish_material_for
+
+    for word in descriptors:
+        text = str(word).strip()
+        low = text.lower()
+        if not any(part in low for part in _FRAME_PARTS):
+            continue
+        material_id = finish_material_for(text)
+        if material_id:
+            return text, material_id
+    return "", ""
+
+
+def _finish_entry(obj) -> dict[str, Any]:
+    """Frame finish and surface quality for one object, with an honest state.
+
+    `state` is the audit answer P14 exists to give:
+      rendered       - the word resolved to a registry material AND the asset
+                       has a separate region to put it on
+      metadata_only  - it was understood but cannot be painted here
+      unsupported    - nothing in the registry represents it
+
+    `source` says where the finish came from, so the audit can separate what
+    the client stated from what was read out of a descriptor. Only a stated
+    `frame_finish` ever counts as that attribute surviving.
+    """
+    from ..planning.compiler import finish_material_for
+
+    finish = (obj.visual.frame_finish or "").strip()
+    material_id = finish_material_for(finish) if finish else ""
+    source = "stated" if material_id else ""
+    if not finish:
+        finish, material_id = _descriptor_finish(obj.visual.descriptors)
+        source = "descriptor" if material_id else ""
+
+    roughness = None
+    for word in obj.visual.descriptors:
+        hit = _FINISH_ROUGHNESS.get(str(word).strip().lower())
+        if hit is not None:
+            roughness = hit
+            break
+
+    regions = 0
+    if material_id and obj.asset_id:
+        glb = get_registry().root / "normalized" / f"{obj.asset_id}.glb"
+        if glb.exists():
+            regions = _separable_regions(str(glb))
+
+    if not finish:
+        state = "rendered" if roughness is not None else "none"
+    elif not material_id:
+        state = "unsupported"
+    elif regions < 2:
+        state = "metadata_only"
+    else:
+        state = "rendered"
+
+    return {
+        "frame_finish": finish,
+        "frame_material": material_id,
+        "material_regions": regions,
+        "roughness": roughness,
+        "source": source,
+        "state": state,
+        "reason": {
+            "unsupported": "no registry material represents this finish",
+            "metadata_only": "the asset has a single material region; a frame finish "
+                             "would repaint the whole piece",
+        }.get(state, ""),
+    }
+
+
 def _asset_entry(asset_id: Optional[str], semantic_type: str, *, shape_hint: Optional[str] = None,
                  texture_ref: Optional[str] = None, project_root: Optional[Path] = None) -> dict[str, Any]:
     texture = ""
@@ -109,6 +224,7 @@ def _asset_entry(asset_id: Optional[str], semantic_type: str, *, shape_hint: Opt
 _SHAPE_BY_TYPE = {
     "tv_unit": "tv", "kitchen_counter": "counter", "curtains": "curtains", "fridge": "fridge",
     "wall_art": "photo", "mirror": "mirror", "table_lamp": "lamp", "fireplace": "fireplace", "books": "books",
+    "television": "tv",
     "vase": "vase", "tray": "tray", "sconce": "sconce", "wall_shelf": "shelf", "pillows": "pillow",
     "candle": "candle", "wall_clock": "clock", "stool": "seat", "lantern": "vase", "basket": "vase",
 }
@@ -188,6 +304,10 @@ def build_manifest(
                 "thickness": w.thickness,
                 "height": w.height,
                 "material": w.material,
+                # P22: per-face finish zones, metres along the room's edge and
+                # up from the floor. Exported so the executor can paint them
+                # when it learns to; today it paints `material` wall-wide.
+                "finishes": [f.model_dump(mode="json") for f in w.finishes],
                 "openings": [
                     {
                         "id": o.opening_id,
@@ -223,6 +343,15 @@ def build_manifest(
                 "mount": o.mount,
                 "parent": o.parent_id,
                 "material_overrides": dict(o.material_overrides),
+                # P13: what the client's reference said this looks like. The
+                # executor paints `color` and `material_overrides`; this block
+                # crosses the boundary as semantic metadata so an attribute it
+                # cannot yet render ("quilted", "dark walnut frame") is
+                # preserved and traceable rather than discarded. Omitted
+                # entirely for planner-only objects, keeping the manifest for
+                # every pre-P13 scene byte-identical.
+                **({"visual": o.visual.model_dump()} if not o.visual.is_empty() else {}),
+                **({"finish": _finish_entry(o)} if not o.visual.is_empty() else {}),
                 "locked": o.locked,
             }
         )

@@ -54,12 +54,34 @@ def analyze(ctx: JobContext) -> dict:
     )
 
     # ── design analysis ──────────────────────────────────────────────────
-    if ctx.has_checkpoint(ANALYSIS) and not force:
-        analysis = DesignAnalysis.model_validate(ctx.read_json(ANALYSIS))
+    # The checkpoint is only valid for the reference set it was computed from.
+    # Reused blindly, a project analysed under an older, smaller Gemini cap kept
+    # reporting "only the first 6 of 8 references were sent" forever, and newly
+    # uploaded photos never reached the model at all. Same test `scene_plan`
+    # already applies to its design-intent cache.
+    current_refs = [r.input_id for r in bundle.references]
+    cached = None
+    if ctx.has_checkpoint(ANALYSIS):
+        try:
+            cached = DesignAnalysis.model_validate(ctx.read_json(ANALYSIS))
+        except Exception as exc:                                        # noqa: BLE001
+            ctx.emit("analyze.analysis", f"could not read the cached analysis "
+                                         f"({type(exc).__name__}); re-analysing", status="warning")
+            cached = None
+
+    analysis_recomputed = not (cached is not None and not force
+                               and cached.reference_ids == current_refs)
+    if not analysis_recomputed:
+        analysis = cached
         ctx.emit("analyze.analysis", "checkpoint present, skipped")
     else:
+        if cached is not None and not force:
+            ctx.emit("analyze.analysis",
+                     f"references changed since the last analysis "
+                     f"({len(cached.reference_ids)} -> {len(current_refs)}); re-analysing")
         t0 = time.monotonic()
         analysis = provider.analyze_input(bundle)
+        analysis.reference_ids = current_refs
         analysis.version = ctx.projects.next_analysis_version(ctx.project_id, "design_analysis")
         ctx.write_json(ANALYSIS, analysis)
         ctx.write_json(
@@ -88,7 +110,11 @@ def analyze(ctx: JobContext) -> dict:
     analysis.warnings = list(dict.fromkeys(analysis.warnings + crop_warnings))
 
     # ── style ────────────────────────────────────────────────────────────
-    if ctx.has_checkpoint(STYLE) and not force:
+    # The style spec is DERIVED from the analysis, so a fresh analysis makes a
+    # cached style stale by definition. Kept, it also preserved its own copy of
+    # the analysis-era warnings - which is the second reason "only the first 6
+    # of 8 references were sent" outlived the cap that caused it.
+    if ctx.has_checkpoint(STYLE) and not force and not analysis_recomputed:
         style = StyleSpec.model_validate(ctx.read_json(STYLE))
         ctx.emit("analyze.style", "checkpoint present, skipped")
     else:
@@ -110,8 +136,15 @@ def analyze(ctx: JobContext) -> dict:
         )
 
     # ── moodboard (derived, always rebuilt) ──────────────────────────────
+    # `paint=False` is the element-first entry: analysis, crops and style
+    # only, so the pieces can be decided and pictured BEFORE a room exists.
+    # The moodboard step runs this job again with the default and paints; the
+    # analysis and style checkpoints above make that second run cheap.
     moodboard = build_moodboard(analysis, style, bundle)
-    _add_scene_image(ctx, moodboard, analysis, style, bundle, provider=provider, force=force)
+    if bool(ctx.params.get("paint", True)):
+        _add_scene_image(ctx, moodboard, analysis, style, bundle, provider=provider, force=force)
+    else:
+        ctx.emit("analyze.scene", "not painted: element-first run, rooms are painted later")
     ctx.write_json(MOODBOARD, moodboard)
     ctx.projects.add_analysis(ctx.project_id, "moodboard_spec", MOODBOARD, style.version)
     ctx.mark_checkpoint("moodboard")

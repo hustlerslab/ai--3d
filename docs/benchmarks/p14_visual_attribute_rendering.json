@@ -1,0 +1,317 @@
+{
+  "_about": "P14 rendering capability, measured against the real asset registry and the real Blender material path. PRESERVATION (P13: 7/7) and RENDERING are reported separately and never combined.",
+  "asset_audit": {
+    "colour_capable": 58,
+    "frame_capable": 10,
+    "frame_named_region": 5,
+    "multi_region_assets": [
+      {
+        "asset_id": "ph_sofa_03",
+        "regions": 2,
+        "slots": [
+          "sofa_03",
+          "sofa_03_fringe"
+        ],
+        "type": "sofa"
+      },
+      {
+        "asset_id": "ph_modern_armchair",
+        "regions": 2,
+        "slots": [
+          "modern_arm_chair_01_legs",
+          "modern_arm_chair_01_pillow"
+        ],
+        "type": "armchair"
+      },
+      {
+        "asset_id": "ph_coffee_table_02",
+        "regions": 2,
+        "slots": [
+          "modern_coffee_table_02_base",
+          "modern_coffee_table_02_wood"
+        ],
+        "type": "coffee_table"
+      },
+      {
+        "asset_id": "ph_steel_shelves",
+        "regions": 2,
+        "slots": [
+          "steel_frame_shelves_03",
+          "steel_frame_shelves_03_drawers"
+        ],
+        "type": "bookshelf"
+      },
+      {
+        "asset_id": "ph_pendant_lamp",
+        "regions": 3,
+        "slots": [
+          "modern_ceiling_lamp_01_glass",
+          "modern_ceiling_lamp_01",
+          "modern_ceiling_globe"
+        ],
+        "type": "pendant_lamp"
+      },
+      {
+        "asset_id": "ph_chandelier",
+        "regions": 2,
+        "slots": [
+          "Chandelier_03",
+          "Chandelier_03_glass"
+        ],
+        "type": "chandelier"
+      },
+      {
+        "asset_id": "ph_diya_lantern",
+        "regions": 3,
+        "slots": [
+          "brass_diya_lantern",
+          "brass_diya_lantern_glass",
+          "brass_diya_lantern_flame"
+        ],
+        "type": "lantern"
+      },
+      {
+        "asset_id": "ph_plant_01",
+        "regions": 2,
+        "slots": [
+          "potted_plant_01_pot",
+          "potted_plant_01_leaves"
+        ],
+        "type": "plant"
+      },
+      {
+        "asset_id": "ph_plant_02",
+        "regions": 2,
+        "slots": [
+          "potted_plant_02_pot",
+          "potted_plant_02_leaves"
+        ],
+        "type": "plant"
+      },
+      {
+        "asset_id": "ph_art_frame_01",
+        "regions": 3,
+        "slots": [
+          "hanging_picture_frame_01_glass",
+          "hanging_picture_frame_01_artwork",
+          "hanging_picture_frame_01"
+        ],
+        "type": "wall_art"
+      }
+    ],
+    "pattern_capable": 0,
+    "regions_histogram": {
+      "1": 48,
+      "2": 7,
+      "3": 3
+    },
+    "total": 58,
+    "unreadable": 0,
+    "unsupported_for_frame": 48,
+    "upholstery_capable": 58,
+    "uv_capable": 58
+  },
+  "cases": [
+    {
+      "detail": {
+        "asset": "ph_sofa_03",
+        "material": "veneer_walnut",
+        "regions": 2,
+        "state": "rendered"
+      },
+      "name": "case01_frame_finish_renders_on_a_multi_region_asset",
+      "ok": true
+    },
+    {
+      "detail": {
+        "asset": "ph_sofa_02",
+        "reason": "the asset has a single material region; a frame finish would repaint the whole piece",
+        "regions": 1,
+        "state": "metadata_only"
+      },
+      "name": "case02_frame_finish_on_a_single_region_asset_stays_metadata",
+      "ok": true
+    },
+    {
+      "detail": {
+        "reason": "no registry material represents this finish",
+        "state": "unsupported"
+      },
+      "name": "case03_unrepresentable_finish_is_unsupported",
+      "ok": true
+    },
+    {
+      "detail": {
+        "contract": "preserved_metadata_only",
+        "finish_entry_state": "none"
+      },
+      "name": "case04_no_colour_word_is_ever_invented",
+      "ok": true
+    },
+    {
+      "detail": {
+        "contract": "preserved_metadata_only",
+        "note": "no texture synthesis exists; 'quilted' must not become a noise map"
+      },
+      "name": "case05_pattern_is_never_faked",
+      "ok": true
+    },
+    {
+      "detail": {
+        "executor_scripts_reading_finish_roughness": [],
+        "luxurious_roughness": null,
+        "matte_roughness": 0.95,
+        "supported_words": [
+          "flat",
+          "gloss",
+          "glossy",
+          "lacquered",
+          "matte",
+          "polished",
+          "satin"
+        ]
+      },
+      "name": "case06_surface_quality_is_resolved_but_not_applied",
+      "ok": true
+    },
+    {
+      "detail": {
+        "capable_asset": "ph_sofa_03",
+        "objects_with_finish": 2,
+        "sample": {
+          "frame_finish": "dark walnut",
+          "frame_material": "veneer_walnut",
+          "material_regions": 2,
+          "reason": "",
+          "roughness": 0.95,
+          "source": "stated",
+          "state": "rendered"
+        },
+        "single_region_asset": "ph_sofa_02",
+        "states": {
+          "metadata_only": 1,
+          "rendered": 1
+        }
+      },
+      "name": "case07_manifest_carries_the_finish_state_for_real_assets",
+      "ok": true
+    },
+    {
+      "detail": {
+        "a": "veneer_walnut",
+        "b": "metal_brass",
+        "registry_record_unchanged": true
+      },
+      "name": "case08_materials_are_never_mutated_across_objects",
+      "ok": true
+    },
+    {
+      "detail": {
+        "distinct": 1,
+        "resolved": [
+          "veneer_walnut",
+          "metal_brass",
+          "metal_black",
+          "veneer_oak",
+          "glass_clear",
+          ""
+        ],
+        "runs": 20
+      },
+      "name": "case09_resolution_is_deterministic",
+      "ok": true
+    },
+    {
+      "detail": {
+        "frame_capable_assets": "10/58",
+        "rendered_attribute_rate": {
+          "color_hex": 1.0,
+          "color_words": 0.0,
+          "descriptors": null,
+          "frame_finish": 0.1724,
+          "material": 1.0,
+          "pattern": 0.0,
+          "upholstery": 1.0
+        },
+        "supported": [
+          "color_hex",
+          "descriptors",
+          "frame_finish",
+          "material",
+          "upholstery"
+        ]
+      },
+      "name": "case10_rendered_attribute_rate",
+      "ok": true
+    },
+    {
+      "detail": {
+        "refuses": [
+          "glass coffee table",
+          "luxurious",
+          "walnut"
+        ],
+        "stated_beats_descriptor": "stated",
+        "supplies": {
+          "gold accent trim": "metal_brass",
+          "wooden frame": "veneer_oak"
+        }
+      },
+      "name": "case11_a_part_naming_descriptor_supplies_the_frame_finish",
+      "ok": true
+    }
+  ],
+  "contract": {
+    "color_hex": {
+      "executor": "preserved_and_rendered",
+      "how": "tinted into the object's material at strength 0.85 (apply_materials.for_object)"
+    },
+    "color_words": {
+      "executor": "preserved_metadata_only",
+      "how": "no colour-word to hex resolution exists in the repository; the rendered colour channel is color_hex. Resolving words against the material registry's own base_colors is a scoped future step, deliberately not invented here"
+    },
+    "descriptors": {
+      "executor": "conditionally_rendered",
+      "how": "P14: a descriptor that names a structural part AND resolves to an existing registry material ('wooden frame', 'gold accent trim') supplies the frame finish and is painted by `import_assets._apply_frame_finish`, recorded as `finish.source == 'descriptor'` and never counted as a stated frame_finish. MEASURED on 8 real photographs: 2 of 8 carry frame evidence this way. The surface-quality words (matte/satin/glossy) are resolved to `finish.roughness` in the manifest but NO Blender script reads that key, so they are carried, not applied - and they appear in 0 of the 8 measured references. Everything else ('luxurious', 'contemporary', 'rounded') has no defensible mapping and stays semantic metadata; it still influences asset SELECTION upstream through style_notes"
+    },
+    "frame_finish": {
+      "executor": "conditionally_rendered",
+      "how": "P14: resolved by `compiler.finish_material_for` to a material that already exists and is applies_to=furniture (veneer_walnut, veneer_oak, metal_brass, metal_black, glass_clear), then painted by `import_assets._apply_frame_finish` onto the trim meshes `_apply_upholstery` deliberately skips. Requires the asset to have more than one material region: MEASURED at 10 of 58 registry assets, so most pieces report metadata_only. Per-object state is in the manifest's `finish.state`. MEASURED on 8 real photographs: Gemini populates this field 0 times, so a stated frame finish is currently rare and the descriptor route below carries it instead"
+    },
+    "material": {
+      "executor": "preserved_and_rendered",
+      "how": "resolved to a registry material id in material_overrides['primary'] with its PBR maps"
+    },
+    "pattern": {
+      "executor": "preserved_metadata_only",
+      "how": "no procedural pattern or texture synthesis exists; 'quilted' cannot become geometry or a map, so it is carried as metadata rather than faked"
+    },
+    "upholstery": {
+      "executor": "preserved_and_rendered",
+      "how": "same channel as material - it is preferred over material when both are stated"
+    }
+  },
+  "passed": 11,
+  "real_reference_extraction": {
+    "descriptor_frame_evidence": 2,
+    "images": 8,
+    "measured": true,
+    "note": "frame_finish is stated 0/8; the frame words arrive in visual_descriptors instead",
+    "populated": {
+      "color_hex": 0,
+      "color_words": 0,
+      "frame_finish": 0,
+      "material": 0,
+      "pattern": 0,
+      "style_descriptors": 0,
+      "upholstery": 8,
+      "visual_descriptors": 8
+    }
+  },
+  "stack": {
+    "asset_generation": "meshy",
+    "executor": "blender",
+    "vision": "gemini"
+  },
+  "total": 11
+}

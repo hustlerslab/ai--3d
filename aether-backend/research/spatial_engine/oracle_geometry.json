@@ -1,0 +1,273 @@
+{
+  "_about": "Phase 5 manual amodal geometry oracle. Hand-estimated PHYSICAL dimensions of each object, including the surfaces hidden from the camera. These are dimensions ONLY. No position, no wall distance, no wall-contact answer: position is derived deterministically from the visible MoGe-2 points by oracle_geometry.py, and the decision is computed by geometry. This file must never contain the benchmark label.",
+  "protocol": {
+    "what_was_estimated": "width, depth and height of the complete physical object envelope, in metres, from looking at the source image and from ordinary furniture proportions.",
+    "what_was_NOT_estimated": "the object's position, its distance to any wall, its orientation, and its wall-contact status. All four are derived or computed.",
+    "label_independence": "Dimensions were chosen from object type and apparent proportion in the image. A sofa is ~0.9 m deep whether or not it stands against a wall, so the estimate cannot encode the answer. At no point was a rear face placed AT a wall because the case was known to be a positive.",
+    "uncertainty": "uncertainty_m is a symmetric plus-or-minus on every linear dimension, recorded per object rather than assumed global. Values are given to the centimetre; no further precision is claimed.",
+    "envelope_rule": "The envelope is the physically occupied volume, not the swept bounding box of empty space. A chair's envelope is seat + back + leg footprint; the air between its legs is inside the envelope because the legs bound it, but the envelope stops at the legs.",
+    "frame": "Dimensions are frame-independent lengths in metres. The canonical frame (+X right, +Y up, -Z forward) enters only when the box is placed."
+  },
+  "measurements": [
+    {
+      "case_id": "preserved.living_room_a.sofa.0",
+      "object_type": "sofa",
+      "source_image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "width_m": 2.0,
+      "depth_m": 0.9,
+      "height_m": 0.85,
+      "uncertainty_m": 0.1,
+      "notes": "Striped two/three-seat sofa at the left edge, running out of frame, so width is a lower bound and is the least certain dimension. Depth is an ordinary upholstered sofa depth. Width does not affect the wall gap along the depth axis."
+    },
+    {
+      "case_id": "preserved.living_room_a.sofa.1",
+      "object_type": "sofa",
+      "source_image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "width_m": 2.4,
+      "depth_m": 0.95,
+      "height_m": 0.8,
+      "uncertainty_m": 0.1,
+      "notes": "Large blue and striped sofa occupying the right half of the frame. Deep seat plus a substantial back cushion; 0.95 m is a generous but ordinary depth for this style."
+    },
+    {
+      "case_id": "preserved.living_room_a.side_table.0",
+      "object_type": "side_table",
+      "source_image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "width_m": 0.45,
+      "depth_m": 0.45,
+      "height_m": 0.55,
+      "uncertainty_m": 0.05,
+      "notes": "Small square timber side table between the two sofas. Near-square in plan, so the width/depth axis assignment is immaterial."
+    },
+    {
+      "case_id": "hist_neg.living_room_a.ottoman.0",
+      "object_type": "ottoman",
+      "source_image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "width_m": 1.3,
+      "depth_m": 0.75,
+      "height_m": 0.42,
+      "uncertainty_m": 0.1,
+      "notes": "Large upholstered rectangular ottoman in the foreground on short timber legs. Its whole top surface is visible, so the amodal addition here is small."
+    },
+    {
+      "case_id": "preserved.master_bedroom.bed.0",
+      "object_type": "bed",
+      "source_image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "width_m": 1.9,
+      "depth_m": 2.1,
+      "height_m": 0.55,
+      "uncertainty_m": 0.15,
+      "notes": "King mattress on a timber platform frame that projects past the mattress on all sides. Depth is head-to-foot INCLUDING the platform, which is why it exceeds a bare mattress length. This is the single largest amodal correction in the subset: only the foot end and the mattress top are visible."
+    },
+    {
+      "case_id": "preserved.master_bedroom.bedside_table.0",
+      "object_type": "bedside_table",
+      "source_image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "width_m": 0.5,
+      "depth_m": 0.38,
+      "height_m": 0.3,
+      "uncertainty_m": 0.05,
+      "notes": "Left-hand bedside unit, built as a shallow timber shelf rather than a free-standing cabinet. Shallow depth is characteristic of this style."
+    },
+    {
+      "case_id": "preserved.master_bedroom.bedside_table.1",
+      "object_type": "bedside_table",
+      "source_image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "width_m": 0.5,
+      "depth_m": 0.38,
+      "height_m": 0.3,
+      "uncertainty_m": 0.05,
+      "notes": "Right-hand bedside unit, the mirror of the left one and measured identically."
+    },
+    {
+      "case_id": "preserved.living_room_b.sofa.0",
+      "object_type": "sofa",
+      "source_image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "width_m": 2.6,
+      "depth_m": 0.95,
+      "height_m": 0.75,
+      "uncertainty_m": 0.15,
+      "notes": "White sectional. Width is the long run visible in frame; being a sectional it turns a corner, which a single box cannot represent. Recorded as a known representation limit, not smoothed over."
+    },
+    {
+      "case_id": "preserved.living_room_b.tv_unit.0",
+      "object_type": "tv_unit",
+      "source_image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "width_m": 1.2,
+      "depth_m": 0.08,
+      "height_m": 0.7,
+      "uncertainty_m": 0.03,
+      "notes": "The annotated box covers the television panel itself, not the white console beneath it, despite the object_type name. A flat-panel screen is about 8 cm deep. Because the object is thin, its amodal extent is almost identical to its visible surface - this case tests almost nothing about occlusion, and that is worth knowing."
+    },
+    {
+      "case_id": "hist_neg.living_room_b.coffee_table.0",
+      "object_type": "coffee_table",
+      "source_image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "width_m": 1.3,
+      "depth_m": 0.7,
+      "height_m": 0.35,
+      "uncertainty_m": 0.1,
+      "notes": "Dark rectangular coffee table on the rug in the foreground. Top fully visible; the envelope adds only the thickness below the top and the leg footprint."
+    },
+    {
+      "case_id": "preserved.kitchen.kitchen_counter.0",
+      "object_type": "kitchen_counter",
+      "source_image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "width_m": 2.5,
+      "depth_m": 0.65,
+      "height_m": 0.9,
+      "uncertainty_m": 0.1,
+      "notes": "Run of base cabinets under the window. 0.65 m is the standard base-cabinet depth and was taken from that standard rather than from the image, which shows the run heavily foreshortened."
+    },
+    {
+      "case_id": "hist_neg.kitchen.bar_stool.0",
+      "object_type": "bar_stool",
+      "source_image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "width_m": 0.45,
+      "depth_m": 0.45,
+      "height_m": 1.0,
+      "uncertainty_m": 0.05,
+      "notes": "Black moulded seat with a low back on splayed metal legs, at the island. Height includes the back. Near-square in plan."
+    },
+    {
+      "case_id": "hist_neg.kitchen.bar_stool.1",
+      "object_type": "bar_stool",
+      "source_image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "width_m": 0.45,
+      "depth_m": 0.45,
+      "height_m": 1.0,
+      "uncertainty_m": 0.05,
+      "notes": "Identical model to bar_stool.0, measured identically."
+    },
+    {
+      "case_id": "hist_neg.kitchen.bar_stool.2",
+      "object_type": "bar_stool",
+      "source_image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "width_m": 0.45,
+      "depth_m": 0.45,
+      "height_m": 1.0,
+      "uncertainty_m": 0.05,
+      "notes": "Identical model to bar_stool.0, measured identically."
+    },
+    {
+      "case_id": "s01.armchair.0",
+      "object_type": "armchair",
+      "source_image": "research/phase1g/scenes/s01_living_room.png",
+      "width_m": 0.9,
+      "depth_m": 0.85,
+      "height_m": 0.75,
+      "uncertainty_m": 0.1,
+      "notes": "Wide tan upholstered armchair with low arms, on a rug. Roughly square in plan."
+    },
+    {
+      "case_id": "s02.ottoman.0",
+      "object_type": "ottoman",
+      "source_image": "research/phase1g/scenes/s02_living_room.png",
+      "width_m": 0.6,
+      "depth_m": 0.6,
+      "height_m": 0.55,
+      "uncertainty_m": 0.05,
+      "notes": "Round two-tier pouf, white drum on a grey base. Circular in plan, so the box is its circumscribing square and the width/depth assignment is immaterial."
+    },
+    {
+      "case_id": "s05.armchair.0",
+      "object_type": "armchair",
+      "source_image": "research/phase1g/scenes/s05_bedroom.png",
+      "width_m": 0.75,
+      "depth_m": 0.85,
+      "height_m": 1.0,
+      "uncertainty_m": 0.1,
+      "notes": "White high-backed chaise-style chair at the right of the bedroom, standing at an angle to the room axes. The angle is a known source of error for an axis-aligned box and is recorded rather than hidden."
+    },
+    {
+      "case_id": "s07.bar_stool.0",
+      "object_type": "bar_stool",
+      "source_image": "research/phase1g/scenes/s07_kitchen.png",
+      "width_m": 0.4,
+      "depth_m": 0.4,
+      "height_m": 0.7,
+      "uncertainty_m": 0.05,
+      "notes": "Backless round timber stool tucked under the island counter. Circular seat on splayed legs; near-square envelope."
+    },
+    {
+      "case_id": "s07.bar_stool.1",
+      "object_type": "bar_stool",
+      "source_image": "research/phase1g/scenes/s07_kitchen.png",
+      "width_m": 0.4,
+      "depth_m": 0.4,
+      "height_m": 0.7,
+      "uncertainty_m": 0.05,
+      "notes": "Identical model to s07.bar_stool.0, measured identically."
+    },
+    {
+      "case_id": "s09.chair.0",
+      "object_type": "chair",
+      "source_image": "research/phase1g/scenes/s09_office.png",
+      "width_m": 0.7,
+      "depth_m": 0.7,
+      "height_m": 1.05,
+      "uncertainty_m": 0.08,
+      "notes": "Red leather captain's swivel chair on a five-star base, pulled out from the built-in desk. The base footprint sets the envelope, being wider than the seat."
+    },
+    {
+      "case_id": "s10.chair.1",
+      "object_type": "chair",
+      "source_image": "research/phase1g/scenes/s10_office.png",
+      "width_m": 0.65,
+      "depth_m": 0.65,
+      "height_m": 1.05,
+      "uncertainty_m": 0.1,
+      "notes": "Task chair at a desk in the mid-distance of a large open office. Small in frame (about 53 x 66 px), so the estimate rests on the standard size of an office task chair rather than on measurable image detail. Uncertainty raised accordingly."
+    },
+    {
+      "case_id": "s10.chair.2",
+      "object_type": "chair",
+      "source_image": "research/phase1g/scenes/s10_office.png",
+      "width_m": 0.65,
+      "depth_m": 0.65,
+      "height_m": 1.05,
+      "uncertainty_m": 0.1,
+      "notes": "As s10.chair.1, and smaller still in frame (about 44 x 54 px)."
+    },
+    {
+      "case_id": "s16.chair.0",
+      "object_type": "chair",
+      "source_image": "research/phase1g/scenes/s16_dining_room.png",
+      "width_m": 0.48,
+      "depth_m": 0.52,
+      "height_m": 0.95,
+      "uncertainty_m": 0.05,
+      "notes": "Dark timber dining chair with a tall back, standing beside the bench along the panelled right-hand wall."
+    },
+    {
+      "case_id": "s17.chair.0",
+      "object_type": "chair",
+      "source_image": "research/phase1g/scenes/s17_office.png",
+      "width_m": 0.65,
+      "depth_m": 0.65,
+      "height_m": 1.05,
+      "uncertainty_m": 0.08,
+      "notes": "Black office task chair on castors at the desk cluster, in front of the glazed meeting pod."
+    },
+    {
+      "case_id": "s17.chair.1",
+      "object_type": "chair",
+      "source_image": "research/phase1g/scenes/s17_office.png",
+      "width_m": 0.65,
+      "depth_m": 0.65,
+      "height_m": 1.05,
+      "uncertainty_m": 0.08,
+      "notes": "Identical model to s17.chair.0, measured identically."
+    },
+    {
+      "case_id": "s17.chair.2",
+      "object_type": "chair",
+      "source_image": "research/phase1g/scenes/s17_office.png",
+      "width_m": 0.65,
+      "depth_m": 0.65,
+      "height_m": 1.05,
+      "uncertainty_m": 0.08,
+      "notes": "Identical model to s17.chair.0, measured identically."
+    }
+  ]
+}

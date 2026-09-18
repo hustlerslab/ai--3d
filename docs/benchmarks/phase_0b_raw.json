@@ -1,0 +1,651 @@
+{
+  "environment": {
+    "model": "IDEA-Research/grounding-dino-tiny",
+    "torch": "2.14.0+cu126",
+    "cuda": true,
+    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_gb": 6.0
+  },
+  "box_threshold": 0.3,
+  "text_threshold": 0.25,
+  "labels": [
+    "sofa",
+    "armchair",
+    "chair",
+    "bar stool",
+    "ottoman",
+    "bed",
+    "pillow",
+    "coffee table",
+    "side table",
+    "dining table",
+    "desk",
+    "bedside table",
+    "cabinet",
+    "wardrobe",
+    "shelf",
+    "television",
+    "tv stand",
+    "lamp",
+    "plant",
+    "rug",
+    "curtain",
+    "mirror",
+    "painting",
+    "vase",
+    "towel",
+    "kitchen counter",
+    "bathtub",
+    "vanity"
+  ],
+  "excluded_labels": [
+    "ceiling",
+    "door",
+    "floor",
+    "wall",
+    "window"
+  ],
+  "errors": [],
+  "per_image": [
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "source": "proj_553cb09794",
+      "expected": [
+        "curtains",
+        "ottoman",
+        "pillows",
+        "rug",
+        "side_table",
+        "sofa"
+      ],
+      "reader": {
+        "found": [
+          "ottoman",
+          "rug",
+          "side_table",
+          "sofa"
+        ],
+        "elapsed_s": 11.82,
+        "error": "",
+        "tp": 4,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "f1": 0.8,
+        "missing": [
+          "curtains",
+          "pillows"
+        ],
+        "spurious": []
+      },
+      "dino": {
+        "found": [
+          "armchair",
+          "bedside_table",
+          "curtains",
+          "ottoman",
+          "pillows",
+          "plant",
+          "side_table",
+          "sofa"
+        ],
+        "elapsed_s": 2.571,
+        "peak_vram_mb": 2027.2,
+        "raw_boxes": 10,
+        "tp": 5,
+        "fp": 3,
+        "fn": 1,
+        "precision": 0.625,
+        "recall": 0.8333333333333334,
+        "f1": 0.7142857142857143,
+        "missing": [
+          "rug"
+        ],
+        "spurious": [
+          "armchair",
+          "bedside_table",
+          "plant"
+        ]
+      },
+      "hybrid": {
+        "found": [
+          "armchair",
+          "bedside_table",
+          "curtains",
+          "ottoman",
+          "pillows",
+          "plant",
+          "rug",
+          "side_table",
+          "sofa"
+        ],
+        "tp": 6,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.6666666666666666,
+        "recall": 1.0,
+        "f1": 0.8,
+        "missing": [],
+        "spurious": [
+          "armchair",
+          "bedside_table",
+          "plant"
+        ]
+      },
+      "confirm": {
+        "found": [
+          "ottoman",
+          "side_table",
+          "sofa"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6666666666666666,
+        "missing": [
+          "curtains",
+          "pillows",
+          "rug"
+        ],
+        "spurious": []
+      }
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "room_type": "kitchen",
+      "source": "proj_553cb09794",
+      "expected": [
+        "bar_stool",
+        "kitchen_counter",
+        "plant",
+        "wall_shelf"
+      ],
+      "reader": {
+        "found": [
+          "bar_stool",
+          "kitchen_counter",
+          "kitchen_island",
+          "sideboard"
+        ],
+        "elapsed_s": 16.17,
+        "error": "",
+        "tp": 2,
+        "fp": 2,
+        "fn": 2,
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5,
+        "missing": [
+          "plant",
+          "wall_shelf"
+        ],
+        "spurious": [
+          "kitchen_island",
+          "sideboard"
+        ]
+      },
+      "dino": {
+        "found": [
+          "armchair",
+          "bar_stool",
+          "desk",
+          "kitchen_counter",
+          "mirror",
+          "plant",
+          "sideboard",
+          "tv_unit",
+          "vase"
+        ],
+        "elapsed_s": 2.064,
+        "peak_vram_mb": 2027.1,
+        "raw_boxes": 17,
+        "tp": 3,
+        "fp": 6,
+        "fn": 1,
+        "precision": 0.3333333333333333,
+        "recall": 0.75,
+        "f1": 0.46153846153846156,
+        "missing": [
+          "wall_shelf"
+        ],
+        "spurious": [
+          "armchair",
+          "desk",
+          "mirror",
+          "sideboard",
+          "tv_unit",
+          "vase"
+        ]
+      },
+      "hybrid": {
+        "found": [
+          "armchair",
+          "bar_stool",
+          "desk",
+          "kitchen_counter",
+          "kitchen_island",
+          "mirror",
+          "plant",
+          "sideboard",
+          "tv_unit",
+          "vase"
+        ],
+        "tp": 3,
+        "fp": 7,
+        "fn": 1,
+        "precision": 0.3,
+        "recall": 0.75,
+        "f1": 0.4285714285714285,
+        "missing": [
+          "wall_shelf"
+        ],
+        "spurious": [
+          "armchair",
+          "desk",
+          "kitchen_island",
+          "mirror",
+          "sideboard",
+          "tv_unit",
+          "vase"
+        ]
+      },
+      "confirm": {
+        "found": [
+          "bar_stool",
+          "kitchen_counter",
+          "sideboard"
+        ],
+        "tp": 2,
+        "fp": 1,
+        "fn": 2,
+        "precision": 0.6666666666666666,
+        "recall": 0.5,
+        "f1": 0.5714285714285715,
+        "missing": [
+          "plant",
+          "wall_shelf"
+        ],
+        "spurious": [
+          "sideboard"
+        ]
+      }
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "room_type": "bathroom",
+      "source": "proj_553cb09794",
+      "expected": [
+        "mirror",
+        "vanity"
+      ],
+      "reader": {
+        "found": [
+          "bathtub",
+          "mirror",
+          "vanity"
+        ],
+        "elapsed_s": 9.41,
+        "error": "",
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.6666666666666666,
+        "recall": 1.0,
+        "f1": 0.8,
+        "missing": [],
+        "spurious": [
+          "bathtub"
+        ]
+      },
+      "dino": {
+        "found": [
+          "bathtub",
+          "curtains",
+          "kitchen_counter",
+          "mirror",
+          "wardrobe"
+        ],
+        "elapsed_s": 2.107,
+        "peak_vram_mb": 2027.1,
+        "raw_boxes": 9,
+        "tp": 1,
+        "fp": 4,
+        "fn": 1,
+        "precision": 0.2,
+        "recall": 0.5,
+        "f1": 0.28571428571428575,
+        "missing": [
+          "vanity"
+        ],
+        "spurious": [
+          "bathtub",
+          "curtains",
+          "kitchen_counter",
+          "wardrobe"
+        ]
+      },
+      "hybrid": {
+        "found": [
+          "bathtub",
+          "curtains",
+          "kitchen_counter",
+          "mirror",
+          "vanity",
+          "wardrobe"
+        ],
+        "tp": 2,
+        "fp": 4,
+        "fn": 0,
+        "precision": 0.3333333333333333,
+        "recall": 1.0,
+        "f1": 0.5,
+        "missing": [],
+        "spurious": [
+          "bathtub",
+          "curtains",
+          "kitchen_counter",
+          "wardrobe"
+        ]
+      },
+      "confirm": {
+        "found": [
+          "bathtub",
+          "mirror"
+        ],
+        "tp": 1,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5,
+        "missing": [
+          "vanity"
+        ],
+        "spurious": [
+          "bathtub"
+        ]
+      }
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "room_type": "master_bedroom",
+      "source": "proj_5db681f48c (archived)",
+      "expected": [
+        "bed",
+        "bedside_table",
+        "pillows",
+        "plant",
+        "rug",
+        "wall_art"
+      ],
+      "reader": {
+        "found": [
+          "bed",
+          "bedside_table",
+          "rug",
+          "side_table",
+          "sideboard"
+        ],
+        "elapsed_s": 9.43,
+        "error": "",
+        "tp": 3,
+        "fp": 2,
+        "fn": 3,
+        "precision": 0.6,
+        "recall": 0.5,
+        "f1": 0.5454545454545454,
+        "missing": [
+          "pillows",
+          "plant",
+          "wall_art"
+        ],
+        "spurious": [
+          "side_table",
+          "sideboard"
+        ]
+      },
+      "dino": {
+        "found": [
+          "bed",
+          "bedside_table",
+          "curtains",
+          "kitchen_counter",
+          "mirror",
+          "ottoman",
+          "pillows",
+          "rug",
+          "table_lamp"
+        ],
+        "elapsed_s": 2.178,
+        "peak_vram_mb": 2027.1,
+        "raw_boxes": 14,
+        "tp": 4,
+        "fp": 5,
+        "fn": 2,
+        "precision": 0.4444444444444444,
+        "recall": 0.6666666666666666,
+        "f1": 0.5333333333333333,
+        "missing": [
+          "plant",
+          "wall_art"
+        ],
+        "spurious": [
+          "curtains",
+          "kitchen_counter",
+          "mirror",
+          "ottoman",
+          "table_lamp"
+        ]
+      },
+      "hybrid": {
+        "found": [
+          "bed",
+          "bedside_table",
+          "curtains",
+          "kitchen_counter",
+          "mirror",
+          "ottoman",
+          "pillows",
+          "rug",
+          "side_table",
+          "sideboard",
+          "table_lamp"
+        ],
+        "tp": 4,
+        "fp": 7,
+        "fn": 2,
+        "precision": 0.36363636363636365,
+        "recall": 0.6666666666666666,
+        "f1": 0.4705882352941177,
+        "missing": [
+          "plant",
+          "wall_art"
+        ],
+        "spurious": [
+          "curtains",
+          "kitchen_counter",
+          "mirror",
+          "ottoman",
+          "side_table",
+          "sideboard",
+          "table_lamp"
+        ]
+      },
+      "confirm": {
+        "found": [
+          "bed",
+          "bedside_table",
+          "rug"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6666666666666666,
+        "missing": [
+          "pillows",
+          "plant",
+          "wall_art"
+        ],
+        "spurious": []
+      }
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "source": "proj_5db681f48c (archived)",
+      "expected": [
+        "coffee_table",
+        "pillows",
+        "rug",
+        "sofa",
+        "tv_unit",
+        "vase",
+        "wall_art"
+      ],
+      "reader": {
+        "found": [
+          "rug",
+          "sideboard",
+          "sofa",
+          "tv_unit",
+          "wall_art"
+        ],
+        "elapsed_s": 13.45,
+        "error": "",
+        "tp": 4,
+        "fp": 1,
+        "fn": 3,
+        "precision": 0.8,
+        "recall": 0.5714285714285714,
+        "f1": 0.6666666666666666,
+        "missing": [
+          "coffee_table",
+          "pillows",
+          "vase"
+        ],
+        "spurious": [
+          "sideboard"
+        ]
+      },
+      "dino": {
+        "found": [
+          "kitchen_counter",
+          "ottoman",
+          "pillows",
+          "rug",
+          "sofa",
+          "tv_unit",
+          "vase",
+          "wall_art"
+        ],
+        "elapsed_s": 1.932,
+        "peak_vram_mb": 2027.1,
+        "raw_boxes": 18,
+        "tp": 6,
+        "fp": 2,
+        "fn": 1,
+        "precision": 0.75,
+        "recall": 0.8571428571428571,
+        "f1": 0.7999999999999999,
+        "missing": [
+          "coffee_table"
+        ],
+        "spurious": [
+          "kitchen_counter",
+          "ottoman"
+        ]
+      },
+      "hybrid": {
+        "found": [
+          "kitchen_counter",
+          "ottoman",
+          "pillows",
+          "rug",
+          "sideboard",
+          "sofa",
+          "tv_unit",
+          "vase",
+          "wall_art"
+        ],
+        "tp": 6,
+        "fp": 3,
+        "fn": 1,
+        "precision": 0.6666666666666666,
+        "recall": 0.8571428571428571,
+        "f1": 0.75,
+        "missing": [
+          "coffee_table"
+        ],
+        "spurious": [
+          "kitchen_counter",
+          "ottoman",
+          "sideboard"
+        ]
+      },
+      "confirm": {
+        "found": [
+          "rug",
+          "sofa",
+          "tv_unit",
+          "wall_art"
+        ],
+        "tp": 4,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.5714285714285714,
+        "f1": 0.7272727272727273,
+        "missing": [
+          "coffee_table",
+          "pillows",
+          "vase"
+        ],
+        "spurious": []
+      }
+    }
+  ],
+  "totals": {
+    "reader": {
+      "tp": 15,
+      "fp": 6,
+      "fn": 10,
+      "precision": 0.7142857142857143,
+      "recall": 0.6,
+      "f1": 0.6521739130434783,
+      "avg_s": 12.06
+    },
+    "dino": {
+      "tp": 19,
+      "fp": 20,
+      "fn": 6,
+      "precision": 0.48717948717948717,
+      "recall": 0.76,
+      "f1": 0.59375,
+      "avg_s": 2.17
+    },
+    "hybrid": {
+      "tp": 21,
+      "fp": 24,
+      "fn": 4,
+      "precision": 0.4666666666666667,
+      "recall": 0.84,
+      "f1": 0.6000000000000001,
+      "avg_s": 0.0
+    },
+    "confirm": {
+      "tp": 13,
+      "fp": 2,
+      "fn": 12,
+      "precision": 0.8666666666666667,
+      "recall": 0.52,
+      "f1": 0.65,
+      "avg_s": 0.0
+    }
+  }
+}

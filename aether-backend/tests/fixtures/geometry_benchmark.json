@@ -1,0 +1,75 @@
+{
+  "_about": "Phase 0d box ground truth. Extends tests/fixtures/detection_benchmark.json (which deliberately has no boxes) with manually placed pixel rectangles for the SAME five renders.",
+  "_format": "bbox is [x1, y1, x2, y2] in PIXELS of the source image, top-left origin. Production SceneElement.bbox is (x0,y0,x1,y1) as FRACTIONS 0-1; the benchmark converts, it does not change the schema.",
+  "_method": "Placed by eye from the rendered images, with no labelling tool. Expect roughly +/-5% error on each edge, which puts a ceiling on how finely IoU can be read: treat a 0.02 difference in mean IoU as noise. No model output was used to build these.",
+  "_excluded": "Windows, doors, walls, floors and ceilings are not elements (scene_reading_prompt forbids boxing them). Towels, taps and other specks have no semantic_type in vocab and are omitted.",
+  "image_size": [704, 448],
+  "images": [
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "objects": [
+        {"label": "sofa", "bbox": [0, 55, 195, 240], "note": "striped sectional, runs off the left edge"},
+        {"label": "sofa", "bbox": [287, 97, 704, 292], "note": "blue and striped, right"},
+        {"label": "pillows", "bbox": [62, 84, 140, 146], "note": "tan cushion on the left sofa"},
+        {"label": "ottoman", "bbox": [33, 186, 368, 424]},
+        {"label": "side_table", "bbox": [190, 112, 272, 215], "note": "small wooden, between the sofas"},
+        {"label": "curtains", "bbox": [298, 55, 350, 133], "note": "left white panel; a second panel far right is omitted as a fragment"},
+        {"label": "rug", "bbox": [0, 262, 704, 448], "note": "woven sisal, 58% of the frame but under the 0.92 whole-image gate"}
+      ]
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "room_type": "kitchen",
+      "objects": [
+        {"label": "kitchen_counter", "bbox": [0, 228, 272, 410], "note": "left run with the sink"},
+        {"label": "kitchen_counter", "bbox": [264, 224, 704, 340], "note": "island with the hob"},
+        {"label": "kitchen_counter", "bbox": [0, 276, 150, 448], "note": "near island, bottom left"},
+        {"label": "bar_stool", "bbox": [272, 262, 372, 425]},
+        {"label": "bar_stool", "bbox": [400, 258, 505, 448]},
+        {"label": "bar_stool", "bbox": [545, 258, 660, 448]},
+        {"label": "plant", "bbox": [0, 175, 58, 232], "note": "potted, far left"},
+        {"label": "wall_shelf", "bbox": [368, 138, 590, 152], "note": "floating shelf, only 14 px tall"}
+      ]
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "room_type": "bathroom",
+      "objects": [
+        {"label": "mirror", "bbox": [0, 28, 434, 268]},
+        {"label": "vanity", "bbox": [0, 270, 508, 448], "note": "countertop, basin and the cabinet under it as one piece"}
+      ]
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "room_type": "master_bedroom",
+      "objects": [
+        {"label": "bed", "bbox": [152, 140, 682, 378], "note": "platform frame and mattress together"},
+        {"label": "pillows", "bbox": [288, 132, 420, 178]},
+        {"label": "pillows", "bbox": [430, 138, 540, 180]},
+        {"label": "bedside_table", "bbox": [176, 188, 262, 250]},
+        {"label": "bedside_table", "bbox": [590, 185, 680, 258]},
+        {"label": "rug", "bbox": [58, 305, 704, 448], "note": "white shag under the bed"},
+        {"label": "wall_art", "bbox": [30, 20, 140, 150], "note": "framed, left wall"},
+        {"label": "plant", "bbox": [48, 0, 130, 90], "note": "trailing foliage above the frame"}
+      ]
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "objects": [
+        {"label": "sofa", "bbox": [0, 130, 310, 275], "note": "white sectional"},
+        {"label": "pillows", "bbox": [205, 163, 262, 205]},
+        {"label": "pillows", "bbox": [0, 168, 40, 220]},
+        {"label": "coffee_table", "bbox": [62, 236, 348, 372]},
+        {"label": "tv_unit", "bbox": [455, 72, 650, 200], "note": "the television; canonical_type folds screen and console onto one type"},
+        {"label": "tv_unit", "bbox": [288, 200, 680, 262], "note": "the media console"},
+        {"label": "rug", "bbox": [0, 250, 560, 448]},
+        {"label": "wall_art", "bbox": [0, 20, 55, 95]},
+        {"label": "wall_art", "bbox": [70, 25, 130, 100]},
+        {"label": "vase", "bbox": [175, 228, 205, 258], "note": "on the coffee table"},
+        {"label": "vase", "bbox": [228, 218, 262, 255], "note": "on the coffee table"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,504 @@
+{
+  "_about": "P9 candidate architecture benchmark.",
+  "critical_experiment": {
+    "step1_facing_wiring_fix_only_verdicts": {
+      "constraint_fe55e4c60974ca85": "satisfied",
+      "constraint_e20872a3363e9ecb": "partial",
+      "constraint_517c8d43043d3c66": "violated",
+      "constraint_1e075acdd3702b9c": "violated"
+    },
+    "step1_facing_wiring_fix_only_messages": {
+      "constraint_fe55e4c60974ca85": "angular error 0.0 deg (tolerance 60.0 deg)",
+      "constraint_e20872a3363e9ecb": "on the segment but 1.400 m off-axis (tolerance 0.300 m)",
+      "constraint_517c8d43043d3c66": "actual 2.83 m vs requested 1.20 m +/- 0.30 m",
+      "constraint_1e075acdd3702b9c": "actual 3.62 m vs requested 1.20 m +/- 0.30 m"
+    },
+    "step2_combined_with_regeneration_verdicts": {
+      "constraint_5197b211aaab30f4": "satisfied",
+      "constraint_fc9f5f9072e5af21": "satisfied",
+      "constraint_4fed209410726caf": "satisfied",
+      "constraint_ad3c0d02b51f7a5f": "violated"
+    },
+    "step2_combined_with_regeneration_messages": {
+      "constraint_5197b211aaab30f4": "angular error 0.0 deg (tolerance 60.0 deg)",
+      "constraint_fc9f5f9072e5af21": "lateral offset 0.000 m",
+      "constraint_4fed209410726caf": "actual 1.20 m vs requested 1.20 m +/- 0.30 m",
+      "constraint_ad3c0d02b51f7a5f": "actual 3.62 m vs requested 1.20 m +/- 0.30 m"
+    },
+    "step2_regenerated_notes": [
+      "constraint_fc9f5f9072e5af21: regenerated to (0.0, 0.0, -1.5428), yaw=0.0",
+      "constraint_4fed209410726caf: regenerated to (0.0, 0.0, 1.2), yaw=0.0",
+      "constraint_ad3c0d02b51f7a5f: no feasible regenerated candidate found"
+    ]
+  },
+  "performance": [
+    {
+      "n_objects": 5,
+      "total_ms": 7.42,
+      "mean_ms_per_object": 1.484
+    },
+    {
+      "n_objects": 10,
+      "total_ms": 17.783,
+      "mean_ms_per_object": 1.7783
+    },
+    {
+      "n_objects": 20,
+      "total_ms": 33.916,
+      "mean_ms_per_object": 1.6958
+    }
+  ],
+  "deterministic": true,
+  "adversarial_pass": 40,
+  "adversarial_total": 40,
+  "adversarial": [
+    {
+      "name": "sofa_faces_tv",
+      "actual": {
+        "faces_satisfied": true
+      },
+      "expected": {
+        "faces_satisfied": true
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_tv_with_wall_constraint",
+      "actual": {
+        "faces": "violated",
+        "contact": "satisfied"
+      },
+      "expected": {
+        "faces": "violated",
+        "contact": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_tv_rotated_room",
+      "actual": {
+        "verdict": "satisfied"
+      },
+      "expected": {
+        "verdict": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_tv_diagonal_wall",
+      "actual": {
+        "verdict": "satisfied"
+      },
+      "expected": {
+        "verdict": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "chair_faces_table",
+      "actual": {
+        "verdict": "satisfied"
+      },
+      "expected": {
+        "verdict": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "target_behind_object",
+      "actual": {
+        "verdict": "violated"
+      },
+      "expected": {
+        "verdict": "violated"
+      },
+      "pass": true
+    },
+    {
+      "name": "target_beside_object",
+      "actual": {
+        "verdict": "violated"
+      },
+      "expected": {
+        "verdict": "violated"
+      },
+      "pass": true
+    },
+    {
+      "name": "target_coincident",
+      "actual": {
+        "verdict": "unknown"
+      },
+      "expected": {
+        "verdict": "unknown"
+      },
+      "pass": true
+    },
+    {
+      "name": "near_sofa_chair",
+      "actual": {
+        "found": true,
+        "distance": 1.2
+      },
+      "expected": {
+        "found": true,
+        "distance": 1.2
+      },
+      "pass": true
+    },
+    {
+      "name": "near_explicit_distance",
+      "actual": {
+        "n_candidates": 16,
+        "all_at_09m": true
+      },
+      "expected": {
+        "n_candidates": 16,
+        "all_at_09m": true
+      },
+      "pass": true
+    },
+    {
+      "name": "near_with_collision_risk",
+      "actual": {
+        "found": true,
+        "no_collision": true
+      },
+      "expected": {
+        "found": true,
+        "no_collision": true
+      },
+      "pass": true
+    },
+    {
+      "name": "between_sofa_tv",
+      "actual": {
+        "found": true,
+        "pos": [
+          0.0,
+          0.0
+        ]
+      },
+      "expected": {
+        "found": true,
+        "pos": [
+          0.0,
+          0.0
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "between_with_obstruction",
+      "actual": {
+        "found": true,
+        "off_midpoint": true
+      },
+      "expected": {
+        "found": true,
+        "off_midpoint": true
+      },
+      "pass": true
+    },
+    {
+      "name": "centered_on_wall_unsupported",
+      "actual": {
+        "unsupported": 1
+      },
+      "expected": {
+        "unsupported": 1
+      },
+      "pass": true
+    },
+    {
+      "name": "against_wall_plus_faces",
+      "actual": {
+        "contact": "satisfied",
+        "faces": "satisfied"
+      },
+      "expected": {
+        "contact": "satisfied",
+        "faces": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "against_wall_plus_clearance",
+      "actual": {
+        "contact": "satisfied",
+        "has_clearance_opinion": true
+      },
+      "expected": {
+        "contact": "satisfied",
+        "has_clearance_opinion": true
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_plus_collision",
+      "actual": {
+        "feasible_count": 0
+      },
+      "expected": {
+        "feasible_count": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "faces_plus_room_boundary",
+      "actual": {
+        "n_feasible": 1
+      },
+      "expected": {
+        "n_feasible": 1
+      },
+      "pass": true
+    },
+    {
+      "name": "multiple_faces_conflict",
+      "actual": {
+        "conflict": true
+      },
+      "expected": {
+        "conflict": true
+      },
+      "pass": true
+    },
+    {
+      "name": "contradictory_faces",
+      "actual": {
+        "conflict": true
+      },
+      "expected": {
+        "conflict": true
+      },
+      "pass": true
+    },
+    {
+      "name": "two_same_category_targets",
+      "actual": {
+        "both_satisfied": true,
+        "distinct_ids": true
+      },
+      "expected": {
+        "both_satisfied": true,
+        "distinct_ids": true
+      },
+      "pass": true
+    },
+    {
+      "name": "two_candidate_targets_by_id",
+      "actual": {
+        "verdict": "satisfied"
+      },
+      "expected": {
+        "verdict": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "duplicate_candidate_generation_dedup",
+      "actual": {
+        "n": 1
+      },
+      "expected": {
+        "n": 1
+      },
+      "pass": true
+    },
+    {
+      "name": "no_feasible_candidate",
+      "actual": {
+        "found": false
+      },
+      "expected": {
+        "found": false
+      },
+      "pass": true
+    },
+    {
+      "name": "candidate_generated_but_filtered",
+      "actual": {
+        "generated": 16,
+        "feasible_lt_generated": true
+      },
+      "expected": {
+        "generated": 16,
+        "feasible_lt_generated": true
+      },
+      "pass": true
+    },
+    {
+      "name": "candidate_valid_but_not_selected",
+      "actual": {
+        "best": [
+          0.0,
+          1.0
+        ]
+      },
+      "expected": {
+        "best": [
+          0.0,
+          1.0
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "soft_preference_priority",
+      "actual": {
+        "priority": 0
+      },
+      "expected": {
+        "priority": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "hard_constraint_filters",
+      "actual": {
+        "n": 0
+      },
+      "expected": {
+        "n": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "hard_soft_conflict_never_overridden",
+      "actual": {
+        "selected": [
+          2.0,
+          0.0
+        ]
+      },
+      "expected": {
+        "selected": [
+          2.0,
+          0.0
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "post_repair_reevaluation",
+      "actual": {
+        "hard_violations": 0
+      },
+      "expected": {
+        "hard_violations": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "stale_constraint",
+      "actual": {
+        "before": "satisfied",
+        "after": "violated"
+      },
+      "expected": {
+        "before": "satisfied",
+        "after": "violated"
+      },
+      "pass": true
+    },
+    {
+      "name": "wrong_frame_camera_predicate",
+      "actual": {
+        "unsupported": 1
+      },
+      "expected": {
+        "unsupported": 1
+      },
+      "pass": true
+    },
+    {
+      "name": "wrong_units_large_distance",
+      "actual": {
+        "crashed": false,
+        "found_in_small_room": false,
+        "found_in_huge_room": true
+      },
+      "expected": {
+        "crashed": false,
+        "found_in_small_room": false,
+        "found_in_huge_room": true
+      },
+      "pass": true
+    },
+    {
+      "name": "asset_orientation_default",
+      "actual": {
+        "rotation_matches_target": true
+      },
+      "expected": {
+        "rotation_matches_target": true
+      },
+      "pass": true
+    },
+    {
+      "name": "wall_local_orientation_near_wall",
+      "actual": {
+        "faces": "satisfied",
+        "contact": "satisfied"
+      },
+      "expected": {
+        "faces": "satisfied",
+        "contact": "satisfied"
+      },
+      "pass": true
+    },
+    {
+      "name": "off_center_origin_not_modelled",
+      "actual": {
+        "has_pivot_offset_field": false
+      },
+      "expected": {
+        "has_pivot_offset_field": false
+      },
+      "pass": true
+    },
+    {
+      "name": "zero_length_target_vector",
+      "actual": {
+        "n_candidates": 0
+      },
+      "expected": {
+        "n_candidates": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "target_overlapping_subject",
+      "actual": {
+        "found": true,
+        "distance": 1.2
+      },
+      "expected": {
+        "found": true,
+        "distance": 1.2
+      },
+      "pass": true
+    },
+    {
+      "name": "empty_candidate_set_missing_target",
+      "actual": {
+        "n": 0
+      },
+      "expected": {
+        "n": 0
+      },
+      "pass": true
+    },
+    {
+      "name": "deterministic_candidate_ordering",
+      "actual": {
+        "identical": true
+      },
+      "expected": {
+        "identical": true
+      },
+      "pass": true
+    }
+  ]
+}

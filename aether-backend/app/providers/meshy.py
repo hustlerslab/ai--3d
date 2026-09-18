@@ -239,18 +239,46 @@ async def wait_for(
         await asyncio.sleep(poll_seconds)
 
 
+#: Attempts at pulling a finished mesh down. The model is already generated and
+#: already paid for by the time this runs, so giving up on the first blip
+#: throws away the whole purchase: measured on proj_a25a006c88, three of six
+#: pieces - the client's television among them - reached 100% at Meshy and were
+#: then lost to "All connection attempts failed", leaving a catalog cabinet
+#: standing where the TV should be. A transient network error is not a reason
+#: to lose a mesh.
+DOWNLOAD_ATTEMPTS = 4
+
+
 async def download_glb(client: httpx.AsyncClient, url: str, dest: Path) -> Path:
-    """Stream the model to disk. Returns the written path."""
+    """Stream the model to disk, retrying a transient network failure.
+
+    Retries only what is worth retrying: a connection or timeout error, and a
+    5xx from the CDN. A 404 or a 403 means the URL is wrong or expired, and
+    trying it three more times only delays the real message.
+    """
     dest.parent.mkdir(parents=True, exist_ok=True)
-    async with client.stream("GET", url) as resp:
-        resp.raise_for_status()
-        with dest.open("wb") as fh:
-            async for chunk in resp.aiter_bytes():
-                fh.write(chunk)
-    if dest.stat().st_size == 0:
-        dest.unlink(missing_ok=True)
-        raise MeshyError(f"downloaded an empty file from {url[:80]}")
-    return dest
+    last: Optional[Exception] = None
+    for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
+        try:
+            async with client.stream("GET", url) as resp:
+                if resp.status_code >= 500:
+                    raise MeshyError(f"CDN returned {resp.status_code}")
+                resp.raise_for_status()
+                with dest.open("wb") as fh:
+                    async for chunk in resp.aiter_bytes():
+                        fh.write(chunk)
+            if dest.stat().st_size == 0:
+                dest.unlink(missing_ok=True)
+                raise MeshyError(f"downloaded an empty file from {url[:80]}")
+            return dest
+        except (httpx.TransportError, httpx.StreamError, MeshyError) as exc:
+            last = exc
+            dest.unlink(missing_ok=True)
+            if attempt == DOWNLOAD_ATTEMPTS:
+                break
+            await asyncio.sleep(min(8.0, 1.5 ** attempt))
+    raise MeshyError(f"could not download the finished mesh after {DOWNLOAD_ATTEMPTS} "
+                     f"attempt(s): {type(last).__name__}: {last}")
 
 
 def make_client(api_key: str, timeout_seconds: float = 300.0) -> httpx.AsyncClient:

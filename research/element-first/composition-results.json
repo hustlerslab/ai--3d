@@ -1,0 +1,150 @@
+{
+  "_about": "May the moodboard be painted FROM the element images?",
+  "beats_current": false,
+  "expected": {
+    "ottoman": 1,
+    "pillows": 1,
+    "side_table": 1,
+    "sofa": 1
+  },
+  "project": "proj_553cb09794",
+  "prompt": "Modern family living room featuring a blue fabric sofa with patterned back strip, brown and beige two-tone sofa, mint green tufted loveseat, oak coffee table, sleek tv unit, plush linen rug, accent armchair, ivory painted walls, warm natural daylight, wide angle, whole room, far from the subject, two walls and floor visible",
+  "room": "living_room",
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "selected": "A_current",
+  "variants": {
+    "A_current": {
+      "count_accuracy": 0.5,
+      "error": "",
+      "extra_types": 4.0,
+      "references": 1,
+      "runs": [
+        {
+          "count_accuracy": 0.5,
+          "extra_types": 1,
+          "found": {
+            "ottoman": 1,
+            "side_table": 1,
+            "sofa": 2,
+            "wall_art": 2
+          },
+          "image": "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\g--ALLURE-INTERIOR-ISHANA-Interior-design\\9c0578df-4a5c-4af1-93e9-bcb7da7d1588\\scratchpad\\composition_renders\\living_room_A_current_11.png",
+          "render_seconds": 56.7,
+          "seed": 11,
+          "type_recall": 0.75
+        },
+        {
+          "count_accuracy": 0.5,
+          "extra_types": 7,
+          "found": {
+            "armchair": 1,
+            "coffee_table": 1,
+            "curtains": 1,
+            "loveseat": 1,
+            "rug": 1,
+            "side_table": 1,
+            "sofa": 1,
+            "table_lamp": 1,
+            "tv_unit": 1
+          },
+          "image": "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\g--ALLURE-INTERIOR-ISHANA-Interior-design\\9c0578df-4a5c-4af1-93e9-bcb7da7d1588\\scratchpad\\composition_renders\\living_room_A_current_23.png",
+          "render_seconds": 11.7,
+          "seed": 23,
+          "type_recall": 0.5
+        },
+        {
+          "count_accuracy": 0.5,
+          "extra_types": 4,
+          "found": {
+            "curtains": 2,
+            "pillows": 2,
+            "plant": 1,
+            "sculpture": 1,
+            "side_table": 1,
+            "sofa": 1,
+            "tv_unit": 1
+          },
+          "image": "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\g--ALLURE-INTERIOR-ISHANA-Interior-design\\9c0578df-4a5c-4af1-93e9-bcb7da7d1588\\scratchpad\\composition_renders\\living_room_A_current_37.png",
+          "render_seconds": 11.8,
+          "seed": 37,
+          "type_recall": 0.75
+        }
+      ],
+      "type_recall": 0.667
+    },
+    "B_all_elements": {
+      "count_accuracy": 0.0,
+      "error": "LocalImageError: generation failed: `ip_adapter_image` must have same length as the number of IP Adapters. Got 4 images and 1 IP Adapters.",
+      "extra_types": 99.0,
+      "references": 4,
+      "runs": [
+        {
+          "error": "LocalImageError: generation failed: `ip_adapter_image` must have same length as the number of IP Adapters. Got 4 images and 1 IP Adapters.",
+          "seed": 11
+        }
+      ],
+      "type_recall": 0.0
+    },
+    "C_anchor_element": {
+      "count_accuracy": 0.25,
+      "error": "",
+      "extra_types": 4.0,
+      "references": 1,
+      "runs": [
+        {
+          "count_accuracy": 0.25,
+          "extra_types": 3,
+          "found": {
+            "floor_lamp": 1,
+            "ottoman": 1,
+            "sofa": 2,
+            "wall_art": 2,
+            "wall_shelf": 1
+          },
+          "image": "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\g--ALLURE-INTERIOR-ISHANA-Interior-design\\9c0578df-4a5c-4af1-93e9-bcb7da7d1588\\scratchpad\\composition_renders\\living_room_C_anchor_element_11.png",
+          "render_seconds": 11.8,
+          "seed": 11,
+          "type_recall": 0.5
+        },
+        {
+          "count_accuracy": 0.0,
+          "extra_types": 5,
+          "found": {
+            "armchair": 1,
+            "coffee_table": 1,
+            "curtains": 2,
+            "rug": 1,
+            "sofa": 2,
+            "tv_unit": 1
+          },
+          "image": "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\g--ALLURE-INTERIOR-ISHANA-Interior-design\\9c0578df-4a5c-4af1-93e9-bcb7da7d1588\\scratchpad\\composition_renders\\living_room_C_anchor_element_23.png",
+          "render_seconds": 11.7,
+          "seed": 23,
+          "type_recall": 0.25
+        },
+        {
+          "count_accuracy": 0.5,
+          "extra_types": 4,
+          "found": {
+            "curtains": 1,
+            "pillows": 4,
+            "plant": 1,
+            "side_table": 1,
+            "sofa": 1,
+            "tv_unit": 1,
+            "vase": 1
+          },
+          "image": "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\g--ALLURE-INTERIOR-ISHANA-Interior-design\\9c0578df-4a5c-4af1-93e9-bcb7da7d1588\\scratchpad\\composition_renders\\living_room_C_anchor_element_37.png",
+          "render_seconds": 11.7,
+          "seed": 37,
+          "type_recall": 0.75
+        }
+      ],
+      "type_recall": 0.5
+    }
+  }
+}

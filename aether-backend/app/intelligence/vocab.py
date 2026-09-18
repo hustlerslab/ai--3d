@@ -252,7 +252,7 @@ def brief_counts(text: str, vertical: Vertical | str) -> dict[str, int]:
 # semantic types the catalog and asset registry understand
 _RESIDENTIAL_SEMANTIC_TYPES: list[str] = [
     "sofa", "loveseat", "armchair", "ottoman", "coffee_table", "side_table",
-    "tv_unit", "dining_table", "chair", "bar_stool", "bed", "wardrobe",
+    "tv_unit", "television", "dining_table", "chair", "bar_stool", "bed", "wardrobe",
     "bedside_table", "dresser", "desk", "bookshelf", "sideboard", "console",
     "rug", "floor_lamp", "pendant_lamp", "chandelier", "table_lamp", "plant",
     "mirror", "wall_art", "curtains", "vase", "sculpture", "pillows", "lantern",
@@ -305,7 +305,7 @@ FAMILY_BY_TYPE: dict[str, str] = {
     "bar_stool": "seating", "stool": "seating",
     "coffee_table": "table", "side_table": "table", "dining_table": "table", "desk": "table", "console": "table",
     "bedside_table": "table", "kitchen_island": "table",
-    "tv_unit": "storage", "wardrobe": "storage", "dresser": "storage", "bookshelf": "storage", "sideboard": "storage",
+    "television": "appliance", "tv_unit": "storage", "wardrobe": "storage", "dresser": "storage", "bookshelf": "storage", "sideboard": "storage",
     "kitchen_counter": "storage", "vanity": "storage", "wall_shelf": "storage", "pedestal": "storage", "basket": "storage",
     "bed": "bed",
     "floor_lamp": "lighting", "pendant_lamp": "lighting", "chandelier": "lighting", "table_lamp": "lighting",
@@ -327,6 +327,7 @@ FAMILY_BY_TYPE: dict[str, str] = {
 # where a type sits when the reader does not say
 PLACEMENT_BY_TYPE: dict[str, str] = {
     "wall_art": "wall", "mirror": "wall", "sconce": "wall", "wall_shelf": "wall", "wall_clock": "wall",
+    "television": "wall",
     "curtains": "wall",
     "pendant_lamp": "ceiling", "chandelier": "ceiling",
     "table_lamp": "on_surface", "vase": "on_surface", "books": "on_surface", "tray": "on_surface",
@@ -408,7 +409,8 @@ NAME_KEYWORDS: list[tuple[str, str]] = [
     ("sculpture", "sculpture"), ("bust", "sculpture"), ("figurine", "sculpture"), ("pagoda", "sculpture"),
     ("ornament", "sculpture"), ("statue", "sculpture"), ("coral", "sculpture"), ("box", "tray"),
     ("tray", "tray"), ("book", "books"), ("basket", "basket"), ("wardrobe", "wardrobe"), ("armoire", "wardrobe"),
-    ("closet", "wardrobe"), ("bed", "bed"), ("headboard", "bed"), ("tv", "tv_unit"), ("media", "tv_unit"),
+    ("closet", "wardrobe"), ("bed", "bed"), ("headboard", "bed"), ("television", "television"), ("flat screen", "television"),
+    ("tv", "tv_unit"), ("media", "tv_unit"),
     ("fridge", "fridge"), ("refrigerator", "fridge"), ("counter", "kitchen_counter"), ("island", "kitchen_island"),
     ("dining chair", "chair"), ("chair", "chair"), ("bathtub", "bathtub"), ("vanity", "vanity"),
 ]
@@ -465,7 +467,9 @@ OBJECT_KEYWORDS: dict[str, list[str]] = {
     "ottoman": ["ottoman", "pouf", "pouffe"],
     "coffee_table": ["coffee table", "center table", "centre table"],
     "side_table": ["side table", "end table"],
-    "tv_unit": ["tv unit", "tv stand", "television", "tv console", "media unit"],
+    "television": ["television", "wall mounted tv", "wall-mounted television", "flat screen",
+                   "flatscreen", "tv screen", "smart tv"],
+    "tv_unit": ["tv unit", "tv stand", "tv console", "media unit", "media console"],
     "dining_table": ["dining table", "dining set"],
     "chair": ["dining chair", "chairs"],
     "bar_stool": ["bar stool", "counter stool"],
@@ -491,6 +495,34 @@ OBJECT_KEYWORDS: dict[str, list[str]] = {
     "fridge": ["fridge", "refrigerator"],
 }
 
+# Types that are genuinely implausible OUTSIDE these rooms, and nothing else.
+#
+# Deliberately NOT derived from OBJECT_DEFAULT_ROOM below. That map answers a
+# different question - "where does this go when the brief does not say" - and
+# reading it as plausibility would flag ordinary designs: it puts `rug` and
+# `plant` in the living room, so a rug in a bedroom would come back suspicious,
+# and the sample bedroom render has one. It also has no entry for `bathtub` at
+# all, so it could not catch the hallucination that prompted this list - a
+# freestanding bath read into a living room.
+#
+# Short on purpose. A type absent from here is NEVER flagged: most furniture is
+# genuinely room-agnostic, and false suspicion trains a reviewer to click past
+# warnings, which costs more than the occasional oddity it would have caught.
+ROOM_BOUND_TYPES: dict[str, set[str]] = {
+    "bathtub": {"bathroom"},
+    "vanity": {"bathroom"},
+    "kitchen_counter": {"kitchen"},
+    "kitchen_island": {"kitchen"},
+    "fridge": {"kitchen"},
+    "bed": {"bedroom", "master_bedroom", "kids_bedroom", "guest_room", "suite"},
+}
+
+
+def room_bound(semantic_type: str) -> set[str]:
+    """Rooms where this type is plausible, or an empty set meaning 'anywhere'."""
+    return ROOM_BOUND_TYPES.get((semantic_type or "").strip().lower(), set())
+
+
 # where an object lives when the brief does not say
 OBJECT_DEFAULT_ROOM: dict[str, str] = {
     "fireplace": "living_room", "stool": "living_room", "pedestal": "living_room", "books": "living_room",
@@ -499,7 +531,8 @@ OBJECT_DEFAULT_ROOM: dict[str, str] = {
     "vase": "living_room", "sculpture": "living_room", "lantern": "living_room", "pillows": "living_room",
     "sofa": "living_room", "loveseat": "living_room", "armchair": "living_room",
     "ottoman": "living_room", "coffee_table": "living_room", "side_table": "living_room",
-    "tv_unit": "living_room", "rug": "living_room", "floor_lamp": "living_room",
+    "tv_unit": "living_room", "television": "living_room",
+    "rug": "living_room", "floor_lamp": "living_room",
     "plant": "living_room", "wall_art": "living_room", "console": "entry",
     "mirror": "entry", "bookshelf": "study", "desk": "study",
     "dining_table": "dining_room", "chair": "dining_room", "sideboard": "dining_room",

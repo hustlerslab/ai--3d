@@ -1,0 +1,239 @@
+{
+  "_about": "CURRENT inventory representation, measured by calling the shipped merge_intents / intent_to_plan_item / merge_reading_into_plan on inventories whose ground truth is known. Element-first column comes from qwen-capability.json.",
+  "scenarios": [
+    {
+      "a_correct": false,
+      "b_correct": true,
+      "expected": {
+        "armchair": 2,
+        "coffee_table": 1,
+        "sofa": 1
+      },
+      "route_a_design_intent": {
+        "merged_intents": 3,
+        "produced": {
+          "armchair": 1,
+          "coffee_table": 1,
+          "sofa": 1
+        },
+        "references_in": 4
+      },
+      "route_b_moodboard_reading": {
+        "counts_all_one": true,
+        "elements_in": 4,
+        "plan_items": 4,
+        "produced": {
+          "armchair": 2,
+          "coffee_table": 1,
+          "sofa": 1
+        }
+      },
+      "scenario": "s1_two_chairs"
+    },
+    {
+      "a_correct": false,
+      "b_correct": true,
+      "expected": {
+        "pillow": 4,
+        "rug": 1,
+        "sofa": 1
+      },
+      "route_a_design_intent": {
+        "merged_intents": 3,
+        "produced": {
+          "pillow": 1,
+          "rug": 1,
+          "sofa": 1
+        },
+        "references_in": 6
+      },
+      "route_b_moodboard_reading": {
+        "counts_all_one": true,
+        "elements_in": 6,
+        "plan_items": 6,
+        "produced": {
+          "pillow": 4,
+          "rug": 1,
+          "sofa": 1
+        }
+      },
+      "scenario": "s2_four_pillows"
+    },
+    {
+      "a_correct": false,
+      "b_correct": true,
+      "expected": {
+        "bed": 1,
+        "nightstand": 2
+      },
+      "route_a_design_intent": {
+        "merged_intents": 2,
+        "produced": {
+          "bed": 1,
+          "nightstand": 1
+        },
+        "references_in": 3
+      },
+      "route_b_moodboard_reading": {
+        "counts_all_one": true,
+        "elements_in": 3,
+        "plan_items": 3,
+        "produced": {
+          "bed": 1,
+          "nightstand": 2
+        }
+      },
+      "scenario": "s3_symmetric_bedroom"
+    },
+    {
+      "a_correct": false,
+      "b_correct": true,
+      "expected": {
+        "bar_stool": 3,
+        "kitchen_island": 1
+      },
+      "route_a_design_intent": {
+        "merged_intents": 2,
+        "produced": {
+          "bar_stool": 1,
+          "kitchen_island": 1
+        },
+        "references_in": 4
+      },
+      "route_b_moodboard_reading": {
+        "counts_all_one": true,
+        "elements_in": 4,
+        "plan_items": 4,
+        "produced": {
+          "bar_stool": 3,
+          "kitchen_island": 1
+        }
+      },
+      "scenario": "s4_three_stools"
+    },
+    {
+      "a_correct": true,
+      "b_correct": true,
+      "expected": {
+        "armchair": 1,
+        "desk": 1,
+        "desk_chair": 1
+      },
+      "route_a_design_intent": {
+        "merged_intents": 3,
+        "produced": {
+          "armchair": 1,
+          "desk": 1,
+          "desk_chair": 1
+        },
+        "references_in": 3
+      },
+      "route_b_moodboard_reading": {
+        "counts_all_one": true,
+        "elements_in": 3,
+        "plan_items": 3,
+        "produced": {
+          "armchair": 1,
+          "desk": 1,
+          "desk_chair": 1
+        }
+      },
+      "scenario": "s5_two_different_chairs"
+    },
+    {
+      "a_correct": false,
+      "b_correct": true,
+      "expected": {
+        "coffee_table": 1,
+        "floor_lamp": 2,
+        "sofa": 1
+      },
+      "route_a_design_intent": {
+        "merged_intents": 3,
+        "produced": {
+          "coffee_table": 1,
+          "floor_lamp": 1,
+          "sofa": 1
+        },
+        "references_in": 4
+      },
+      "route_b_moodboard_reading": {
+        "counts_all_one": true,
+        "elements_in": 4,
+        "plan_items": 4,
+        "produced": {
+          "coffee_table": 1,
+          "floor_lamp": 2,
+          "sofa": 1
+        }
+      },
+      "scenario": "s6_lamps_pair"
+    },
+    {
+      "a_correct": true,
+      "b_correct": true,
+      "expected": {
+        "bench": 1,
+        "console_table": 1,
+        "mirror": 1
+      },
+      "route_a_design_intent": {
+        "merged_intents": 3,
+        "produced": {
+          "bench": 1,
+          "console_table": 1,
+          "mirror": 1
+        },
+        "references_in": 3
+      },
+      "route_b_moodboard_reading": {
+        "counts_all_one": true,
+        "elements_in": 3,
+        "plan_items": 3,
+        "produced": {
+          "bench": 1,
+          "console_table": 1,
+          "mirror": 1
+        }
+      },
+      "scenario": "s7_singletons"
+    },
+    {
+      "a_correct": false,
+      "b_correct": true,
+      "expected": {
+        "side_table": 2,
+        "sofa": 1
+      },
+      "route_a_design_intent": {
+        "merged_intents": 2,
+        "produced": {
+          "side_table": 1,
+          "sofa": 1
+        },
+        "references_in": 3
+      },
+      "route_b_moodboard_reading": {
+        "counts_all_one": true,
+        "elements_in": 3,
+        "plan_items": 3,
+        "produced": {
+          "side_table": 2,
+          "sofa": 1
+        }
+      },
+      "scenario": "s8_attributes"
+    }
+  ],
+  "summary": {
+    "element_first_count_accuracy": 0.9619,
+    "element_first_fully_correct_generations": "36/40",
+    "element_first_model": "qwen2.5vl:3b",
+    "route_a_correct_on_repeated": 0,
+    "route_a_design_intent_correct": 2,
+    "route_b_correct_on_repeated": 6,
+    "route_b_moodboard_reading_correct": 8,
+    "scenarios": 8,
+    "scenarios_with_a_repeated_element": 6
+  }
+}

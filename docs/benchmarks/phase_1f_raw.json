@@ -1,0 +1,839 @@
+{
+  "blocker": {
+    "required_negatives": 25,
+    "available_negatives": 5,
+    "objective_A_false_wall_rate": "BLOCKED - 5 distinct objects cannot resolve a 20% gate; repetition does not reduce sampling error over objects",
+    "objective_B_category_confusion": "ANSWERABLE - reported below",
+    "sources_examined": "11 moodboard renders + 8 reference photos",
+    "rejected_candidates": [
+      {
+        "id": "primary_bedroom.side_table",
+        "reason": "reads as against the wall beside the bed head; annotating it NEGATIVE to raise the count would be a convenient reading, not an honest one"
+      },
+      {
+        "id": "primary_bedroom.floor_lamp",
+        "reason": "'is its back or main side against a wall' is ill-posed for a slim pole lamp"
+      },
+      {
+        "id": "primary_bedroom.white_form_foreground",
+        "reason": "cut off by the frame and not confidently identifiable; no ground truth can be asserted"
+      },
+      {
+        "id": "archive_bathroom.bathtub",
+        "reason": "freestanding tub set in an alcove; already UNKNOWN in Phase 1c and unchanged here"
+      },
+      {
+        "id": "archive_kitchen.hob_run",
+        "reason": "ambiguous whether it returns onto the wall; already UNKNOWN"
+      },
+      {
+        "id": "all rugs",
+        "reason": "a rug lies on the floor and touches walls at its edges; the wall question is degenerate for it, and Phase 1d eligibility already excluded rugs"
+      },
+      {
+        "id": "ref_04..ref_12",
+        "reason": "product shots of sofas and mattresses in a warehouse, a showroom, or on a white background; two have no wall in frame at all. Out of domain for a room wall-gate."
+      }
+    ]
+  },
+  "environment": {
+    "gpu_before": {
+      "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+      "vram_total_mib": 6144,
+      "vram_used_mib": 4606,
+      "vram_free_mib": 1396
+    },
+    "ram_before": {
+      "total_gb": 16.8,
+      "available_gb": 2.7,
+      "load_pct": 84
+    },
+    "temperature": 0.2,
+    "num_ctx": 16384,
+    "num_predict": 8192,
+    "image_max_px": 768,
+    "prompt": "phase1d _wall_a, imported unmodified via phase1e",
+    "quantisation": "Q4_K_M"
+  },
+  "model_load": {
+    "load_s": 17.0,
+    "residency": {
+      "total_gb": 6.17,
+      "vram_gb": 3.47,
+      "cpu_gb": 2.7,
+      "on_gpu_pct": 56.3
+    },
+    "gpu_after": {
+      "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+      "vram_total_mib": 6144,
+      "vram_used_mib": 4648,
+      "vram_free_mib": 1354
+    }
+  },
+  "ram_after": {
+    "total_gb": 16.8,
+    "available_gb": 0.8,
+    "load_pct": 95
+  },
+  "gpu_after": {
+    "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_total_mib": 6144,
+    "vram_used_mib": 4752,
+    "vram_free_mib": 1250
+  },
+  "dataset": {
+    "cases": 16,
+    "positives": 11,
+    "negatives": 5,
+    "category_A": 2,
+    "category_B": 3,
+    "unchanged_from_phase_1d_1e": true
+  },
+  "runs_this_phase": [
+    {
+      "n": 16,
+      "yes_truth": 11,
+      "no_truth": 5,
+      "tp": 10,
+      "tn": 5,
+      "fp": 0,
+      "fn": 1,
+      "unanswered": 0,
+      "accuracy": 93.8,
+      "yes_precision": 100.0,
+      "yes_recall": 90.9,
+      "f1": 95.2,
+      "no_precision": 83.3,
+      "no_recall": 100.0,
+      "false_wall_rate": 0.0,
+      "false_wall_ci95": [
+        0.0,
+        43.4
+      ],
+      "no_recall_ci95": [
+        56.6,
+        100.0
+      ],
+      "run": 1,
+      "rows": [
+        {
+          "source": "living_room_a.sofa.0",
+          "room": "living_room_a",
+          "elapsed_s": 22.26,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_a.sofa.1",
+          "room": "living_room_a",
+          "elapsed_s": 0.88,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_a.side_table.0",
+          "room": "living_room_a",
+          "elapsed_s": 0.88,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_a.ottoman.0",
+          "room": "living_room_a",
+          "elapsed_s": 0.86,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "kitchen.kitchen_counter.0",
+          "room": "kitchen",
+          "elapsed_s": 4.28,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "kitchen.bar_stool.0",
+          "room": "kitchen",
+          "elapsed_s": 0.92,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "kitchen.bar_stool.1",
+          "room": "kitchen",
+          "elapsed_s": 0.89,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "kitchen.bar_stool.2",
+          "room": "kitchen",
+          "elapsed_s": 0.91,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "bathroom.vanity.0",
+          "room": "bathroom",
+          "elapsed_s": 4.32,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "master_bedroom.bed.0",
+          "room": "master_bedroom",
+          "elapsed_s": 4.36,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "master_bedroom.bedside_table.0",
+          "room": "master_bedroom",
+          "elapsed_s": 0.87,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "master_bedroom.bedside_table.1",
+          "room": "master_bedroom",
+          "elapsed_s": 0.86,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_b.sofa.0",
+          "room": "living_room_b",
+          "elapsed_s": 4.4,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_b.tv_unit.0",
+          "room": "living_room_b",
+          "elapsed_s": 0.86,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_b.tv_unit.1",
+          "room": "living_room_b",
+          "elapsed_s": 0.9,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_b.coffee_table.0",
+          "room": "living_room_b",
+          "elapsed_s": 0.9,
+          "answer": false,
+          "status": "complete"
+        }
+      ],
+      "latency": {
+        "mean": 3.08,
+        "median": 0.9,
+        "p95": 22.26,
+        "worst": 22.26
+      },
+      "first_query_s": 22.26,
+      "valid_json": 16,
+      "failed": 0
+    },
+    {
+      "n": 16,
+      "yes_truth": 11,
+      "no_truth": 5,
+      "tp": 8,
+      "tn": 3,
+      "fp": 2,
+      "fn": 3,
+      "unanswered": 0,
+      "accuracy": 68.8,
+      "yes_precision": 80.0,
+      "yes_recall": 72.7,
+      "f1": 76.2,
+      "no_precision": 50.0,
+      "no_recall": 60.0,
+      "false_wall_rate": 40.0,
+      "false_wall_ci95": [
+        11.8,
+        76.9
+      ],
+      "no_recall_ci95": [
+        23.1,
+        88.2
+      ],
+      "run": 2,
+      "rows": [
+        {
+          "source": "living_room_a.sofa.0",
+          "room": "living_room_a",
+          "elapsed_s": 0.96,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_a.sofa.1",
+          "room": "living_room_a",
+          "elapsed_s": 0.87,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_a.side_table.0",
+          "room": "living_room_a",
+          "elapsed_s": 0.98,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_a.ottoman.0",
+          "room": "living_room_a",
+          "elapsed_s": 0.91,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "kitchen.kitchen_counter.0",
+          "room": "kitchen",
+          "elapsed_s": 1.04,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "kitchen.bar_stool.0",
+          "room": "kitchen",
+          "elapsed_s": 0.98,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "kitchen.bar_stool.1",
+          "room": "kitchen",
+          "elapsed_s": 0.91,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "kitchen.bar_stool.2",
+          "room": "kitchen",
+          "elapsed_s": 0.9,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "bathroom.vanity.0",
+          "room": "bathroom",
+          "elapsed_s": 0.66,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "master_bedroom.bed.0",
+          "room": "master_bedroom",
+          "elapsed_s": 0.94,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "master_bedroom.bedside_table.0",
+          "room": "master_bedroom",
+          "elapsed_s": 0.84,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "master_bedroom.bedside_table.1",
+          "room": "master_bedroom",
+          "elapsed_s": 0.91,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_b.sofa.0",
+          "room": "living_room_b",
+          "elapsed_s": 1.01,
+          "answer": false,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_b.tv_unit.0",
+          "room": "living_room_b",
+          "elapsed_s": 0.95,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_b.tv_unit.1",
+          "room": "living_room_b",
+          "elapsed_s": 0.89,
+          "answer": true,
+          "status": "complete"
+        },
+        {
+          "source": "living_room_b.coffee_table.0",
+          "room": "living_room_b",
+          "elapsed_s": 0.86,
+          "answer": false,
+          "status": "complete"
+        }
+      ],
+      "latency": {
+        "mean": 0.91,
+        "median": 0.91,
+        "p95": 1.04,
+        "worst": 1.04
+      },
+      "first_query_s": 0.96,
+      "valid_json": 16,
+      "failed": 0
+    }
+  ],
+  "pooled_sources": [
+    "1f_run1",
+    "1f_run2",
+    "1e_run1",
+    "1e_run2"
+  ],
+  "subsets_pooled": {
+    "all_cases": {
+      "n": 64,
+      "yes_truth": 44,
+      "no_truth": 20,
+      "tp": 39,
+      "tn": 13,
+      "fp": 7,
+      "fn": 5,
+      "unanswered": 0,
+      "accuracy": 81.2,
+      "yes_precision": 84.8,
+      "yes_recall": 88.6,
+      "f1": 86.7,
+      "no_precision": 72.2,
+      "no_recall": 65.0,
+      "false_wall_rate": 35.0,
+      "false_wall_ci95": [
+        18.1,
+        56.7
+      ],
+      "no_recall_ci95": [
+        43.3,
+        81.9
+      ]
+    },
+    "negatives_only": {
+      "n": 20,
+      "yes_truth": 0,
+      "no_truth": 20,
+      "tp": 0,
+      "tn": 13,
+      "fp": 7,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 65.0,
+      "yes_precision": 0.0,
+      "yes_recall": null,
+      "f1": null,
+      "no_precision": 100.0,
+      "no_recall": 65.0,
+      "false_wall_rate": 35.0,
+      "false_wall_ci95": [
+        18.1,
+        56.7
+      ],
+      "no_recall_ci95": [
+        43.3,
+        81.9
+      ]
+    },
+    "category_A": {
+      "n": 8,
+      "yes_truth": 0,
+      "no_truth": 8,
+      "tp": 0,
+      "tn": 8,
+      "fp": 0,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 100.0,
+      "yes_precision": null,
+      "yes_recall": null,
+      "f1": null,
+      "no_precision": 100.0,
+      "no_recall": 100.0,
+      "false_wall_rate": 0.0,
+      "false_wall_ci95": [
+        0.0,
+        32.4
+      ],
+      "no_recall_ci95": [
+        67.6,
+        100.0
+      ]
+    },
+    "category_B": {
+      "n": 12,
+      "yes_truth": 0,
+      "no_truth": 12,
+      "tp": 0,
+      "tn": 5,
+      "fp": 7,
+      "fn": 0,
+      "unanswered": 0,
+      "accuracy": 41.7,
+      "yes_precision": 0.0,
+      "yes_recall": null,
+      "f1": null,
+      "no_precision": 100.0,
+      "no_recall": 41.7,
+      "false_wall_rate": 58.3,
+      "false_wall_ci95": [
+        32.0,
+        80.7
+      ],
+      "no_recall_ci95": [
+        19.3,
+        68.0
+      ]
+    }
+  },
+  "per_case": [
+    {
+      "object": "living_room_a.sofa.0",
+      "type": "sofa",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "living_room_a.sofa.1",
+      "type": "sofa",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "living_room_a.side_table.0",
+      "type": "side_table",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "living_room_a.ottoman.0",
+      "type": "ottoman",
+      "category": "A",
+      "ground_truth_wall": false,
+      "answers": {
+        "1f_run1": false,
+        "1f_run2": false,
+        "1e_run1": false,
+        "1e_run2": false
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": false,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "none"
+    },
+    {
+      "object": "kitchen.kitchen_counter.0",
+      "type": "kitchen_counter",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "kitchen.bar_stool.0",
+      "type": "bar_stool",
+      "category": "B",
+      "ground_truth_wall": false,
+      "answers": {
+        "1f_run1": false,
+        "1f_run2": false,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": false,
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": true,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "the counter run occludes the stool's base and the floor behind it"
+    },
+    {
+      "object": "kitchen.bar_stool.1",
+      "type": "bar_stool",
+      "category": "B",
+      "ground_truth_wall": false,
+      "answers": {
+        "1f_run1": false,
+        "1f_run2": true,
+        "1e_run1": false,
+        "1e_run2": true
+      },
+      "stable_across_runs": false,
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": true,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "the counter run occludes the stool's base and the floor behind it"
+    },
+    {
+      "object": "kitchen.bar_stool.2",
+      "type": "bar_stool",
+      "category": "B",
+      "ground_truth_wall": false,
+      "answers": {
+        "1f_run1": false,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": false,
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": true,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "the counter run occludes the stool's base and the floor behind it"
+    },
+    {
+      "object": "bathroom.vanity.0",
+      "type": "vanity",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "master_bedroom.bed.0",
+      "type": "bed",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": false,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": false,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "master_bedroom.bedside_table.0",
+      "type": "bedside_table",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "master_bedroom.bedside_table.1",
+      "type": "bedside_table",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": false,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": false,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "living_room_b.sofa.0",
+      "type": "sofa",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": false,
+        "1f_run2": false,
+        "1e_run1": false,
+        "1e_run2": true
+      },
+      "stable_across_runs": false,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "living_room_b.tv_unit.0",
+      "type": "tv_unit",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "living_room_b.tv_unit.1",
+      "type": "tv_unit",
+      "category": "-",
+      "ground_truth_wall": true,
+      "answers": {
+        "1f_run1": true,
+        "1f_run2": true,
+        "1e_run1": true,
+        "1e_run2": true
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": null,
+      "wall_backed_object_immediately_behind": null,
+      "visually_touching_wall": null,
+      "visually_separated_from_wall": null,
+      "occlusion": null
+    },
+    {
+      "object": "living_room_b.coffee_table.0",
+      "type": "coffee_table",
+      "category": "A",
+      "ground_truth_wall": false,
+      "answers": {
+        "1f_run1": false,
+        "1f_run2": false,
+        "1e_run1": false,
+        "1e_run2": false
+      },
+      "stable_across_runs": true,
+      "wall_behind_object": true,
+      "wall_backed_object_immediately_behind": false,
+      "visually_touching_wall": false,
+      "visually_separated_from_wall": true,
+      "occlusion": "none"
+    }
+  ],
+  "phase_1e_reference": {
+    "combined": {
+      "n": 32,
+      "yes_truth": 22,
+      "no_truth": 10,
+      "tp": 21,
+      "tn": 5,
+      "fp": 5,
+      "fn": 1,
+      "unanswered": 0,
+      "accuracy": 81.2,
+      "yes_precision": 80.8,
+      "yes_recall": 95.5,
+      "f1": 87.5,
+      "no_precision": 83.3,
+      "no_recall": 50.0,
+      "false_wall_rate": 50.0,
+      "latency": {
+        "mean": 2.06,
+        "median": 0.94,
+        "p95": 4.45,
+        "worst": 23.38
+      },
+      "agreement_pct": 87.5
+    },
+    "load": {
+      "load_s": 15.9,
+      "residency": {
+        "total_gb": 6.17,
+        "vram_gb": 3.47,
+        "cpu_gb": 2.7,
+        "on_gpu_pct": 56.3
+      },
+      "gpu_after": {
+        "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+        "vram_total_mib": 6144,
+        "vram_used_mib": 4648,
+        "vram_free_mib": 1354
+      }
+    }
+  },
+  "latency": {
+    "this_phase": {
+      "mean": 2.0,
+      "median": 0.91,
+      "p95": 4.4,
+      "worst": 22.26
+    }
+  }
+}

@@ -1,0 +1,2687 @@
+{
+  "environment": {
+    "model": "IDEA-Research/grounding-dino-tiny",
+    "torch": "2.14.0+cu126",
+    "cuda": true,
+    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_gb": 6.0
+  },
+  "image_size": [
+    704,
+    448
+  ],
+  "box_threshold": 0.3,
+  "resolutions": {
+    "512": {
+      "per_image": [
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+          "room_type": "living_room",
+          "elapsed_s": 22.95,
+          "bytes": 951,
+          "validity": {
+            "VALID": 4,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 6,
+          "scores": [
+            0.632109245601505,
+            0.39535326278940713,
+            0.15199205095564627
+          ],
+          "missed_truths": 4,
+          "detection": {
+            "found": 3,
+            "truths": 7,
+            "recall": 0.429,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 3,
+            "mean": 0.393,
+            "median": 0.395,
+            "min": 0.152,
+            "max": 0.632,
+            "at25": 2,
+            "at50": 1,
+            "at75": 0
+          },
+          "combined": {
+            "n": 7,
+            "mean": 0.168,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.632,
+            "at25": 2,
+            "at50": 1,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 2,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 4
+            },
+            "faces": {
+              "RESOLVABLE": 2,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 4
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+          "room_type": "kitchen",
+          "elapsed_s": 185.11,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 8,
+          "detection": {
+            "found": 0,
+            "truths": 8,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+          "room_type": "bathroom",
+          "elapsed_s": 11.14,
+          "bytes": 796,
+          "validity": {
+            "VALID": 4,
+            "OUT_OF_RANGE": 1,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 1,
+          "elements": 5,
+          "scores": [
+            0.5904595125239639,
+            0.20309082059732836
+          ],
+          "missed_truths": 0,
+          "detection": {
+            "found": 2,
+            "truths": 2,
+            "recall": 1.0,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 2,
+            "mean": 0.397,
+            "median": 0.397,
+            "min": 0.203,
+            "max": 0.59,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "combined": {
+            "n": 2,
+            "mean": 0.397,
+            "median": 0.397,
+            "min": 0.203,
+            "max": 0.59,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 5
+            },
+            "faces": {
+              "RESOLVABLE": 5,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+          "room_type": "master_bedroom",
+          "elapsed_s": 20.17,
+          "bytes": 1859,
+          "validity": {
+            "VALID": 4,
+            "OUT_OF_RANGE": 5,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 3,
+          "elements": 9,
+          "scores": [
+            0.02671015077858616
+          ],
+          "missed_truths": 7,
+          "detection": {
+            "found": 1,
+            "truths": 8,
+            "recall": 0.125,
+            "unmatched_preds": 2
+          },
+          "geometry": {
+            "n": 1,
+            "mean": 0.027,
+            "median": 0.027,
+            "min": 0.027,
+            "max": 0.027,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.003,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.027,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 9
+            },
+            "faces": {
+              "RESOLVABLE": 9,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+          "room_type": "living_room",
+          "elapsed_s": 190.59,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 11,
+          "detection": {
+            "found": 0,
+            "truths": 11,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 11,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        }
+      ],
+      "validity": {
+        "VALID": 12,
+        "OUT_OF_RANGE": 8,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 6,
+      "elements": 20,
+      "detection": {
+        "found": 6,
+        "truths": 36,
+        "recall": 0.167,
+        "unmatched_preds": 4
+      },
+      "geometry": {
+        "n": 6,
+        "mean": 0.333,
+        "median": 0.299,
+        "min": 0.027,
+        "max": 0.632,
+        "at25": 3,
+        "at50": 2,
+        "at75": 0
+      },
+      "combined": {
+        "n": 36,
+        "mean": 0.056,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.632,
+        "at25": 3,
+        "at50": 2,
+        "at75": 0
+      },
+      "avg_s": 85.99,
+      "avg_bytes": 721,
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 2,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 18
+        },
+        "faces": {
+          "RESOLVABLE": 16,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 4
+        }
+      }
+    },
+    "768": {
+      "per_image": [
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+          "room_type": "living_room",
+          "elapsed_s": 10.88,
+          "bytes": 848,
+          "validity": {
+            "VALID": 3,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 5,
+          "scores": [
+            0.39871112083329746,
+            0.15951570545676513
+          ],
+          "missed_truths": 5,
+          "detection": {
+            "found": 2,
+            "truths": 7,
+            "recall": 0.286,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 2,
+            "mean": 0.279,
+            "median": 0.279,
+            "min": 0.16,
+            "max": 0.399,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 7,
+            "mean": 0.08,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.399,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 4,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            },
+            "faces": {
+              "RESOLVABLE": 4,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+          "room_type": "kitchen",
+          "elapsed_s": 12.36,
+          "bytes": 996,
+          "validity": {
+            "VALID": 4,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 6,
+          "scores": [
+            0.31527626939785136,
+            0.13665748001371247,
+            0.10703004644569335
+          ],
+          "missed_truths": 5,
+          "detection": {
+            "found": 3,
+            "truths": 8,
+            "recall": 0.375,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 3,
+            "mean": 0.186,
+            "median": 0.137,
+            "min": 0.107,
+            "max": 0.315,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.07,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.315,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 3,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 3
+            },
+            "faces": {
+              "RESOLVABLE": 6,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+          "room_type": "bathroom",
+          "elapsed_s": 7.9,
+          "bytes": 542,
+          "validity": {
+            "VALID": 3,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 3,
+          "scores": [
+            0.5912377991011954
+          ],
+          "missed_truths": 1,
+          "detection": {
+            "found": 1,
+            "truths": 2,
+            "recall": 0.5,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 1,
+            "mean": 0.591,
+            "median": 0.591,
+            "min": 0.591,
+            "max": 0.591,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "combined": {
+            "n": 2,
+            "mean": 0.296,
+            "median": 0.296,
+            "min": 0.0,
+            "max": 0.591,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 3
+            },
+            "faces": {
+              "RESOLVABLE": 3,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+          "room_type": "master_bedroom",
+          "elapsed_s": 190.6,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 8,
+          "detection": {
+            "found": 0,
+            "truths": 8,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+          "room_type": "living_room",
+          "elapsed_s": 191.27,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 11,
+          "detection": {
+            "found": 0,
+            "truths": 11,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 11,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        }
+      ],
+      "validity": {
+        "VALID": 10,
+        "OUT_OF_RANGE": 4,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 4,
+      "elements": 14,
+      "detection": {
+        "found": 6,
+        "truths": 36,
+        "recall": 0.167,
+        "unmatched_preds": 2
+      },
+      "geometry": {
+        "n": 6,
+        "mean": 0.285,
+        "median": 0.237,
+        "min": 0.107,
+        "max": 0.591,
+        "at25": 3,
+        "at50": 1,
+        "at75": 0
+      },
+      "combined": {
+        "n": 36,
+        "mean": 0.047,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.591,
+        "at25": 3,
+        "at50": 1,
+        "at75": 0
+      },
+      "avg_s": 82.6,
+      "avg_bytes": 477,
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 3,
+          "CAMERA_RELATIVE": 4,
+          "EMPTY": 0,
+          "UNKNOWN": 7
+        },
+        "faces": {
+          "RESOLVABLE": 13,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 1
+        }
+      }
+    },
+    "1024": {
+      "per_image": [
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+          "room_type": "living_room",
+          "elapsed_s": 8.09,
+          "bytes": 744,
+          "validity": {
+            "VALID": 3,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 5,
+          "scores": [
+            0.397442377624967,
+            0.16188081057127154
+          ],
+          "missed_truths": 5,
+          "detection": {
+            "found": 2,
+            "truths": 7,
+            "recall": 0.286,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 2,
+            "mean": 0.28,
+            "median": 0.28,
+            "min": 0.162,
+            "max": 0.397,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 7,
+            "mean": 0.08,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.397,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 4,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            },
+            "faces": {
+              "RESOLVABLE": 4,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+          "room_type": "kitchen",
+          "elapsed_s": 9.59,
+          "bytes": 948,
+          "validity": {
+            "VALID": 4,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 6,
+          "scores": [
+            0.31648199384746456,
+            0.13567165432814984,
+            0.10906354633551767
+          ],
+          "missed_truths": 5,
+          "detection": {
+            "found": 3,
+            "truths": 8,
+            "recall": 0.375,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 3,
+            "mean": 0.187,
+            "median": 0.136,
+            "min": 0.109,
+            "max": 0.316,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.07,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.316,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 3,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 3
+            },
+            "faces": {
+              "RESOLVABLE": 6,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+          "room_type": "bathroom",
+          "elapsed_s": 10.86,
+          "bytes": 1023,
+          "validity": {
+            "VALID": 6,
+            "OUT_OF_RANGE": 1,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 1,
+          "elements": 7,
+          "scores": [
+            0.5920726342666826
+          ],
+          "missed_truths": 1,
+          "detection": {
+            "found": 1,
+            "truths": 2,
+            "recall": 0.5,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 1,
+            "mean": 0.592,
+            "median": 0.592,
+            "min": 0.592,
+            "max": 0.592,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "combined": {
+            "n": 2,
+            "mean": 0.296,
+            "median": 0.296,
+            "min": 0.0,
+            "max": 0.592,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 7
+            },
+            "faces": {
+              "RESOLVABLE": 7,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+          "room_type": "master_bedroom",
+          "elapsed_s": 10.93,
+          "bytes": 733,
+          "validity": {
+            "VALID": 1,
+            "OUT_OF_RANGE": 4,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 4,
+          "elements": 5,
+          "scores": [],
+          "missed_truths": 8,
+          "detection": {
+            "found": 0,
+            "truths": 8,
+            "recall": 0.0,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 5
+            },
+            "faces": {
+              "RESOLVABLE": 4,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+          "room_type": "living_room",
+          "elapsed_s": 190.9,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 11,
+          "detection": {
+            "found": 0,
+            "truths": 11,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 11,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        }
+      ],
+      "validity": {
+        "VALID": 14,
+        "OUT_OF_RANGE": 9,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 9,
+      "elements": 23,
+      "detection": {
+        "found": 6,
+        "truths": 36,
+        "recall": 0.167,
+        "unmatched_preds": 3
+      },
+      "geometry": {
+        "n": 6,
+        "mean": 0.285,
+        "median": 0.239,
+        "min": 0.109,
+        "max": 0.592,
+        "at25": 3,
+        "at50": 1,
+        "at75": 0
+      },
+      "combined": {
+        "n": 36,
+        "mean": 0.048,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.592,
+        "at25": 3,
+        "at50": 1,
+        "at75": 0
+      },
+      "avg_s": 46.07,
+      "avg_bytes": 689,
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 3,
+          "CAMERA_RELATIVE": 4,
+          "EMPTY": 0,
+          "UNKNOWN": 16
+        },
+        "faces": {
+          "RESOLVABLE": 21,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 2
+        }
+      }
+    }
+  },
+  "prompts": {
+    "A": {
+      "per_image": [
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+          "room_type": "living_room",
+          "elapsed_s": 10.88,
+          "bytes": 848,
+          "validity": {
+            "VALID": 3,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 5,
+          "scores": [
+            0.39871112083329746,
+            0.15951570545676513
+          ],
+          "missed_truths": 5,
+          "detection": {
+            "found": 2,
+            "truths": 7,
+            "recall": 0.286,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 2,
+            "mean": 0.279,
+            "median": 0.279,
+            "min": 0.16,
+            "max": 0.399,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 7,
+            "mean": 0.08,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.399,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 4,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            },
+            "faces": {
+              "RESOLVABLE": 4,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+          "room_type": "kitchen",
+          "elapsed_s": 12.36,
+          "bytes": 996,
+          "validity": {
+            "VALID": 4,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 6,
+          "scores": [
+            0.31527626939785136,
+            0.13665748001371247,
+            0.10703004644569335
+          ],
+          "missed_truths": 5,
+          "detection": {
+            "found": 3,
+            "truths": 8,
+            "recall": 0.375,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 3,
+            "mean": 0.186,
+            "median": 0.137,
+            "min": 0.107,
+            "max": 0.315,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.07,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.315,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 3,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 3
+            },
+            "faces": {
+              "RESOLVABLE": 6,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+          "room_type": "bathroom",
+          "elapsed_s": 7.9,
+          "bytes": 542,
+          "validity": {
+            "VALID": 3,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 3,
+          "scores": [
+            0.5912377991011954
+          ],
+          "missed_truths": 1,
+          "detection": {
+            "found": 1,
+            "truths": 2,
+            "recall": 0.5,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 1,
+            "mean": 0.591,
+            "median": 0.591,
+            "min": 0.591,
+            "max": 0.591,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "combined": {
+            "n": 2,
+            "mean": 0.296,
+            "median": 0.296,
+            "min": 0.0,
+            "max": 0.591,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 3
+            },
+            "faces": {
+              "RESOLVABLE": 3,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+          "room_type": "master_bedroom",
+          "elapsed_s": 190.6,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 8,
+          "detection": {
+            "found": 0,
+            "truths": 8,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+          "room_type": "living_room",
+          "elapsed_s": 191.27,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 11,
+          "detection": {
+            "found": 0,
+            "truths": 11,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 11,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        }
+      ],
+      "validity": {
+        "VALID": 10,
+        "OUT_OF_RANGE": 4,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 4,
+      "elements": 14,
+      "detection": {
+        "found": 6,
+        "truths": 36,
+        "recall": 0.167,
+        "unmatched_preds": 2
+      },
+      "geometry": {
+        "n": 6,
+        "mean": 0.285,
+        "median": 0.237,
+        "min": 0.107,
+        "max": 0.591,
+        "at25": 3,
+        "at50": 1,
+        "at75": 0
+      },
+      "combined": {
+        "n": 36,
+        "mean": 0.047,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.591,
+        "at25": 3,
+        "at50": 1,
+        "at75": 0
+      },
+      "avg_s": 82.6,
+      "avg_bytes": 477,
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 3,
+          "CAMERA_RELATIVE": 4,
+          "EMPTY": 0,
+          "UNKNOWN": 7
+        },
+        "faces": {
+          "RESOLVABLE": 13,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 1
+        }
+      }
+    },
+    "B": {
+      "per_image": [
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+          "elapsed_s": 11.47,
+          "bytes": 1058,
+          "validity": {
+            "VALID": 5,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 7,
+          "scores": [
+            0.4003033701083266,
+            0.16744901765139808,
+            0.00876977673439666
+          ],
+          "missed_truths": 4,
+          "detection": {
+            "found": 3,
+            "truths": 7,
+            "recall": 0.429,
+            "unmatched_preds": 2
+          },
+          "geometry": {
+            "n": 3,
+            "mean": 0.192,
+            "median": 0.167,
+            "min": 0.009,
+            "max": 0.4,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 7,
+            "mean": 0.082,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.4,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 7,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 7,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+          "elapsed_s": 189.53,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 8,
+          "detection": {
+            "found": 0,
+            "truths": 8,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+          "elapsed_s": 9.05,
+          "bytes": 797,
+          "validity": {
+            "VALID": 5,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 5,
+          "scores": [
+            0.591678204044134
+          ],
+          "missed_truths": 1,
+          "detection": {
+            "found": 1,
+            "truths": 2,
+            "recall": 0.5,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 1,
+            "mean": 0.592,
+            "median": 0.592,
+            "min": 0.592,
+            "max": 0.592,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "combined": {
+            "n": 2,
+            "mean": 0.296,
+            "median": 0.296,
+            "min": 0.0,
+            "max": 0.592,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 5
+            },
+            "faces": {
+              "RESOLVABLE": 5,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+          "elapsed_s": 12.08,
+          "bytes": 1079,
+          "validity": {
+            "VALID": 3,
+            "OUT_OF_RANGE": 4,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 4,
+          "elements": 7,
+          "scores": [
+            0.5499667996809021
+          ],
+          "missed_truths": 7,
+          "detection": {
+            "found": 1,
+            "truths": 8,
+            "recall": 0.125,
+            "unmatched_preds": 2
+          },
+          "geometry": {
+            "n": 1,
+            "mean": 0.55,
+            "median": 0.55,
+            "min": 0.55,
+            "max": 0.55,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.069,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.55,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 7
+            },
+            "faces": {
+              "RESOLVABLE": 4,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 3
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+          "elapsed_s": 195.08,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 11,
+          "detection": {
+            "found": 0,
+            "truths": 11,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 11,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        }
+      ],
+      "validity": {
+        "VALID": 13,
+        "OUT_OF_RANGE": 6,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 6,
+      "elements": 19,
+      "detection": {
+        "found": 5,
+        "truths": 36,
+        "recall": 0.139,
+        "unmatched_preds": 5
+      },
+      "geometry": {
+        "n": 5,
+        "mean": 0.344,
+        "median": 0.4,
+        "min": 0.009,
+        "max": 0.592,
+        "at25": 3,
+        "at50": 2,
+        "at75": 0
+      },
+      "combined": {
+        "n": 36,
+        "mean": 0.048,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.592,
+        "at25": 3,
+        "at50": 2,
+        "at75": 0
+      },
+      "avg_s": 83.44,
+      "avg_bytes": 586,
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 0,
+          "CAMERA_RELATIVE": 7,
+          "EMPTY": 0,
+          "UNKNOWN": 12
+        },
+        "faces": {
+          "RESOLVABLE": 16,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 3
+        }
+      }
+    },
+    "C": {
+      "per_image": [
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+          "elapsed_s": 9.04,
+          "bytes": 788,
+          "validity": {
+            "VALID": 3,
+            "OUT_OF_RANGE": 2,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 2,
+          "elements": 5,
+          "scores": [
+            0.3953170355455367,
+            0.16312374684221229
+          ],
+          "missed_truths": 5,
+          "detection": {
+            "found": 2,
+            "truths": 7,
+            "recall": 0.286,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 2,
+            "mean": 0.279,
+            "median": 0.279,
+            "min": 0.163,
+            "max": 0.395,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 7,
+            "mean": 0.08,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.395,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 4,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            },
+            "faces": {
+              "RESOLVABLE": 4,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+          "elapsed_s": 192.92,
+          "bytes": 0,
+          "validity": {
+            "VALID": 0,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 0,
+          "scores": [],
+          "missed_truths": 8,
+          "detection": {
+            "found": 0,
+            "truths": 8,
+            "recall": 0.0,
+            "unmatched_preds": 0
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+          "elapsed_s": 5.98,
+          "bytes": 561,
+          "validity": {
+            "VALID": 3,
+            "OUT_OF_RANGE": 0,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 0,
+          "elements": 3,
+          "scores": [
+            0.5935550891914628
+          ],
+          "missed_truths": 1,
+          "detection": {
+            "found": 1,
+            "truths": 2,
+            "recall": 0.5,
+            "unmatched_preds": 1
+          },
+          "geometry": {
+            "n": 1,
+            "mean": 0.594,
+            "median": 0.594,
+            "min": 0.594,
+            "max": 0.594,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "combined": {
+            "n": 2,
+            "mean": 0.297,
+            "median": 0.297,
+            "min": 0.0,
+            "max": 0.594,
+            "at25": 1,
+            "at50": 1,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 3,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            },
+            "faces": {
+              "RESOLVABLE": 3,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 0
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+          "elapsed_s": 8.51,
+          "bytes": 781,
+          "validity": {
+            "VALID": 2,
+            "OUT_OF_RANGE": 3,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 3,
+          "elements": 5,
+          "scores": [],
+          "missed_truths": 8,
+          "detection": {
+            "found": 0,
+            "truths": 8,
+            "recall": 0.0,
+            "unmatched_preds": 2
+          },
+          "geometry": {
+            "n": 0,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 8,
+            "mean": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "at25": 0,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 4,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            },
+            "faces": {
+              "RESOLVABLE": 4,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 1
+            }
+          }
+        },
+        {
+          "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+          "elapsed_s": 17.52,
+          "bytes": 1409,
+          "validity": {
+            "VALID": 6,
+            "OUT_OF_RANGE": 4,
+            "INVERTED": 0,
+            "ZERO_AREA": 0,
+            "MISSING": 0,
+            "MALFORMED": 0
+          },
+          "repairable": 4,
+          "elements": 10,
+          "scores": [
+            0.4429368979285485,
+            0.0,
+            0.0
+          ],
+          "missed_truths": 8,
+          "detection": {
+            "found": 3,
+            "truths": 11,
+            "recall": 0.273,
+            "unmatched_preds": 2
+          },
+          "geometry": {
+            "n": 3,
+            "mean": 0.148,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.443,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "combined": {
+            "n": 11,
+            "mean": 0.04,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.443,
+            "at25": 1,
+            "at50": 0,
+            "at75": 0
+          },
+          "relationships": {
+            "against": {
+              "RESOLVABLE": 0,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 10
+            },
+            "faces": {
+              "RESOLVABLE": 6,
+              "CAMERA_RELATIVE": 0,
+              "EMPTY": 0,
+              "UNKNOWN": 4
+            }
+          }
+        }
+      ],
+      "validity": {
+        "VALID": 14,
+        "OUT_OF_RANGE": 9,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 9,
+      "elements": 23,
+      "detection": {
+        "found": 6,
+        "truths": 36,
+        "recall": 0.167,
+        "unmatched_preds": 6
+      },
+      "geometry": {
+        "n": 6,
+        "mean": 0.266,
+        "median": 0.279,
+        "min": 0.0,
+        "max": 0.594,
+        "at25": 3,
+        "at50": 1,
+        "at75": 0
+      },
+      "combined": {
+        "n": 36,
+        "mean": 0.044,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.594,
+        "at25": 3,
+        "at50": 1,
+        "at75": 0
+      },
+      "avg_s": 46.79,
+      "avg_bytes": 707,
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 0,
+          "CAMERA_RELATIVE": 11,
+          "EMPTY": 0,
+          "UNKNOWN": 12
+        },
+        "faces": {
+          "RESOLVABLE": 17,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 6
+        }
+      }
+    }
+  },
+  "per_image": [
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "elapsed_s": 10.88,
+      "bytes": 848,
+      "validity": {
+        "VALID": 3,
+        "OUT_OF_RANGE": 2,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 2,
+      "elements": 5,
+      "scores": [
+        0.39871112083329746,
+        0.15951570545676513
+      ],
+      "missed_truths": 5,
+      "detection": {
+        "found": 2,
+        "truths": 7,
+        "recall": 0.286,
+        "unmatched_preds": 1
+      },
+      "geometry": {
+        "n": 2,
+        "mean": 0.279,
+        "median": 0.279,
+        "min": 0.16,
+        "max": 0.399,
+        "at25": 1,
+        "at50": 0,
+        "at75": 0
+      },
+      "combined": {
+        "n": 7,
+        "mean": 0.08,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.399,
+        "at25": 1,
+        "at50": 0,
+        "at75": 0
+      },
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 0,
+          "CAMERA_RELATIVE": 4,
+          "EMPTY": 0,
+          "UNKNOWN": 1
+        },
+        "faces": {
+          "RESOLVABLE": 4,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 1
+        }
+      }
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+      "room_type": "kitchen",
+      "elapsed_s": 12.36,
+      "bytes": 996,
+      "validity": {
+        "VALID": 4,
+        "OUT_OF_RANGE": 2,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 2,
+      "elements": 6,
+      "scores": [
+        0.31527626939785136,
+        0.13665748001371247,
+        0.10703004644569335
+      ],
+      "missed_truths": 5,
+      "detection": {
+        "found": 3,
+        "truths": 8,
+        "recall": 0.375,
+        "unmatched_preds": 0
+      },
+      "geometry": {
+        "n": 3,
+        "mean": 0.186,
+        "median": 0.137,
+        "min": 0.107,
+        "max": 0.315,
+        "at25": 1,
+        "at50": 0,
+        "at75": 0
+      },
+      "combined": {
+        "n": 8,
+        "mean": 0.07,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.315,
+        "at25": 1,
+        "at50": 0,
+        "at75": 0
+      },
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 3,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 3
+        },
+        "faces": {
+          "RESOLVABLE": 6,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 0
+        }
+      }
+    },
+    {
+      "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+      "room_type": "bathroom",
+      "elapsed_s": 7.9,
+      "bytes": 542,
+      "validity": {
+        "VALID": 3,
+        "OUT_OF_RANGE": 0,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 0,
+      "elements": 3,
+      "scores": [
+        0.5912377991011954
+      ],
+      "missed_truths": 1,
+      "detection": {
+        "found": 1,
+        "truths": 2,
+        "recall": 0.5,
+        "unmatched_preds": 1
+      },
+      "geometry": {
+        "n": 1,
+        "mean": 0.591,
+        "median": 0.591,
+        "min": 0.591,
+        "max": 0.591,
+        "at25": 1,
+        "at50": 1,
+        "at75": 0
+      },
+      "combined": {
+        "n": 2,
+        "mean": 0.296,
+        "median": 0.296,
+        "min": 0.0,
+        "max": 0.591,
+        "at25": 1,
+        "at50": 1,
+        "at75": 0
+      },
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 0,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 3
+        },
+        "faces": {
+          "RESOLVABLE": 3,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 0
+        }
+      }
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+      "room_type": "master_bedroom",
+      "elapsed_s": 190.6,
+      "bytes": 0,
+      "validity": {
+        "VALID": 0,
+        "OUT_OF_RANGE": 0,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 0,
+      "elements": 0,
+      "scores": [],
+      "missed_truths": 8,
+      "detection": {
+        "found": 0,
+        "truths": 8,
+        "recall": 0.0,
+        "unmatched_preds": 0
+      },
+      "geometry": {
+        "n": 0,
+        "mean": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "at25": 0,
+        "at50": 0,
+        "at75": 0
+      },
+      "combined": {
+        "n": 8,
+        "mean": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "at25": 0,
+        "at50": 0,
+        "at75": 0
+      },
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 0,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 0
+        },
+        "faces": {
+          "RESOLVABLE": 0,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 0
+        }
+      }
+    },
+    {
+      "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+      "room_type": "living_room",
+      "elapsed_s": 191.27,
+      "bytes": 0,
+      "validity": {
+        "VALID": 0,
+        "OUT_OF_RANGE": 0,
+        "INVERTED": 0,
+        "ZERO_AREA": 0,
+        "MISSING": 0,
+        "MALFORMED": 0
+      },
+      "repairable": 0,
+      "elements": 0,
+      "scores": [],
+      "missed_truths": 11,
+      "detection": {
+        "found": 0,
+        "truths": 11,
+        "recall": 0.0,
+        "unmatched_preds": 0
+      },
+      "geometry": {
+        "n": 0,
+        "mean": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "at25": 0,
+        "at50": 0,
+        "at75": 0
+      },
+      "combined": {
+        "n": 11,
+        "mean": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "at25": 0,
+        "at50": 0,
+        "at75": 0
+      },
+      "relationships": {
+        "against": {
+          "RESOLVABLE": 0,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 0
+        },
+        "faces": {
+          "RESOLVABLE": 0,
+          "CAMERA_RELATIVE": 0,
+          "EMPTY": 0,
+          "UNKNOWN": 0
+        }
+      }
+    }
+  ],
+  "dino": {
+    "per_image": [
+      {
+        "image": "data/projects/proj_553cb09794/analysis/moodboard_room_living_room.png",
+        "scores": [
+          0.9196078431372549,
+          0.8448504567638594,
+          0.8332793259883344,
+          0.7832744405182568,
+          0.6999769744416302,
+          0.29132231404958675
+        ],
+        "missed_truths": 1,
+        "detection": {
+          "found": 6,
+          "truths": 7,
+          "recall": 0.857,
+          "unmatched_preds": 4
+        },
+        "geometry": {
+          "n": 6,
+          "mean": 0.729,
+          "median": 0.808,
+          "min": 0.291,
+          "max": 0.92,
+          "at25": 6,
+          "at50": 5,
+          "at75": 4
+        },
+        "combined": {
+          "n": 7,
+          "mean": 0.625,
+          "median": 0.783,
+          "min": 0.0,
+          "max": 0.92,
+          "at25": 6,
+          "at50": 5,
+          "at75": 4
+        },
+        "boxes": 10,
+        "elapsed_s": 2.857,
+        "peak_vram_mb": 2027.2,
+        "mean_confidence": 0.497
+      },
+      {
+        "image": "data/projects/proj_553cb09794/analysis/moodboard_room_kitchen.png",
+        "scores": [
+          0.7514290982850821,
+          0.6485842815559671,
+          0.34190949375587487,
+          0.15037243947858472
+        ],
+        "missed_truths": 4,
+        "detection": {
+          "found": 4,
+          "truths": 8,
+          "recall": 0.5,
+          "unmatched_preds": 12
+        },
+        "geometry": {
+          "n": 4,
+          "mean": 0.473,
+          "median": 0.495,
+          "min": 0.15,
+          "max": 0.751,
+          "at25": 3,
+          "at50": 2,
+          "at75": 1
+        },
+        "combined": {
+          "n": 8,
+          "mean": 0.237,
+          "median": 0.075,
+          "min": 0.0,
+          "max": 0.751,
+          "at25": 3,
+          "at50": 2,
+          "at75": 1
+        },
+        "boxes": 17,
+        "elapsed_s": 1.021,
+        "peak_vram_mb": 2027.1,
+        "mean_confidence": 0.374
+      },
+      {
+        "image": "data/projects/proj_553cb09794/analysis/moodboard_room_bathroom.png",
+        "scores": [
+          0.9374855376299299
+        ],
+        "missed_truths": 1,
+        "detection": {
+          "found": 1,
+          "truths": 2,
+          "recall": 0.5,
+          "unmatched_preds": 6
+        },
+        "geometry": {
+          "n": 1,
+          "mean": 0.937,
+          "median": 0.937,
+          "min": 0.937,
+          "max": 0.937,
+          "at25": 1,
+          "at50": 1,
+          "at75": 1
+        },
+        "combined": {
+          "n": 2,
+          "mean": 0.469,
+          "median": 0.469,
+          "min": 0.0,
+          "max": 0.937,
+          "at25": 1,
+          "at50": 1,
+          "at75": 1
+        },
+        "boxes": 9,
+        "elapsed_s": 1.026,
+        "peak_vram_mb": 2027.1,
+        "mean_confidence": 0.368
+      },
+      {
+        "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_master_bedroom.png",
+        "scores": [
+          0.9610259260974969,
+          0.931610911380578,
+          0.7546174142480211,
+          0.7268344938403857,
+          0.7152317880794702,
+          0.6320630749014454
+        ],
+        "missed_truths": 2,
+        "detection": {
+          "found": 6,
+          "truths": 8,
+          "recall": 0.75,
+          "unmatched_preds": 7
+        },
+        "geometry": {
+          "n": 6,
+          "mean": 0.787,
+          "median": 0.741,
+          "min": 0.632,
+          "max": 0.961,
+          "at25": 6,
+          "at50": 6,
+          "at75": 3
+        },
+        "combined": {
+          "n": 8,
+          "mean": 0.59,
+          "median": 0.721,
+          "min": 0.0,
+          "max": 0.961,
+          "at25": 6,
+          "at50": 6,
+          "at75": 3
+        },
+        "boxes": 14,
+        "elapsed_s": 0.955,
+        "peak_vram_mb": 2027.1,
+        "mean_confidence": 0.501
+      },
+      {
+        "image": "data/archive/proj_5db681f48c/moodboard/moodboard_room_living_room.png",
+        "scores": [
+          0.8266365864094286,
+          0.7997418653624074,
+          0.7894736842105263,
+          0.7657058388765706,
+          0.7359691417550627,
+          0.7083485235144003,
+          0.6343042071197411,
+          0.5573248407643312,
+          0.5417170495767836,
+          0.09036144578313253
+        ],
+        "missed_truths": 1,
+        "detection": {
+          "found": 10,
+          "truths": 11,
+          "recall": 0.909,
+          "unmatched_preds": 6
+        },
+        "geometry": {
+          "n": 10,
+          "mean": 0.645,
+          "median": 0.722,
+          "min": 0.09,
+          "max": 0.827,
+          "at25": 9,
+          "at50": 9,
+          "at75": 4
+        },
+        "combined": {
+          "n": 11,
+          "mean": 0.586,
+          "median": 0.708,
+          "min": 0.0,
+          "max": 0.827,
+          "at25": 9,
+          "at50": 9,
+          "at75": 4
+        },
+        "boxes": 18,
+        "elapsed_s": 1.03,
+        "peak_vram_mb": 2027.1,
+        "mean_confidence": 0.531
+      }
+    ],
+    "detection": {
+      "found": 27,
+      "truths": 36,
+      "recall": 0.75,
+      "unmatched_preds": 35
+    },
+    "geometry": {
+      "n": 27,
+      "mean": 0.68,
+      "median": 0.736,
+      "min": 0.09,
+      "max": 0.961,
+      "at25": 25,
+      "at50": 23,
+      "at75": 13
+    },
+    "combined": {
+      "n": 36,
+      "mean": 0.51,
+      "median": 0.674,
+      "min": 0.0,
+      "max": 0.961,
+      "at25": 25,
+      "at50": 23,
+      "at75": 13
+    },
+    "peak_vram_mb": 2027.2,
+    "avg_s": 1.38
+  },
+  "errors": [
+    "512px kitchen: OllamaError: phase0d: response is not JSON (Expecting value: line 936 column 23 (char 23960))",
+    "512px living_room: OllamaError: phase0d: response is not JSON (Unterminated string starting at: line 897 column 16 (char 22587))",
+    "768px master_bedroom: OllamaError: phase0d: response is not JSON (Expecting property name enclosed in double quotes: line 950 column 36 (char 22421))",
+    "768px living_room: OllamaError: phase0d: response is not JSON (Expecting value: line 979 column 29 (char 22823))",
+    "1024px living_room: OllamaError: phase0d: response is not JSON (Unterminated string starting at: line 911 column 16 (char 23006))",
+    "prompt B kitchen: OllamaError: phase0d: response is not JSON (Expecting value: line 919 column 7 (char 24001))",
+    "prompt B living_room: OllamaError: phase0d: response is not JSON (Expecting value: line 942 column 14 (char 23493))",
+    "prompt C kitchen: OllamaError: phase0d: response is not JSON (Unterminated string starting at: line 897 column 16 (char 24754))"
+  ]
+}

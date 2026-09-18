@@ -16,6 +16,7 @@ from pydantic import BaseModel
 
 from ..scene.schema import Opening, OpeningType, Scene, SceneObject
 from . import geometry as geo
+from .wall_geometry import object_wall_collides
 
 # A person needs this much clear space in front of / behind a door.
 DOOR_CLEARANCE_DEPTH = 0.75
@@ -95,10 +96,10 @@ def validate_object(scene: Scene, obj: SceneObject) -> list[Violation]:
             )
             break
 
-    # H2 — wall intersection (openings do not exempt furniture)
+    # H2 — wall intersection (openings do not exempt furniture). Height-aware
+    # since P5: a vertical wall gives exactly the old single-rectangle test.
     for wall in scene.walls:
-        rect = geo.wall_rectangle(wall.start, wall.end, wall.thickness)
-        if geo.convex_polygons_overlap(footprint, rect):
+        if object_wall_collides(obj, wall):
             violations.append(
                 Violation(
                     code="COLLIDES_WALL",

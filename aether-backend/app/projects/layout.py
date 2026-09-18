@@ -44,7 +44,13 @@ CHECKPOINTS = {
     "scene_reading": "planning/scene_reading.json",
     "object_plan": "planning/object_plan.json",
     "asset_plan": "planning/asset_plan.json",
+    # The client's own reference photos, classified into typed design intent.
+    "design_intent": "planning/design_intent.json",
     "scene_spec": "planning/scene_spec.json",
+    # Repair / intent-evaluation / consistency summary of the committed scene.
+    "spatial_check": "planning/spatial_check.json",
+    # Did the references' visual attributes survive into the committed scene?
+    "visual_intent_fidelity": "planning/visual_intent_fidelity.json",
     "build_manifest": "blender/build_manifest.json",
     "scene_blend": "blender/scene.blend",
     "validation_report": "blender/validation_report.json",

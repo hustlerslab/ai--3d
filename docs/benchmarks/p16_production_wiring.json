@@ -1,0 +1,178 @@
+{
+  "_about": "One real reference image through the real production API with live Gemini and real Blender. Isolated data dir, real asset registry.",
+  "blender": {
+    "blend_bytes": 12156890,
+    "file_status": {
+      "blend": 200,
+      "manifest": 200,
+      "preview": 200
+    },
+    "files": {
+      "blend": "/files/projects/proj_e6b5a80307/blender/scene.blend",
+      "manifest": "/files/projects/proj_e6b5a80307/blender/build_manifest.json",
+      "preview": "/files/projects/proj_e6b5a80307/previews/build_preview.png"
+    },
+    "ran": true,
+    "report_keys": [
+      "blender",
+      "counts",
+      "errors",
+      "objects",
+      "ok",
+      "stages",
+      "warnings"
+    ]
+  },
+  "design_intent": {
+    "intents": [
+      {
+        "attributes": {
+          "color_words": [
+            "sage green",
+            "dark brown"
+          ],
+          "frame_finish": "dark wood",
+          "pattern": "tufted",
+          "style_descriptors": [
+            "mid-century modern",
+            "contemporary"
+          ],
+          "upholstery": "fabric",
+          "visual_descriptors": [
+            "tufted back",
+            "tufted seat",
+            "wooden armrests",
+            "crossed side panels",
+            "straight legs"
+          ]
+        },
+        "from_input": "in_cfe1902649",
+        "intent_id": "di_1cc56006607dcbec",
+        "object_category": "sofa",
+        "reference_class": "exact_object"
+      }
+    ],
+    "reference_ids": [
+      "in_cfe1902649"
+    ],
+    "unread": []
+  },
+  "manifest": {
+    "described": [
+      {
+        "asset": "glb",
+        "color": "#7FA695",
+        "finish": {
+          "frame_finish": "dark wood",
+          "frame_material": "veneer_oak",
+          "material_regions": 1,
+          "reason": "the asset has a single material region; a frame finish would repaint the whole piece",
+          "roughness": null,
+          "source": "stated",
+          "state": "metadata_only"
+        },
+        "id": "obj_8a26302ca8",
+        "material_overrides": {
+          "primary": "fabric_linen"
+        },
+        "semantic_type": "sofa"
+      }
+    ],
+    "finish_states": {
+      "metadata_only": 1
+    },
+    "objects": 6,
+    "objects_with_finish": 1,
+    "scene_id": "scene_f605d7cbba"
+  },
+  "model": "gemini-3.5-flash-lite",
+  "plan_result": {
+    "hard_violations": 0,
+    "objects": 6,
+    "rooms": 1,
+    "scene_id": "scene_f605d7cbba",
+    "scene_version": 1,
+    "unresolved_intents": []
+  },
+  "project_id": "proj_e6b5a80307",
+  "provider_mode": "live",
+  "reference": "ref_07.jpeg",
+  "reference_input_ids": [
+    "in_cfe1902649"
+  ],
+  "scene": {
+    "objects": 6,
+    "objects_traceable_to_a_reference": 1,
+    "rooms": 1,
+    "traced": [
+      {
+        "asset_id": "ph_sofa_02",
+        "color": "#7FA695",
+        "material_overrides": {
+          "primary": "fabric_linen"
+        },
+        "object_id": "obj_8a26302ca8",
+        "semantic_type": "sofa",
+        "visual": {
+          "color_words": [
+            "dark brown",
+            "sage green"
+          ],
+          "descriptors": [
+            "contemporary",
+            "mid-century modern",
+            "crossed side panels",
+            "straight legs",
+            "tufted back",
+            "tufted seat",
+            "wooden armrests"
+          ],
+          "frame_finish": "dark wood",
+          "material": "",
+          "pattern": "tufted",
+          "source_intent_ids": [
+            "di_1cc56006607dcbec"
+          ],
+          "upholstery": "fabric"
+        }
+      }
+    ]
+  },
+  "scene_id": "scene_f605d7cbba",
+  "stack": {
+    "asset_generation": "meshy",
+    "executor": "blender",
+    "spatial": "allure",
+    "vision": "gemini"
+  },
+  "stages": [
+    {
+      "rejected": [],
+      "seconds": 0.06,
+      "stage": "upload",
+      "status": "OK"
+    },
+    {
+      "error": "",
+      "job_id": "job_12251a05ff",
+      "seconds": 6.21,
+      "stage": "analyze",
+      "status": "SUCCEEDED"
+    },
+    {
+      "error": "",
+      "job_id": "job_c080bb46b9",
+      "seconds": 6.48,
+      "stage": "scene_plan",
+      "status": "SUCCEEDED"
+    },
+    {
+      "error": "",
+      "job_id": "job_19c7110bed",
+      "seconds": 12.72,
+      "stage": "build",
+      "status": "SUCCEEDED"
+    }
+  ],
+  "total_seconds": 25.47
+}

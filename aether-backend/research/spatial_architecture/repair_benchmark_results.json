@@ -1,0 +1,265 @@
+{
+  "_about": "P4.8/P4.9 adversarial repair benchmark - synthetic ground truth. See repair_benchmark.py module docstring for the 18-case subset covered.",
+  "cases_total": 12,
+  "cases_passed": 12,
+  "all_pass": true,
+  "results": [
+    {
+      "case": "1_object_object_collision",
+      "expected_terminal": "REPAIRED",
+      "measured_terminal": "REPAIRED",
+      "hard_before": 2,
+      "hard_after": 0,
+      "escalation_level": 1,
+      "nodes_explored": 51,
+      "latency_ms": 8.68,
+      "records": [
+        {
+          "level": 1,
+          "type": "LOCAL_NUDGE",
+          "subject": "b",
+          "target": null,
+          "cause": "COLLIDES_OBJECT",
+          "outcome": "MOVED"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "2_object_wall_collision",
+      "expected_terminal": "REPAIRED",
+      "measured_terminal": "REPAIRED",
+      "hard_before": 2,
+      "hard_after": 0,
+      "escalation_level": 1,
+      "nodes_explored": 43,
+      "latency_ms": 11.65,
+      "records": [
+        {
+          "level": 1,
+          "type": "LOCAL_NUDGE",
+          "subject": "a",
+          "target": null,
+          "cause": "COLLIDES_WALL",
+          "outcome": "MOVED"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "3_insufficient_clearance_soft_not_repaired",
+      "expected_terminal": "ALREADY_VALID",
+      "measured_terminal": "ALREADY_VALID",
+      "hard_before": 0,
+      "hard_after": 0,
+      "escalation_level": 0,
+      "nodes_explored": 0,
+      "latency_ms": 0.36,
+      "records": [],
+      "pass": true
+    },
+    {
+      "case": "4_blocked_circulation",
+      "expected_terminal": "REPAIRED",
+      "measured_terminal": "REPAIRED",
+      "hard_before": 1,
+      "hard_after": 0,
+      "escalation_level": 3,
+      "nodes_explored": 1,
+      "latency_ms": 18630.29,
+      "records": [
+        {
+          "level": 3,
+          "type": "BOUNDED_LOCAL_BACKTRACK",
+          "subject": "barrier",
+          "target": null,
+          "cause": "CIRCULATION",
+          "outcome": "MOVED"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "5_blocked_doorway",
+      "expected_terminal": "REPAIRED",
+      "measured_terminal": "REPAIRED",
+      "hard_before": 1,
+      "hard_after": 0,
+      "escalation_level": 1,
+      "nodes_explored": 49,
+      "latency_ms": 7.72,
+      "records": [
+        {
+          "level": 1,
+          "type": "LOCAL_NUDGE",
+          "subject": "blocker",
+          "target": null,
+          "cause": "BLOCKS_DOOR",
+          "outcome": "MOVED"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "7_wrong_orientation_no_hard_violation",
+      "expected_terminal": "ALREADY_VALID",
+      "measured_terminal": "ALREADY_VALID",
+      "hard_before": 0,
+      "hard_after": 0,
+      "escalation_level": 0,
+      "nodes_explored": 0,
+      "latency_ms": 0.06,
+      "records": [],
+      "pass": true
+    },
+    {
+      "case": "8_competing_wall_anchors",
+      "expected_terminal": "REPAIRED",
+      "measured_terminal": "REPAIRED",
+      "hard_before": 3,
+      "hard_after": 0,
+      "escalation_level": 1,
+      "nodes_explored": 38,
+      "latency_ms": 6.28,
+      "records": [
+        {
+          "level": 1,
+          "type": "LOCAL_NUDGE",
+          "subject": "b",
+          "target": null,
+          "cause": "COLLIDES_OBJECT",
+          "outcome": "MOVED"
+        },
+        {
+          "level": 1,
+          "type": "LOCAL_NUDGE",
+          "subject": "a",
+          "target": null,
+          "cause": "COLLIDES_WALL",
+          "outcome": "MOVED"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "10_repair_must_not_create_second_violation",
+      "expected_terminal": null,
+      "measured_terminal": "REPAIRED",
+      "hard_before": 1,
+      "hard_after": 0,
+      "escalation_level": 3,
+      "nodes_explored": 3,
+      "latency_ms": 11.75,
+      "records": [
+        {
+          "level": 3,
+          "type": "BOUNDED_LOCAL_BACKTRACK",
+          "subject": "b",
+          "target": null,
+          "cause": "COLLIDES_WALL",
+          "outcome": "MOVED"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "11_impossible_scene",
+      "expected_terminal": null,
+      "measured_terminal": "UNREPAIRABLE",
+      "hard_before": 2,
+      "hard_after": 2,
+      "escalation_level": 0,
+      "nodes_explored": 0,
+      "latency_ms": 63.78,
+      "records": [
+        {
+          "level": 0,
+          "type": "NONE",
+          "subject": "a",
+          "target": "b",
+          "cause": "COLLIDES_OBJECT",
+          "outcome": "ESCALATE"
+        },
+        {
+          "level": 0,
+          "type": "NONE",
+          "subject": "b",
+          "target": "a",
+          "cause": "COLLIDES_OBJECT",
+          "outcome": "ESCALATE"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "12_duplicate_object",
+      "expected_terminal": "UPSTREAM_REQUIRED",
+      "measured_terminal": "UPSTREAM_REQUIRED",
+      "hard_before": 2,
+      "hard_after": 2,
+      "escalation_level": 0,
+      "nodes_explored": 0,
+      "latency_ms": 1.0,
+      "records": [
+        {
+          "level": 0,
+          "type": "CLASSIFY_UNREPAIRABLE",
+          "subject": "a",
+          "target": "b",
+          "cause": "COLLIDES_OBJECT",
+          "outcome": "UPSTREAM_REQUIRED"
+        },
+        {
+          "level": 0,
+          "type": "CLASSIFY_UNREPAIRABLE",
+          "subject": "b",
+          "target": "a",
+          "cause": "COLLIDES_OBJECT",
+          "outcome": "UPSTREAM_REQUIRED"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "15_multi_object_cascading",
+      "expected_terminal": null,
+      "measured_terminal": "REPAIRED",
+      "hard_before": 3,
+      "hard_after": 0,
+      "escalation_level": 1,
+      "nodes_explored": 58,
+      "latency_ms": 9.8,
+      "records": [
+        {
+          "level": 1,
+          "type": "LOCAL_NUDGE",
+          "subject": "b",
+          "target": null,
+          "cause": "COLLIDES_OBJECT",
+          "outcome": "MOVED"
+        },
+        {
+          "level": 1,
+          "type": "LOCAL_NUDGE",
+          "subject": "c",
+          "target": null,
+          "cause": "COLLIDES_OBJECT",
+          "outcome": "MOVED"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "case": "18_global_search_not_invoked_trivially",
+      "expected_terminal": "ALREADY_VALID",
+      "measured_terminal": "ALREADY_VALID",
+      "hard_before": 0,
+      "hard_after": 0,
+      "escalation_level": 0,
+      "nodes_explored": 0,
+      "latency_ms": 0.06,
+      "records": [],
+      "pass": true
+    }
+  ]
+}
