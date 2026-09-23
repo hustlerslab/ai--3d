@@ -25,8 +25,11 @@ import httpx
 from ...assets import pipeline as asset_pipeline
 from ...assets.schema import AssetSource, IngestMeta
 from ...core.config import Settings, get_settings
+from ...spend import check_budget, record_spend
+from .generate_elements import CREDITS_PER_PIECE
 from ...intelligence import AssetPlan
 from ...intelligence.schema import AssetDecision
+from ...projects.layout import file_url
 from ...providers import meshy
 from ...scene.patches import Patch, PatchError, ReplaceAssetOp, commit_patch
 from ...scene.store import get_store
@@ -99,6 +102,9 @@ async def _generate_one(
 
     dest = ctx.path(_glb_rel(decision.object_key))
     await meshy.download_glb(client, model.glb_url, dest)
+    # P1-ASSET-004: the preview lives beside the mesh, never as a vendor URL.
+    thumb_rel = _glb_rel(decision.object_key)[:-4] + ".thumb.png"
+    thumbnail = await meshy.download_thumbnail(client, model.thumbnail_url, ctx.path(thumb_rel))
 
     # The same ingestion every other model goes through: parse, measure,
     # normalize to the decision's target size, validate, register.
@@ -119,7 +125,7 @@ async def _generate_one(
                 license=meshy.LICENSE,
                 license_url=meshy.LICENSE_URL,
                 creator="Meshy",
-                thumbnail_url=model.thumbnail_url,
+                thumbnail_url=file_url(ctx.project_id, thumb_rel) if thumbnail else "",
             ),
         ),
     )
@@ -134,6 +140,12 @@ async def _generate_one(
         # piece on every future run, stranding the stand-in with no retry.
         dest.unlink(missing_ok=True)
         raise meshy.MeshyError(f"generated model failed ingest validation: {why}")
+    why = asset_pipeline.persisted(record, dest)
+    if why:
+        # P1-ASSET-004: no checkpoint until the bytes are ours; the piece is
+        # retried and downloaded again while the vendor still has the file.
+        dest.unlink(missing_ok=True)
+        raise meshy.MeshyError(f"mesh not persisted: {why}")
 
     ctx.mark_checkpoint(_glb_rel(decision.object_key))
     return record.asset_id, model.credits
@@ -156,6 +168,15 @@ async def _run(ctx: JobContext, todo: list[AssetDecision], settings: Settings) -
             try:
                 asset_id, spent = await _generate_one(client, ctx, decision, settings)
                 credits += spent
+                # Written the moment the provider confirms, not at the end of
+                # the batch: a crash in between would lose money genuinely
+                # spent, and a limit that forgets charges is not a limit.
+                record_spend(
+                    ctx.project_id, spent,
+                    user_id=ctx.job.created_by or None,
+                    job_id=ctx.job.job_id,
+                    item_key=decision.object_key,
+                )
                 generated[decision.object_key] = asset_id
                 ctx.emit("generate.done", f"{decision.object_key} -> {asset_id} ({spent} credit(s))")
             except meshy.MeshyOutOfCredits as exc:
@@ -194,6 +215,30 @@ def generate_assets(ctx: JobContext) -> dict[str, Any]:
     if not todo:
         ctx.emit("generate.skip", "no pieces are waiting on generation")
         return {"generated": {}, "warnings": [], "credits": 0, "replaced": 0}
+
+    # P0-SEC-003. `limit` caps this ONE job and resets with the next; this caps
+    # the project and the user for good, read from the persisted ledger.
+    budget = check_budget(
+        ctx.project_id,
+        ctx.job.created_by or None,
+        pieces=len(todo),
+        credits_per_piece=CREDITS_PER_PIECE,
+        project_cap=settings.meshy_max_credits_per_project,
+        user_cap=settings.meshy_max_credits_per_user,
+    )
+    capped = 0
+    if budget.blocked:
+        capped = len(todo) - budget.allowed
+        todo = todo[:budget.allowed]
+        ctx.emit(
+            "generate.capped",
+            f"spend cap reached: {capped} piece(s) held back. {budget.reason}. "
+            "The plan and every asset already placed are untouched.",
+            status="warning",
+        )
+        if not todo:
+            return {"generated": {}, "warnings": [f"spend cap reached: {budget.reason}"],
+                    "credits": 0, "replaced": 0, "held_by_spend_cap": capped}
 
     ctx.emit("generate.start", f"{len(todo)} piece(s) to generate, mode={settings.meshy_mode}")
     result = asyncio.run(_run(ctx, todo, settings))
@@ -235,4 +280,6 @@ def generate_assets(ctx: JobContext) -> dict[str, Any]:
         f"{len(generated)} generated, {replaced} placed, {result['credits']} credit(s) spent"
         + (f", {len(result['warnings'])} warning(s)" if result["warnings"] else ""),
     )
-    return {**result, "replaced": replaced}
+    return {**result, "replaced": replaced, "held_by_spend_cap": capped,
+            "project_credits_spent": budget.project_spent + result["credits"],
+            "project_credit_cap": budget.project_cap}

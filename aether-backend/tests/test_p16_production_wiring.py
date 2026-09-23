@@ -19,6 +19,8 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
+
+from tests.conftest import sign_in_admin
 from PIL import Image
 
 from app.jobs import get_runner
@@ -35,7 +37,7 @@ def client(env):
     from app.main import app
 
     with TestClient(app) as c:
-        yield c
+        yield sign_in_admin(c)
 
 
 def _jpeg(color=(150, 160, 140)) -> bytes:
@@ -466,20 +468,43 @@ def test_the_gemini_key_never_travels_in_the_url(monkeypatch):
 
 
 def test_each_job_logs_the_ids_needed_to_trace_one_generation(client, caplog):
+    """P0-OBSERVABILITY-001 moved these ids from the message string into
+    structured fields, so this asserts the fields and the rendered JSON rather
+    than matching substrings. Same two claims, checked against the real
+    mechanism - plus correlation_id, which the string form could not express.
+    """
+    import json
     import logging
+
+    from app.core.logging import JsonFormatter
 
     caplog.set_level(logging.INFO, logger="aether.jobs")
     pid, scene_id = _planned(client)
 
-    lines = [r.getMessage() for r in caplog.records if r.name == "aether.jobs"]
-    started = [m for m in lines if m.startswith("job.start")]
-    done = [m for m in lines if m.startswith("job.succeeded")]
+    records = [r for r in caplog.records if r.name == "aether.jobs"]
+    started = [r for r in records if r.getMessage() == "job.start"]
+    done = [r for r in records if r.getMessage() == "job.succeeded"]
 
-    assert any("type=scene_plan" in m and f"project={pid}" in m for m in started)
-    assert any(f"scene_id={scene_id}" in m for m in done), "the scene id is not traceable in logs"
+    assert any(getattr(r, "type", None) == "scene_plan" for r in started)
+    assert any(getattr(r, "scene_id", None) == scene_id for r in done),         "the scene id is not traceable in logs"
+
+    # Every line renders as JSON carrying the four correlation fields.
+    formatter = JsonFormatter()
+    for record in records:
+        payload = json.loads(formatter.format(record))
+        for field in ("correlation_id", "project_id", "job_id", "stage"):
+            assert field in payload, f"{field} missing from a job log line"
+
+    # A job line must NAME the project it belongs to. The record factory
+    # stamps this at creation on the runner's thread, so it is a real record
+    # attribute here rather than something reconstructed at format time.
+    assert any(getattr(r, "project_id", "") == pid for r in records),         "no job log line carries the project id"
+    assert any(getattr(r, "correlation_id", "") for r in records),         "no job log line carries a correlation id"
+
     # ids only: no brief text, no prompt, no key
-    for message in lines:
-        assert BRIEF[:40] not in message
+    for record in records:
+        rendered = formatter.format(record)
+        assert BRIEF[:40] not in rendered
 
 
 def test_the_provider_mode_is_reported_honestly(client):

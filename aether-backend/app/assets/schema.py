@@ -79,6 +79,22 @@ class AssetRecord(BaseModel):
     # offering it to the next project would silently put one client's
     # furniture in another's home. Reached by id instead, deliberately.
     project_id: str = ""
+    # P1-IDENTITY-004. Which ELEMENT this mesh was generated for, and which
+    # uploaded image the crop came from. Without these the library can hold a
+    # mesh that cost 30 credits and be unable to say what it is of, so the only
+    # way to find out is to look at it.
+    #
+    # `canonical_element_id`, not `element_id`: the value is the CANONICAL key
+    # (`room|type|dims-bucket|material|colour` hashed), so three bar stools
+    # share one asset. Naming it `element_id` would invite somebody to store a
+    # per-occurrence id here, which is exactly the mistake that made three
+    # stools three purchases.
+    #
+    # Both default to "" so every record already in registry.json loads
+    # unchanged. Empty means "not recorded", never "no element" - a Poly Haven
+    # download legitimately has neither.
+    canonical_element_id: str = ""
+    source_image_id: str = ""
 
     @property
     def valid(self) -> bool:
@@ -105,3 +121,8 @@ class IngestMeta(BaseModel):
     # offering it to the next project would silently put one client's
     # furniture in another's home. Reached by id instead, deliberately.
     project_id: str = ""
+    # P1-IDENTITY-004. Carried through to the record so the library can answer
+    # "which element is this mesh for" without re-deriving it. Both optional:
+    # a Poly Haven download has neither, and an upload may have neither.
+    canonical_element_id: str = ""
+    source_image_id: str = ""

@@ -1,0 +1,135 @@
+{
+  "proj_553cb09794": {
+    "index": {
+      "elements": 0,
+      "instances": 0,
+      "placed": 0
+    },
+    "coverage": {
+      "objects": 14,
+      "origins": {
+        "moodboard_element": 14
+      },
+      "terminus": {
+        "source_image": 7,
+        "moodboard": 7
+      },
+      "traced_to_element": 0,
+      "traced_to_scene_element": 14,
+      "reached_moodboard": 14,
+      "reached_source_image_exact": 1,
+      "reached_source_image_via_moodboard": 6,
+      "complete": 14,
+      "gaps": {}
+    }
+  },
+  "proj_a25a006c88": {
+    "index": {
+      "elements": 9,
+      "instances": 9,
+      "placed": 9
+    },
+    "coverage": {
+      "objects": 11,
+      "origins": {
+        "moodboard_element": 11
+      },
+      "terminus": {
+        "moodboard": 11
+      },
+      "traced_to_element": 9,
+      "traced_to_scene_element": 11,
+      "reached_moodboard": 11,
+      "reached_source_image_exact": 0,
+      "reached_source_image_via_moodboard": 0,
+      "complete": 9,
+      "gaps": {
+        "instance": 2
+      }
+    },
+    "example_incomplete": {
+      "project_id": "proj_a25a006c88",
+      "scene_object_id": "obj_70dfaa853b",
+      "origin": "moodboard_element",
+      "complete": false,
+      "gaps": [
+        "instance"
+      ],
+      "terminus": "moodboard",
+      "hops": [
+        {
+          "hop": "blender_object",
+          "resolved": true,
+          "gap": false,
+          "id": "obj_70dfaa853b",
+          "note": "",
+          "detail": {
+            "manifest_version": "1.1",
+            "name": "oak tv unit"
+          }
+        },
+        {
+          "hop": "scene_object",
+          "resolved": true,
+          "gap": false,
+          "id": "obj_70dfaa853b",
+          "note": "identity read from plan_key join (scene_spec predates P1-IDENTITY-002)",
+          "detail": {
+            "semantic_type": "tv_unit",
+            "room_id": "living_room",
+            "name": "oak tv unit",
+            "asset_id": "el_5a006c88_living_room_tv_unit__oak_and_fabric_d6bc99",
+            "plan_key": "living_room.tv_unit.0",
+            "instance_id": null
+          }
+        },
+        {
+          "hop": "instance",
+          "resolved": false,
+          "gap": true,
+          "id": "",
+          "note": "the reading resolved definitions but none covers this element",
+          "detail": {}
+        },
+        {
+          "hop": "scene_element",
+          "resolved": true,
+          "gap": false,
+          "id": "el_faae211b0c",
+          "note": "",
+          "detail": {
+            "name": "oak tv unit",
+            "crop_ref": "planning/scene_crops/living_room/02_oak_tv_unit.png",
+            "crop_url": "/files/projects/proj_a25a006c88/planning/scene_crops/living_room/02_oak_tv_unit.png",
+            "asset_id": "el_5a006c88_living_room_tv_unit__oak_and_fabric_d6bc99",
+            "approved": true,
+            "check": "mismatch"
+          }
+        },
+        {
+          "hop": "moodboard",
+          "resolved": true,
+          "gap": false,
+          "id": "living_room",
+          "note": "",
+          "detail": {
+            "url": "/files/projects/proj_a25a006c88/analysis/moodboard_room_living_room.png",
+            "reference_resolved": false,
+            "reference_note": "no photo of this room's own pieces; painted from the brief and style"
+          }
+        },
+        {
+          "hop": "design_intent",
+          "resolved": false,
+          "gap": false,
+          "id": "",
+          "note": "plan item living_room.tv_unit.0 lists no source_intent_ids \u2014 this piece came from the moodboard reading, not from a classified reference photo",
+          "detail": {
+            "intents": []
+          }
+        }
+      ],
+      "source_images": []
+    }
+  }
+}

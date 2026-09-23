@@ -724,12 +724,29 @@ def _ordered(plan: ObjectPlan) -> list[ObjectPlanItem]:
     return ordered
 
 
-def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[list[AddObjectOp], list[str]]:
+def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan, *,
+                  reading=None) -> tuple[list[AddObjectOp], list[str]]:
+    """Place every planned item, carrying element identity onto each object.
+
+    `reading` is optional and keyword-only so the nine existing call sites keep
+    working untouched. When it IS supplied, the plan's `count` is checked
+    against how many occurrences of that element the approved reading actually
+    holds, and any divergence is warned about rather than tolerated: planning
+    four stools from a picture showing two is a decision somebody should see,
+    not something to discover at the point of paying for four meshes.
+    """
     working = scene.model_copy(deep=True)
     ops: list[AddObjectOp] = []
     warnings: list[str] = []
     placed_by_key: dict[str, SceneObject] = {}
     palette = list(scene.style.palette) if scene.style else []
+
+    # P1-IDENTITY-002: occurrences per element, as READ, not as planned.
+    occurrences: dict[str, int] = {}
+    for element in getattr(reading, "elements", None) or []:
+        key = getattr(element, "element_id", "") or ""
+        if key:
+            occurrences[key] = occurrences.get(key, 0) + 1
 
     for item in _ordered(plan):
         decision = assets.decision(item.object_key)
@@ -743,6 +760,18 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
         dims = tuple(d * s for d, s in zip(decision.dimensions, decision.scale))
         color = _object_color(item, decision, palette)
         placement = item.placement if item.semantic_type != "curtains" else "floor"
+
+        # The divergence check. Only when a reading was supplied AND it knows
+        # this element: a reading that has never seen the element says nothing
+        # about it, and treating silence as "zero occurrences" would warn on
+        # every catalog item the planner legitimately added.
+        if item.element_id and item.element_id in occurrences:
+            read_count = occurrences[item.element_id]
+            if read_count != item.count:
+                warnings.append(
+                    f"{item.object_key}: plan says {item.count}, the approved reading "
+                    f"has {read_count} occurrence(s) of {item.element_id}"
+                )
 
         for n in range(item.count):
             parent: Optional[SceneObject] = None
@@ -815,6 +844,21 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan) -> tuple[li
                         source_strategy=decision.strategy,
                         material_overrides=decision.material_overrides,
                         plan_key=item.object_key if n == 0 else f"{item.object_key}#{n + 1}",
+                        # P1-IDENTITY-002. This is the one place identity was
+                        # lost: `item.element_id` was in scope and unused, so
+                        # three bar stools became three unrelated objects and
+                        # the link back to the element that justified them
+                        # survived only as a join nobody performed.
+                        #
+                        # `instance_id` is DERIVED from element_id and the loop
+                        # index, not resolved from ElementInstance rows
+                        # (design.md TDR-004): resolving them would make
+                        # app/planning import from app/intelligence, crossing a
+                        # boundary app/scene/schema.py exists to keep. Derived
+                        # also means deterministic - two compiles of one plan
+                        # produce identical ids, with no uuid and no clock.
+                        element_id=item.element_id or None,
+                        instance_id=f"{item.element_id}#{n}" if item.element_id else None,
                         parent_id=parent.object_id if parent else None,
                         texture_ref=decision.texture_ref or None,
                         shape=decision.shape or None,

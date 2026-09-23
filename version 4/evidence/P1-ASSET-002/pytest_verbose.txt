@@ -1,0 +1,5 @@
+tests/test_generation_idempotency.py::test_the_key_is_deterministic_for_identical_inputs_and_only_those PASSED [ 25%]
+tests/test_generation_idempotency.py::test_killing_and_restarting_a_generation_job_submits_nothing_more PASSED [ 50%]
+tests/test_generation_idempotency.py::test_a_task_the_vendor_ended_is_resubmitted_and_a_timeout_is_not PASSED [ 75%]
+tests/test_generation_idempotency.py::test_a_mesh_the_ingester_rejects_is_recorded_and_not_resumed PASSED [100%]
+======================== 4 passed, 1 warning in 7.41s =========================

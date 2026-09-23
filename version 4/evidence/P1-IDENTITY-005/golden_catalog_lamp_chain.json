@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "data": {
+    "project_id": "proj_0446d09bca",
+    "scene_object_id": "obj_lamp",
+    "origin": "planner_catalog",
+    "complete": true,
+    "gaps": [],
+    "terminus": "scene_object",
+    "hops": [
+      {
+        "hop": "blender_object",
+        "resolved": true,
+        "gap": false,
+        "id": "obj_lamp",
+        "note": "",
+        "detail": {
+          "manifest_version": "1.2",
+          "name": "floor_lamp"
+        }
+      },
+      {
+        "hop": "scene_object",
+        "resolved": true,
+        "gap": false,
+        "id": "obj_lamp",
+        "note": "carries no element_id and its plan item names none",
+        "detail": {
+          "semantic_type": "floor_lamp",
+          "room_id": "living_room",
+          "name": "",
+          "asset_id": null,
+          "plan_key": "living_room.floor_lamp.0#0",
+          "instance_id": null
+        }
+      }
+    ],
+    "source_images": []
+  }
+}

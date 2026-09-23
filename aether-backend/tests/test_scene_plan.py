@@ -5,6 +5,8 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
+
+from tests.conftest import sign_in_admin
 from PIL import Image
 
 from app.intelligence import InputBundle, StyleSpec
@@ -183,7 +185,7 @@ def client(env):
     from app.main import app
 
     with TestClient(app) as c:
-        yield c
+        yield sign_in_admin(c)
 
 
 def _prepared_project(client, tmp_path) -> str:

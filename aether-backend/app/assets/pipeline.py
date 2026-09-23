@@ -31,6 +31,40 @@ def _relative(path: Path) -> str:
         return str(path)
 
 
+def has_normalized(record: AssetRecord) -> bool:
+    """Are this asset's normalized bytes actually in Allure storage? A record
+    can outlive its file (a restore without assets, a cleaned disk); a record
+    without bytes must never be handed to a scene as "already ours"."""
+    if not record.files.normalized:
+        return False
+    path = get_settings().data_dir / record.files.normalized
+    return path.is_file() and path.stat().st_size > 0
+
+
+def persisted(record: AssetRecord, source_path: Path) -> str:
+    """P1-ASSET-004 - why this asset is NOT safely in Allure storage, or "".
+
+    Meshy keeps generated files for 3 days on non-Enterprise plans, behind
+    signed, time-limited URLs. A purchase is only safe once the bytes are
+    ours, so completion may be recorded only when the downloaded original AND
+    the normalized copy exist here and are non-empty, and nothing on the
+    record still points at a vendor file URL. Callers treat a non-empty
+    answer as "not done": the task stays resumable and a retry downloads
+    again while the window is open, instead of a success that names a file
+    that is not there.
+    """
+    if not source_path.is_file() or source_path.stat().st_size == 0:
+        return f"original missing or empty: {source_path.name}"
+    if not record.files.normalized:
+        return "no normalized copy recorded"
+    if not has_normalized(record):
+        return f"normalized copy missing or empty: {record.files.normalized}"
+    thumb = record.source.thumbnail_url
+    if record.source.provider == "meshy" and thumb.startswith(("http://", "https://")):
+        return f"thumbnail still points at the vendor: {thumb[:60]}"
+    return ""
+
+
 def ingest_file(source_path: Path, meta: IngestMeta) -> AssetRecord:
     """Run the full pipeline on a .glb/.gltf on disk and register the result."""
     registry = get_registry()
@@ -60,6 +94,8 @@ def ingest_file(source_path: Path, meta: IngestMeta) -> AssetRecord:
         price_inr=meta.price_inr,
         color=meta.color,
         project_id=meta.project_id,
+        canonical_element_id=meta.canonical_element_id,
+        source_image_id=meta.source_image_id,
         created_at=datetime.now(timezone.utc).isoformat(),
     )
 

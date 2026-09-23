@@ -13,6 +13,8 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+from tests.conftest import sign_in_admin
+
 from app.providers import meshy
 
 TASK = "01a09084-c443-7771-be68-6329f8e25814"
@@ -23,7 +25,7 @@ def client(env):
     from app.main import app
 
     with TestClient(app) as c:
-        yield c
+        yield sign_in_admin(c)
 
 
 def _client(handler) -> httpx.AsyncClient:

@@ -7,6 +7,7 @@ import time
 from pathlib import Path
 from typing import Any, Optional
 
+from ..core.logging import bind
 from ..projects.layout import CHECKPOINTS, ensure_layout, file_url
 from ..projects.schema import ProjectRecord
 from ..projects.store import ProjectStore
@@ -58,7 +59,13 @@ class JobContext:
         now = time.monotonic()
         duration_ms = int((now - self._stage_started) * 1000)
         self._stage_started = now
-        self.log.info("[%s] %s %s", stage, status, message)
+        # `stage` is bound for THIS line only, then restored. Binding it for
+        # the rest of the job would label every later line with whichever
+        # stage happened to emit last, which is worse than leaving it empty:
+        # a wrong label is read as a fact.
+        with bind(stage=stage):
+            self.log.info(message or status, extra={"status": status,
+                                                    "duration_ms": duration_ms})
         self.jobs.add_event(
             self.project_id, stage, status, message, job_id=self.job.job_id, duration_ms=duration_ms
         )

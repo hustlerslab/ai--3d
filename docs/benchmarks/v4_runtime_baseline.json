@@ -1,0 +1,387 @@
+{
+  "_comment": "P0-QA-003. Every figure carries its own N. A stage measured once is labelled single_observation and is NOT a rate - the figures this replaces were all N=1 and were quoted as though they were rates. Durations are N=3 projects / N=6 runs. Accuracy is N=2 - see accuracy._comment.",
+  "schema_version": "1.0",
+  "captured_at": "2026-09-21T17:41:17Z",
+  "git_sha": "02ca264",
+  "data_dir": "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\g--ALLURE-INTERIOR-ISHANA-Interior-design\\9c0578df-4a5c-4af1-93e9-bcb7da7d1588\\scratchpad\\backup-222927-restored",
+  "measurement": {
+    "projects_measured": [
+      "proj_553cb09794",
+      "proj_seed",
+      "proj_a25a006c88"
+    ],
+    "project_count": 3,
+    "repeats_per_project": 2,
+    "what_was_measured": "A real Blender build per project, driven from each project's existing build_manifest.json. Per-stage figures are DERIVED from build_scene.py's ALLURE_STAGE lines, which are cumulative elapsed times rather than per-stage durations - see stage_durations() and the note in blender_stages_note.",
+    "what_was_not_measured": "Provider stages (analyze, scene_plan) and accuracy scoring are not in this run; both call a vision model and belong to a separate, explicitly-costed measurement."
+  },
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.14.4",
+    "cpu_count": 12,
+    "blender_path": "H:/Program Files/Blender Foundation/Blender 5.2/blender.exe",
+    "intelligence_provider": "gemini",
+    "scene_image_enabled": true,
+    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU, 6144 MiB, 6001 MiB"
+  },
+  "per_project": {
+    "proj_553cb09794": {
+      "name": "Sample reference run",
+      "N": 2,
+      "build_seconds": [
+        39.42,
+        38.39
+      ],
+      "objects": 14,
+      "rooms": 5,
+      "validation_ok": true
+    },
+    "proj_seed": {
+      "name": "Seed Project",
+      "N": 2,
+      "build_seconds": [
+        19.64,
+        15.75
+      ],
+      "objects": 8,
+      "rooms": 2,
+      "validation_ok": true
+    },
+    "proj_a25a006c88": {
+      "name": "test 1",
+      "N": 2,
+      "build_seconds": [
+        35.35,
+        29.42
+      ],
+      "objects": 13,
+      "rooms": 1,
+      "validation_ok": true
+    }
+  },
+  "blender_build_total": {
+    "N": 6,
+    "unit": "seconds",
+    "runs": [
+      39.42,
+      38.39,
+      19.64,
+      15.75,
+      35.35,
+      29.42
+    ],
+    "status": "measured",
+    "mean": 29.66,
+    "median": 32.39,
+    "min": 15.75,
+    "max": 39.42,
+    "stdev": 9.98
+  },
+  "blender_stages_note": "Per-stage DURATIONS. build_scene.py emitted cumulative elapsed times under these names until 2026-09-21, when this benchmark found it: the build handler printed them into the project's event feed as though they were durations, so a build spent almost entirely in `objects` was reported as though `lighting`, `camera` and `save` had each taken seven seconds too. Fixed at source; the stages now sum to the reported total.",
+  "blender_stages": {
+    "camera": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "status": "measured",
+      "mean": 0.0,
+      "median": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "lighting": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        0.01,
+        0.0,
+        0.01,
+        0.01,
+        0.0,
+        0.0
+      ],
+      "status": "measured",
+      "mean": 0.01,
+      "median": 0.01,
+      "min": 0.0,
+      "max": 0.01,
+      "stdev": 0.01
+    },
+    "materials": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        2.35,
+        2.28,
+        0.06,
+        0.05,
+        1.87,
+        0.7
+      ],
+      "status": "measured",
+      "mean": 1.22,
+      "median": 1.29,
+      "min": 0.05,
+      "max": 2.35,
+      "stdev": 1.08
+    },
+    "objects": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        9.55,
+        8.76,
+        0.21,
+        0.16,
+        6.37,
+        5.35
+      ],
+      "status": "measured",
+      "mean": 5.07,
+      "median": 5.86,
+      "min": 0.16,
+      "max": 9.55,
+      "stdev": 4.08
+    },
+    "preview": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        20.14,
+        19.43,
+        13.02,
+        11.12,
+        19.88,
+        17.98
+      ],
+      "status": "measured",
+      "mean": 16.93,
+      "median": 18.7,
+      "min": 11.12,
+      "max": 20.14,
+      "stdev": 3.88
+    },
+    "reset": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        0.19,
+        0.21,
+        0.2,
+        0.2,
+        0.23,
+        0.18
+      ],
+      "status": "measured",
+      "mean": 0.2,
+      "median": 0.2,
+      "min": 0.18,
+      "max": 0.23,
+      "stdev": 0.02
+    },
+    "rooms": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        0.03,
+        0.03,
+        0.04,
+        0.03,
+        0.01,
+        0.01
+      ],
+      "status": "measured",
+      "mean": 0.03,
+      "median": 0.03,
+      "min": 0.01,
+      "max": 0.04,
+      "stdev": 0.01
+    },
+    "save": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        2.06,
+        2.72,
+        0.08,
+        0.07,
+        2.84,
+        0.98
+      ],
+      "status": "measured",
+      "mean": 1.46,
+      "median": 1.52,
+      "min": 0.07,
+      "max": 2.84,
+      "stdev": 1.26
+    },
+    "validate": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        0.0,
+        0.01,
+        0.01,
+        0.01,
+        0.0,
+        0.0
+      ],
+      "status": "measured",
+      "mean": 0.01,
+      "median": 0.01,
+      "min": 0.0,
+      "max": 0.01,
+      "stdev": 0.01
+    },
+    "walls": {
+      "N": 6,
+      "unit": "seconds",
+      "runs": [
+        0.15,
+        0.14,
+        0.06,
+        0.04,
+        0.07,
+        0.03
+      ],
+      "status": "measured",
+      "mean": 0.08,
+      "median": 0.07,
+      "min": 0.03,
+      "max": 0.15,
+      "stdev": 0.05
+    }
+  },
+  "accuracy": {
+    "_comment": "P0-QA-003. N=2, NOT 3: accuracy scores a built scene against the moodboard reading the client approved, and only two projects have one. proj_seed is a hand-authored demo scene that never went through the pipeline, so there is nothing to score it against. Raising this to N=3 needs a third project run end to end from photographs.",
+    "projects_measured": [
+      "proj_553cb09794",
+      "proj_a25a006c88"
+    ],
+    "project_count": 2,
+    "harness": "research/placement_loop.py --max-iterations 1 (baseline lever)",
+    "tolerance_m": 1.0,
+    "strict_tolerance_m": 0.5,
+    "per_project": {
+      "proj_a25a006c88": {
+        "coverage": 1.0,
+        "placement": 0.909,
+        "placement_strict": 0.545,
+        "orientation": 1.0,
+        "assets": 1.0,
+        "accuracy": 0.977,
+        "occluded": [],
+        "seconds": 93.2
+      },
+      "proj_553cb09794": {
+        "coverage": 0.75,
+        "placement": 1.0,
+        "placement_strict": 1.0,
+        "orientation": 1.0,
+        "assets": 1.0,
+        "accuracy": 0.938,
+        "occluded": [
+          "open_win_kitchen.frame-1",
+          "obj_19e3cd7e7d",
+          "obj_33e53e194d",
+          "obj_f0a19d6d92",
+          "obj_d5e1aef40c"
+        ],
+        "seconds": 93.4
+      }
+    },
+    "metrics": {
+      "coverage": {
+        "N": 2,
+        "unit": "fraction",
+        "runs": [
+          1.0,
+          0.75
+        ],
+        "status": "measured",
+        "mean": 0.875,
+        "min": 0.75,
+        "max": 1.0,
+        "spread_points": 25.0
+      },
+      "placement": {
+        "N": 2,
+        "unit": "fraction",
+        "runs": [
+          0.909,
+          1.0
+        ],
+        "status": "measured",
+        "mean": 0.9545,
+        "min": 0.909,
+        "max": 1.0,
+        "spread_points": 9.1
+      },
+      "placement_strict": {
+        "N": 2,
+        "unit": "fraction",
+        "runs": [
+          0.545,
+          1.0
+        ],
+        "status": "measured",
+        "mean": 0.7725,
+        "min": 0.545,
+        "max": 1.0,
+        "spread_points": 45.5
+      },
+      "orientation": {
+        "N": 2,
+        "unit": "fraction",
+        "runs": [
+          1.0,
+          1.0
+        ],
+        "status": "measured",
+        "mean": 1.0,
+        "min": 1.0,
+        "max": 1.0,
+        "spread_points": 0.0
+      },
+      "assets": {
+        "N": 2,
+        "unit": "fraction",
+        "runs": [
+          1.0,
+          1.0
+        ],
+        "status": "measured",
+        "mean": 1.0,
+        "min": 1.0,
+        "max": 1.0,
+        "spread_points": 0.0
+      },
+      "accuracy": {
+        "N": 2,
+        "unit": "fraction",
+        "runs": [
+          0.977,
+          0.938
+        ],
+        "status": "measured",
+        "mean": 0.9575,
+        "min": 0.938,
+        "max": 0.977,
+        "spread_points": 3.9
+      }
+    },
+    "finding": "The previously documented figures - coverage 100%, placement 91%, composite 98% - were N=1 and reproduce EXACTLY on that same project. The second project scores composite 94%, below the 95% target, with coverage 75%: five pieces no camera can reach. Coverage varies by 25 points between two projects, so 98% was the better of two and not a typical value.",
+    "exit_criterion_95_percent": {
+      "met": false,
+      "detail": "1 of 2 projects reaches 95%. At N=2 this cannot be called a rate either way."
+    }
+  }
+}

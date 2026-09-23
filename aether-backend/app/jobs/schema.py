@@ -38,6 +38,16 @@ class Job(BaseModel):
     params: dict[str, Any] = {}
     result: dict[str, Any] = {}
     log_path: str = ""
+    #: Which user asked for this job. A COLUMN, not a key in `params`,
+    #: because POST /projects/{id}/jobs lets the caller supply params
+    #: wholesale - a user id in there would be forgeable, which is the
+    #: opposite of an audit trail. Empty means the job predates this field,
+    #: or the runner raised it itself while resuming after a restart.
+    created_by: str = ""
+    #: The project's correlation id, copied at enqueue. Denormalised so the
+    #: runner can bind log context without a project lookup - a lookup that
+    #: itself fails is exactly when the ids matter.
+    correlation_id: str = ""
     created_at: str
     started_at: str = ""
     finished_at: str = ""

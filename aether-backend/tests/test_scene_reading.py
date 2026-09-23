@@ -232,11 +232,13 @@ def _seed_reading(env):
     from fastapi.testclient import TestClient
     from PIL import Image
 
+    from tests.conftest import sign_in_admin
+
     from app.main import app
     from app.projects import get_project_store
     from app.projects.layout import ensure_layout, project_dir
 
-    client = TestClient(app)
+    client = sign_in_admin(TestClient(app))
     pid = get_project_store().create(name="review", description="2BHK").project_id
     ensure_layout(pid)
     root = project_dir(pid)

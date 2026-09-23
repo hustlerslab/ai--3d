@@ -1,0 +1,10 @@
+tests/test_asset_rebind.py::test_bindings_follow_the_piece_not_the_box_or_the_id PASSED [ 11%]
+tests/test_asset_rebind.py::test_a_changed_piece_carries_nothing_and_is_reported PASSED [ 22%]
+tests/test_asset_rebind.py::test_no_evidence_never_inherits_a_mesh PASSED [ 33%]
+tests/test_asset_rebind.py::test_a_remeasured_piece_across_a_dimension_bucket_is_still_found_when_unique PASSED [ 44%]
+tests/test_asset_rebind.py::test_the_loose_match_never_hands_one_mesh_to_two_pieces PASSED [ 55%]
+tests/test_asset_rebind.py::test_an_asset_that_no_longer_resolves_is_not_carried PASSED [ 66%]
+tests/test_asset_rebind.py::test_a_re_read_keeps_every_binding_and_the_next_run_submits_nothing PASSED [ 77%]
+tests/test_asset_rebind.py::test_a_changed_piece_gets_a_new_binding_and_only_it_is_bought PASSED [ 88%]
+tests/test_asset_rebind.py::test_without_the_carry_the_legacy_mesh_would_have_been_bought_again PASSED [100%]
+======================== 9 passed, 1 warning in 5.73s =========================

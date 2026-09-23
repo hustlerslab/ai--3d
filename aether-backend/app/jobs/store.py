@@ -29,6 +29,8 @@ def _row_to_job(row) -> Job:
         max_attempts=row["max_attempts"],
         checkpoint=row["checkpoint"],
         error=row["error"],
+        created_by=(row["created_by"] if "created_by" in row.keys() else ""),
+        correlation_id=(row["correlation_id"] if "correlation_id" in row.keys() else ""),
         params=json.loads(row["params"]),
         result=json.loads(row["result"]),
         log_path=row["log_path"],
@@ -64,6 +66,8 @@ class JobStore:
         params: Optional[dict[str, Any]] = None,
         max_attempts: int = 3,
         log_path: str = "",
+        created_by: str = "",
+        correlation_id: str = "",
     ) -> Job:
         job = Job(
             project_id=project_id,
@@ -72,13 +76,15 @@ class JobStore:
             params=params or {},
             max_attempts=max_attempts,
             log_path=log_path,
+            created_by=created_by,
+            correlation_id=correlation_id,
             created_at=_now(),
         )
         self._db.execute(
             """INSERT INTO jobs(job_id, project_id, type, lane, status, attempt, max_attempts,
-                                checkpoint, error, params, result, log_path, created_at,
-                                started_at, finished_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                                checkpoint, error, params, result, log_path, created_by,
+                                correlation_id, created_at, started_at, finished_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 job.job_id,
                 job.project_id,
@@ -92,6 +98,8 @@ class JobStore:
                 json.dumps(job.params),
                 json.dumps(job.result),
                 job.log_path,
+                job.created_by,
+                job.correlation_id,
                 job.created_at,
                 job.started_at,
                 job.finished_at,

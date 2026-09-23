@@ -7,6 +7,8 @@ import json
 import httpx
 import pytest
 from fastapi.testclient import TestClient
+
+from tests.conftest import sign_in_admin
 from PIL import Image
 
 from app.intelligence import (
@@ -198,7 +200,7 @@ def client(env):
     from app.main import app
 
     with TestClient(app) as c:
-        yield c
+        yield sign_in_admin(c)
 
 
 def _project_with_inputs(client, tmp_path) -> str:

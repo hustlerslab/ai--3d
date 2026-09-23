@@ -1,0 +1,408 @@
+[    1548ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[    2110ms] [WARNING] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js:1969
+[  116956ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  121683ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  122003ms] [LOG] [Fast Refresh] done in 320ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  125960ms] [LOG] [Fast Refresh] done in 4278ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  131523ms] [WARNING] The resource http://localhost:3001/_next/static/css/app/layout.css?v=1790005030233 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3001/w/proj_a25a006c88?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  135883ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  145006ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  145677ms] [LOG] [Fast Refresh] done in 671ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  145967ms] [ERROR] ./src/features/walkthrough3d/api/aether-api.ts
+Error:   x Expected ',', got ';'
+     ,-[G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\src\features\walkthrough3d\api\aether-api.ts:269:1]
+ 266 | export function fileUrl(path: string): string {
+ 267 |   // Same reason as the tour's fileUrl: a share-link visitor has no cookie, and
+ 268 |   // a mesh or texture load cannot carry a header. P0-SEC-005.
+ 269 |   if (/^https?:\/\//.test(path)) return withShareToken(path;
+     :                                                            ^
+ 270 |   const clean = path.replace(/^\/+/, "");
+ 271 |   return withShareToken(clean.startsWith("files/")
+ 271 |     ? `${AETHER_BASE_URL}/${clean}`
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/features/walkthrough3d/api/aether-api.ts
+./src/features/walkthrough3d/components/walkthrough3d-view.tsx
+./src/features/walkthrough-studio/components/walkthrough-studio.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[  146015ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[  149404ms] [WARNING] The resource http://localhost:3001/_next/static/css/app/layout.css?v=1790005030233 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3001/w/proj_a25a006c88?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  160268ms] [ERROR] ./src/features/walkthrough3d/api/aether-api.ts
+Error:   x Expected ',', got ';'
+     ,-[G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\src\features\walkthrough3d\api\aether-api.ts:269:1]
+ 266 | export function fileUrl(path: string): string {
+ 267 |   // Same reason as the tour's fileUrl: a share-link visitor has no cookie, and
+ 268 |   // a mesh or texture load cannot carry a header. P0-SEC-005.
+ 269 |   if (/^https?:\/\//.test(path)) return withShareToken(path;
+     :                                                            ^
+ 270 |   const clean = path.replace(/^\/+/, "");
+ 271 |   return withShareToken(clean.startsWith("files/")
+ 271 |     ? `${AETHER_BASE_URL}/${clean}`
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/features/walkthrough3d/api/aether-api.ts
+./src/features/walkthrough3d/components/walkthrough3d-view.tsx
+./src/features/walkthrough-studio/components/walkthrough-studio.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[  160278ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[  163313ms] [WARNING] The resource http://localhost:3001/_next/static/css/app/layout.css?v=1790005030233 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3001/w/proj_a25a006c88?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  163849ms] [ERROR] ./src/features/walkthrough3d/api/aether-api.ts
+Error:   x Expected ',', got ';'
+     ,-[G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\src\features\walkthrough3d\api\aether-api.ts:269:1]
+ 266 | export function fileUrl(path: string): string {
+ 267 |   // Same reason as the tour's fileUrl: a share-link visitor has no cookie, and
+ 268 |   // a mesh or texture load cannot carry a header. P0-SEC-005.
+ 269 |   if (/^https?:\/\//.test(path)) return withShareToken(path;
+     :                                                            ^
+ 270 |   const clean = path.replace(/^\/+/, "");
+ 271 |   return withShareToken(clean.startsWith("files/")
+ 271 |     ? `${AETHER_BASE_URL}/${clean}`
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/features/walkthrough3d/api/aether-api.ts
+./src/features/walkthrough3d/components/walkthrough3d-view.tsx
+./src/features/walkthrough-studio/components/walkthrough-studio.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[  165473ms] [ERROR] ./src/features/walkthrough3d/api/aether-api.ts
+Error:   x Expected ',', got ';'
+     ,-[G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\src\features\walkthrough3d\api\aether-api.ts:269:1]
+ 266 | export function fileUrl(path: string): string {
+ 267 |   // Same reason as the tour's fileUrl: a share-link visitor has no cookie, and
+ 268 |   // a mesh or texture load cannot carry a header. P0-SEC-005.
+ 269 |   if (/^https?:\/\//.test(path)) return withShareToken(path;
+     :                                                            ^
+ 270 |   const clean = path.replace(/^\/+/, "");
+ 271 |   return withShareToken(clean.startsWith("files/")
+ 271 |     ? `${AETHER_BASE_URL}/${clean}`
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/features/walkthrough3d/api/aether-api.ts
+./src/features/walkthrough3d/components/walkthrough3d-view.tsx
+./src/features/walkthrough-studio/components/walkthrough-studio.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[  168332ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/w/proj_a25a006c88?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM&_rsc=-HK8lCGFu_QL0kTj:0
+[  168430ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/w/proj_a25a006c88?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM&_rsc=-HK8lCGFu_QL0kTj:0
+[  168521ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/w/proj_a25a006c88?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM&_rsc=-HK8lCGFu_QL0kTj:0
+[  168641ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/w/proj_a25a006c88?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  169147ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:24868
+[  169431ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error:   x Expected ',', got ';'
+     ,-[G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\src\features\walkthrough3d\api\aether-api.ts:269:1]
+ 266 | export function fileUrl(path: string): string {
+ 267 |   // Same reason as the tour's fileUrl: a share-link visitor has no cookie, and
+ 268 |   // a mesh or texture load cannot carry a header. P0-SEC-005.
+ 269 |   if (/^https?:\/\//.test(path)) return withShareToken(path;
+     :                                                            ^
+ 270 |   const clean = path.replace(/^\/+/, "");
+ 271 |   return withShareToken(clean.startsWith("files/")
+ 271 |     ? `${AETHER_BASE_URL}/${clean}`
+     `----
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[  169426ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[  169433ms] [ERROR] ./src/features/walkthrough3d/api/aether-api.ts
+Error:   x Expected ',', got ';'
+     ,-[G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\src\features\walkthrough3d\api\aether-api.ts:269:1]
+ 266 | export function fileUrl(path: string): string {
+ 267 |   // Same reason as the tour's fileUrl: a share-link visitor has no cookie, and
+ 268 |   // a mesh or texture load cannot carry a header. P0-SEC-005.
+ 269 |   if (/^https?:\/\//.test(path)) return withShareToken(path;
+     :                                                            ^
+ 270 |   const clean = path.replace(/^\/+/, "");
+ 271 |   return withShareToken(clean.startsWith("files/")
+ 271 |     ? `${AETHER_BASE_URL}/${clean}`
+     `----
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[  169572ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[  179624ms] [ERROR] ./src/features/walkthrough3d/api/aether-api.ts
+Error:   x Expected ',', got ';'
+     ,-[G:\ALLURE INTERIOR\ISHANA\Interior design\aether-frontend\src\features\walkthrough3d\api\aether-api.ts:269:1]
+ 266 | export function fileUrl(path: string): string {
+ 267 |   // Same reason as the tour's fileUrl: a share-link visitor has no cookie, and
+ 268 |   // a mesh or texture load cannot carry a header. P0-SEC-005.
+ 269 |   if (/^https?:\/\//.test(path)) return withShareToken(path;
+     :                                                            ^
+ 270 |   const clean = path.replace(/^\/+/, "");
+ 271 |   return withShareToken(clean.startsWith("files/")
+ 271 |     ? `${AETHER_BASE_URL}/${clean}`
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/features/walkthrough3d/api/aether-api.ts
+./src/features/walkthrough3d/components/walkthrough3d-view.tsx
+./src/features/walkthrough-studio/components/walkthrough-studio.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[  179625ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:206
+[  179628ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[  181454ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3001/_next/static/webpack/fe13ebb24d225b9a.webpack.hot-update.json:0
+[  181456ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[  185681ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  186513ms] [WARNING] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js:1969
+[  197226ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  216125ms] [LOG] [Fast Refresh] done in 18900ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  261723ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/catalog?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  261974ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/catalog?project_id=proj_a25a006c88&k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262023ms] [WARNING] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js:1969
+[  262096ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262342ms] [ERROR] A component was suspended by an uncached promise. Creating promises inside a Client Component or hook is not yet supported, except via a Suspense-compatible library or framework. @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[  262350ms] [LOG] THREE.WebGLRenderer: Context Lost. @ webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js:1927
+[  262382ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262415ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262428ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262447ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262462ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262474ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262497ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262507ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262521ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262543ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262557ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262575ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262592ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262613ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262634ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262659ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262682ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262705ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262730ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262752ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262772ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262887ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262911ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262934ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262952ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  262977ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263001ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263023ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263047ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263067ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263086ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263104ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263124ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263144ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263164ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263187ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263204ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263225ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263248ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263269ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263294ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263316ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263335ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263352ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263370ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263395ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263416ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263442ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263458ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263482ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263509ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263525ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263572ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263591ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263609ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263651ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263668ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263696ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263718ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263737ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263757ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263776ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263797ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263822ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263844ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263864ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263882ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263901ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263923ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263942ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263961ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263979ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  263989ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264006ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264023ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264044ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264065ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264080ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264102ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264125ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264146ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264170ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264191ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264215ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264231ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264263ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264283ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264304ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264329ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264355ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264375ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264397ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264443ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264468ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264486ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264510ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264538ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264556ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264577ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264598ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264619ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264638ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264663ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264688ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264714ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264736ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264760ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264781ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264810ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264833ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264857ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264885ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264910ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264927ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264949ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264971ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  264999ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265019ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265039ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265059ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265083ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265104ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265133ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265152ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265176ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265194ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265212ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265234ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265264ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265371ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265415ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265479ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265547ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265601ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265637ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265682ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265749ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265801ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265852ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265885ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265923ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265952ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265974ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  265995ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266017ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266036ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266060ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266089ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266110ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266136ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266163ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266195ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266230ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266281ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266319ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266366ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266399ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266426ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266458ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266481ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266504ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266533ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266554ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266578ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266598ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266624ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266645ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266672ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266697ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266715ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266741ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266765ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266786ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266813ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266838ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266865ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266886ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266918ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266944ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266967ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  266985ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267018ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267046ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267073ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267089ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267107ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267125ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267143ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267163ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267180ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267284ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267299ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267318ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267345ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267380ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267413ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267431ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267459ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267484ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267498ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267533ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267556ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267573ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267595ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267611ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267693ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267730ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267791ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267804ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267834ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267852ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267866ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267886ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267906ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267935ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267953ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  267975ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268001ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268022ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268042ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268060ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268079ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268099ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268118ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268139ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268160ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268182ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268198ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268219ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268253ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268276ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268300ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268345ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/materials?k=pdkYQhKtNMegp7CfwDr8_b98rH1iCwmg8lajU6tMnYM:0
+[  268399ms] [WARNING] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js:1969
+[  268854ms] [LOG] THREE.WebGLRenderer: Context Lost. @ webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js:1927

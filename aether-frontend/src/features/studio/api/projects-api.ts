@@ -36,7 +36,15 @@ async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 20_0
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   let response: Response;
   try {
-    response = await fetch(`${API}${path}`, { ...init, signal: init.signal ?? controller.signal });
+    response = await fetch(`${API}${path}`, {
+      ...init,
+      // P0-SEC-002: the API is deny-by-default. `include` sends the httpOnly
+      // `allure_session` cookie set by POST /api/auth/login. Script never reads
+      // the token - that is what httpOnly buys - so this is the only way the
+      // browser can authenticate.
+      credentials: "include",
+      signal: init.signal ?? controller.signal,
+    });
   } catch (err) {
     clearTimeout(timer);
     if (init.signal?.aborted) throw err;
@@ -122,6 +130,8 @@ export function uploadInputs(
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", `${API}/projects/${projectId}/inputs`);
+    // XHR needs this set separately from fetch's `credentials` option.
+    xhr.withCredentials = true;
     xhr.timeout = 10 * 60 * 1000;
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) onProgress?.(e.loaded / e.total);

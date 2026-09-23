@@ -172,8 +172,21 @@ class SceneObject(BaseModel):
     source_strategy: SourceStrategy = "procedural"
     # slot -> material_id from app/materials (e.g. {"primary": "fabric_linen"})
     material_overrides: dict[str, str] = {}
-    # planner bookkeeping: object_plan key this object was created from
+    # planner bookkeeping: object_plan key this object was created from.
+    # KEPT. It is the join every pre-V4 scene relies on, and the two identity
+    # fields below do not replace it - they remove the need to perform it.
     plan_key: Optional[str] = None
+    # P1-IDENTITY-001. Which ELEMENT this object is an occurrence of, and which
+    # occurrence it is. Identity used to survive only as a join:
+    # plan_key -> ObjectPlanItem.object_key -> .element_id, which nobody
+    # performed, so three bar stools looked like three unrelated purchases
+    # rather than one element placed three times.
+    #
+    # Both Optional with a None default, so a scene_spec.json written before V4
+    # loads unchanged. That is the whole reason they are optional: making them
+    # required would strand every scene already on disk.
+    element_id: Optional[str] = None
+    instance_id: Optional[str] = None
     # surfaces (spec 1.1): the object this one rests on (mount "surface")
     parent_id: Optional[str] = None
     # project-relative image that textures the object's face (art, rugs)
@@ -185,6 +198,18 @@ class SceneObject(BaseModel):
     # P13: what the client's reference said this looks like. Defaults to an
     # empty block, so every scene stored before P13 loads unchanged.
     visual: ObjectVisual = Field(default_factory=ObjectVisual)
+
+    @property
+    def source_intent_ids(self) -> list[str]:
+        """Which design intents produced or shaped this object.
+
+        A read-only accessor, not a second field. The list lives at
+        `visual.source_intent_ids` and stays there: duplicating it would create
+        two places to update and one of them would eventually be wrong. This
+        exists because callers asking "which reference justified this piece?"
+        should not have to know it is nested.
+        """
+        return self.visual.source_intent_ids
 
 
 # ── SceneSpec extensions (plan §4.1) ────────────────────────────────────

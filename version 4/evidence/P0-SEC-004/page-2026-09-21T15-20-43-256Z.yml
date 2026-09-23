@@ -1,0 +1,46 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Allure Walkthrough" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]: Allure
+        - generic [ref=e6]: Walkthrough
+      - navigation [ref=e7]:
+        - link "Studio" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "3D viewer" [ref=e9] [cursor=pointer]:
+          - /url: /3d
+        - link "Cinematic film" [ref=e10] [cursor=pointer]:
+          - /url: /cinematic
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - heading "test 1" [level=1] [ref=e15]
+          - paragraph [ref=e16]:
+            - text: warm modern neutral · 1 rooms · 2 viewpoints
+            - generic [ref=e17]:
+              - generic "#F5F2EB" [ref=e18]
+              - generic "#C49A6C" [ref=e19]
+              - generic "#E8E2D5" [ref=e20]
+              - generic "#222222" [ref=e21]
+              - generic "#D6CEC2" [ref=e22]
+        - tablist "View mode" [ref=e23]:
+          - tab "360° Tour" [selected] [ref=e24] [cursor=pointer]
+          - tab "Explore in 3D" [ref=e25] [cursor=pointer]
+      - generic [ref=e27]:
+        - generic:
+          - generic: Living Room
+          - generic: preview render · drag to look · scroll to zoom · loading…
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - button "Living Room" [ref=e34] [cursor=pointer]
+            - button "Living Room · 2" [ref=e35] [cursor=pointer]
+          - generic [ref=e36]:
+            - button "Pause tour" [pressed] [ref=e37] [cursor=pointer]
+            - img "Floor plan with tour stops" [ref=e38]:
+              - generic "Living Room" [ref=e40] [cursor=pointer]
+              - generic "Living Room · 2" [ref=e42] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e49] [cursor=pointer]:
+    - img [ref=e50]
+  - alert [ref=e53]

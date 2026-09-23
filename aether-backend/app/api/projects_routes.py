@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-from fastapi import APIRouter, File, Form, UploadFile
+from fastapi import APIRouter, File, Form, Request, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, ValidationError
 
@@ -93,12 +93,26 @@ class EnqueueJobBody(BaseModel):
 
 
 @router.get("/projects")
-def list_projects() -> dict:
-    return ok([p.model_dump(mode="json") for p in get_project_store().list()])
+def list_projects(request: Request) -> dict:
+    """Only what this caller may see.
+
+    Filtering here rather than in the gate is deliberate: the gate answers
+    "may you touch project X", and a list has no X. Without this a signed-in
+    stranger could not OPEN anyone else's project but could still read every
+    project's name and id, which is most of what a client brief reveals.
+    """
+    from ..auth.authz import visible_project_ids
+    from ..auth.deps import require_principal
+
+    visible = visible_project_ids(require_principal(request))
+    projects = get_project_store().list()
+    if visible is not None:
+        projects = [p for p in projects if p.project_id in visible]
+    return ok([p.model_dump(mode="json") for p in projects])
 
 
 @router.post("/projects")
-def create_project(body: CreateProjectBody) -> dict:
+def create_project(body: CreateProjectBody, request: Request) -> dict:
     refusal = _brief_refusal(body.description)
     if refusal is not None:
         return refusal  # nothing is created for a brief we decline
@@ -109,6 +123,13 @@ def create_project(body: CreateProjectBody) -> dict:
         room_hints=body.room_hints,
         vertical=body.vertical,
     )
+    # Stamp the owner immediately. A project that exists for even one request
+    # without an owner is a project only an admin can reach - including the
+    # person who just created it.
+    from ..auth.authz import set_owner
+    from ..auth.deps import require_principal
+
+    set_owner(project.project_id, require_principal(request).user_id)
     get_job_store().add_event(project.project_id, "project", "created", f"project '{project.name}' created")
     if body.description:
         _write_description(project.project_id, body.description)
@@ -657,7 +678,26 @@ def get_scene_reading(project_id: str) -> dict:
 
 @router.patch("/projects/{project_id}/scene-reading")
 def review_scene_reading(project_id: str, body: ElementReviewBody) -> dict:
-    """Record the human's confirm/reject per element. Nothing else changes."""
+    """Record the human's confirm/reject per element, and re-resolve identity.
+
+    **It used to say "nothing else changes", and that was the bug.** `trustworthy()`
+    gates `resolve_elements()`, and it answers `element.approved` whenever the
+    human has spoken. So approving a crop the automated check had rejected made
+    that row trustworthy — but the definitions had been computed at reading time
+    and were never recomputed, so the piece stayed permanently outside the
+    canonical element set.
+
+    That costs money. Sharing one mesh between identical pieces is done by
+    grouping instances under a definition; a row with no definition cannot join a
+    group, so two approved identical chairs become two Meshy generations instead
+    of one. Found by the P1-IDENTITY-005 provenance query, which reported an
+    `instance` gap on exactly the two approved-but-unresolved objects in
+    `proj_a25a006c88` (a `crowded` rug and a `mismatch` tv unit).
+
+    Re-resolving is safe because `resolve_elements()` is deterministic and its
+    ids are content-addressed from the canonical key: measured on that project,
+    all 9 existing definition ids survived unchanged and 2 were added.
+    """
     get_project_store().get(project_id)
     path = project_dir(project_id) / "planning" / "scene_reading.json"
     data = _read(path)
@@ -676,7 +716,24 @@ def review_scene_reading(project_id: str, body: ElementReviewBody) -> dict:
     for el in reading.elements:
         if el.element_id in body.decisions:
             el.approved = bool(body.decisions[el.element_id])
+
+    # Only when the reading already carried resolved identity. A reading written
+    # before `resolve_elements()` existed has no definitions, and minting a set
+    # here would hand it identity its asset bindings were never made against.
+    if reading.definitions or reading.instances:
+        from ..intelligence.scene_reading import resolve_elements
+
+        reading.definitions, reading.instances = resolve_elements(reading)
     _write(path, reading)
+    # The identity index is derived from this file, so it is stale the moment the
+    # file changes. Rebuilt rather than patched: it is cheap, and a patched index
+    # is a second implementation of the same rules.
+    try:
+        from ..provenance import index_project
+
+        index_project(project_id)
+    except Exception:                                          # noqa: BLE001
+        pass                    # ensure_indexed() rebuilds it on the next read
     return ok(_reading_payload(project_id, reading.model_dump(mode="json")))
 
 
@@ -878,6 +935,43 @@ def get_scene_spec(project_id: str) -> dict:
     )
 
 
+# ── Provenance (P1-IDENTITY-005) ────────────────────────────────────────
+
+
+@router.get("/projects/{project_id}/provenance")
+def get_provenance_coverage(project_id: str) -> dict:
+    """How much of the committed scene traces back to a source photograph.
+
+    The scene-wide form of the query below. Counted, never asserted: the
+    acceptance criterion for P1-IDENTITY-005 is stated over *every* object, and
+    a per-object endpoint alone cannot answer it without 14 round trips.
+    """
+    from ..provenance import coverage, ensure_indexed
+
+    get_project_store().get(project_id)          # 404s on an unknown project
+    ensure_indexed(project_id)
+    return ok(coverage(project_id))
+
+
+@router.get("/projects/{project_id}/provenance/{scene_object_id}")
+def get_provenance(project_id: str, scene_object_id: str) -> dict:
+    """What caused this rendered object to exist — the whole chain, by query.
+
+    404 only when the object is not in the committed scene. An object that IS in
+    the scene but whose chain stops early returns 200 with the hop that stopped
+    it: "this piece has no source photograph" is an answer, and returning an
+    error for it would make an ordinary catalog chair look like a failure.
+    """
+    from ..provenance import resolve
+
+    get_project_store().get(project_id)
+    chain = resolve(project_id, scene_object_id)
+    if chain.origin == "unknown":
+        return _error("OBJECT_NOT_FOUND",
+                      f"No object {scene_object_id} in this project's committed scene.", 404)
+    return ok(chain.model_dump(mode="json"))
+
+
 # ── Blender build (stage 9, render lane) ────────────────────────────────
 
 
@@ -1002,6 +1096,73 @@ def get_tour(project_id: str) -> dict:
     return ok(tour)
 
 
+# ── Share links (P0-SEC-004) ────────────────────────────────────────────
+#
+# The tour route itself is unchanged. What changed is who may reach it: the
+# gate in authz.py now wants a capability token, because the project id used to
+# BE the capability and a project id is not a secret.
+
+
+class ShareLinkBody(BaseModel):
+    label: str = ""
+    #: None means "until revoked". An expiry is offered, not imposed: a link
+    #: that dies on its own while a client is still looking at the design is a
+    #: support call, and a silently-expiring share is worse than a revocable one.
+    expires_in_days: Optional[int] = None
+
+
+@router.post("/projects/{project_id}/share")
+def create_share_link(project_id: str, body: ShareLinkBody, request: Request) -> dict:
+    """Mint a link that shows this project's tour and nothing else.
+
+    The token comes back ONCE. It is stored only as a SHA-256, so it cannot be
+    reprinted - if it is lost, mint another and revoke this one.
+    """
+    from ..auth.capability import mint
+    from ..auth.deps import require_principal
+
+    get_project_store().get(project_id)               # 404 for a project that is not there
+    principal = require_principal(request)
+    days = body.expires_in_days
+    if days is not None and days <= 0:
+        return _error("INVALID_EXPIRY", "expires_in_days must be a positive number of days.", 422)
+
+    token, tid = mint(project_id, created_by=principal.user_id,
+                      label=body.label.strip()[:80], expires_in_days=days)
+    return ok({
+        "token_id": tid,
+        "url": f"/w/{project_id}?k={token}",
+        "token": token,
+        "label": body.label.strip()[:80],
+        "expires_in_days": days,
+        "note": "This link is shown once. It grants read-only access to this "
+                "project's tour and nothing else, and can be revoked at any time.",
+    })
+
+
+@router.get("/projects/{project_id}/share")
+def list_share_links(project_id: str) -> dict:
+    """Every link ever minted for this project, including revoked ones.
+
+    Revoked links stay listed on purpose: "this stopped working on the 3rd" is
+    what people actually ask, and a list that forgets them cannot answer.
+    """
+    from ..auth.capability import list_for_project
+
+    get_project_store().get(project_id)
+    return ok({"links": list_for_project(project_id)})
+
+
+@router.delete("/projects/{project_id}/share/{token_id}")
+def revoke_share_link(project_id: str, token_id: str) -> dict:
+    """Break one link. Idempotent - revoking an already-dead link is not an
+    error, because the caller's intent is already satisfied."""
+    from ..auth.capability import revoke
+
+    get_project_store().get(project_id)
+    return ok({"revoked": revoke(project_id, token_id)})
+
+
 # ── Jobs and events ─────────────────────────────────────────────────────
 
 
@@ -1051,11 +1212,64 @@ def list_outputs(project_id: str) -> dict:
 
 @files_router.get("/files/projects/{project_id}/{path:path}")
 def project_file(project_id: str, path: str):
+    """One project's artifacts.
+
+    Authorization happens in the gate (`authz.authorize`), which sees
+    `project_id` as a path parameter and applies the same owner/member/admin
+    rule as every other project route - plus the narrow share-link carve-out
+    for `outputs/web/`. This function keeps doing exactly what it did: resolve
+    the path and refuse anything outside the project directory.
+    """
     root = project_dir(project_id).resolve()
     target = (root / path).resolve()
     if root not in target.parents or not target.is_file():
         return _error("FILE_NOT_FOUND", f"No such project file: {path}", 404)
     return FileResponse(str(target))
+
+
+def _serve_from(root, path: str, what: str):
+    """Serve `path` from under `root`, or 404.
+
+    `root not in target.parents` is the whole traversal guard: `..` segments
+    are resolved first, so a path that climbs out simply is not under the root
+    any more and never matches. A missing file and an escaping path answer
+    identically, so the 404 cannot be used to map the filesystem.
+    """
+    root = Path(root).resolve()
+    target = (root / path).resolve()
+    if root not in target.parents or not target.is_file():
+        return _error("FILE_NOT_FOUND", f"No such {what}: {path}", 404)
+    return FileResponse(str(target))
+
+
+# The shared library. Not per-project, but not public either: a Meshy mesh is
+# generated from somebody's moodboard crop, so a sofa in here can be as
+# identifying as the photograph it came from. The gate requires a principal or
+# a live share token - see authz.SHARED_LIBRARY.
+
+
+@files_router.get("/files/assets/{path:path}")
+def asset_file(path: str):
+    from ..assets.registry import get_registry
+
+    return _serve_from(get_registry().root / "normalized", path, "asset")
+
+
+@files_router.get("/files/assets-web/{path:path}")
+def asset_web_file(path: str):
+    """The browser's copy: same geometry, textures sized to a GPU budget.
+    Separate from `normalized/` because Blender reads that folder off disk and
+    must keep getting every pixel."""
+    from ..assets.registry import get_registry
+
+    return _serve_from(get_registry().root / "web", path, "asset")
+
+
+@files_router.get("/files/materials/{path:path}")
+def material_file(path: str):
+    from ..materials.registry import get_material_registry
+
+    return _serve_from(get_material_registry().root, path, "material")
 
 
 # ── helpers ─────────────────────────────────────────────────────────────

@@ -7,12 +7,18 @@ from __future__ import annotations
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from .api.envelope import error_response
 from .api.projects_routes import files_router
+from .auth import router as auth_router
+from .auth.authz import authorize, current_actor
+from .auth.deps import optional_principal
+from fastapi.responses import JSONResponse
+
+from .core import ratelimit
+from .core.logging import bind, configure_logging, new_correlation_id
 from .api.projects_routes import router as projects_router
 from .api.routes import router
 from .assets.registry import get_registry
@@ -26,7 +32,11 @@ from .scene.patches import PatchError
 from .scene.store import SceneNotFound, VersionConflict, get_store
 from .seed import ensure_seed
 
-logging.basicConfig(level=logging.INFO)
+# P0-OBSERVABILITY-001. `basicConfig(level=INFO)` was the ENTIRE logging
+# configuration; this replaces it with one JSON line per record, each carrying
+# correlation_id / project_id / job_id / stage. Ids only - never a brief, a
+# prompt, an image path or a key.
+configure_logging()
 log = logging.getLogger("aether")
 
 
@@ -40,10 +50,18 @@ async def lifespan(app: FastAPI):
     ensure_seed(get_store())
     runner = get_runner()
     runner.start()
+    # Resolve the reasoning provider HERE, at boot, not lazily on the first job.
+    # Its own logging then names the model that will read customers' homes while
+    # somebody is still watching the console - see provider._announce.
+    from .intelligence import get_provider
+
+    provider = get_provider()
     log.info(
-        "Aether backend up. data_dir=%s gemini=%s meshy=%s blender=%s",
+        "Aether backend up. data_dir=%s provider=%s model=%s mode=%s meshy=%s blender=%s",
         settings.data_dir,
-        "live" if settings.gemini_configured else "mock",
+        provider.name,
+        provider.label,
+        provider.mode,
         "live" if settings.meshy_configured else "mock",
         settings.blender_path if settings.blender_configured else "unavailable",
     )
@@ -55,29 +73,115 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Aether Walkthrough Backend", version="0.1.0", lifespan=lifespan)
 
+# P0-SEC-002 made the session cookie essential, so CORS has to carry
+# credentials. The CORS spec forbids wildcards once it does - a browser will
+# refuse `*` for origin, methods or headers on a credentialed request - so all
+# three are explicit. `cors_origins` is a parsed list and is never `*`, which is
+# what makes allow_credentials safe here rather than an open door.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_settings().cors_origins,
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
-app.include_router(router)
-app.include_router(projects_router)
+# Identity first, so /api/auth/* is reachable even while the rest of the API
+# is still open. P0-SEC-001 adds capability only - no route below is gated by
+# it yet; P0-SEC-002 attaches require_principal to both routers.
+@app.middleware("http")
+async def _remember_who_is_asking(request: Request, call_next):
+    """Record the caller for the life of the request.
 
-# Binary assets are served as static files, never through PostgreSQL/JSON
-# (system design §26). Only the normalized models, material maps and the
-# per-project artifact folders are exposed — never the raw data dir.
-app.mount("/files/assets", StaticFiles(directory=str(get_registry().root / "normalized")), name="asset-files")
-# The browser's copy: same geometry, textures sized to a GPU budget. A separate
-# mount rather than a replacement, because Blender reads the normalized folder
-# straight off disk and must keep getting every pixel.
+    This has to be middleware. Setting the contextvar inside the `authorize`
+    dependency looks equivalent and is not: FastAPI runs a sync dependency and
+    a sync endpoint in two separate threadpool calls, each with its own copied
+    context, so the value never arrives. Jobs were created with created_by=""
+    and the per-user spend cap had nothing to attribute a charge to.
+
+    Resolving the session here also means it is resolved once per request
+    instead of twice - `authorize` reuses what this leaves on request.state.
+    """
+    principal = optional_principal(request)
+    request.state.principal = principal
+    token = current_actor.set(principal.user_id if principal else "")
+
+    # One correlation id per request. An inbound X-Correlation-Id is honoured
+    # so a frontend retry, or a call that fans out into jobs, stays one thread
+    # in the logs; otherwise a fresh one is minted here.
+    #
+    # correlation_id ONLY. `request.path_params` is empty in middleware - this
+    # runs before routing - so binding project_id here would silently bind
+    # nothing. The runner binds project_id and job_id where they exist.
+    cid = request.headers.get("x-correlation-id") or new_correlation_id()
+    request.state.correlation_id = cid
+    try:
+        with bind(correlation_id=cid):
+            # P0-SEC-006. Here rather than in its own middleware because the
+            # decision needs the principal this one just resolved, and
+            # resolving a session twice per request to answer one question is
+            # waste.
+            verdict = ratelimit.check(
+                request.method,
+                request.url.path,
+                principal_id=principal.user_id if principal else None,
+                client=request.client.host if request.client else None,
+                settings=get_settings(),
+            )
+            if not verdict.allowed:
+                log.warning("rate limit hit", extra={
+                    "bucket": verdict.bucket,
+                    "path": request.url.path,
+                    "limit": verdict.limit,
+                })
+                return JSONResponse(
+                    status_code=429,
+                    headers={
+                        "Retry-After": str(verdict.retry_after),
+                        "X-Correlation-Id": cid,
+                    },
+                    content={
+                        "success": False,
+                        "error": {
+                            "code": "RATE_LIMITED",
+                            "message": (
+                                f"Too many requests. Try again in "
+                                f"{verdict.retry_after} second(s)."
+                            ),
+                            # The one error in this codebase genuinely worth
+                            # retrying: waiting is the fix.
+                            "retryable": True,
+                        },
+                    },
+                )
+            response = await call_next(request)
+            # Hand the id back so a user can quote it in a support request and
+            # somebody can find the run without asking them what they clicked.
+            response.headers["X-Correlation-Id"] = cid
+            return response
+    finally:
+        current_actor.reset(token)
+
+
+app.include_router(auth_router)
+# P0-SEC-002: ONE dependency, both routers, deny by default. Attached here
+# rather than on 63 individual route functions - a per-route check is a
+# per-route opportunity to forget, and the forgotten one is the one that
+# matters. The anonymous allow-list lives in authz.is_anonymous().
+app.include_router(router, dependencies=[Depends(authorize)])
+app.include_router(projects_router, dependencies=[Depends(authorize)])
+
+# Binary assets are served as files, never through PostgreSQL/JSON (system
+# design §26). Only the normalized models, material maps and the per-project
+# artifact folders are exposed — never the raw data dir.
+#
+# P0-SEC-005: these were three bare StaticFiles mounts, which a router-level
+# dependency cannot reach — a mount is not a route, so `authorize` never saw
+# them and every byte was world-readable. They are ordinary routes now, on
+# files_router, so the same gate covers them as covers everything else.
 _web_dir = get_registry().root / "web"
 _web_dir.mkdir(parents=True, exist_ok=True)
-app.mount("/files/assets-web", StaticFiles(directory=str(_web_dir)), name="asset-files-web")
-app.mount("/files/materials", StaticFiles(directory=str(get_material_registry().root)), name="material-files")
-app.include_router(files_router)  # /files/projects/{id}/{path} resolved per request
+app.include_router(files_router, dependencies=[Depends(authorize)])
 
 
 @app.exception_handler(ProjectNotFound)

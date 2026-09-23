@@ -22,7 +22,11 @@ from ..materials.registry import get_material_registry
 from ..scene.schema import Scene, Vec2, Vec3
 from ..walkthrough import service as walkthrough_service
 
-MANIFEST_VERSION = "1.1"
+#: "<major>.<minor>". A MINOR bump adds keys an older reader can ignore; a
+#: MAJOR bump changes or removes one, and build_scene.py refuses a major it
+#: does not know rather than silently building a scene from a manifest it has
+#: misunderstood. 1.2 adds the three identity fields (P1-IDENTITY-003).
+MANIFEST_VERSION = "1.2"
 
 
 def to_blender_xyz(p: Vec3) -> list[float]:
@@ -329,6 +333,16 @@ def build_manifest(
         objects.append(
             {
                 "id": o.object_id,
+                # P1-IDENTITY-003. The chain used to break at this hop: a
+                # Blender object - and therefore a rendered pixel region -
+                # could not be traced back to the element that caused it.
+                # None where there is no element, never invented: a catalog
+                # piece the planner added is not an occurrence of anything the
+                # client approved, and saying otherwise would put a fiction
+                # into the provenance chain.
+                "element_id": o.element_id,
+                "instance_id": o.instance_id,
+                "plan_key": o.plan_key,
                 "semantic_type": o.semantic_type,
                 "room_id": o.room_id,
                 "strategy": o.source_strategy,

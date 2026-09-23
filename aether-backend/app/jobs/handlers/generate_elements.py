@@ -29,8 +29,10 @@ import httpx
 from ...assets import pipeline as asset_pipeline
 from ...assets.schema import AssetSource, IngestMeta
 from ...core.config import Settings, get_settings
+from ...spend import check_budget, mark_task, record_spend, record_submission, request_key, resumable_task
 from ...intelligence.schema import SceneElement, SceneReading
 from ...intelligence.scene_reading import approved_for_generation, distinct_shapes
+from ...projects.layout import file_url
 from ...providers import meshy
 from ..context import JobContext
 from ..registry import register
@@ -153,23 +155,53 @@ async def _generate_one(client: httpx.AsyncClient, ctx: JobContext, key: str,
     ctx.emit("elements.source",
              f"{element.name}: " + ("canonical element image" if element_image else "moodboard crop"))
 
-    task_id = await meshy.submit_image_to_3d(
-        client, crop,
-        should_remesh=settings.meshy_should_remesh,
-        target_polycount=settings.meshy_target_polycount,
-    )
-    ctx.emit("elements.submit", f"{element.name}: task {task_id}")
+    # P1-ASSET-002 - the fourth spend gate. The request is identified by WHAT
+    # is being asked for; a job killed after submission leaves the receipt on
+    # disk, and this retry polls that task instead of buying another one.
+    params = {"should_remesh": settings.meshy_should_remesh,
+              "target_polycount": settings.meshy_target_polycount,
+              "enable_pbr": True, "symmetry_mode": "auto"}
+    request_id, image_sha256 = request_key(key, crop, params)
+    prior = resumable_task(request_id)
+    if prior is not None:
+        task_id = prior["task_id"]
+        ctx.emit("elements.resume",
+                 f"{element.name}: task {task_id} already submitted ({prior['status']}, "
+                 f"job {prior['job_id'] or '?'}); polling it, not re-submitting")
+    else:
+        task_id = await meshy.submit_image_to_3d(
+            client, crop,
+            should_remesh=settings.meshy_should_remesh,
+            target_polycount=settings.meshy_target_polycount,
+        )
+        # Before anything waits: the moment between "submitted" and "recorded"
+        # is where a crash turns into a second purchase.
+        record_submission(request_id, project_id=ctx.project_id, job_id=ctx.job.job_id,
+                          item_key=key, element_id=element.element_id or "",
+                          image_sha256=image_sha256, params=params, task_id=task_id,
+                          endpoint=meshy.IMAGE_TO_3D)
+        ctx.emit("elements.submit", f"{element.name}: task {task_id}")
 
-    model = await meshy.wait_for(
-        client, task_id,
-        timeout_seconds=float(settings.meshy_timeout_seconds),
-        poll_seconds=float(settings.meshy_poll_seconds),
-        on_progress=lambda status, pct: ctx.emit("elements.task", f"{element.name}: {status.lower()} {pct}%"),
-        endpoint=meshy.IMAGE_TO_3D,
-    )
+    try:
+        model = await meshy.wait_for(
+            client, task_id,
+            timeout_seconds=float(settings.meshy_timeout_seconds),
+            poll_seconds=float(settings.meshy_poll_seconds),
+            on_progress=lambda status, pct: ctx.emit("elements.task", f"{element.name}: {status.lower()} {pct}%"),
+            endpoint=meshy.IMAGE_TO_3D,
+        )
+    except meshy.MeshyTaskFailed as exc:
+        # The vendor ended it. Only THIS clears the receipt: a timeout or a
+        # dropped connection says nothing about the task, so the row stays
+        # SUBMITTED and the next run polls the same id.
+        mark_task(request_id, "FAILED", error=str(exc))
+        raise
 
     dest = ctx.path(_glb_rel(key))
     await meshy.download_glb(client, model.glb_url, dest)
+    # P1-ASSET-004: the preview lives beside the mesh, never as a vendor URL.
+    thumb_rel = _glb_rel(key)[:-4] + ".thumb.png"
+    thumbnail = await meshy.download_thumbnail(client, model.thumbnail_url, ctx.path(thumb_rel))
 
     record = asset_pipeline.ingest_file(
         dest,
@@ -181,6 +213,15 @@ async def _generate_one(client: httpx.AsyncClient, ctx: JobContext, key: str,
             mount=_mount(element),                        # type: ignore[arg-type]
             color=element.color,
             project_id=ctx.project_id,
+            # P1-IDENTITY-004. This mesh cost 30 credits; without these the
+            # library could not say what it is OF, and the only way to find
+            # out would be to open it and look.
+            #
+            # `element.element_id` is the CANONICAL key, so three bar stools
+            # share one asset and one charge - the whole point of the
+            # element-first identity work.
+            canonical_element_id=element.element_id or "",
+            source_image_id=element.crop_ref or "",
             source=AssetSource(
                 provider="meshy",
                 source_id=model.task_id,
@@ -188,7 +229,7 @@ async def _generate_one(client: httpx.AsyncClient, ctx: JobContext, key: str,
                 license=meshy.LICENSE,
                 license_url=meshy.LICENSE_URL,
                 creator="Meshy",
-                thumbnail_url=model.thumbnail_url,
+                thumbnail_url=file_url(ctx.project_id, thumb_rel) if thumbnail else "",
             ),
         ),
     )
@@ -198,7 +239,21 @@ async def _generate_one(client: httpx.AsyncClient, ctx: JobContext, key: str,
         # left on disk it reads as "already done" and this piece would never be
         # retried, silently keeping a catalog stand-in forever.
         dest.unlink(missing_ok=True)
+        # Paid for and unusable. Recorded as such - not resumable, because the
+        # vendor is not deterministic and a fresh generation may pass where this
+        # one failed; that is a deliberate second purchase, never an accidental one.
+        mark_task(request_id, "INGEST_FAILED", credits=model.credits, error=why)
         raise meshy.MeshyError(f"generated model failed ingest validation: {why}")
+    why = asset_pipeline.persisted(record, dest)
+    if why:
+        # Not done until the bytes are ours. The receipt stays SUBMITTED, so a
+        # retry polls the task and downloads again inside the vendor's 3-day
+        # window - never a success that names a file that is not there. The
+        # download goes too: the file IS the checkpoint, and left behind it
+        # would read as "already done" on the next run.
+        dest.unlink(missing_ok=True)
+        raise meshy.MeshyError(f"mesh not persisted: {why}")
+    mark_task(request_id, "SUCCEEDED", asset_id=record.asset_id, credits=model.credits)
     return record.asset_id, model.credits
 
 
@@ -247,6 +302,28 @@ def _contradicts_its_type(asset_id: str, semantic_type: str) -> str:
             f"for a {semantic_type.replace('_', ' ')}")
 
 
+def _bound_asset(els: list[SceneElement]) -> str:
+    """The mesh this group already carries, if the registry still resolves it.
+
+    P1-ASSET-001: after a re-read the rows carry their old `asset_id` (see
+    `carry_asset_bindings`) but the mesh may sit on disk under the OLD
+    position-keyed name, which `storage_key` can no longer derive from the new
+    boxes. The binding itself is the proof of purchase; checked before any
+    file lookup so a paid piece is never bought twice.
+    """
+    from ...assets.registry import get_registry
+
+    for el in els:
+        if el.asset_id:
+            rec = get_registry().get(el.asset_id)
+            # P1-ASSET-004: the binding is a receipt only while the bytes are
+            # here. A record whose normalized file is gone falls through to the
+            # download on disk, or to the vendor's still-open task.
+            if rec is not None and rec.status != "failed" and asset_pipeline.has_normalized(rec):
+                return el.asset_id
+    return ""
+
+
 def _ensure_registered(ctx: JobContext, key: str, element: SceneElement) -> Optional[str]:
     """Make a checkpoint on disk into an asset the scene can actually load.
 
@@ -263,10 +340,12 @@ def _ensure_registered(ctx: JobContext, key: str, element: SceneElement) -> Opti
     from ...assets.registry import get_registry
 
     asset_id = _asset_id(ctx.project_id, key)
-    record = get_registry().get(asset_id)
-    if record is not None and record.status != "failed":
-        return asset_id
     source = ctx.path(_glb_rel(key))
+    record = get_registry().get(asset_id)
+    # P1-ASSET-004: a record is only reusable when its bytes are here. One
+    # without its normalized copy is re-ingested from the download below.
+    if record is not None and record.status != "failed" and not asset_pipeline.persisted(record, source):
+        return asset_id
     if not source.is_file():
         return None
     try:
@@ -303,12 +382,18 @@ async def _run(ctx: JobContext, todo: dict[str, SceneElement], settings: Setting
         except meshy.MeshyError as exc:          # never block a batch on a status read
             ctx.emit("elements.balance", f"balance unavailable: {exc}", status="warning")
 
+        # P1-ASSET-003: never more tasks in flight than the account's queue
+        # holds. Held from submission until the task is done, so the count
+        # the vendor sees is the count this bounds.
+        slots = asyncio.Semaphore(max(1, int(settings.meshy_max_concurrent_tasks)))
+
         async def one(key: str, element: SceneElement):
-            try:
-                return key, await _generate_one(client, ctx, key, element, settings), None
-            except Exception as exc:                      # noqa: BLE001
-                ctx.log.exception("%s: element generation failed", key)
-                return key, None, exc
+            async with slots:
+                try:
+                    return key, await _generate_one(client, ctx, key, element, settings), None
+                except Exception as exc:                  # noqa: BLE001
+                    ctx.log.exception("%s: element generation failed", key)
+                    return key, None, exc
 
         for key, result, exc in await asyncio.gather(*(one(k, e) for k, e in todo.items())):
             name = todo[key].name
@@ -326,6 +411,17 @@ async def _run(ctx: JobContext, todo: dict[str, SceneElement], settings: Setting
             asset_id, spent = result                      # type: ignore[misc]
             made[key] = asset_id
             credits += spent
+            # Write the charge to the ledger the moment the provider confirms
+            # it. Not at the end of the batch: a crash between here and there
+            # would lose money that was genuinely spent, and a spend limit that
+            # forgets charges is not a limit. `spent` is Meshy's own reported
+            # figure, so this row is measured, never estimated.
+            record_spend(
+                ctx.project_id, spent,
+                user_id=ctx.job.created_by or None,
+                job_id=ctx.job.job_id,
+                item_key=key,
+            )
             ctx.emit("elements.done", f"{name} -> {asset_id} ({spent} credit(s))")
     return {"made": made, "warnings": warnings, "credits": credits}
 
@@ -356,7 +452,13 @@ def generate_elements(ctx: JobContext) -> dict[str, Any]:
     todo: dict[str, SceneElement] = {}
     reused = 0
     on_disk: dict[str, str] = {}
+    bound: dict[str, str] = {}
     for key, els in groups.items():
+        already = _bound_asset(els)
+        if already:
+            bound[key] = already
+            reused += 1                                   # paid for; the binding is the receipt
+            continue
         disk = storage_key(ctx.has_checkpoint, key, els)
         on_disk[key] = disk
         if ctx.has_checkpoint(_glb_rel(disk)):
@@ -366,10 +468,37 @@ def generate_elements(ctx: JobContext) -> dict[str, Any]:
     over = max(0, len(todo) - limit)
     todo = dict(list(todo.items())[:limit])
 
+    # P0-SEC-003. `limit` above caps ONE job; it resets with every new job and
+    # so cannot bound what a project costs in total. This does, by reading the
+    # persisted ledger - which is what makes restarting the process useless as
+    # a way to clear a spending limit.
+    budget = check_budget(
+        ctx.project_id,
+        ctx.job.created_by or None,
+        pieces=len(todo),
+        credits_per_piece=CREDITS_PER_PIECE,
+        project_cap=settings.meshy_max_credits_per_project,
+        user_cap=settings.meshy_max_credits_per_user,
+    )
+    capped = 0
+    if budget.blocked:
+        capped = len(todo) - budget.allowed
+        todo = dict(list(todo.items())[:budget.allowed])
+        # A warning, not a failure. The project keeps everything it already
+        # has; a human decides whether to raise the cap or drop pieces.
+        ctx.emit(
+            "elements.capped",
+            f"spend cap reached: {capped} piece(s) held back. {budget.reason}. "
+            "Nothing else about the project has changed - raise the cap or "
+            "reduce the selection, then run this again.",
+            status="warning",
+        )
+
     ctx.emit("elements.start",
              f"{len(ready)} approved -> {len(groups)} distinct piece(s); "
              f"{reused} already generated, {len(todo)} to generate"
-             + (f", {over} over the limit of {limit}" if over else ""))
+             + (f", {over} over the per-job limit of {limit}" if over else "")
+             + (f", {capped} held back by the spend cap" if capped else ""))
 
     result = (asyncio.run(_run(ctx, todo, settings)) if todo
               else {"made": {}, "warnings": [], "credits": 0})
@@ -380,7 +509,7 @@ def generate_elements(ctx: JobContext) -> dict[str, Any]:
     # purchase and three placements.
     attached = 0
     for key, els in groups.items():
-        asset_id: Optional[str] = made.get(key)
+        asset_id: Optional[str] = made.get(key) or bound.get(key)
         disk = on_disk.get(key, key)
         if not asset_id and ctx.has_checkpoint(_glb_rel(disk)):
             asset_id = _ensure_registered(ctx, disk, els[0])
@@ -411,7 +540,10 @@ def generate_elements(ctx: JobContext) -> dict[str, Any]:
              f"({result['credits']} credit(s) spent)")
     return {"made": made, "reused": reused, "attached": attached,
             "warnings": result["warnings"], "credits": result["credits"],
-            "skipped_over_limit": over}
+            "skipped_over_limit": over,
+            "held_by_spend_cap": capped,
+            "project_credits_spent": budget.project_spent + result["credits"],
+            "project_credit_cap": budget.project_cap}
 
 
 __all__ = ["generate_elements"]

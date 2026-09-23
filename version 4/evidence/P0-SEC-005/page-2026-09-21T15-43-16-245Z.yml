@@ -1,0 +1,13 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e48] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e49]:
+      - img [ref=e50]
+    - generic [ref=e54]:
+      - button "Open issues overlay" [ref=e55]:
+        - generic [ref=e56]:
+          - generic [ref=e57]: "0"
+          - generic [ref=e58]: "1"
+        - generic [ref=e59]: Issue
+      - button "Collapse issues badge" [ref=e60]:
+        - img [ref=e61]
+  - 'heading "Application error: a client-side exception has occurred while loading localhost (see the browser console for more information)." [level=2] [ref=e65]'

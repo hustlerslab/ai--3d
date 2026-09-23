@@ -12,7 +12,8 @@
  * floors from looking flat — the same fallback ladder as furniture.
  */
 
-import { useTexture } from "@react-three/drei";
+import { useLoader } from "@react-three/fiber";
+import { withSessionCredentials } from "../api/loader-credentials";
 import { use, useMemo } from "react";
 import * as THREE from "three";
 
@@ -87,7 +88,9 @@ function useTextureSet(record: MaterialRecord): TextureSet {
     : local
       ? [local.src]
       : [BLANK_TEXTURE];
-  const loaded = useTexture(urls);
+  // fiber's useLoader rather than drei's useTexture: only the former takes a
+  // loader extension, and the loader has to send the session cookie.
+  const loaded = useLoader(THREE.TextureLoader, urls, withSessionCredentials);
   const textures = Array.isArray(loaded) ? loaded : [loaded];
 
   return useMemo(() => {

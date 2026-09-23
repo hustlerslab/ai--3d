@@ -1,7 +1,10 @@
 # Auth and authorization — plan
 
-**Status:** proposed · decision open · **no implementation code written**
-**Written:** 11 Sep 2026
+**Status:** **DECIDED 21 Sep 2026 — see "The decision, made" at the foot of this
+document.** Neither A, B nor C: identity comes from the parent `CODEBASE`
+project, which already has it. Everything above the decision section is kept as
+written, because the analysis is what makes that choice coherent.
+**Written:** 11 Sep 2026 · **Decided:** 21 Sep 2026
 **Blocks:** any feature handling a real designer account, a real client's
 project, or a real payment.
 
@@ -169,3 +172,109 @@ block starting.**
 - **Implementation.** No code has been written for any of this, by intent.
 - **Multi-tenancy beyond project membership.** Studios/organisations may be
   needed later; not designed for now.
+
+---
+
+# The decision, made
+
+**21 Sep 2026, by the owner.** Quoted, because a decision record that
+paraphrases is a decision record nobody trusts:
+
+> "right now we are not including the auth system because this code base is the
+> part of other code base and other codebase have the proper auth part"
+>
+> "right now not linked i will link it further after this done"
+
+## What was chosen
+
+**Option D — identity is delegated to the parent `CODEBASE` project.** Allure
+does not own accounts, passwords, sessions or password reset. This repository is
+a component of a larger product that already authenticates people.
+
+That closes the question this document opened. It is not a compromise between
+A, B and C; it removes the premise. The reasoning that led to recommending C —
+"building identity yourself is the highest-risk, lowest-differentiation work in
+the product" — points the same way, only further: the best version of not
+building identity is not building it *at all*.
+
+## What this does NOT change
+
+**Authorization stays here, and has to.** The distinction this document drew in
+its three findings is exactly the one that matters now:
+
+| | Whose job |
+|---|---|
+| *Who is this person?* | the parent codebase |
+| *May this person open project `proj_x`?* | **Allure** |
+| *May this person spend 30 Meshy credits?* | **Allure** |
+| *May this link show this tour and nothing else?* | **Allure** |
+| *May this request read `/files/projects/x/renders/…`?* | **Allure** |
+
+The parent cannot answer any of the last four. It does not know which projects
+exist, who owns them, what a tour package contains, or what a mesh costs. Those
+are Allure's own data model, and `docs/production/v4_inventory.md` shows why
+they cannot be inherited: 63 routes, 34 of them mutating, 2 able to spend money.
+
+So P0-SEC-002 through P0-SEC-006 — ownership, spend caps, share links, file
+authorization, rate limiting — remain correct and remain necessary. They were
+never about who you are; they are about what you may do.
+
+## The seam, and the size of the link
+
+Everything outside `app/auth/` touches identity through **one type and two
+functions**:
+
+```python
+from app.auth import Principal, require_principal, optional_principal
+```
+
+```python
+@dataclass(frozen=True)
+class Principal:
+    user_id: str
+    email: str
+    role: str        # homeowner | designer | admin
+```
+
+Measured: **9 call sites in 2 files** — `app/api/projects_routes.py` (6) and
+`app/main.py` (3). Everything else in the codebase asks the gate, never the
+identity store.
+
+**Linking therefore means replacing one function**, `auth.service.resolve_session`,
+with whatever the parent hands over — a verified JWT, a trusted gateway header,
+or a session lookup against its store — and mapping that to a `Principal`. The
+authorization layer above it does not change.
+
+## What becomes redundant on the day it is linked
+
+| Now | On linking |
+|---|---|
+| `POST /api/auth/register`, `POST /api/auth/login` | **Delete.** The parent owns sign-up and sign-in. |
+| `users.password_hash`, `scrypt` hashing | **Stops being written.** The column stays until a migration drops it, because dropping a column with data in it is its own task. |
+| `users.external_id` | **Becomes the join** to the parent's user id. It was added nullable for exactly this reason. |
+| `sessions` table, `POST /api/auth/logout` | Depends on the parent's mechanism. If it issues a JWT, this table stops being used; if it has server-side sessions, this becomes a cache of them. |
+| `users` rows, `role`, `project_members` | **Stay.** Project membership is Allure's, not the parent's. |
+| `require_principal`, `Principal`, the gate, spend caps, share links, file authorization, rate limiting | **Stay, unchanged.** |
+
+## Why the local login was still worth building
+
+Three reasons, stated so the decision does not read as wasted work:
+
+1. **Nothing was reachable without it.** P0-SEC-002 closed 60 of 63 routes. A
+   gate with no way to get through it is an outage, not a security control.
+2. **It is the standalone development path.** Running Allure on its own — which
+   is how every test in `tests/` runs, and how the container boots — needs some
+   way to be somebody.
+3. **It is the thing being replaced, so it defines the contract.** `Principal`
+   exists because something had to produce one. The parent will produce the
+   same shape.
+
+The cost of the choice is one module, `app/auth/service.py`, and two routes.
+The parts that survive — authorization, ownership, spend protection, capability
+tokens, file access — are the parts that took the work.
+
+## Still not in scope
+
+Unchanged from the original plan: **billing** (no credits system, no ledger, no
+subscription tier — `spend_records` tracks *provider cost*, not customer
+billing), and **multi-tenancy beyond project membership**.

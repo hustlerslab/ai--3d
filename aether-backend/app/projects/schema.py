@@ -78,6 +78,10 @@ class ProjectRecord(BaseModel):
     description: str = ""
     stage: ProjectStage = ProjectStage.CREATED
     scene_ids: list[str] = []
+    #: One id for this project's whole run, minted at creation and carried
+    #: onto every job and every log line. Filtering a log stream by it
+    #: returns the complete run - P0-OBSERVABILITY-001.
+    correlation_id: str = ""
     room_hints: list[RoomHint] = []
     vertical: Vertical = Vertical.RESIDENTIAL
     created_at: str

@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+from ..core.logging import new_correlation_id
 from ..db import Database, get_db
 from .layout import ensure_layout
 from .schema import InputKind, InputRecord, ProjectRecord, ProjectStage, RoomHint, Vertical
@@ -37,6 +38,7 @@ def _row_to_project(row) -> ProjectRecord:
         description=row["description"],
         stage=ProjectStage(row["stage"]),
         scene_ids=json.loads(row["scene_ids"]),
+        correlation_id=(row["correlation_id"] if "correlation_id" in row.keys() else ""),
         room_hints=[RoomHint.model_validate(h) for h in json.loads(row["room_hints"])],
         vertical=Vertical(row["vertical"]),
         created_at=row["created_at"],
@@ -80,14 +82,19 @@ class ProjectStore:
             room_hints=room_hints or [],
             scene_ids=scene_ids or [],
             vertical=vertical,
+            # Minted HERE, once, at the start of the run. Every job this
+            # project spawns copies it, and every log line either writes
+            # carries it - P0-OBSERVABILITY-001.
+            correlation_id=new_correlation_id(),
             created_at=created_at or now,
             updated_at=now,
             **({"project_id": project_id} if project_id else {}),
         )
         self._db.execute(
             """INSERT INTO projects(project_id, name, description, stage, scene_ids,
-                                    room_hints, vertical, created_at, updated_at)
-               VALUES (?,?,?,?,?,?,?,?,?)""",
+                                    room_hints, vertical, correlation_id,
+                                    created_at, updated_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?)""",
             (
                 project.project_id,
                 project.name,
@@ -96,6 +103,7 @@ class ProjectStore:
                 json.dumps(project.scene_ids),
                 json.dumps([h.model_dump() for h in project.room_hints]),
                 project.vertical.value,
+                project.correlation_id,
                 project.created_at,
                 project.updated_at,
             ),
@@ -231,7 +239,12 @@ class ProjectStore:
         client who comes back should not pay for them twice.
         """
         record = self.get(project_id)                      # raises if unknown
-        for table in ("events", "jobs", "outputs", "scene_specs", "analyses", "inputs"):
+        # `elements` and `element_instances` are the P1-IDENTITY-005 index, not a
+        # record: they are rebuilt from the project's files by index_project().
+        # They are dropped here so a deleted project leaves no stale rows behind
+        # to be matched by the cross-project asset lookup.
+        for table in ("events", "jobs", "outputs", "scene_specs", "analyses", "inputs",
+                      "elements", "element_instances"):
             self._db.execute(f"DELETE FROM {table} WHERE project_id = ?", (project_id,))
         self._db.execute("DELETE FROM projects WHERE project_id = ?", (project_id,))
         return record

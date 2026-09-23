@@ -1281,23 +1281,50 @@ export function WalkthroughStudio() {
         ) : null}
 
         {step.id === "designer" ? (
-          <StepShell title="Bring a designer into it" subtitle="A curated match based on your moodboard direction and city — connecting is free.">
+          <StepShell title="Bring a designer into it" subtitle="Designer matchmaking is in development. The profiles below are examples, not real designers.">
+            {/* PREVIEW, NOT A LIVE FEATURE.
+                `DESIGNERS` is a static array from `lib/mock/designers.ts`; there is no
+                designer endpoint on the backend and this block makes no network call.
+                It previously rendered "Request sent" from local React state alone, so the
+                interface claimed an action it had not performed, and a reload erased it.
+                Until a real connection endpoint exists (which needs auth to know WHO is
+                connecting, plus consented designer profiles) this step must not imply
+                anything was sent. See task.md P0-FRONTEND-002. */}
+            <div className="flex items-start gap-2 rounded-lg border border-dashed p-3">
+              <Users className="mt-0.5 size-4 shrink-0 text-ink-muted" />
+              <div className="flex flex-col gap-1">
+                <p className="body-sm font-medium text-ink-soft">Preview — not yet connected to real designers</p>
+                <p className="caption text-ink-muted">
+                  We&apos;re building designer matchmaking on top of your validated design. These
+                  are sample profiles so you can see how it will work. Marking interest saves a
+                  note on this device only — no request is sent to anyone.
+                </p>
+              </div>
+            </div>
             <div className="grid gap-3 md:grid-cols-3">
               {DESIGNERS.filter((d) => d.vetting === "verified").slice(0, 3).map((designer) => (
                 <div key={designer.id} className="flex flex-col gap-3 rounded-lg border p-4">
                   <div className="flex items-center gap-3">
-                    <Image src={designer.avatar} alt={designer.name} width={40} height={40} className="rounded-full" />
+                    <Image src={designer.avatar} alt={designer.name} width={40} height={40} className="rounded-full opacity-70" />
                     <div className="flex flex-col">
                       <p className="body-sm font-medium text-ink-soft">{designer.name}</p>
                       <p className="caption text-ink-muted">{designer.studio} · {designer.city}</p>
                     </div>
                   </div>
                   <p className="caption text-ink-muted">{designer.style}</p>
+                  <p className="caption text-ink-muted">Example profile</p>
                   {connectedDesigner === designer.id ? (
-                    <p className="flex items-center gap-1.5 body-sm text-ink-soft"><Check className="size-4 text-gold" /> Request sent</p>
+                    <p className="flex items-center gap-1.5 body-sm text-ink-soft">
+                      <Check className="size-4 text-gold" /> Noted on this device
+                    </p>
                   ) : (
-                    <button type="button" onClick={() => setConnectedDesigner(designer.id)} className="flex items-center justify-center gap-1.5 rounded-md border px-3 py-1.5 body-sm text-ink-muted hover:bg-muted">
-                      <Users className="size-3.5" /> Connect
+                    <button
+                      type="button"
+                      onClick={() => setConnectedDesigner(designer.id)}
+                      aria-label={`Note interest in ${designer.name} — saved on this device only`}
+                      className="flex items-center justify-center gap-1.5 rounded-md border px-3 py-1.5 body-sm text-ink-muted hover:bg-muted"
+                    >
+                      <Users className="size-3.5" /> Note interest
                     </button>
                   )}
                 </div>

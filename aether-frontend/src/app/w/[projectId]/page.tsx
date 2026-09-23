@@ -8,10 +8,22 @@ export const metadata: Metadata = {
 };
 
 /**
- * Public share link: /w/<projectId>. Read-only — it consumes the tour
+ * Share link: /w/<projectId>?k=<token>. Read-only — it consumes the tour
  * package only, never the editing APIs.
+ *
+ * P0-SEC-004: the `k` is the capability. The project id identifies which
+ * project; it no longer grants access to it, because an id travels in URLs,
+ * logs and support emails and the owner can neither rotate nor revoke it.
+ * A signed-in owner needs no `k` — their session is enough.
  */
-export default async function Page({ params }: { params: Promise<{ projectId: string }> }) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ projectId: string }>;
+  searchParams: Promise<{ k?: string }>;
+}) {
   const { projectId } = await params;
-  return <ShareView projectId={projectId} />;
+  const { k } = await searchParams;
+  return <ShareView projectId={projectId} token={k} />;
 }

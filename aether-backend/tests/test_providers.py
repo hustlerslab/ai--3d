@@ -106,3 +106,81 @@ def test_provider_selection(env, monkeypatch):
     reset_provider()
     _settings(monkeypatch, ANTHROPIC_API_KEY="", GEMINI_API_KEY="", INTELLIGENCE_PROVIDER="anthropic")
     assert get_provider().mode == "mock"
+
+
+# --- P0-AI-001: provider resolution must be announced, never silent ---------
+#
+# The defect these guard: `INTELLIGENCE_PROVIDER` defaults to `auto`, and `auto`
+# prefers Anthropic whenever ANTHROPIC_API_KEY exists. Live production runs
+# Gemini ONLY because that key is absent. Exporting it would silently promote
+# claude-opus-5 to the model that reads customers' homes, with nothing in the
+# logs to show it happened.
+
+def _resolve_with(monkeypatch, caplog, **env):
+    """Resolve the provider under `env` and return (provider, log records)."""
+    import logging
+
+    _settings(monkeypatch, **env)
+    reset_provider()
+    with caplog.at_level(logging.INFO, logger="aether.intelligence"):
+        provider = get_provider()
+    return provider, [r for r in caplog.records if r.name == "aether.intelligence"]
+
+
+def _messages(records, level):
+    import logging
+
+    want = getattr(logging, level)
+    return [r.getMessage() for r in records if r.levelno == want]
+
+
+def test_explicit_provider_logs_provider_and_model_without_warning(monkeypatch, caplog):
+    """Configuration 1 - explicit. The resolution is stated; nothing is wrong."""
+    provider, records = _resolve_with(
+        monkeypatch, caplog, INTELLIGENCE_PROVIDER="gemini", GEMINI_API_KEY="test-key"
+    )
+    info = _messages(records, "INFO")
+    assert any("provider=gemini" in m and "model=gemini:" in m for m in info), info
+    assert any("mode=live" in m for m in info), info
+    # Explicit means no scolding.
+    assert not any("is 'auto'" in m for m in _messages(records, "WARNING"))
+    assert provider.mode == "live"
+
+
+def test_auto_warns_and_names_what_it_resolved_to(monkeypatch, caplog):
+    """Configuration 2 - `auto` with one key. Must warn, and say WHICH model."""
+    provider, records = _resolve_with(
+        monkeypatch, caplog, INTELLIGENCE_PROVIDER="auto", GEMINI_API_KEY="test-key"
+    )
+    warnings = _messages(records, "WARNING")
+    assert any("INTELLIGENCE_PROVIDER is 'auto'" in m for m in warnings), warnings
+    # A warning that does not name the resolved model is not actionable.
+    assert any(provider.label in m for m in warnings), (provider.label, warnings)
+
+
+def test_adding_an_anthropic_key_under_auto_is_loudly_visible(monkeypatch, caplog):
+    """Configuration 3 - the actual production risk.
+
+    Someone exports ANTHROPIC_API_KEY on a box already running Gemini. The
+    reasoning model changes. The logs must say so, and must say that the Gemini
+    key present on the same box is now unused.
+    """
+    provider, records = _resolve_with(
+        monkeypatch,
+        caplog,
+        INTELLIGENCE_PROVIDER="auto",
+        GEMINI_API_KEY="test-key",
+        ANTHROPIC_API_KEY="test-key",
+    )
+    assert provider.name == "anthropic", "auto is documented to prefer Anthropic"
+    warnings = " | ".join(_messages(records, "WARNING"))
+    assert "BOTH" in warnings and "anthropic" in warnings
+    assert "Gemini" in warnings and "NOT in use" in warnings
+
+
+def test_mock_resolution_is_announced_as_mock_not_passed_off_as_live(monkeypatch, caplog):
+    """No keys at all. The log must say mock, so a green run is never mistaken
+    for a real one."""
+    provider, records = _resolve_with(monkeypatch, caplog, INTELLIGENCE_PROVIDER="auto")
+    assert provider.mode == "mock"
+    assert any("mode=mock" in m for m in _messages(records, "INFO"))

@@ -1,0 +1,70 @@
+{
+  "project": "proj_a25a006c88",
+  "target": 0.95,
+  "tolerance_m": 1.0,
+  "iterations": [
+    {
+      "coverage": 1.0,
+      "placement": 0.909,
+      "placement_strict": 0.545,
+      "orientation": 1.0,
+      "oriented_pieces": 5,
+      "wrong_way": [],
+      "assets": 1.0,
+      "accuracy": 0.977,
+      "occluded": [],
+      "never_in_frame": [],
+      "without_a_mesh": [],
+      "offsets_m": [
+        0.17,
+        0.31,
+        0.12,
+        0.0,
+        0.8,
+        1.27,
+        0.25,
+        0.54,
+        0.82,
+        0.11,
+        0.53
+      ],
+      "measured_pieces": 11,
+      "n": 1,
+      "lever": "baseline",
+      "knobs": {},
+      "seconds": 93.2
+    }
+  ],
+  "stopped_because": "reached 98% with every piece facing as read, on attempt 1 (baseline)",
+  "best": {
+    "coverage": 1.0,
+    "placement": 0.909,
+    "placement_strict": 0.545,
+    "orientation": 1.0,
+    "oriented_pieces": 5,
+    "wrong_way": [],
+    "assets": 1.0,
+    "accuracy": 0.977,
+    "occluded": [],
+    "never_in_frame": [],
+    "without_a_mesh": [],
+    "offsets_m": [
+      0.17,
+      0.31,
+      0.12,
+      0.0,
+      0.8,
+      1.27,
+      0.25,
+      0.54,
+      0.82,
+      0.11,
+      0.53
+    ],
+    "measured_pieces": 11,
+    "n": 1,
+    "lever": "baseline",
+    "knobs": {},
+    "seconds": 93.2
+  }
+}

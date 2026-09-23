@@ -1,0 +1,11 @@
+tests/test_meshy_rate_limits.py::test_a_rate_limit_backs_off_exponentially_and_then_succeeds PASSED [ 10%]
+tests/test_meshy_rate_limits.py::test_a_rate_limit_that_never_clears_raises_the_typed_error PASSED [ 20%]
+tests/test_meshy_rate_limits.py::test_an_unnamed_429_is_treated_as_a_rate_limit_not_a_full_queue PASSED [ 30%]
+tests/test_meshy_rate_limits.py::test_a_full_queue_waits_for_a_slot_at_a_steady_cadence PASSED [ 40%]
+tests/test_meshy_rate_limits.py::test_a_queue_that_never_frees_raises_the_typed_error PASSED [ 50%]
+tests/test_meshy_rate_limits.py::test_the_message_is_matched_case_and_space_insensitively PASSED [ 60%]
+tests/test_meshy_rate_limits.py::test_the_two_errors_are_distinct_and_both_are_meshy_errors PASSED [ 70%]
+tests/test_meshy_rate_limits.py::test_polling_backs_off_on_a_rate_limit_and_still_finishes PASSED [ 80%]
+tests/test_meshy_rate_limits.py::test_in_flight_tasks_never_exceed_the_configured_cap PASSED [ 90%]
+tests/test_meshy_rate_limits.py::test_the_default_cap_sits_below_the_pro_queue_limit PASSED [100%]
+============================= 10 passed in 1.99s ==============================

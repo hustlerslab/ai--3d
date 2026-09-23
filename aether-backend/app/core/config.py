@@ -145,6 +145,37 @@ class Settings(BaseSettings):
     # a plan cannot drain the account - but it now sits above a real room.
     meshy_max_per_project: int = 20
     meshy_poll_seconds: float = 10.0
+    # P1-ASSET-003 - how many generation tasks may be in flight at the vendor at
+    # once. Meshy queues are per ACCOUNT across every API key: 10 on Pro, 30
+    # Premium, 20 Studio, 100 Ultra (docs.meshy.ai/en/api/rate-limits). Past
+    # that, every submission is 429 NoMoreConcurrentTasks. 8 sits under the
+    # Pro queue with room for a task the dashboard started by hand; raise it
+    # to match the plan, never above it.
+    meshy_max_concurrent_tasks: int = 8
+
+    # P0-SEC-003 - spend caps in CREDITS, checked against the persisted ledger
+    # rather than a counter in memory. `meshy_max_per_project` above is a
+    # different thing: it limits how many pieces ONE job may attempt, resets
+    # with every new job, and so cannot bound total spend.
+    #
+    # 600 credits is 20 pieces at 30 each - the same ceiling the per-job limit
+    # implies, now enforced across every job for the life of the project.
+    # 3000 per user is 100 pieces: generous for one person, ruinous for none.
+    # Set either to 0 to run deliberately uncapped; that is a choice a
+    # deployment makes explicitly, never a default.
+    meshy_max_credits_per_project: int = 600
+    meshy_max_credits_per_user: int = 3000
+
+    # P0-SEC-006 - rate limits, per bucket, per window. A value of 0 disables
+    # that bucket; setting rate_limit_enabled=false disables all of them, which
+    # is the documented rollback. Reads are deliberately generous: a limit that
+    # fires during normal studio use trains people to reload harder.
+    rate_limit_enabled: bool = True
+    rate_limit_window_seconds: int = 60
+    rate_limit_auth_per_window: int = 10      # password guessing lives here
+    rate_limit_spend_per_window: int = 5      # anything that costs Meshy credits
+    rate_limit_write_per_window: int = 60
+    rate_limit_read_per_window: int = 300
 
     provider_fallback_to_mock: bool = True
 

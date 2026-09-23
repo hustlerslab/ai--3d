@@ -188,6 +188,45 @@ _provider: Optional[ResilientProvider] = None
 _lock = threading.Lock()
 
 
+def _announce(choice: str, provider: ResilientProvider, settings) -> None:
+    """Say out loud which model is about to read customers' homes.
+
+    This runs once per process (the provider is a singleton). Silence here is
+    exactly how `claude-opus-5` could quietly become the production reasoning
+    model because somebody exported an API key on a Tuesday: nothing in the
+    logs, nothing in the UI, a different model reading the same photographs.
+    """
+    log.info(
+        "intelligence provider resolved: provider=%s model=%s mode=%s "
+        "INTELLIGENCE_PROVIDER=%s fallback_to_mock=%s",
+        provider.name,
+        provider.label,
+        provider.mode,
+        choice or "(unset)",
+        settings.provider_fallback_to_mock,
+    )
+    if choice != "auto":
+        return
+
+    # `auto` means the model was picked by which keys happen to exist. That is
+    # a deployment accident waiting to happen, so it is a WARNING, not info.
+    log.warning(
+        "INTELLIGENCE_PROVIDER is 'auto' (or unset): the reasoning model was chosen "
+        "by which API keys are present, and resolved to %s. Set INTELLIGENCE_PROVIDER "
+        "explicitly to one of anthropic|gemini|ollama|mock so the production model "
+        "cannot change just because a key was added.",
+        provider.label,
+    )
+    if settings.anthropic_configured and settings.gemini_configured:
+        log.warning(
+            "INTELLIGENCE_PROVIDER=auto found BOTH ANTHROPIC_API_KEY and GEMINI_API_KEY "
+            "and preferred anthropic (%s). Gemini (%s) is configured but NOT in use. "
+            "If that is not what you intended, set INTELLIGENCE_PROVIDER=gemini.",
+            settings.anthropic_model,
+            settings.gemini_model,
+        )
+
+
 def get_provider() -> ResilientProvider:
     global _provider
     with _lock:
@@ -203,6 +242,7 @@ def get_provider() -> ResilientProvider:
                 _provider = ResilientProvider(
                     OllamaProvider(settings), MockProvider(), settings.provider_fallback_to_mock
                 )
+                _announce(choice, _provider, settings)
                 return _provider
 
             use_anthropic = choice == "anthropic" or (choice == "auto" and settings.anthropic_configured)
@@ -218,6 +258,7 @@ def get_provider() -> ResilientProvider:
             elif choice not in ("auto", "mock"):
                 log.warning("INTELLIGENCE_PROVIDER=%s but its API key is missing; using the mock provider", choice)
             _provider = ResilientProvider(primary, MockProvider(), settings.provider_fallback_to_mock)
+            _announce(choice, _provider, settings)
         return _provider
 
 

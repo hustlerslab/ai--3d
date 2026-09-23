@@ -224,7 +224,15 @@ def test_manifest_carries_textures_surfaces_and_features(env, tmp_path):
     crop.parent.mkdir(parents=True)
     Image.new("RGB", (64, 48), (120, 80, 60)).save(crop)
     manifest = build_manifest(scene, project_id="proj_x", project_root=tmp_path, preview=False)
-    assert manifest["manifest_version"] == "1.1"
+    # Tracks the source of truth rather than a frozen literal. "1.1" was
+    # pinned here and P1-IDENTITY-003 bumped it to 1.2 by design; a literal
+    # makes every additive change a test edit while pinning nothing about
+    # correctness. Asserting the MAJOR additionally catches an accidental
+    # breaking bump, which the old assertion could not tell from a minor one.
+    from app.blender.manifest import MANIFEST_VERSION
+
+    assert manifest["manifest_version"] == MANIFEST_VERSION
+    assert manifest["manifest_version"].split(".")[0] == "1", "an unintended major bump"
     assert manifest["rooms"][0]["features"] == ["cornice"]
     art = next(o for o in manifest["objects"] if o["semantic_type"] == "wall_art" and o["room_id"] == scene.rooms[0].room_id)
     assert art["asset"]["shape"] == "photo" and art["asset"]["texture"] == str(crop)

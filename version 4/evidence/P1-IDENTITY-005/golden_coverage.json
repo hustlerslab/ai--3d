@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "data": {
+    "objects": 7,
+    "origins": {
+      "moodboard_element": 6,
+      "planner_catalog": 1
+    },
+    "terminus": {
+      "source_image": 6,
+      "scene_object": 1
+    },
+    "traced_to_element": 6,
+    "traced_to_scene_element": 6,
+    "reached_moodboard": 6,
+    "reached_source_image_exact": 1,
+    "reached_source_image_via_moodboard": 5,
+    "complete": 7,
+    "gaps": {}
+  }
+}

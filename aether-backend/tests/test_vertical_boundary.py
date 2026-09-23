@@ -30,6 +30,8 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
+from tests.conftest import sign_in_admin
+
 from app.api.projects_routes import OUT_OF_SCOPE_TERMS
 from app.intelligence import vocab
 from app.projects import ProjectStage, Vertical, get_project_store
@@ -45,7 +47,7 @@ def client(env):
     from app.main import app
 
     with TestClient(app) as c:
-        yield c
+        yield sign_in_admin(c)
 
 
 def _pid(client, **body) -> str:
@@ -638,8 +640,18 @@ def test_the_vertical_change_added_a_column_and_no_new_table():
 
     from app.db.sqlite import MIGRATIONS, SCHEMA, SCHEMA_VERSION, _v2_project_vertical
 
-    assert SCHEMA_VERSION == 2
-    assert [v for v, _ in MIGRATIONS] == [2]
+    # This test used to assert SCHEMA_VERSION == 2 and MIGRATIONS == [2]. Those
+    # said "no later feature may ever add a migration" - more than the docstring
+    # claims, and a blocker on every future schema change; P0-SEC-001 added
+    # users/sessions at v3 and tripped it. The claim being protected is about
+    # THE VERTICAL FEATURE, so it is pinned precisely instead: the step still
+    # sits at version 2 and still only adds a column. The substantive
+    # no-new-table assertion below is unchanged.
+    assert (2, _v2_project_vertical) in MIGRATIONS, "the vertical step must stay at version 2"
+    assert SCHEMA_VERSION >= 2
+    assert sorted(v for v, _ in MIGRATIONS) == list(range(2, SCHEMA_VERSION + 1)), \
+        "the ladder must have no gaps and no duplicate versions"
+
     tables = sorted(re.findall(r"CREATE TABLE IF NOT EXISTS (\w+)", "\n".join(SCHEMA)))
     assert tables == ["analyses", "events", "inputs", "jobs", "meta", "outputs", "projects", "scene_specs"]
 

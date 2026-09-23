@@ -14,6 +14,8 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
+
+from tests.conftest import sign_in_admin
 from PIL import Image
 
 from app.intelligence.prompts import ELEMENT_NEGATIVE, SD_NEGATIVE, element_prompt_sd
@@ -37,7 +39,7 @@ def client(env, monkeypatch):
     from app.main import app
 
     with TestClient(app) as c:
-        yield c
+        yield sign_in_admin(c)
 
 
 # ── the inventory before the room ─────────────────────────────────────

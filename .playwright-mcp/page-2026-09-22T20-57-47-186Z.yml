@@ -1,0 +1,85 @@
+- generic [ref=e1]:
+  - generic [active]:
+    - generic [ref=e34]:
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - navigation [ref=e37]:
+            - button "previous" [disabled] [ref=e38]:
+              - img "previous" [ref=e39]
+            - generic [ref=e41]:
+              - generic [ref=e42]: 1/
+              - text: "1"
+            - button "next" [disabled] [ref=e43]:
+              - img "next" [ref=e44]
+          - img
+        - generic [ref=e46]:
+          - link "Next.js 15.5.25 (outdated) Webpack" [ref=e47] [cursor=pointer]:
+            - /url: https://nextjs.org/docs/messages/version-staleness
+            - img [ref=e48]
+            - generic "An outdated version detected (latest is 16.3.6), upgrade is highly recommended!" [ref=e50]: Next.js 15.5.25 (outdated)
+            - generic [ref=e51]: Webpack
+          - img
+      - dialog "Runtime Error" [ref=e53]:
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - generic [ref=e60]: Runtime Error
+              - generic [ref=e61]:
+                - button "Copy Error Info" [ref=e62] [cursor=pointer]:
+                  - img [ref=e63]
+                - button "No related documentation found" [disabled] [ref=e65]:
+                  - img [ref=e66]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e68] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                  - img [ref=e69]
+            - paragraph [ref=e78]: "Could not load http://localhost:8000/files/materials/wood_oak/color.jpg: undefined"
+          - generic [ref=e79]:
+            - generic [ref=e80]:
+              - paragraph [ref=e82]:
+                - img [ref=e84]
+                - generic [ref=e87]: src\features\walkthrough3d\components\walkthrough3d-view.tsx (477:11) @ Walkthrough3DView
+                - button "Open in editor" [ref=e88] [cursor=pointer]:
+                  - img [ref=e90]
+              - generic [ref=e93]:
+                - generic [ref=e94]: "475 | }}"
+                - generic [ref=e95]: 476 | >
+                - generic [ref=e96]: "> 477 | <Canvas"
+                - generic [ref=e97]: "| ^"
+                - generic [ref=e98]: 478 | // "percentage" = PCFShadowMap; three r185 deprecated PCFSoftShadowMap
+                - generic [ref=e99]: "479 | // (what shadows={true} selects) and silently falls back to this anyway."
+                - generic [ref=e100]: 480 | shadows="percentage"
+            - generic [ref=e101]:
+              - generic [ref=e102]:
+                - paragraph [ref=e103]:
+                  - text: Call Stack
+                  - generic [ref=e104]: "5"
+                - button "Show 3 ignore-listed frame(s)" [ref=e105] [cursor=pointer]:
+                  - text: Show 3 ignore-listed frame(s)
+                  - img [ref=e106]
+              - generic [ref=e108]:
+                - generic [ref=e109]:
+                  - text: Walkthrough3DView
+                  - button "Open Walkthrough3DView in editor" [ref=e110] [cursor=pointer]:
+                    - img [ref=e111]
+                - text: src\features\walkthrough3d\components\walkthrough3d-view.tsx (477:11)
+              - generic [ref=e113]:
+                - generic [ref=e114]:
+                  - text: Page
+                  - button "Open Page in editor" [ref=e115] [cursor=pointer]:
+                    - img [ref=e116]
+                - text: src\app\3d\page.tsx (22:10)
+        - generic [ref=e118]:
+          - generic [ref=e119]: "1"
+          - generic [ref=e120]: "2"
+    - generic [ref=e26] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e27]:
+        - img [ref=e28]
+      - generic [ref=e121]:
+        - button "Open issues overlay" [ref=e122]:
+          - generic [ref=e123]:
+            - generic [ref=e124]: "0"
+            - generic [ref=e125]: "1"
+          - generic [ref=e126]: Issue
+        - button "Collapse issues badge" [ref=e127]:
+          - img [ref=e128]
+  - 'heading "Application error: a client-side exception has occurred while loading localhost (see the browser console for more information)." [level=2] [ref=e132]'

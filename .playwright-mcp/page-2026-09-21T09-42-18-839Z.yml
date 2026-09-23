@@ -1,0 +1,121 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Allure Walkthrough" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]: Allure
+        - generic [ref=e6]: Walkthrough
+      - navigation [ref=e7]:
+        - link "Studio" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "3D viewer" [ref=e9] [cursor=pointer]:
+          - /url: /3d
+        - link "Cinematic film" [ref=e10] [cursor=pointer]:
+          - /url: /cinematic
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - paragraph [ref=e15]: See it before you commit
+          - heading "Walkthrough Studio" [level=1] [ref=e16]
+          - paragraph [ref=e17]: From an idea to a space you can walk through — moodboard first, 3D when you're sure.
+        - generic [ref=e18]:
+          - link "Cinematic film studio" [ref=e19] [cursor=pointer]:
+            - /url: /cinematic
+            - img [ref=e20]
+            - text: Cinematic film studio
+          - link "Open 3D viewer" [ref=e22] [cursor=pointer]:
+            - /url: /3d
+            - img [ref=e23]
+            - text: Open 3D viewer
+      - list [ref=e26]:
+        - listitem [ref=e27]:
+          - button "1 Create Project" [ref=e28] [cursor=pointer]:
+            - generic [ref=e29]: "1"
+            - text: Create Project
+          - generic [ref=e30]: →
+        - listitem [ref=e31]:
+          - button "2 Upload & Describe" [disabled] [ref=e32]:
+            - generic [ref=e33]: "2"
+            - text: Upload & Describe
+          - generic [ref=e34]: →
+        - listitem [ref=e35]:
+          - button "3 Generate Moodboard Free" [disabled] [ref=e36]:
+            - generic [ref=e37]: "3"
+            - text: Generate Moodboard
+            - generic [ref=e38]: Free
+          - generic [ref=e39]: →
+        - listitem [ref=e40]:
+          - button "4 Review & Refine" [disabled] [ref=e41]:
+            - generic [ref=e42]: "4"
+            - text: Review & Refine
+          - generic [ref=e43]: →
+        - listitem [ref=e44]:
+          - button "5 Plan 3D Space" [disabled] [ref=e45]:
+            - generic [ref=e46]: "5"
+            - text: Plan 3D Space
+          - generic [ref=e47]: →
+        - listitem [ref=e48]:
+          - button "6 Generate 3D Space Paid" [disabled] [ref=e49]:
+            - generic [ref=e50]: "6"
+            - text: Generate 3D Space
+            - generic [ref=e51]: Paid
+          - generic [ref=e52]: →
+        - listitem [ref=e53]:
+          - button "7 View 3D Experience" [disabled] [ref=e54]:
+            - generic [ref=e55]: "7"
+            - text: View 3D Experience
+          - generic [ref=e56]: →
+        - listitem [ref=e57]:
+          - button "8 Save / Share" [disabled] [ref=e58]:
+            - generic [ref=e59]: "8"
+            - text: Save / Share
+          - generic [ref=e60]: →
+        - listitem [ref=e61]:
+          - button "9 Connect with Designer Free" [disabled] [ref=e62]:
+            - generic [ref=e63]: "9"
+            - text: Connect with Designer
+            - generic [ref=e64]: Free
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - heading "Tell us about your space" [level=2] [ref=e68]
+          - paragraph [ref=e69]: Basic details to name the project — everything else comes from your photos and vision.
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - generic [ref=e72]: Project name
+            - textbox "Project name" [ref=e73]:
+              - /placeholder: e.g. Sharma Residence, Kankarbagh
+          - generic [ref=e74]:
+            - generic [ref=e75]: Space
+            - combobox "Space" [ref=e76]:
+              - option "Full 2BHK" [selected]
+              - option "Full 3BHK"
+              - option "Living room + bedroom"
+              - option "Living room"
+              - option "Bedroom"
+          - group "Vertical" [ref=e77]:
+            - generic [ref=e78]: Vertical
+            - generic [ref=e79]:
+              - generic [ref=e80] [cursor=pointer]:
+                - radio "Residential Homes and apartments" [checked] [ref=e81]
+                - generic [ref=e82]: Residential
+                - generic [ref=e83]: Homes and apartments
+              - generic [ref=e84] [cursor=pointer]:
+                - radio "Hospitality Hotels, restaurants, cafés and bars" [ref=e85]
+                - generic [ref=e86]: Hospitality
+                - generic [ref=e87]: Hotels, restaurants, cafés and bars
+              - generic [ref=e88] [cursor=pointer]:
+                - radio "Industrial Loft-style offices and workspaces" [ref=e89]
+                - generic [ref=e90]: Industrial
+                - generic [ref=e91]: Loft-style offices and workspaces
+        - button "Create project" [disabled] [ref=e93]:
+          - text: Create project
+          - img [ref=e94]
+        - region "Your projects" [ref=e97]:
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - heading "Your projects" [level=3] [ref=e100]
+              - paragraph [ref=e101]: Loading…
+            - button "Refresh" [ref=e103] [cursor=pointer]:
+              - img [ref=e104]
+              - text: Refresh

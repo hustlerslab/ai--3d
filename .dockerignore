@@ -1,0 +1,47 @@
+# Keep the build context small, and keep secrets and customers out of it.
+#
+# Everything not listed here is COPY-able into a layer, and an image layer is
+# forever: deleting a file in a later step does not remove it from the layer
+# that added it, so a key copied in by accident stays in the image even after a
+# later RUN appears to delete it.
+
+# Credentials. The image takes these at runtime, never at build time.
+**/.env
+**/.env.*
+!**/.env.example
+
+# Customer data: uploaded photographs, renders, the database.
+aether-backend/data/
+data/
+**/*.db
+**/*.db-wal
+**/*.db-shm
+
+# Local environments and caches
+**/.venv/
+**/venv/
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/node_modules/
+**/.next/
+
+# Repository and tooling noise
+.git/
+.github/
+.claude/
+.claude-flow/
+.playwright-mcp/
+graphify-out/
+
+# Not part of the API image
+aether-frontend/
+research/
+sample/
+docs/
+version 4/
+**/*.blend
+**/*.blend1
+**/server.log

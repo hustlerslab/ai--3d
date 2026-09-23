@@ -12,6 +12,8 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
+from tests.conftest import sign_in_admin
+
 from app.projects.layout import project_dir
 
 FIXTURE = Path(__file__).parent / "fixtures" / "golden_project"
@@ -22,7 +24,7 @@ def client(env):
     from app.main import app
 
     with TestClient(app) as c:
-        yield c
+        yield sign_in_admin(c)
 
 
 def _seed_project(client) -> str:

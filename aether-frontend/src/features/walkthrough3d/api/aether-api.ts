@@ -8,6 +8,8 @@
  * Meshy keys live in the backend's own .env.
  */
 
+import { withShareToken } from "@/features/tour/share-token";
+
 import {
   AetherApiError,
   type AetherHealth,
@@ -44,10 +46,13 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
   let response: Response;
   try {
-    response = await fetch(`${API_ROOT}${path}`, {
+    response = await fetch(withShareToken(`${API_ROOT}${path}`), {
       method,
       headers: body === undefined ? undefined : { "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
+      // P0-SEC-002: the scene API is deny-by-default. Sends the httpOnly
+      // `allure_session` cookie; script never sees the token.
+      credentials: "include",
       signal: signal ?? timeout.signal,
     });
   } catch (err) {
@@ -261,9 +266,11 @@ export async function getMaterials(signal?: AbortSignal): Promise<MaterialRecord
  * relative path like "materials/wood_oak/color.jpg".
  */
 export function fileUrl(path: string): string {
-  if (/^https?:\/\//.test(path)) return path;
+  // Same reason as the tour's fileUrl: a share-link visitor has no cookie, and
+  // a mesh or texture load cannot carry a header. P0-SEC-005.
+  if (/^https?:\/\//.test(path)) return withShareToken(path);
   const clean = path.replace(/^\/+/, "");
-  return clean.startsWith("files/")
+  return withShareToken(clean.startsWith("files/")
     ? `${AETHER_BASE_URL}/${clean}`
-    : `${AETHER_BASE_URL}/files/${clean}`;
+    : `${AETHER_BASE_URL}/files/${clean}`);
 }

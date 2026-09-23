@@ -1,0 +1,4 @@
+tests/test_asset_persistence.py::test_persisted_is_empty_only_when_everything_is_ours PASSED [ 33%]
+tests/test_asset_persistence.py::test_expiring_the_vendor_url_after_download_breaks_nothing PASSED [ 66%]
+tests/test_asset_persistence.py::test_a_mesh_that_did_not_persist_is_not_recorded_as_done PASSED [100%]
+======================== 3 passed, 1 warning in 4.46s =========================

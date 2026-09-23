@@ -1,0 +1,31 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Allure Walkthrough" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]: Allure
+        - generic [ref=e6]: Walkthrough
+      - navigation [ref=e7]:
+        - link "Studio" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "3D viewer" [ref=e9] [cursor=pointer]:
+          - /url: /3d
+        - link "Cinematic film" [ref=e10] [cursor=pointer]:
+          - /url: /cinematic
+  - main [ref=e11]:
+    - generic [ref=e191]:
+      - generic [ref=e192]:
+        - heading "Sign in to Allure" [level=1] [ref=e193]
+        - paragraph [ref=e194]: Your projects, photographs and designs are visible only to you.
+      - generic [ref=e195]:
+        - generic [ref=e196]: Email
+        - textbox "Email" [ref=e197]:
+          - /placeholder: you@example.com
+      - generic [ref=e198]:
+        - generic [ref=e199]: Password
+        - textbox "Password" [ref=e200]
+      - button "Sign in" [ref=e201] [cursor=pointer]
+      - button "No account yet? Create one" [ref=e202] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e30] [cursor=pointer]:
+    - img [ref=e31]
+  - alert [ref=e34]

@@ -180,10 +180,21 @@ def _read_scene(ctx: JobContext, analysis, style, provider, *, force: bool):
     precondition for having one.
     """
     from ...intelligence.scene_reading import (
-        check_element_crops, coerce_room_reading, element_inventory, ensure_anchors,
-        estimate_dimensions, inventory_notes, resolve_elements, write_element_crops)
+        carry_asset_bindings, check_element_crops, coerce_room_reading, element_inventory,
+        ensure_anchors, estimate_dimensions, inventory_notes, resolve_elements,
+        write_element_crops)
     from ...intelligence.schema import SceneReading
     from ...projects.layout import project_dir
+
+    # P1-ASSET-001: a forced re-read replaces this file. Keep what it knew
+    # about paid meshes, so the bindings can follow the pieces (below).
+    previous = None
+    if force and ctx.has_checkpoint(SCENE_READING):
+        try:
+            previous = SceneReading.model_validate(ctx.read_json(SCENE_READING))
+        except Exception as exc:                                       # noqa: BLE001
+            ctx.emit("plan.read", f"previous reading unreadable, nothing to carry: {exc}",
+                     status="warning")
 
     if ctx.has_checkpoint(SCENE_READING) and not force:
         reading = SceneReading.model_validate(ctx.read_json(SCENE_READING))
@@ -286,6 +297,23 @@ def _read_scene(ctx: JobContext, analysis, style, provider, *, force: bool):
     if carried:
         ctx.emit("plan.decisions", f"{carried} row(s) inherited the client's element decision")
         reading.inventory = element_inventory(reading)
+    # P1-ASSET-001: meshes already bought follow the piece, not the box. Before
+    # resolve_elements() so the definitions' canonical_asset_id sees them.
+    if previous is not None and any(e.asset_id for e in previous.elements):
+        from ...assets.registry import get_registry
+
+        def _resolves(asset_id: str) -> bool:
+            rec = get_registry().get(asset_id)
+            return rec is not None and rec.status != "failed"
+
+        kept = carry_asset_bindings(previous, reading, valid=_resolves)
+        n = kept["carried"] + kept["carried_loose"]
+        ctx.emit("plan.assets",
+                 f"{n} mesh binding(s) carried across the re-read by canonical key"
+                 + (f" ({kept['carried_loose']} by loose match)" if kept["carried_loose"] else "")
+                 + (f"; {kept['unbound']} not matched - the piece changed or is gone"
+                    if kept["unbound"] else ""),
+                 status="warning" if kept["unbound"] else "info")
     reading.definitions, reading.instances = resolve_elements(reading)
     multi = [d for d in reading.definitions if d.instance_count > 1]
     if multi:
@@ -467,7 +495,7 @@ def scene_plan(ctx: JobContext) -> dict[str, Any]:
         store.create(scene)
         ctx.emit("plan.scene", f"{len(scene.rooms)} room(s), {len(scene.walls)} wall(s), {len(scene.openings)} opening(s) laid out")
 
-        ops, place_warnings = place_objects(scene, plan, assets)
+        ops, place_warnings = place_objects(scene, plan, assets, reading=reading)
         warnings += place_warnings
         # P4 repair between the solver and the commit gate: only objects in
         # hard violation move, only to positions validate_object accepts.
@@ -480,6 +508,19 @@ def scene_plan(ctx: JobContext) -> dict[str, Any]:
         ctx.projects.attach_scene(ctx.project_id, scene.scene_id)
         ctx.projects.add_scene_spec(ctx.project_id, scene.scene_id, scene.version, SCENE_SPEC)
         ctx.mark_checkpoint("scene_spec")
+        # P1-IDENTITY-005: refresh the identity index now that both files it is
+        # derived from are on disk. A failure here must not fail the plan — the
+        # index is a cache of what the files already say, and `ensure_indexed()`
+        # rebuilds it on the next read.
+        try:
+            from ...provenance import index_project
+
+            counts = index_project(ctx.project_id)
+            ctx.emit("plan.provenance",
+                     f"{counts['elements']} element(s), {counts['instances']} instance(s) indexed"
+                     f" · {counts['placed']} placed")
+        except Exception as exc:                               # noqa: BLE001
+            ctx.emit("plan.provenance", f"identity index not refreshed: {exc}", status="warning")
         ctx.emit("plan.scene", f"{len(scene.objects)} object(s) placed and validated · scene {scene.scene_id} v{scene.version}")
         # Independent intent evaluation (P8, read-only) + P7 spatial scene of the
         # committed result; refreshed only when the scene itself was rebuilt.

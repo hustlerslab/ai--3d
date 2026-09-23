@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Walkthrough3DView } from "@/features/walkthrough3d/components/walkthrough3d-view";
 
 import { fileUrl, getTour } from "../api/tour-api";
+import { setShareToken } from "../share-token";
 import { TourApiError, type TourPackage } from "../types";
 import { PanoramaTour } from "./panorama-tour";
 
@@ -31,33 +32,43 @@ export function FilmPlayer({ pkg, className }: { pkg: TourPackage; className?: s
   );
 }
 
-export function ShareView({ projectId }: { projectId: string }) {
+export function ShareView({ projectId, token }: { projectId: string; token?: string }) {
   const [pkg, setPkg] = useState<TourPackage | null>(null);
-  const [error, setError] = useState<{ code: string; message: string } | null>(null);
+  const [error, setError] = useState<{ code: string; message: string; status: number } | null>(null);
   const [mode, setMode] = useState<Mode>("tour");
+
+  // Set before the first fetch, and before any <img> or texture URL is built.
+  // Every asset on this page authorises through it - see features/tour/share-token.
+  setShareToken(token);
 
   useEffect(() => {
     const controller = new AbortController();
     setPkg(null);
     setError(null);
-    getTour(projectId, controller.signal)
+    getTour(projectId, controller.signal, token)
       .then(setPkg)
       .catch((err) => {
         if (controller.signal.aborted) return;
         const e = err instanceof TourApiError ? err : new TourApiError("UNKNOWN", String(err), 0);
-        setError({ code: e.code, message: e.message });
+        setError({ code: e.code, message: e.message, status: e.status });
       });
     return () => controller.abort();
-  }, [projectId]);
+  }, [projectId, token]);
 
   if (error) {
     return (
       <div className="mx-auto max-w-lg px-6 py-24 text-center">
-        <p className="font-serif text-2xl">This walkthrough isn&apos;t ready yet</p>
+        <p className="font-serif text-2xl">
+          {error.status === 401
+            ? "This link doesn’t work"
+            : "This walkthrough isn’t ready yet"}
+        </p>
         <p className="mt-3 text-sm text-ink-muted">
           {error.code === "TOUR_NOT_READY"
             ? "The panoramas are still being rendered. Check back in a few minutes."
-            : error.message}
+            : error.status === 401
+              ? "This link has expired or been turned off. Ask whoever shared it with you for a new one."
+              : error.message}
         </p>
       </div>
     );

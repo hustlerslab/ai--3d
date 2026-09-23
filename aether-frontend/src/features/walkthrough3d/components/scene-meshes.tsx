@@ -13,6 +13,7 @@
  */
 
 import { RoundedBox, useGLTF } from "@react-three/drei";
+import { withSessionCredentials } from "../api/loader-credentials";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import * as THREE from "three";
 
@@ -536,7 +537,7 @@ function BoxShape({ obj }: { obj: SceneObject }) {
 const FABRIC_TYPES = new Set(["sofa", "loveseat", "armchair", "ottoman", "chair", "bed", "bar_stool", "pillows", "rug", "curtains"]);
 
 function GlbModel({ url, obj, ownMaterials }: { url: string; obj: SceneObject; ownMaterials: boolean }) {
-  const gltf = useGLTF(url);
+  const gltf = useGLTF(url, undefined, undefined, withSessionCredentials);
   const normalized = useMemo(() => {
     const clone = gltf.scene.clone(true);
     const box = new THREE.Box3().setFromObject(clone);

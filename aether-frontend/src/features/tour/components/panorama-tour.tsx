@@ -12,6 +12,7 @@
  */
 
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { withSessionCredentials } from "../../walkthrough3d/api/loader-credentials";
 import { Html } from "@react-three/drei";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
@@ -39,7 +40,7 @@ function direction(lon: number, lat: number): THREE.Vector3 {
 }
 
 function PanoSphere({ url, yaw, onReady }: { url: string; yaw: number; onReady?: () => void }) {
-  const texture = useLoader(THREE.TextureLoader, url);
+  const texture = useLoader(THREE.TextureLoader, url, withSessionCredentials);
   useEffect(() => {
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.minFilter = THREE.LinearFilter;
@@ -140,7 +141,7 @@ export function PanoramaTour({ pkg, initialNodeId, autoplay = false, onNodeChang
   useEffect(() => {
     if (readyId === null) return;
     const urls = nodes.filter((n) => n.id !== readyId).map((n) => fileUrl(n.pano_url));
-    const timer = setTimeout(() => useLoader.preload(THREE.TextureLoader, urls), 200);
+    const timer = setTimeout(() => useLoader.preload(THREE.TextureLoader, urls, withSessionCredentials), 200);
     return () => clearTimeout(timer);
     // only the first ready node should trigger the warm-up
     // eslint-disable-next-line react-hooks/exhaustive-deps

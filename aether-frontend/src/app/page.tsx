@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AuthGate } from "@/features/auth/components/auth-gate";
 import { WalkthroughStudio } from "@/features/walkthrough-studio/components/walkthrough-studio";
 
 export const metadata: Metadata = {
@@ -9,5 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <WalkthroughStudio />;
+  // P0-SEC-002 closed 60 of 63 API routes. Without the gate every call in the
+  // studio returns 401 and the UI reports a network error it cannot explain.
+  return (
+    <AuthGate>
+      <WalkthroughStudio />
+    </AuthGate>
+  );
 }

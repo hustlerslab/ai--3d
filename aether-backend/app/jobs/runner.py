@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 
 from ..core.config import get_settings
+from ..core.logging import bind
 from ..projects.schema import ProjectStage
 from ..projects.store import ProjectStore, get_project_store
 from .context import JobContext
@@ -83,9 +84,18 @@ class JobRunner:
             pool.shutdown(wait=wait, cancel_futures=True)
 
     # ── submission ───────────────────────────────────────────────
-    def enqueue(self, project_id: str, type: str, params: Optional[dict[str, Any]] = None) -> Job:
+    def enqueue(self, project_id: str, type: str, params: Optional[dict[str, Any]] = None,
+                created_by: str = "") -> Job:
         spec = get_spec(type)
-        self.projects.get(project_id)  # raises ProjectNotFound
+        project = self.projects.get(project_id)  # raises ProjectNotFound
+
+        # Who asked. Taken from the request context rather than from `params`,
+        # which POST /projects/{id}/jobs lets the caller write wholesale. An
+        # explicit argument still wins, for callers outside a request.
+        if not created_by:
+            from ..auth.authz import current_actor
+
+            created_by = current_actor.get("")
 
         # P16 idempotency. A double-clicked "Generate 3D space" used to queue the
         # work twice: the render lane has one worker so those merely serialised,
@@ -108,6 +118,11 @@ class JobRunner:
             lane=self._lane_for(spec),
             params=params,
             max_attempts=spec.max_attempts,
+            created_by=created_by,
+            # Copied, not looked up later: the runner binds log context before
+            # it touches the project store, because a lookup that itself fails
+            # is exactly when the ids matter.
+            correlation_id=getattr(project, "correlation_id", "") or "",
         )
         self.jobs.add_event(project_id, type, "queued", job_id=job.job_id)
         self._submit(job.job_id, job.lane)
@@ -182,10 +197,25 @@ class JobRunner:
 
     # ── execution ────────────────────────────────────────────────
     def _run(self, job_id: str) -> None:
+        # P0-OBSERVABILITY-001. Bound HERE, around the whole execution, rather
+        # than inside _execute: a crash before the ids are set would produce
+        # exactly the uncorrelated line somebody needs most. The `bind` context
+        # manager restores the previous values on exit, so a failed job cannot
+        # leave its ids attached to whatever this worker thread picks up next -
+        # a log naming the wrong customer is worse than one naming none.
+        try:
+            job = self.jobs.get(job_id)
+            project_id, correlation = job.project_id, job.correlation_id
+        except Exception:                      # noqa: BLE001 - id lookup only
+            project_id, correlation = "", ""
+        with bind(project_id=project_id, job_id=job_id, correlation_id=correlation or None):
+            self._run_bound(job_id)
+
+    def _run_bound(self, job_id: str) -> None:
         try:
             self._execute(job_id)
         except Exception:  # pragma: no cover - last line of defence
-            log.exception("job %s crashed outside the handler", job_id)
+            log.exception("job crashed outside the handler")
         finally:
             with self._cv:
                 self._inflight -= 1
@@ -212,17 +242,24 @@ class JobRunner:
         # per-project `events` table already records stage and status; this is
         # the server-side half, so a log file alone is enough to trace a run.
         # Ids only - never a brief, an image, a prompt or a key.
-        log.info("job.start project=%s job=%s type=%s lane=%s attempt=%d/%d",
-                 job.project_id, job_id, job.type, job.lane, attempt, job.max_attempts)
+        # The ids are already on every line (see _run); this carries the rest.
+        log.info("job.start", extra={
+            "type": job.type, "lane": str(job.lane),
+            "attempt": attempt, "max_attempts": job.max_attempts,
+        })
 
         t0 = time.monotonic()
         try:
             result = spec.handler(ctx) or {}
             duration_ms = int((time.monotonic() - t0) * 1000)
-            log.info("job.succeeded project=%s job=%s type=%s ms=%d %s",
-                     job.project_id, job_id, job.type, duration_ms,
-                     " ".join(f"{k}={result[k]}" for k in ("scene_id", "scene_version")
-                              if isinstance(result, dict) and k in result))
+            log.info("job.succeeded", extra={
+                "type": job.type,
+                "duration_ms": duration_ms,
+                # Ids only. `result` can contain anything a handler returns, so
+                # named keys are copied out rather than the dict logged.
+                **{k: result[k] for k in ("scene_id", "scene_version")
+                   if isinstance(result, dict) and k in result},
+            })
             self.jobs.update(job_id, status=JobStatus.SUCCEEDED, result=result, finished_at=_now())
             self.jobs.add_event(
                 job.project_id, job.type, "succeeded", job_id=job_id, duration_ms=duration_ms

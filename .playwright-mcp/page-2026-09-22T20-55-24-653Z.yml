@@ -1,0 +1,159 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Allure Walkthrough" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]: Allure
+        - generic [ref=e6]: Walkthrough
+      - navigation [ref=e7]:
+        - link "Studio" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "3D viewer" [ref=e9] [cursor=pointer]:
+          - /url: /3d
+        - link "Cinematic film" [ref=e10] [cursor=pointer]:
+          - /url: /cinematic
+  - main [ref=e11]:
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - generic [ref=e42]: Signed in as browser-check@example.com · admin
+        - button "Sign out" [ref=e43] [cursor=pointer]
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - paragraph [ref=e47]: See it before you commit
+            - heading "Walkthrough Studio" [level=1] [ref=e48]
+            - paragraph [ref=e49]: From an idea to a space you can walk through — moodboard first, 3D when you're sure.
+          - generic [ref=e50]:
+            - link "Cinematic film studio" [ref=e51] [cursor=pointer]:
+              - /url: /cinematic
+              - img [ref=e52]
+              - text: Cinematic film studio
+            - link "Open 3D viewer" [ref=e54] [cursor=pointer]:
+              - /url: /3d
+              - img [ref=e55]
+              - text: Open 3D viewer
+        - list [ref=e58]:
+          - listitem [ref=e59]:
+            - button "1 Create Project" [ref=e60] [cursor=pointer]:
+              - generic [ref=e61]: "1"
+              - text: Create Project
+            - generic [ref=e62]: →
+          - listitem [ref=e63]:
+            - button "2 Upload & Describe" [disabled] [ref=e64]:
+              - generic [ref=e65]: "2"
+              - text: Upload & Describe
+            - generic [ref=e66]: →
+          - listitem [ref=e67]:
+            - button "3 Generate Moodboard Free" [disabled] [ref=e68]:
+              - generic [ref=e69]: "3"
+              - text: Generate Moodboard
+              - generic [ref=e70]: Free
+            - generic [ref=e71]: →
+          - listitem [ref=e72]:
+            - button "4 Review & Refine" [disabled] [ref=e73]:
+              - generic [ref=e74]: "4"
+              - text: Review & Refine
+            - generic [ref=e75]: →
+          - listitem [ref=e76]:
+            - button "5 Plan 3D Space" [disabled] [ref=e77]:
+              - generic [ref=e78]: "5"
+              - text: Plan 3D Space
+            - generic [ref=e79]: →
+          - listitem [ref=e80]:
+            - button "6 Generate 3D Space Paid" [disabled] [ref=e81]:
+              - generic [ref=e82]: "6"
+              - text: Generate 3D Space
+              - generic [ref=e83]: Paid
+            - generic [ref=e84]: →
+          - listitem [ref=e85]:
+            - button "7 View 3D Experience" [disabled] [ref=e86]:
+              - generic [ref=e87]: "7"
+              - text: View 3D Experience
+            - generic [ref=e88]: →
+          - listitem [ref=e89]:
+            - button "8 Save / Share" [disabled] [ref=e90]:
+              - generic [ref=e91]: "8"
+              - text: Save / Share
+            - generic [ref=e92]: →
+          - listitem [ref=e93]:
+            - button "9 Connect with Designer Free" [disabled] [ref=e94]:
+              - generic [ref=e95]: "9"
+              - text: Connect with Designer
+              - generic [ref=e96]: Free
+        - generic [ref=e98]:
+          - generic [ref=e99]:
+            - heading "Tell us about your space" [level=2] [ref=e100]
+            - paragraph [ref=e101]: Basic details to name the project — everything else comes from your photos and vision.
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - generic [ref=e104]: Project name
+              - textbox "Project name" [ref=e105]:
+                - /placeholder: e.g. Sharma Residence, Kankarbagh
+            - generic [ref=e106]:
+              - generic [ref=e107]: Space
+              - combobox "Space" [ref=e108]:
+                - option "Full 2BHK" [selected]
+                - option "Full 3BHK"
+                - option "Living room + bedroom"
+                - option "Living room"
+                - option "Bedroom"
+            - group "Vertical" [ref=e109]:
+              - generic [ref=e110]: Vertical
+              - generic [ref=e111]:
+                - generic [ref=e112] [cursor=pointer]:
+                  - radio "Residential Homes and apartments" [checked] [ref=e113]
+                  - generic [ref=e114]: Residential
+                  - generic [ref=e115]: Homes and apartments
+                - generic [ref=e116] [cursor=pointer]:
+                  - radio "Hospitality Hotels, restaurants, cafés and bars" [ref=e117]
+                  - generic [ref=e118]: Hospitality
+                  - generic [ref=e119]: Hotels, restaurants, cafés and bars
+                - generic [ref=e120] [cursor=pointer]:
+                  - radio "Industrial Loft-style offices and workspaces" [ref=e121]
+                  - generic [ref=e122]: Industrial
+                  - generic [ref=e123]: Loft-style offices and workspaces
+          - button "Create project" [disabled] [ref=e125]:
+            - text: Create project
+            - img [ref=e126]
+          - region "Your projects" [ref=e129]:
+            - generic [ref=e130]:
+              - generic [ref=e131]:
+                - heading "Your projects" [level=3] [ref=e132]
+                - paragraph [ref=e133]: 3 projects on this engine. Open one to pick up where it stopped.
+              - button "Refresh" [ref=e135] [cursor=pointer]:
+                - img [ref=e136]
+                - text: Refresh
+            - list [ref=e141]:
+              - listitem [ref=e142]:
+                - 'button "test 1 Residential · 36 scenes · Warm and calm modern 2BHK living room for a family of five. Keep the existing TV unit and oak flooring. Create comfortable seating for five with one main sofa and two lounge chairs, plus a coffee table and two side tables. Add a soft neutral rug, floor lamp, cushions, and subtle warm lighting. Use natural oak/wood, beige and cream upholstery, and restrained black accents. Keep the room uncluttered, practical, elegant, and buildable. Do not add unnecessary furniture or decorative objects. Preserve the existing architecture and TV unit. Space: living room only. Space: living room only. Space: living room only. Space: living room only. 20 Sept 2026 Preview ready" [ref=e143] [cursor=pointer]':
+                  - generic [ref=e144]:
+                    - generic [ref=e146]: test 1
+                    - generic [ref=e147]: "Residential · 36 scenes · Warm and calm modern 2BHK living room for a family of five. Keep the existing TV unit and oak flooring. Create comfortable seating for five with one main sofa and two lounge chairs, plus a coffee table and two side tables. Add a soft neutral rug, floor lamp, cushions, and subtle warm lighting. Use natural oak/wood, beige and cream upholstery, and restrained black accents. Keep the room uncluttered, practical, elegant, and buildable. Do not add unnecessary furniture or decorative objects. Preserve the existing architecture and TV unit. Space: living room only. Space: living room only. Space: living room only. Space: living room only."
+                  - generic [ref=e148]: 20 Sept 2026
+                  - generic [ref=e149]: Preview ready
+                  - img [ref=e151]
+                - button "Delete test 1" [ref=e154] [cursor=pointer]:
+                  - img [ref=e155]
+              - listitem [ref=e158]:
+                - 'button "Sample reference run Residential · 7 scenes · Warm, modern family home — a living room built around this blue sofa, and a primary bedroom built around this mattress. Living room: cozy and functional for a family who entertains occasionally — coffee table, a rug, side tables, warm ambient lighting. Bedroom: calm and restful, warm neutral tones, a nightstand on each side, soft layered textiles. Keep the overall palette warm and modern, not stark minimalist — lived-in comfort, not a showroom. Space: 2BHK apartment. Space: 2BHK apartment. Space: 2BHK apartment. Space: 2BHK apartment. Space: 2BHK apartment. 16 Sept 2026 Preview ready" [ref=e159] [cursor=pointer]':
+                  - generic [ref=e160]:
+                    - generic [ref=e162]: Sample reference run
+                    - generic [ref=e163]: "Residential · 7 scenes · Warm, modern family home — a living room built around this blue sofa, and a primary bedroom built around this mattress. Living room: cozy and functional for a family who entertains occasionally — coffee table, a rug, side tables, warm ambient lighting. Bedroom: calm and restful, warm neutral tones, a nightstand on each side, soft layered textiles. Keep the overall palette warm and modern, not stark minimalist — lived-in comfort, not a showroom. Space: 2BHK apartment. Space: 2BHK apartment. Space: 2BHK apartment. Space: 2BHK apartment. Space: 2BHK apartment."
+                  - generic [ref=e164]: 16 Sept 2026
+                  - generic [ref=e165]: Preview ready
+                  - img [ref=e167]
+                - button "Delete Sample reference run" [ref=e170] [cursor=pointer]:
+                  - img [ref=e171]
+              - listitem [ref=e174]:
+                - button "Seed Project Residential · 1 scene 16 Sept 2026 Not started" [ref=e175] [cursor=pointer]:
+                  - generic [ref=e176]:
+                    - generic [ref=e178]: Seed Project
+                    - generic [ref=e179]: Residential · 1 scene
+                  - generic [ref=e180]: 16 Sept 2026
+                  - generic [ref=e181]: Not started
+                  - img [ref=e183]
+                - button "Delete Seed Project" [ref=e186] [cursor=pointer]:
+                  - img [ref=e187]
+  - button "Open Next.js Dev Tools" [ref=e30] [cursor=pointer]:
+    - img [ref=e31]
+  - alert [ref=e34]

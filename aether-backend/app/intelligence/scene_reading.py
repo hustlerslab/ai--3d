@@ -666,6 +666,75 @@ def resolve_elements(reading: SceneReading) -> tuple[list[ElementDefinition], li
     return definitions, instances
 
 
+def carry_asset_bindings(previous: SceneReading, reading: SceneReading,
+                         valid=lambda asset_id: True) -> dict[str, int]:
+    """Re-bind meshes already paid for onto a freshly re-read reading - P1-ASSET-001.
+
+    Reading ids are minted from `room|type|name|bbox`; a re-read moves every
+    box, so every id changes, and the `asset_id` on the old row used to vanish
+    with it. The next generation run then bought the same stool again. The
+    binding now follows the PIECE, matched by the position-free canonical key,
+    which is the same rule that makes three stools one purchase.
+
+    Deliberately NOT the id: the id's instability is a symptom, the lost
+    binding is the cost. A piece whose evidence changed (other colour, other
+    material, other size) gets another key, carries nothing, and is generated
+    afresh - which is the right outcome, it IS a different piece. A row with
+    no evidence at all (`|?` key) is not known to be the same piece and never
+    inherits a mesh.
+
+    Second pass, loose key `room|type|material|colour`: a re-read that
+    re-measures a piece across a 10 cm dimension bucket would otherwise change
+    its key and re-buy it. Applied only when that loose key is unique on BOTH
+    sides and the mesh was not already handed out, so one mesh can never reach
+    two different pieces.
+
+    `valid(asset_id)` lets the caller drop bindings whose asset no longer
+    resolves (deleted, or a failed ingest); the default keeps everything.
+    Approvals are NOT carried: a human said yes to the OLD crop, and spend on
+    a crop nobody has seen is exactly what the approval gate exists to stop.
+    """
+    exact: dict[str, str] = {}
+    loose: dict[str, set[str]] = {}
+    for el in previous.elements:
+        if not el.asset_id or not valid(el.asset_id):
+            continue
+        key = canonical_key(el)
+        if "|?" in key:
+            continue
+        exact.setdefault(key, el.asset_id)
+        loose.setdefault(_loose_key(el), set()).add(el.asset_id)
+
+    counts = {"carried": 0, "carried_loose": 0, "unbound": 0}
+    unmatched: dict[str, list[SceneElement]] = {}
+    for el in reading.elements:
+        if el.asset_id:
+            continue
+        key = canonical_key(el)
+        if "|?" in key:
+            continue
+        asset_id = exact.get(key)
+        if asset_id:
+            el.asset_id = asset_id
+            counts["carried"] += 1
+        else:
+            unmatched.setdefault(_loose_key(el), []).append(el)
+    handed_out = {el.asset_id for el in reading.elements if el.asset_id}
+    for lkey, els in unmatched.items():
+        ids = loose.get(lkey, set()) - handed_out
+        if len(ids) == 1 and len(els) == 1:
+            els[0].asset_id = next(iter(ids))
+            handed_out.add(els[0].asset_id)
+            counts["carried_loose"] += 1
+    bound_before = {el.asset_id for el in previous.elements if el.asset_id and valid(el.asset_id)}
+    counts["unbound"] = len(bound_before - handed_out)
+    return counts
+
+
+def _loose_key(el: SceneElement) -> str:
+    return f"{el.room_id}|{el.semantic_type}|{_norm_attr(el.material)}|{_norm_attr(el.color)}"
+
+
 def trustworthy(element: SceneElement) -> bool:
     """Does this element describe something really in the approved picture?
 

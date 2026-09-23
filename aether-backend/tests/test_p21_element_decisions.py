@@ -16,6 +16,8 @@ from types import SimpleNamespace
 
 import pytest
 from fastapi.testclient import TestClient
+
+from tests.conftest import sign_in_admin
 from PIL import Image
 
 from app.intelligence.schema import ElementDefinition, ElementImageSet, SceneElement
@@ -32,7 +34,7 @@ def client(env, monkeypatch):
     from app.main import app
 
     with TestClient(app) as c:
-        yield c
+        yield sign_in_admin(c)
 
 
 def _project(client) -> str:

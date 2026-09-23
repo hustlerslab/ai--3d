@@ -1,0 +1,122 @@
+{
+  "success": true,
+  "data": {
+    "project_id": "proj_0446d09bca",
+    "scene_object_id": "obj_el_sofa",
+    "origin": "moodboard_element",
+    "complete": true,
+    "gaps": [],
+    "terminus": "source_image",
+    "hops": [
+      {
+        "hop": "blender_object",
+        "resolved": true,
+        "gap": false,
+        "id": "obj_el_sofa",
+        "note": "",
+        "detail": {
+          "manifest_version": "1.2",
+          "name": "sofa"
+        }
+      },
+      {
+        "hop": "scene_object",
+        "resolved": true,
+        "gap": false,
+        "id": "obj_el_sofa",
+        "note": "identity read from scene_object.element_id",
+        "detail": {
+          "semantic_type": "sofa",
+          "room_id": "living_room",
+          "name": "",
+          "asset_id": "asset_cel_d459c547c7",
+          "plan_key": "living_room.sofa.0#0",
+          "instance_id": "el_sofa#0"
+        }
+      },
+      {
+        "hop": "instance",
+        "resolved": true,
+        "gap": false,
+        "id": "cel_d459c547c7.1",
+        "note": "",
+        "detail": {
+          "element_id": "cel_d459c547c7",
+          "room_id": "living_room",
+          "crop_ref": "planning/scene_crops/living_room/el_sofa.png",
+          "asset_id": ""
+        }
+      },
+      {
+        "hop": "element",
+        "resolved": true,
+        "gap": false,
+        "id": "cel_d459c547c7",
+        "note": "",
+        "detail": {
+          "canonical_name": "blue three-seater sofa",
+          "semantic_type": "sofa",
+          "identity_method": "room_type_dims_material_colour",
+          "instance_count": 1,
+          "source_element_ids": [
+            "el_sofa"
+          ],
+          "canonical_asset_id": ""
+        }
+      },
+      {
+        "hop": "scene_element",
+        "resolved": true,
+        "gap": false,
+        "id": "el_sofa",
+        "note": "",
+        "detail": {
+          "name": "blue three-seater sofa",
+          "crop_ref": "planning/scene_crops/living_room/el_sofa.png",
+          "crop_url": "/files/projects/proj_0446d09bca/planning/scene_crops/living_room/el_sofa.png",
+          "asset_id": "",
+          "approved": true,
+          "check": "ok"
+        }
+      },
+      {
+        "hop": "moodboard",
+        "resolved": true,
+        "gap": false,
+        "id": "living_room",
+        "note": "",
+        "detail": {
+          "url": "/files/projects/proj_0446d09bca/analysis/moodboard_room_living_room.png",
+          "reference_resolved": true,
+          "reference_note": "blue sofa in living.png"
+        }
+      },
+      {
+        "hop": "design_intent",
+        "resolved": true,
+        "gap": false,
+        "id": "di_sofa",
+        "note": "",
+        "detail": {
+          "intents": [
+            {
+              "intent_id": "di_sofa",
+              "reference_class": "exact_object",
+              "object_category": "sofa"
+            }
+          ]
+        }
+      }
+    ],
+    "source_images": [
+      {
+        "input_id": "in_73f74c213d",
+        "filename": "living.png",
+        "path": "input/references/ref_03.png",
+        "url": "/files/projects/proj_0446d09bca/input/references/ref_03.png",
+        "in_inputs_table": true,
+        "via": "design_intent"
+      }
+    ]
+  }
+}

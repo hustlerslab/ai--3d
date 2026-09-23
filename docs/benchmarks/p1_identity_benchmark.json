@@ -1,0 +1,292 @@
+{
+  "_about": "P1-IDENTITY-006 - identity accuracy as a measured number, with N.",
+  "schema_version": "1",
+  "captured_at": "2026-09-21T22:17:02.012385+00:00",
+  "git_sha": "02ca264",
+  "resolver": "app.intelligence.scene_reading.resolve_elements (shipped code, no model)",
+  "cases": {
+    "golden_living_room_01": {
+      "n_elements": 17,
+      "n_trustworthy": 17,
+      "n_excluded": 0,
+      "definitions": 11,
+      "truth_groups": 11,
+      "instances": 17,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 10,
+        "cells_correct": 10,
+        "accuracy": 1.0,
+        "predicted": 17,
+        "truth": 17
+      },
+      "definition_sizes": [
+        4,
+        3,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "spend": {
+        "ready_rows": 17,
+        "held_rows": 0,
+        "groups": 11,
+        "generations": 10,
+        "reused_groups": 1,
+        "instances_bound": 17,
+        "instances_per_generation": 1.7,
+        "asset_reuse_rate": 0.4118,
+        "owned_rows": [
+          "tv_unit"
+        ]
+      }
+    },
+    "acceptance_one_rejected_stool_is_excluded": {
+      "n_elements": 3,
+      "n_trustworthy": 2,
+      "n_excluded": 1,
+      "definitions": 1,
+      "truth_groups": 1,
+      "instances": 2,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 1,
+        "cells_correct": 1,
+        "accuracy": 1.0,
+        "predicted": 2,
+        "truth": 2
+      },
+      "definition_sizes": [
+        2
+      ]
+    },
+    "acceptance_two_dark_one_light_stool": {
+      "n_elements": 3,
+      "n_trustworthy": 3,
+      "n_excluded": 0,
+      "definitions": 2,
+      "truth_groups": 2,
+      "instances": 3,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 1,
+        "cells_correct": 1,
+        "accuracy": 1.0,
+        "predicted": 3,
+        "truth": 3
+      },
+      "definition_sizes": [
+        2,
+        1
+      ]
+    },
+    "acceptance_television_vs_tv_unit": {
+      "n_elements": 2,
+      "n_trustworthy": 2,
+      "n_excluded": 0,
+      "definitions": 2,
+      "truth_groups": 2,
+      "instances": 2,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 2,
+        "cells_correct": 2,
+        "accuracy": 1.0,
+        "predicted": 2,
+        "truth": 2
+      },
+      "definition_sizes": [
+        1,
+        1
+      ]
+    },
+    "ablation_real_project": {
+      "n_elements": 26,
+      "n_trustworthy": 15,
+      "n_excluded": 11,
+      "definitions": 13,
+      "truth_groups": 13,
+      "instances": 15,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 13,
+        "cells_correct": 13,
+        "accuracy": 1.0,
+        "predicted": 15,
+        "truth": 15
+      },
+      "definition_sizes": [
+        3,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "ablation_golden_three_stools": {
+      "n_elements": 3,
+      "n_trustworthy": 3,
+      "n_excluded": 0,
+      "definitions": 1,
+      "truth_groups": 1,
+      "instances": 3,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 1,
+        "cells_correct": 1,
+        "accuracy": 1.0,
+        "predicted": 3,
+        "truth": 3
+      },
+      "definition_sizes": [
+        3
+      ]
+    },
+    "ablation_golden_chairs_different_upholstery": {
+      "n_elements": 3,
+      "n_trustworthy": 1,
+      "n_excluded": 2,
+      "definitions": 1,
+      "truth_groups": 1,
+      "instances": 1,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 1,
+        "cells_correct": 1,
+        "accuracy": 1.0,
+        "predicted": 1,
+        "truth": 1
+      },
+      "definition_sizes": [
+        1
+      ]
+    },
+    "ablation_golden_two_beds_two_rooms": {
+      "n_elements": 2,
+      "n_trustworthy": 2,
+      "n_excluded": 0,
+      "definitions": 2,
+      "truth_groups": 2,
+      "instances": 2,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 2,
+        "cells_correct": 2,
+        "accuracy": 1.0,
+        "predicted": 2,
+        "truth": 2
+      },
+      "definition_sizes": [
+        1,
+        1
+      ]
+    },
+    "ablation_golden_no_evidence_pair": {
+      "n_elements": 2,
+      "n_trustworthy": 1,
+      "n_excluded": 1,
+      "definitions": 1,
+      "truth_groups": 1,
+      "instances": 1,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 1,
+        "cells_correct": 1,
+        "accuracy": 1.0,
+        "predicted": 1,
+        "truth": 1
+      },
+      "definition_sizes": [
+        1
+      ]
+    },
+    "ablation_golden_six_matching_chairs": {
+      "n_elements": 6,
+      "n_trustworthy": 6,
+      "n_excluded": 0,
+      "definitions": 1,
+      "truth_groups": 1,
+      "instances": 6,
+      "false_merges": 0,
+      "false_splits": 0,
+      "false_merge_rate": 0.0,
+      "false_split_rate": 0.0,
+      "instance_count": {
+        "cells": 1,
+        "cells_correct": 1,
+        "accuracy": 1.0,
+        "predicted": 6,
+        "truth": 6
+      },
+      "definition_sizes": [
+        6
+      ]
+    }
+  },
+  "absent_cases": [],
+  "totals": {
+    "n_elements": 67,
+    "n_trustworthy": 52,
+    "definitions": 35,
+    "truth_groups": 35,
+    "instances": 52,
+    "false_merges": 0,
+    "false_splits": 0,
+    "cells": 33,
+    "cells_correct": 33,
+    "cases": 10,
+    "false_merge_rate": 0.0,
+    "false_split_rate": 0.0,
+    "instance_count_accuracy": 1.0
+  },
+  "golden_acceptance": {
+    "element_kinds_rows": 10,
+    "definitions": 11,
+    "instances": 17,
+    "generations": 10,
+    "false_merges": 0,
+    "false_splits": 0,
+    "note": "task.md section 29.1 states '10 definitions, 17 instances, <=9 generations' AND requires the 2 side tables to stay 2 definitions. Both cannot hold: 10 element rows with the side-table row split is 11 definitions and, with the TV unit already owned, 10 generations. The no-false-merge rule governs (the ablation's own decision rule), so 11 / 17 / 10 is the correct arithmetic. Recorded as correction C10 in TRACK_RECORD.md."
+  }
+}

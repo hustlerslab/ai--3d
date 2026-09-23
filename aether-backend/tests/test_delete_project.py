@@ -4,6 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+
+from tests.conftest import sign_in_admin
 from PIL import Image
 
 from app.core.config import get_settings
@@ -32,7 +34,7 @@ def test_delete_removes_the_project_but_archives_what_it_produced(env):
     """The moodboard is the brief the client approved and the meshes cost 30
     credits each. Losing those with the project would make deleting a tidy-up
     that quietly throws away an afternoon of generation."""
-    client = TestClient(app)
+    client = sign_in_admin(TestClient(app))
     pid, root = _project_with_work(client)
     assert root.is_dir()
 
@@ -55,14 +57,14 @@ def test_delete_removes_the_project_but_archives_what_it_produced(env):
 
 
 def test_deleting_it_twice_is_a_404_not_a_second_success(env):
-    client = TestClient(app)
+    client = sign_in_admin(TestClient(app))
     pid, _ = _project_with_work(client)
     assert client.delete(f"/api/projects/{pid}").status_code == 200
     assert client.delete(f"/api/projects/{pid}").status_code == 404
 
 
 def test_a_deleted_project_is_gone_from_the_list_and_its_rows(env):
-    client = TestClient(app)
+    client = sign_in_admin(TestClient(app))
     pid, _ = _project_with_work(client)
     client.delete(f"/api/projects/{pid}")
     assert pid not in client.get("/api/projects").text

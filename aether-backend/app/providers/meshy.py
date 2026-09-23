@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import random
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -43,6 +44,30 @@ class MeshyError(RuntimeError):
     """Any non-recoverable Meshy failure: bad request, refusal, dead task."""
 
 
+class MeshyTaskFailed(MeshyError):
+    """The VENDOR ended the task: FAILED, CANCELED or EXPIRED. Distinct from a
+    timeout or a dropped connection, which say nothing about the task - it may
+    still be running - and which a retry should therefore poll, not re-submit
+    (P1-ASSET-002)."""
+
+
+class MeshyRateLimited(MeshyError):
+    """429 `RateLimitExceeded`: too many REQUESTS per second (20/s on Pro,
+    Premium, Ultra and Studio; 100/s Enterprise). The right response is to slow
+    the request rate down - exponential backoff - and try again."""
+
+
+class MeshyNoConcurrentSlots(MeshyError):
+    """429 `NoMoreConcurrentTasks`: the account's QUEUE is full (10 tasks on
+    Pro, 30 Premium, 100 Ultra, 20 Studio; per account, across every API key).
+    Not a rate problem: sending slower does nothing, a slot frees only when a
+    task finishes. The right response is to wait for one.
+
+    Both forms are 429 and only the body's `message` tells them apart
+    (docs.meshy.ai/en/api/rate-limits, read 2026-09-22). Treated generically,
+    a full queue burned every retry against the wrong limit (P1-ASSET-003)."""
+
+
 class MeshyOutOfCredits(MeshyError):
     """402 from the API. Distinct so callers can stop a batch instead of
     retrying every remaining item into the same wall."""
@@ -57,22 +82,62 @@ class GeneratedModel:
     textured: bool
 
 
+def _message(resp: httpx.Response) -> str:
+    try:                                      # errors are {"message": ...}
+        return str(resp.json().get("message", "") or "")
+    except Exception:
+        return resp.text[:200]
+
+
 def _raise_for(resp: httpx.Response, what: str) -> None:
     if resp.status_code == 402:
         raise MeshyOutOfCredits(f"{what}: Meshy reports no remaining credits")
+    if resp.status_code == 429:
+        detail = _message(resp)
+        if "nomoreconcurrenttasks" in detail.replace(" ", "").lower():
+            raise MeshyNoConcurrentSlots(f"{what}: {detail}")
+        # `RateLimitExceeded`, or a 429 that names neither: slowing down is the
+        # safe reading of an unknown 429, waiting for a slot is not.
+        raise MeshyRateLimited(f"{what}: {detail or 'RateLimitExceeded'}")
     if resp.status_code >= 400:
-        detail = ""
-        try:                                  # validation errors are {"message": ...}
-            detail = resp.json().get("message", "")
-        except Exception:
-            detail = resp.text[:200]
-        raise MeshyError(f"{what}: HTTP {resp.status_code} {detail}".strip())
+        raise MeshyError(f"{what}: HTTP {resp.status_code} {_message(resp)}".strip())
+
+
+#: How long to keep trying against each 429. Meshy documents no Retry-After,
+#: so the waits are ours: doubling from half a second for the request rate
+#: (~30 s in total before giving up), and a steady poll-length wait for a queue
+#: slot, because a slot appears when a task finishes (~60-90 s) and asking
+#: faster changes nothing. Module attributes so tests can shrink them.
+RATE_LIMIT_ATTEMPTS = 6
+RATE_LIMIT_BASE_SECONDS = 0.5
+SLOT_WAIT_SECONDS = 10.0
+SLOT_WAIT_ATTEMPTS = 90                   # 15 minutes for a slot
+_sleep = asyncio.sleep                    # patched in tests
+
+
+async def _send(client: httpx.AsyncClient, method: str, url: str, what: str, **kw: Any) -> httpx.Response:
+    """One request, with the right wait for each kind of 429."""
+    rate_tries = slot_tries = 0
+    while True:
+        resp = await client.request(method, url, **kw)
+        try:
+            _raise_for(resp, what)
+            return resp
+        except MeshyNoConcurrentSlots:
+            slot_tries += 1
+            if slot_tries > SLOT_WAIT_ATTEMPTS:
+                raise
+            await _sleep(SLOT_WAIT_SECONDS)
+        except MeshyRateLimited:
+            rate_tries += 1
+            if rate_tries > RATE_LIMIT_ATTEMPTS:
+                raise
+            await _sleep(RATE_LIMIT_BASE_SECONDS * 2 ** (rate_tries - 1) * (1 + 0.25 * random.random()))
 
 
 async def balance(client: httpx.AsyncClient) -> int:
     """Remaining credits. Cheap — use it to fail fast before a batch."""
-    resp = await client.get(f"{BASE}/openapi/v1/balance")
-    _raise_for(resp, "balance")
+    resp = await _send(client, "GET", f"{BASE}/openapi/v1/balance", "balance")
     return int(resp.json().get("balance", 0))
 
 
@@ -108,8 +173,7 @@ async def submit_text_to_3d(
         body["topology"] = "triangle"
     if negative_prompt:
         body["negative_prompt"] = negative_prompt
-    resp = await client.post(f"{BASE}/openapi/v2/text-to-3d", json=body)
-    _raise_for(resp, "submit_text_to_3d")
+    resp = await _send(client, "POST", f"{BASE}/openapi/v2/text-to-3d", "submit_text_to_3d", json=body)
     task_id = resp.json().get("result")
     if not task_id:
         raise MeshyError("submit_text_to_3d: no task id in the response")
@@ -118,11 +182,8 @@ async def submit_text_to_3d(
 
 async def submit_refine(client: httpx.AsyncClient, preview_task_id: str) -> str:
     """Second stage: texture a finished preview. Returns a new task id."""
-    resp = await client.post(
-        f"{BASE}/openapi/v2/text-to-3d",
-        json={"mode": "refine", "preview_task_id": preview_task_id},
-    )
-    _raise_for(resp, "submit_refine")
+    resp = await _send(client, "POST", f"{BASE}/openapi/v2/text-to-3d", "submit_refine",
+                       json={"mode": "refine", "preview_task_id": preview_task_id})
     task_id = resp.json().get("result")
     if not task_id:
         raise MeshyError("submit_refine: no task id in the response")
@@ -177,8 +238,7 @@ async def submit_image_to_3d(
     if should_remesh and target_polycount > 0:
         body["target_polycount"] = int(target_polycount)
         body["topology"] = "triangle"
-    resp = await client.post(f"{BASE}/{IMAGE_TO_3D}", json=body)
-    _raise_for(resp, "submit_image_to_3d")
+    resp = await _send(client, "POST", f"{BASE}/{IMAGE_TO_3D}", "submit_image_to_3d", json=body)
     task_id = resp.json().get("result")
     if not task_id:
         raise MeshyError(f"submit_image_to_3d: no task id in {resp.text[:200]}")
@@ -186,8 +246,7 @@ async def submit_image_to_3d(
 
 
 async def get_task(client: httpx.AsyncClient, task_id: str, endpoint: str = TEXT_TO_3D) -> dict[str, Any]:
-    resp = await client.get(f"{BASE}/{endpoint}/{task_id}")
-    _raise_for(resp, f"get_task {task_id}")
+    resp = await _send(client, "GET", f"{BASE}/{endpoint}/{task_id}", f"get_task {task_id}")
     return resp.json()
 
 
@@ -229,7 +288,7 @@ async def wait_for(
             )
         if status in TERMINAL:
             why = (task.get("task_error") or {}).get("message") or status
-            raise MeshyError(f"task {task_id} ended as {status}: {why}")
+            raise MeshyTaskFailed(f"task {task_id} ended as {status}: {why}")
 
         if loop.time() >= deadline:
             raise MeshyError(
@@ -279,6 +338,31 @@ async def download_glb(client: httpx.AsyncClient, url: str, dest: Path) -> Path:
             await asyncio.sleep(min(8.0, 1.5 ** attempt))
     raise MeshyError(f"could not download the finished mesh after {DOWNLOAD_ATTEMPTS} "
                      f"attempt(s): {type(last).__name__}: {last}")
+
+
+async def download_thumbnail(client: httpx.AsyncClient, url: str, dest: Path) -> Optional[Path]:
+    """Keep the vendor's preview image next to the mesh, or nothing.
+
+    P1-ASSET-004: the thumbnail URL is signed and expires with the vendor's
+    retention window, so it must not be stored. One attempt, never fatal - a
+    preview is a convenience; the mesh is the purchase.
+    """
+    if not url:
+        return None
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        async with client.stream("GET", url) as resp:
+            resp.raise_for_status()
+            with dest.open("wb") as fh:
+                async for chunk in resp.aiter_bytes():
+                    fh.write(chunk)
+        if dest.stat().st_size == 0:
+            dest.unlink(missing_ok=True)
+            return None
+        return dest
+    except Exception:                                      # noqa: BLE001
+        dest.unlink(missing_ok=True)
+        return None
 
 
 def make_client(api_key: str, timeout_seconds: float = 300.0) -> httpx.AsyncClient:

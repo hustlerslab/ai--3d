@@ -12,6 +12,8 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
+
+from tests.conftest import sign_in_admin
 from PIL import Image
 
 from app.intelligence.schema import MoodboardSpec
@@ -43,6 +45,8 @@ def studio(env, monkeypatch):
     from app.main import app
 
     with TestClient(app) as client:
+
+        sign_in_admin(client)
         pid = client.post("/api/projects", json={"name": "repaint"}).json()["project"]["project_id"]
         img = project_dir(pid) / "ref.png"
         Image.new("RGB", (32, 32), (90, 120, 160)).save(img)
@@ -110,6 +114,8 @@ def test_repaint_before_any_analysis_is_refused(env):
     from app.main import app
 
     with TestClient(app) as client:
+
+        sign_in_admin(client)
         pid = client.post("/api/projects", json={"name": "empty"}).json()["project"]["project_id"]
         r = client.post(f"/api/projects/{pid}/moodboard/rooms/living_room/repaint")
         assert r.status_code == 404

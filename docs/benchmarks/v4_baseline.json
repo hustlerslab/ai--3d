@@ -1,0 +1,147 @@
+{
+  "_comment": "V4 baseline - task.md P0-QA-001. Measured, not estimated. Every later V4 change is compared against this file.",
+  "schema_version": "1.0",
+  "captured_at": "2026-09-21T00:00:00Z",
+  "git_sha": "02ca264",
+  "git_branch": "ai-3d",
+  "uncommitted_files_at_capture": 2,
+  "environment": {
+    "_comment": "Measured on the actual development machine. This is the binding constraint for V4 - see TRD.md section 41.0.",
+    "os": "Windows 11 Home Single Language 10.0.26200",
+    "python": "3.14.4",
+    "node": "v24.15.0",
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+      "vram_total_mib": 6144,
+      "vram_free_mib_at_capture": 6001,
+      "driver_version": "592.82",
+      "form_factor": "laptop",
+      "note": "Thermally throttled under sustained load. Secondary Intel UHD Graphics present but not CUDA-capable."
+    },
+    "ram": {
+      "total_gb": 15.65,
+      "free_gb_at_capture": 0.84,
+      "commit_charge_gb_at_capture": 45.21,
+      "note": "Commit charge is ~3x physical RAM. The machine pages under normal load; the failure mode is slowness, not an error."
+    },
+    "cpu": {
+      "name": "13th Gen Intel(R) Core(TM) i5-13420H",
+      "cores": 8,
+      "logical_processors": 12
+    },
+    "disk_free_gb": {
+      "C": 215.1,
+      "G": 221.8
+    },
+    "services_running_at_capture": {
+      "backend_port_8000": true,
+      "frontend_port_3001": true,
+      "ollama_port_11434": true,
+      "blender": false,
+      "node_processes": 51,
+      "node_total_mb": 2385
+    }
+  },
+  "backend_tests": {
+    "command": "./.venv/Scripts/python.exe -m pytest -q --tb=no",
+    "test_class": "MOCK",
+    "class_note": "CORRECTED 2026-09-21 (C7). The original note claimed conftest.py blanks GEMINI_API_KEY, ANTHROPIC_API_KEY and MESHY_API_KEY for the suite. It did NOT. The blanking lived in the non-autouse `env` fixture, which only 181 of 728 test functions request; the other 547 read the developer's real .env. The suite was only accidentally offline. Fixed by moving the blanking into an autouse `_no_real_keys` fixture, so the claim is now true for every test. This remains a structural suite and is NOT production evidence - see TRD.md TR-QA-001.",
+    "passed": 970,
+    "skipped": 9,
+    "xfailed": 30,
+    "failed": 0,
+    "warnings": 1,
+    "duration_seconds": 183.3,
+    "reproduced": true,
+    "reproduces_documented_figure": true
+  },
+  "frontend_tests": {
+    "files": 5,
+    "tests": 46,
+    "status": "documented; NOT re-run during this baseline capture",
+    "verification_status": "UNVERIFIED"
+  },
+  "xfail_inventory": {
+    "_comment": "task.md P0-QA-002. CORRECTION: an earlier draft of task.md claimed these were 'unexplained'. That was WRONG. All five markers already carry strict=True AND a detailed reason=. The reason sits on the line after the decorator, which is why a naive grep missed it. 5 decorators expand to 30 xfailed test runs via parametrize.",
+    "file": "aether-backend/tests/test_vertical_boundary.py",
+    "decorator_count": 5,
+    "expanded_xfail_runs": 30,
+    "all_strict": true,
+    "all_have_reason": true,
+    "module_docstring_rationale": "The xfail(strict=True) tests are deliberate: they record limits the current implementation has. They pass (as xfail) today and turn into failures the day the limit is fixed - at which point delete the marker and keep the assertion.",
+    "markers": [
+      {
+        "line": 215,
+        "test": "test_known_guard_evasions",
+        "reason": "the guard is a lowercase substring scan over 10 phrases; these evade it by construction",
+        "disposition": "accepted-limitation"
+      },
+      {
+        "line": 229,
+        "test": "test_brief_text_surfaces_the_guard_never_sees",
+        "reason": "_scope_refusal is only applied to `description`; these text fields are never scanned",
+        "disposition": "accepted-limitation"
+      },
+      {
+        "line": 594,
+        "test": "test_a_json_object_in_dimensions_is_rejected_not_silently_treated_as_no_rooms",
+        "reason": "pre-existing (predates the vertical work): a JSON object iterates to zero rooms instead of failing",
+        "disposition": "deferred-bug",
+        "note": "A malformed payload is silently accepted as zero rooms. Candidate for a V4 input-validation fix."
+      },
+      {
+        "line": 713,
+        "test": "test_a_vendor_provider_cannot_return_a_room_outside_its_vertical",
+        "reason": "RoomAnalysis.type is a plain str; the vertical is enforced by the JSON schema and coerce.py, never on a Protocol provider's returned objects",
+        "disposition": "accepted-limitation"
+      },
+      {
+        "line": 729,
+        "test": "parametrized module-constant removal check",
+        "reason": "the vertical work deleted these module constants instead of deprecating them",
+        "disposition": "deferred-bug",
+        "note": "An API break that was taken rather than deprecated. Low impact; recorded for honesty."
+      }
+    ],
+    "summary": {
+      "accepted_limitation": 3,
+      "deferred_bug": 2
+    }
+  },
+  "measured_pipeline_timings": {
+    "_comment": "Carried from prior measurement. N=1 on project proj_a25a006c88 - these are SINGLE OBSERVATIONS, not rates. task.md P0-QA-003 requires re-measurement at N>=3 before any figure is quoted as a rate.",
+    "N": 1,
+    "scene_plan_seconds": 120,
+    "blender_build_seconds_range": [
+      40,
+      60
+    ],
+    "four_viewpoint_renders_seconds": 11,
+    "placement_accuracy_within_1_0m_pct": 91,
+    "placement_accuracy_within_0_5m_pct": 55,
+    "orientation_accuracy_pct": 100,
+    "coverage_pct": 100,
+    "composite_accuracy_pct": 98,
+    "statistical_warning": "N=1. Do not report as a rate. Superseded - see _superseded and v4_runtime_baseline.json.",
+    "_superseded": "SUPERSEDED 2026-09-21 by docs/benchmarks/v4_runtime_baseline.json (P0-QA-003). Everything in this block was N=1. Re-measured: Blender build 29.66 s mean at N=3 projects / N=6 runs (15.75-39.42, stdev 9.98) - the 40-60 s range is retracted. Accuracy re-measured at N=2: composite 98% and 94%, coverage 100% and 75%. The 98% here is the better of the two, not a typical value."
+  },
+  "known_open_defects_at_baseline": [
+    "No authentication on any of 63 routes; POST /projects/{id}/elements/generate spends Meshy credits unauthenticated",
+    "blender/scripts/build_scene.py:38-42 - look name rejected by installed Blender, failure swallowed by except TypeError: pass",
+    "scene.eevee.use_raytracing set nowhere in blender/scripts/",
+    "SceneObject has no element_id or instance_id",
+    "app/spatial/failures.py FailureCategory has zero importers",
+    "RETRACTED 2026-09-21 (correction C1): '/cinematic route calls /api/walkthroughs/* which returns HTTP 404' was WRONG. The route calls a separate optional engine at NEXT_PUBLIC_WALKTHROUGH_API_URL (default http://localhost:4000) and renders a graceful 'engine not running' state. Verified in-browser with Playwright. Not a defect.",
+    "InputKind.floor_plan accepted at upload, never read",
+    "NormalizationInfo.yaw_offset always 0.0",
+    "SceneElement.element_id is bbox-dependent; re-read orphans paid meshes",
+    "Designer step in Studio renders hardcoded data; 'Request sent' sends nothing"
+  ],
+  "baseline_gate": {
+    "P0-QA-001_repository_and_test_baseline": "DONE",
+    "P0-QA-002_xfail_classification": "DONE - all 5 already carried strict=True and reason=; dispositions assigned above",
+    "P0-QA-003_runtime_baseline_N3": "NOT DONE - requires 3+ project runs",
+    "P0-ARCH-001_production_inventory": "NOT DONE",
+    "P0-INFRA-002_backup_restore_tested": "NOT DONE - data/ backup status remains UNKNOWN"
+  }
+}

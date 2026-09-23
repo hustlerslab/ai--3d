@@ -1,0 +1,137 @@
+{
+  "success": true,
+  "data": {
+    "project_id": "proj_0446d09bca",
+    "scene_object_id": "obj_el_stool_b",
+    "origin": "moodboard_element",
+    "complete": true,
+    "gaps": [],
+    "terminus": "source_image",
+    "hops": [
+      {
+        "hop": "blender_object",
+        "resolved": true,
+        "gap": false,
+        "id": "obj_el_stool_b",
+        "note": "",
+        "detail": {
+          "manifest_version": "1.2",
+          "name": "stool"
+        }
+      },
+      {
+        "hop": "scene_object",
+        "resolved": true,
+        "gap": false,
+        "id": "obj_el_stool_b",
+        "note": "identity read from scene_object.element_id",
+        "detail": {
+          "semantic_type": "stool",
+          "room_id": "living_room",
+          "name": "",
+          "asset_id": "asset_cel_dd8a8896e6",
+          "plan_key": "living_room.stool.2#0",
+          "instance_id": "el_stool_b#0"
+        }
+      },
+      {
+        "hop": "instance",
+        "resolved": true,
+        "gap": false,
+        "id": "cel_dd8a8896e6.2",
+        "note": "",
+        "detail": {
+          "element_id": "cel_dd8a8896e6",
+          "room_id": "living_room",
+          "crop_ref": "planning/scene_crops/living_room/el_stool_b.png",
+          "asset_id": ""
+        }
+      },
+      {
+        "hop": "element",
+        "resolved": true,
+        "gap": false,
+        "id": "cel_dd8a8896e6",
+        "note": "",
+        "detail": {
+          "canonical_name": "black bar stool",
+          "semantic_type": "stool",
+          "identity_method": "room_type_dims_material_colour",
+          "instance_count": 3,
+          "source_element_ids": [
+            "el_stool_a",
+            "el_stool_b",
+            "el_stool_c"
+          ],
+          "canonical_asset_id": ""
+        }
+      },
+      {
+        "hop": "scene_element",
+        "resolved": true,
+        "gap": false,
+        "id": "el_stool_b",
+        "note": "",
+        "detail": {
+          "name": "black bar stool",
+          "crop_ref": "planning/scene_crops/living_room/el_stool_b.png",
+          "crop_url": "/files/projects/proj_0446d09bca/planning/scene_crops/living_room/el_stool_b.png",
+          "asset_id": "",
+          "approved": true,
+          "check": "ok"
+        }
+      },
+      {
+        "hop": "moodboard",
+        "resolved": true,
+        "gap": false,
+        "id": "living_room",
+        "note": "",
+        "detail": {
+          "url": "/files/projects/proj_0446d09bca/analysis/moodboard_room_living_room.png",
+          "reference_resolved": true,
+          "reference_note": "blue sofa in living.png"
+        }
+      },
+      {
+        "hop": "design_intent",
+        "resolved": false,
+        "gap": false,
+        "id": "",
+        "note": "plan item living_room.stool.2 lists no source_intent_ids \u2014 this piece came from the moodboard reading, not from a classified reference photo",
+        "detail": {
+          "intents": []
+        }
+      }
+    ],
+    "source_images": [
+      {
+        "input_id": "in_24109650ef",
+        "filename": "bedroom.png",
+        "path": "input/references/ref_01.png",
+        "url": "/files/projects/proj_0446d09bca/input/references/ref_01.png",
+        "in_inputs_table": true,
+        "via": "moodboard_reference",
+        "note": "blue sofa in living.png"
+      },
+      {
+        "input_id": "in_85a5f19c4f",
+        "filename": "kitchen.png",
+        "path": "input/references/ref_02.png",
+        "url": "/files/projects/proj_0446d09bca/input/references/ref_02.png",
+        "in_inputs_table": true,
+        "via": "moodboard_reference",
+        "note": "blue sofa in living.png"
+      },
+      {
+        "input_id": "in_73f74c213d",
+        "filename": "living.png",
+        "path": "input/references/ref_03.png",
+        "url": "/files/projects/proj_0446d09bca/input/references/ref_03.png",
+        "in_inputs_table": true,
+        "via": "moodboard_reference",
+        "note": "blue sofa in living.png"
+      }
+    ]
+  }
+}
