@@ -1,10 +1,12 @@
 "use client";
 
-import { Box, Check, Loader2, X } from "lucide-react";
+import { Box, Check, Home, Loader2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { fileUrl } from "../api/projects-api";
-import { buildElementInventory, humanIdentity, humanType } from "../element-inventory";
+import type { Assumption } from "@/generated/api-types";
+
+import { buildElementInventory, type ElementState, humanIdentity, humanType } from "../element-inventory";
 import type { CreditsDto, ElementCheck, SceneElement, SceneReadingDto } from "../types";
 
 const human = (s: string) => s.replace(/_/g, " ");
@@ -45,31 +47,78 @@ const VERDICT: Record<ElementCheck, { label: string; tone: string }> = {
  * because `summary.definitions` and `summary.instances` say so; this
  * component joins ids and renders. It never counts, groups or infers.
  */
-function ElementInventory({ data }: { data: SceneReadingDto }) {
+/** The four states, in the words a person reads. */
+const STATE_TEXT: Record<ElementState, { label: string; tone: string }> = {
+  validated: { label: "Confirmed", tone: "border-gold/60 text-ink-soft" },
+  detected: { label: "Awaiting you", tone: "border-dashed border-ink-muted text-ink-soft" },
+  unresolved: { label: "Identity unresolved", tone: "border-ink-muted text-ink-muted" },
+  rejected: { label: "Not used", tone: "border-dashed text-ink-muted" },
+};
+
+export function StateBadge({ state }: { state: ElementState | null }) {
+  if (!state) return null;
+  const s = STATE_TEXT[state];
+  return <span className={`w-fit rounded-full border px-2 py-0.5 caption ${s.tone}`}>{s.label}</span>;
+}
+
+/** P1-FRONTEND-001: every estimate the design rests on, and where to change it. */
+export function AssumptionsPanel({ assumptions }: { assumptions: Assumption[] }) {
+  if (!assumptions.length) return null;
+  return (
+    <section aria-label="What we assumed" className="flex flex-col gap-2 rounded-md border border-dashed p-3">
+      <h5 className="body-sm font-medium text-ink-soft">What we assumed</h5>
+      <ul className="flex flex-col gap-1.5">
+        {assumptions.map((a, i) => (
+          <li key={`${a.kind}-${i}`} className="caption">
+            <span className="mr-1.5 rounded-sm border px-1 text-[10px] uppercase tracking-wide text-ink-muted">estimated</span>
+            <span className="text-ink-soft">{a.statement}</span> <span className="text-ink-muted">{a.change}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/**
+ * P19 / P1-FRONTEND-001: what the backend decided the room contains, shown as
+ * the backend decided it - the pieces, each row's state, the numbers, the
+ * estimates. This component joins ids and renders. It never counts, groups,
+ * judges or infers, and no internal id reaches the page.
+ */
+export function ElementInventory({ data }: { data: SceneReadingDto }) {
   const view = useMemo(() => buildElementInventory(data), [data]);
   if (view.unavailable) return null;
+  const c = view.counts;
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h4 className="body-sm font-medium text-ink-soft">Element inventory</h4>
-        <span className="caption text-ink-muted tabular">
-          {view.detected_rows} detected · {view.canonical_count} canonical · {view.instance_count} instances
-          · {view.asset_count} asset{view.asset_count === 1 ? "" : "s"}
-        </span>
+        {c ? (
+          <span className="caption text-ink-muted tabular">
+            {c.detected_rows} detected · {c.canonical} piece{c.canonical === 1 ? "" : "s"} · {c.instances} instance
+            {c.instances === 1 ? "" : "s"} · {c.assets} asset{c.assets === 1 ? "" : "s"}
+            {c.yours ? ` · ${c.yours} yours` : ""}
+          </span>
+        ) : null}
       </div>
+
+      <AssumptionsPanel assumptions={view.assumptions} />
 
       {view.groups.length ? (
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {view.groups.map((g) => (
             <li key={g.element_id} className="flex flex-col gap-2 rounded-md border p-3">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="body-sm text-ink-soft">{humanType(g.semantic_type)}</span>
+                <span className="body-sm text-ink-soft">
+                  {humanType(g.semantic_type)}
+                  {g.yours ? <span className="ml-2 caption rounded border px-1.5 text-ink-soft">Yours</span> : null}
+                </span>
                 <span className="caption text-ink-muted">{human(g.room_id)}</span>
               </div>
               <span className="caption text-ink-muted tabular">
                 {g.instance_count} instance{g.instance_count === 1 ? "" : "s"} ·{" "}
-                {g.asset === "resolved" ? "1 canonical asset" : "asset unresolved"}
+                {g.yours ? "kept, not built" : g.asset === "resolved" ? "1 canonical asset" : "asset not made yet"}
               </span>
               {g.instances.length ? (
                 <ul className="flex flex-wrap gap-1.5">
@@ -80,7 +129,6 @@ function ElementInventory({ data }: { data: SceneReadingDto }) {
                         <img
                           src={fileUrl(i.crop_url)}
                           alt={`${humanType(g.semantic_type)} instance ${n + 1}`}
-                          title={i.instance_id}
                           className="h-14 w-14 rounded border bg-muted object-contain"
                         />
                       ) : (
@@ -89,18 +137,17 @@ function ElementInventory({ data }: { data: SceneReadingDto }) {
                         </span>
                       )}
                       <span className="caption text-ink-muted">{String(n + 1).padStart(2, "0")}</span>
+                      {i.estimated_position ? (
+                        <span className="rounded-sm border px-1 text-[10px] uppercase tracking-wide text-ink-muted"
+                              title="Position estimated from the picture - move it in the 3D view">
+                          est. position
+                        </span>
+                      ) : null}
                     </li>
                   ))}
                 </ul>
               ) : null}
-              <span
-                className={`w-fit rounded-full border px-2 py-0.5 caption ${
-                  g.state === "unresolved" ? "border-ink-muted text-ink-muted" : "border-gold/60 text-ink-soft"
-                }`}
-                title={humanIdentity(g.identity)}
-              >
-                {g.state === "unresolved" ? "Identity unresolved" : "Validated"}
-              </span>
+              <StateBadge state={g.state} />
               <span className="caption text-ink-muted">{humanIdentity(g.identity)}</span>
             </li>
           ))}
@@ -117,8 +164,9 @@ function ElementInventory({ data }: { data: SceneReadingDto }) {
               <li key={r.element.element_id} className="flex flex-wrap items-baseline gap-2 caption">
                 <span className="text-ink-soft">{humanType(r.element.semantic_type)}</span>
                 <span className="text-ink-muted">{human(r.element.room_id)}</span>
-                <span className="rounded-full border border-dashed px-2 py-0.5 text-ink-muted">
-                  Rejected: {r.reason}
+                <StateBadge state="rejected" />
+                <span className="text-ink-muted">
+                  {r.reason === "unapproved" ? "you left it out" : (VERDICT[r.reason as ElementCheck]?.label ?? "a check removed it")}
                 </span>
                 {r.note ? <span className="text-ink-muted">{r.note}</span> : null}
               </li>
@@ -139,7 +187,7 @@ export function ElementReview({
   generating = false,
 }: {
   data: SceneReadingDto;
-  onSave: (decisions: Record<string, boolean>) => Promise<void>;
+  onSave: (decisions: Record<string, boolean>, keep: Record<string, boolean>) => Promise<void>;
   saving?: boolean;
   /** Remaining Meshy credits, or null while unknown. */
   credits?: CreditsDto | null;
@@ -148,7 +196,20 @@ export function ElementReview({
   generating?: boolean;
 }) {
   const { reading, summary } = data;
-  const [decisions, setDecisions] = useState<Record<string, boolean>>({});
+  // Seeded at first render as well as on every server answer (the effect
+  // below), so the screen never shows one frame of "nothing decided".
+  const [decisions, setDecisions] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(
+      reading.elements
+        .filter((e) => e.crop_ref && e.approved !== null)
+        .map((e) => [e.element_id, e.approved as boolean]),
+    ),
+  );
+  /** P1-ELEM-004: pieces the client already owns. Sent as its own map, never
+   *  folded into "Build": a kept piece is placed but costs nothing. */
+  const [keep, setKeep] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(reading.elements.filter((e) => e.crop_ref && e.client_owned).map((e) => [e.element_id, true])),
+  );
   const [saved, setSaved] = useState(false);
 
   const withCrops = useMemo(
@@ -166,6 +227,7 @@ export function ElementReview({
         withCrops.filter((e) => e.approved !== null).map((e) => [e.element_id, e.approved as boolean]),
       ),
     );
+    setKeep(Object.fromEntries(withCrops.filter((e) => e.client_owned).map((e) => [e.element_id, true])));
   }, [withCrops]);
 
   // Flagged first: those are the ones that need a real look, and a reviewer who
@@ -186,9 +248,24 @@ export function ElementReview({
       return next;
     });
 
+  // Keeping a piece is a decision too: it is in the room, by the client's word.
+  const toggleKeep = (id: string) =>
+    setKeep((k) => {
+      const next = { ...k };
+      if (next[id]) {
+        next[id] = false;
+      } else {
+        next[id] = true;
+        setDecisions((d) => ({ ...d, [id]: true }));
+      }
+      setSaved(false);
+      return next;
+    });
+
   const values = Object.values(decisions);
-  const yes = values.filter(Boolean).length;
-  const no = values.length - yes;
+  const yours = Object.values(keep).filter(Boolean).length;
+  const yes = values.filter(Boolean).length - yours;
+  const no = values.length - values.filter(Boolean).length;
   const pending = withCrops.length - values.length;
 
   const short =
@@ -203,7 +280,7 @@ export function ElementReview({
         : `credits unavailable — ${credits.reason ?? "unknown"}`;
 
   const save = async () => {
-    await onSave(decisions);
+    await onSave(decisions, keep);
     setSaved(true);
   };
 
@@ -237,6 +314,7 @@ export function ElementReview({
         {ordered.map((el) => {
           const verdict = VERDICT[el.check] ?? VERDICT.unchecked;
           const choice = decisions[el.element_id];
+          const mine = keep[el.element_id] === true;
           return (
             <li
               key={el.element_id}
@@ -253,7 +331,14 @@ export function ElementReview({
                 className="h-36 w-full bg-muted object-contain"
               />
               <div className="flex flex-1 flex-col gap-1.5 p-2">
-                <span className="body-sm text-ink-soft">{el.name}</span>
+                <span className="flex items-baseline justify-between gap-2 body-sm text-ink-soft">
+                  {el.name}
+                  {mine ? (
+                    <span className="rounded-full border border-gold bg-gold/10 px-2 py-0.5 caption text-ink">
+                      Yours
+                    </span>
+                  ) : null}
+                </span>
                 <span className="caption text-ink-muted">
                   {human(el.room_id)} · {human(el.semantic_type)}
                 </span>
@@ -288,13 +373,26 @@ export function ElementReview({
                   <button
                     type="button"
                     onClick={() => decide(el.element_id, false)}
-                    className={`flex flex-1 items-center justify-center gap-1 rounded-md border px-2 py-1 caption ${
+                    disabled={mine}
+                    className={`flex flex-1 items-center justify-center gap-1 rounded-md border px-2 py-1 caption disabled:opacity-40 ${
                       choice === false ? "border-ink-muted bg-muted text-ink" : "text-ink-muted hover:bg-muted"
                     }`}
                   >
                     <X className="size-3" /> Skip
                   </button>
                 </div>
+                {/* P1-ELEM-004: a structured "keep my own piece", not brief phrasing.
+                    Placed and designed around; never generated, never charged. */}
+                <button
+                  type="button"
+                  aria-pressed={mine}
+                  onClick={() => toggleKeep(el.element_id)}
+                  className={`flex items-center justify-center gap-1 rounded-md border px-2 py-1 caption ${
+                    mine ? "border-gold bg-gold/10 text-ink" : "text-ink-muted hover:bg-muted"
+                  }`}
+                >
+                  <Home className="size-3" /> {mine ? "Yours — kept, not built" : "Mine — keep it"}
+                </button>
               </div>
             </li>
           );
@@ -303,7 +401,7 @@ export function ElementReview({
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="caption text-ink-muted tabular">
-          {yes} to build · {no} skipped
+          {yes} to build · {yours} yours, kept · {no} skipped
           {pending ? ` · ${pending} still to decide` : ""}
         </span>
         <button

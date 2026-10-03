@@ -32,7 +32,15 @@ class NormalizationInfo(BaseModel):
     version: str = "1"
     detected_unit: Literal["meter", "centimeter", "millimeter", "unknown"] = "unknown"
     unit_scale: float = 1.0
+    # The yaw baked into the normalized file so the model's front faces -Z.
+    # P1-ASSET-005: `yaw_source` says where that number came from. "declared"
+    # is an operator's or the sourcing manifest's word; "measured" is the
+    # ingest heuristic (app/assets/orientation.py), which may legitimately
+    # measure zero. "unmeasured" is the default so every record already in
+    # registry.json loads unchanged - for those, nothing was ever read and the
+    # Blender importer keeps guessing at build time, exactly as before.
     yaw_offset: float = 0.0
+    yaw_source: Literal["unmeasured", "declared", "measured"] = "unmeasured"
     translation: Vec3 = (0.0, 0.0, 0.0)
     source_size: Vec3 = (0.0, 0.0, 0.0)
     strategy: str = "unit_heuristic"  # unit_heuristic | expected_dimensions | none
@@ -107,7 +115,9 @@ class IngestMeta(BaseModel):
     name: str
     semantic_type: str
     expected_dimensions: Optional[Vec3] = None
-    yaw_offset: float = 0.0
+    # None means "measure it at ingest". A number - including 0.0 - is a
+    # declaration and is trusted over the measurement.
+    yaw_offset: Optional[float] = None
     mount: Mount = "floor"
     style_tags: list[str] = []
     material_tags: list[str] = []

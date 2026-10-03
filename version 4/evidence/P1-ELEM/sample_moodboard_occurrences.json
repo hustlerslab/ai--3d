@@ -1,0 +1,67 @@
+{
+  "frame": "MOODBOARD",
+  "derived_from": "planning/scene_reading.json",
+  "reading_version": 1,
+  "occurrences": [
+    {
+      "frame": "MOODBOARD",
+      "element_id": "el_4119b95931",
+      "room_id": "living_room",
+      "semantic_type": "sofa",
+      "name": "blue sofa",
+      "bbox": [
+        0.05,
+        0.45,
+        0.2,
+        0.8
+      ],
+      "crop_px": [
+        125,
+        219
+      ],
+      "crop_ref": "planning/scene_crops/living_room/00_blue_sofa.png",
+      "wall": "",
+      "derived_from": "SceneElement"
+    },
+    {
+      "frame": "MOODBOARD",
+      "element_id": "el_1d73ab1505",
+      "room_id": "living_room",
+      "semantic_type": "bar_stool",
+      "name": "black bar stool",
+      "bbox": [
+        0.35,
+        0.45,
+        0.5,
+        0.8
+      ],
+      "crop_px": [
+        125,
+        219
+      ],
+      "crop_ref": "planning/scene_crops/living_room/01_black_bar_stool.png",
+      "wall": "",
+      "derived_from": "SceneElement"
+    },
+    {
+      "frame": "MOODBOARD",
+      "element_id": "el_743eb5cc4e",
+      "room_id": "living_room",
+      "semantic_type": "side_table",
+      "name": "oak side table",
+      "bbox": [
+        0.62,
+        0.45,
+        0.77,
+        0.8
+      ],
+      "crop_px": [
+        125,
+        219
+      ],
+      "crop_ref": "planning/scene_crops/living_room/02_oak_side_table.png",
+      "wall": "",
+      "derived_from": "SceneElement"
+    }
+  ]
+}

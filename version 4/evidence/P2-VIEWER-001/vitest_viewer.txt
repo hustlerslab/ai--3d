@@ -1,0 +1,10 @@
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > the viewer never re-lays-out > draws every piece of a real compiled scene exactly where the scene puts it 4ms
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > the viewer never re-lays-out > leaves floor-standing curtains on the floor, where Blender renders them 0ms
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > a selected piece says what it is > answers all five: name, size, material, kept or new, origin 7ms
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > a selected piece says what it is > shows the photo the piece came from 1ms
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > a selected piece says what it is > puts no internal identifier in the visible text 1ms
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > a selected piece says what it is > tells every kind of origin honestly 0ms
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > a selected piece says what it is > says kept or new from the backend's own fields 0ms
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > a selected piece says what it is > prefers the client's own material word, then the assigned one 0ms
+ ✓ src/features/walkthrough3d/viewer-identity.test.ts > a machine without WebGL is told why > detects WebGL, its absence, and a failing probe 0ms
+      Tests  9 passed (9)

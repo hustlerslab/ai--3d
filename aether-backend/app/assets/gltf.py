@@ -309,6 +309,55 @@ def measure(doc: GltfDocument) -> Measurement:
     return Measurement(tuple(mn), tuple(mx), triangles, instances, has_nan)  # type: ignore[arg-type]
 
 
+Triangle = tuple[tuple[float, float, float], tuple[float, float, float], tuple[float, float, float]]
+
+
+def _triangle_indices(doc: GltfDocument, prim: dict, vertex_count: int):
+    mode = prim.get("mode", 4)
+    if "indices" in prim:
+        idx = [i[0] for i in read_accessor(doc, prim["indices"])]
+    else:
+        idx = list(range(vertex_count))
+    if mode == 4:
+        tris = ((idx[i], idx[i + 1], idx[i + 2]) for i in range(0, len(idx) - 2, 3))
+    elif mode == 5:
+        tris = ((idx[i], idx[i + 1], idx[i + 2]) for i in range(len(idx) - 2))
+    elif mode == 6:
+        tris = ((idx[0], idx[i], idx[i + 1]) for i in range(1, len(idx) - 1))
+    else:
+        return
+    for a, b, c in tris:
+        if a < vertex_count and b < vertex_count and c < vertex_count:
+            yield a, b, c
+
+
+def world_triangles(doc: GltfDocument):
+    """Every triangle of the default scene, in world space. Read only, the
+    same traversal as `measure`; strips and fans are unrolled."""
+    nodes = doc.json.get("nodes", [])
+    meshes = doc.json.get("meshes", [])
+    scenes = doc.json.get("scenes", [])
+    scene_index = doc.json.get("scene", 0)
+    roots = scenes[scene_index]["nodes"] if scenes else list(range(len(nodes)))
+
+    def visit(node_index: int, parent: Mat4):
+        node = nodes[node_index]
+        world = mat_mul(parent, node_local_matrix(node))
+        if "mesh" in node:
+            for prim in meshes[node["mesh"]].get("primitives", []):
+                pos_index = prim.get("attributes", {}).get("POSITION")
+                if pos_index is None:
+                    continue
+                pts = [transform_point(world, p) for p in read_accessor(doc, pos_index)]
+                for a, b, c in _triangle_indices(doc, prim, len(pts)):
+                    yield pts[a], pts[b], pts[c]
+        for child in node.get("children", []):
+            yield from visit(child, world)
+
+    for root in roots:
+        yield from visit(root, identity())
+
+
 def texture_summary(doc: GltfDocument) -> dict[str, Any]:
     images = doc.json.get("images", [])
     total = 0

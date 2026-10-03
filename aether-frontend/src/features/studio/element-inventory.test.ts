@@ -56,16 +56,20 @@ function threeStools(assetId = "el_p_kitchen_bar_stool") {
   const d = def("cel_stool", "kitchen", "bar_stool", ["s1", "s2", "s3"],
                 { canonical_asset_id: assetId, canonical_name: "black bar stool" });
   const ins = rows.map((r, i) => inst("cel_stool", i + 1, r.element_id, "kitchen"));
-  return dto(rows, { definitions: [d], instances: ins });
+  return dto(rows, {
+    definitions: [d], instances: ins,
+    element_states: { s1: "detected", s2: "detected", s3: "detected" },
+    counts: { detected_rows: 3, canonical: 1, instances: 3, assets: assetId ? 1 : 0, yours: 0,
+              by_state: { detected: 3, validated: 0, rejected: 0, unresolved: 0 } },
+    assumptions: [],
+  });
 }
 
 describe("element inventory renders from backend truth", () => {
   it("shows three stools as 3 instances of 1 canonical piece with 1 asset", () => {
     const view = buildElementInventory(threeStools());
 
-    expect(view.canonical_count).toBe(1);
-    expect(view.instance_count).toBe(3);
-    expect(view.asset_count).toBe(1);
+    expect(view.counts).toMatchObject({ canonical: 1, instances: 3, assets: 1 });
     const [stool] = view.groups;
     expect(stool.instance_count).toBe(3);
     expect(stool.instances).toHaveLength(3);
@@ -90,7 +94,7 @@ describe("element inventory renders from backend truth", () => {
   it("never claims an asset the backend did not confirm", () => {
     const [stool] = buildElementInventory(threeStools("")).groups;
     expect(stool.asset).toBe("unresolved");
-    expect(buildElementInventory(threeStools("")).asset_count).toBe(0);
+    expect(buildElementInventory(threeStools("")).counts?.assets).toBe(0);
   });
 });
 
@@ -103,7 +107,7 @@ describe("canonical elements stay separate", () => {
       instances: [inst("cel_a", 1, "c1", "dining"), inst("cel_b", 1, "c2", "dining")],
     });
     const view = buildElementInventory(data);
-    expect(view.canonical_count).toBe(2);
+    expect(view.groups).toHaveLength(2);
     expect(view.groups.map((g) => g.instances.length)).toEqual([1, 1]);
   });
 
@@ -117,19 +121,24 @@ describe("canonical elements stay separate", () => {
 describe("rejected and unresolved states", () => {
   it("shows a row the checks removed as rejected, with the backend's reason", () => {
     const island = el("k1", "kitchen", "kitchen_island", "mismatch");
-    const data = dto([...threeStools().reading.elements, island], threeStools().summary);
+    const base = threeStools().summary;
+    const data = dto([...threeStools().reading.elements, island], {
+      ...base,
+      element_states: { ...base.element_states, k1: "rejected" },
+      counts: { ...base.counts!, detected_rows: 4 },
+    });
     const view = buildElementInventory(data);
 
     expect(view.rejected).toHaveLength(1);
     expect(view.rejected[0].element.element_id).toBe("k1");
     expect(view.rejected[0].reason).toBe("mismatch");
     expect(view.rejected[0].note).toBe("looked like a mismatch");
-    expect(view.detected_rows).toBe(4);
+    expect(view.counts?.detected_rows).toBe(4);
   });
 
   it("shows a human rejection as unapproved, not as a check", () => {
     const rug = el("r1", "living_room", "rug", "ok", false);
-    const view = buildElementInventory(dto([rug], { definitions: [], instances: [] }));
+    const view = buildElementInventory(dto([rug], { definitions: [], instances: [], element_states: { r1: "rejected" } }));
     expect(view.rejected[0].reason).toBe("unapproved");
   });
 
@@ -139,6 +148,7 @@ describe("rejected and unresolved states", () => {
       definitions: [def("cel_n", "living_room", "side_table", ["n1"],
                         { identity_method: "unresolved", material: "", color: "" })],
       instances: [inst("cel_n", 1, "n1", "living_room")],
+      element_states: { n1: "unresolved" },
     });
     const [g] = buildElementInventory(data).groups;
     expect(g.state).toBe("unresolved");
@@ -156,7 +166,7 @@ describe("compatibility", () => {
     const view = buildElementInventory(dto([], { definitions: [], instances: [] }));
     expect(view.groups).toEqual([]);
     expect(view.rejected).toEqual([]);
-    expect(view.canonical_count).toBe(0);
+    expect(view.counts).toBeNull();
   });
 
   it("a legacy payload without inventory fields does not crash and says so", () => {
@@ -180,5 +190,53 @@ describe("compatibility", () => {
   it("humanises a semantic type without changing its identity", () => {
     expect(humanType("bar_stool")).toBe("Bar Stool");
     expect(humanType("kitchen_island")).toBe("Kitchen Island");
+  });
+});
+
+describe("P1-FRONTEND-001: the screen displays backend numbers and states, and computes none", () => {
+  it("prints the backend's counts even where recounting the lists would disagree", () => {
+    const data = threeStools();
+    // Deliberately inconsistent with the lists (1 definition, 3 instances): a
+    // presenter that recounted would say 1 and 3. It must say what was sent.
+    data.summary.counts = { detected_rows: 9, canonical: 7, instances: 11, assets: 4, yours: 2,
+                            by_state: { detected: 9, validated: 0, rejected: 0, unresolved: 0 } };
+    expect(buildElementInventory(data).counts).toEqual(data.summary.counts);
+  });
+
+  it("shows no counts rather than recounting when the backend sent none", () => {
+    const data = threeStools();
+    delete data.summary.counts;
+    expect(buildElementInventory(data).counts).toBeNull();
+  });
+
+  it("takes every row's state from the backend, including detected and validated", () => {
+    const data = threeStools();
+    data.summary.element_states = { s1: "validated", s2: "validated", s3: "validated" };
+    const [stool] = buildElementInventory(data).groups;
+    expect(stool.state).toBe("validated");
+    expect(stool.instances.map((i) => i.state)).toEqual(["validated", "validated", "validated"]);
+  });
+
+  it("does not call a row rejected unless the backend did", () => {
+    const orphan = el("x1", "kitchen", "vase");     // claimed by no instance
+    const data = dto([orphan], { definitions: [], instances: [], element_states: { x1: "detected" } });
+    expect(buildElementInventory(data).rejected).toEqual([]);
+  });
+
+  it("marks an estimated position from the backend's assumptions, and passes every assumption through", () => {
+    const data = threeStools();
+    data.summary.assumptions = [
+      { kind: "position", ref: "s2", statement: "Where the stool stands was estimated.", change: "Move it in the 3D view." },
+      { kind: "room_size", ref: "kitchen", statement: "Kitchen: 3 × 4 m is an estimate.", change: "Enter the real size." },
+    ];
+    const view = buildElementInventory(data);
+    expect(view.groups[0].instances.map((i) => i.estimated_position)).toEqual([false, true, false]);
+    expect(view.assumptions).toEqual(data.summary.assumptions);
+  });
+
+  it("labels kept furniture as yours", () => {
+    const data = threeStools();
+    data.summary.definitions![0].client_owned = true;
+    expect(buildElementInventory(data).groups[0].yours).toBe(true);
   });
 });

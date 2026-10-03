@@ -45,6 +45,7 @@ def plan(
     measurement: Measurement,
     expected_dimensions: Optional[Vec3] = None,
     yaw_offset: float = 0.0,
+    yaw_source: str = "declared",
 ) -> NormalizationPlan:
     size = measurement.size
     lo, hi = measurement.bbox_min, measurement.bbox_max
@@ -95,6 +96,7 @@ def plan(
         detected_unit=unit,  # type: ignore[arg-type]
         unit_scale=scale,
         yaw_offset=yaw_offset,
+        yaw_source=yaw_source,  # type: ignore[arg-type]
         translation=translation,
         source_size=tuple(round(v, 4) for v in size),  # type: ignore[arg-type]
         strategy=strategy,

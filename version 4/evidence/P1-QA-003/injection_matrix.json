@@ -1,0 +1,170 @@
+[
+  {
+    "row": 1,
+    "status": "PASS",
+    "detection": "Watcher element_id_discontinuity (rule); inventory counted 3 usable",
+    "category": "perception_failure",
+    "response": "RE_READ (scene_plan force_read, repair round 1)",
+    "user_experience": "We re-checked your room",
+    "evidence": "watcher_memory observation + repair job + repair.requested event"
+  },
+  {
+    "row": 2,
+    "status": "PASS",
+    "detection": "mark_duplicates marked one row 'duplicate'",
+    "category": "-",
+    "response": "CONTINUE",
+    "user_experience": "Marked duplicate, not deleted",
+    "evidence": "both rows still in the reading; one check=duplicate"
+  },
+  {
+    "row": 3,
+    "status": "PASS",
+    "detection": "no merge: resolve_elements",
+    "category": "-",
+    "response": "CONTINUE",
+    "user_experience": "3 instances survive",
+    "evidence": "1 definition, 3 instances"
+  },
+  {
+    "row": 4,
+    "status": "PASS",
+    "detection": "shape gate: the generated mesh is 1.20 x 1.27 x 1.00 m, flatness 1.06 against a li",
+    "category": "asset_failure",
+    "response": "REGENERATE",
+    "user_experience": "Labelled stand-in if unresolved (Rebuilding a piece that didn't come out right)",
+    "evidence": "_contradicts_its_type on a registered mesh; generate_elements keeps the catalog match"
+  },
+  {
+    "row": 5,
+    "status": "NOT PASSING",
+    "detection": "Blender validator ±25%",
+    "category": "asset_failure",
+    "response": "REGENERATE",
+    "user_experience": "Flagged in verification",
+    "evidence": "",
+    "blocked_by": "the recorded Blender pass is stale: the code it tested has changed - re-run `pytest -m production_path tests/test_failure_injection.py`"
+  },
+  {
+    "row": 6,
+    "status": "PASS",
+    "detection": "validate_scene (check_scene): 2 hard violation(s) in the committed scene v2",
+    "category": "solver_failure",
+    "response": "RE_SOLVE -> Repair Engine (repair_scene round 1, repaired)",
+    "user_experience": "Correcting the layout — 1 of 2",
+    "evidence": "repair job result + repair.requested event",
+    "note": "§31 says GEOMETRY_FAILURE; a committed object in collision classifies as SOLVER_FAILURE (valid positions existed). Same response. Recorded as correction C14"
+  },
+  {
+    "row": 7,
+    "status": "PASS",
+    "detection": "door_clearance_rects -> BLOCKS_DOOR",
+    "category": "solver_failure",
+    "response": "RE_SOLVE -> Repair Engine",
+    "user_experience": "The fridge is in the way of a door in the kitchen. (+ options)",
+    "evidence": "/tradeoffs blocks_door statement with 3 options + repair job",
+    "note": "category per C14, as row 6"
+  },
+  {
+    "row": 8,
+    "status": "PASS",
+    "detection": "check_scene object-count check: obj_84c1b059c0 missing",
+    "category": "validation_failure",
+    "response": "HUMAN_REVIEW (review item opened)",
+    "user_experience": "One thing to look at",
+    "evidence": "objects_missing verdict + review item + human_review.required event"
+  },
+  {
+    "row": 9,
+    "status": "PASS",
+    "detection": "poll exceeded its wait (MeshyError ... after 900s)",
+    "category": "asset_failure",
+    "response": "REGENERATE (re-runs generate_elements, which POLLS the kept task - a bounded retry, 0 credits)",
+    "user_experience": "Taking longer than usual",
+    "evidence": "3 generation_tasks rows still SUBMITTED",
+    "note": "§31 says RETRY; the ASSET policy's REGENERATE resumes the same task, which is the bounded retry"
+  },
+  {
+    "row": 10,
+    "status": "PASS",
+    "detection": "schema/JSON validation at the provider (layer 1)",
+    "category": "perception_failure",
+    "response": "job failed after its retries; nothing downstream ran",
+    "user_experience": "No consumer receives it",
+    "evidence": "job.failed with failure_category; analysis/design_analysis.json absent",
+    "note": "§31 says REPRESENTATION_FAILURE; P10 forbids relabelling a model error as an architecture error - invalid model output is PERCEPTION. Recorded as correction C14"
+  },
+  {
+    "row": 11,
+    "status": "PASS",
+    "detection": "non-zero exit (BlenderError)",
+    "category": "blender_execution_failure",
+    "response": "RETRY (runner retry, then FAILED after max attempts)",
+    "user_experience": "Retrying",
+    "evidence": "job.retrying with failure_category; /api/health 200 during and after"
+  },
+  {
+    "row": 12,
+    "status": "NOT PASSING",
+    "detection": "render verifier",
+    "category": "validation_failure",
+    "response": "HUMAN_REVIEW",
+    "user_experience": "Plain description of the mismatch",
+    "evidence": "",
+    "blocked_by": "the recorded Blender pass is stale: the code it tested has changed - re-run `pytest -m production_path tests/test_failure_injection.py`"
+  },
+  {
+    "row": 13,
+    "status": "PASS",
+    "detection": "conflict: model FAIL on geometry vs clean deterministic verdicts",
+    "category": "validation_failure",
+    "response": "HUMAN_REVIEW",
+    "user_experience": "Escalated with both verdicts",
+    "evidence": "directive cites val_det + val_model; review item opened"
+  },
+  {
+    "row": 14,
+    "status": "PASS",
+    "detection": "Watcher latency_outlier (statistic); no failing verdict",
+    "category": "-",
+    "response": "CONTINUE",
+    "user_experience": "Pipeline not disrupted",
+    "evidence": "no job dispatched, no review item, stage unchanged"
+  },
+  {
+    "row": 15,
+    "status": "PASS",
+    "detection": "runner repair counter",
+    "category": "-",
+    "response": "forced escalation after the cap",
+    "user_experience": "Halts at round 2",
+    "evidence": "10 requests -> 2 dispatched, 8 refused"
+  },
+  {
+    "row": 16,
+    "status": "PASS",
+    "detection": "delimited-data guard; agent memory is data",
+    "category": "SECURITY",
+    "response": "Reject",
+    "user_experience": "No decision changed",
+    "evidence": "identical decisions with and without the planted instruction"
+  },
+  {
+    "row": 17,
+    "status": "PASS",
+    "detection": "auth dependency",
+    "category": "SECURITY",
+    "response": "Reject",
+    "user_experience": "401 / 403, zero spend",
+    "evidence": "anonymous 401, another account 403, spend ledger 0, no tasks"
+  },
+  {
+    "row": 18,
+    "status": "PASS",
+    "detection": "restart recovery (runner.start)",
+    "category": "-",
+    "response": "resume from checkpoint",
+    "user_experience": "resumed event · no duplicate spend",
+    "evidence": "job.resumed then SUCCEEDED; generation receipts make a resumed Meshy job poll, never re-buy (tests/test_generation_idempotency.py)"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "source": "tests.test_web_compression.write_meshy_like_glb(rings=24, texture_px=8) run through web_variant.build",
+  "triangles": 1152,
+  "degenerate_at_poles": 48,
+  "min": [
+    -0.800000011920929,
+    0.0,
+    -0.5
+  ],
+  "max": [
+    0.800000011920929,
+    0.8999999761581421,
+    0.5
+  ]
+}

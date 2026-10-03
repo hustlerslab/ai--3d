@@ -1,0 +1,27 @@
+[
+  {
+    "kind": "doesnt_fit",
+    "room": "Living Room",
+    "pieces": [
+      "walnut bed"
+    ],
+    "statement": "The walnut bed doesn't fit in the living room alongside everything else while keeping a clear walkway and space in front of the doors.",
+    "options": [
+      {
+        "id": "leave_out",
+        "label": "Leave the walnut bed out of the living room"
+      },
+      {
+        "id": "smaller",
+        "label": "Use a smaller walnut bed that fits"
+      },
+      {
+        "id": "make_room",
+        "label": "Keep the walnut bed and drop a less important piece instead"
+      }
+    ],
+    "keys": [
+      "living_room.bed.9"
+    ]
+  }
+]

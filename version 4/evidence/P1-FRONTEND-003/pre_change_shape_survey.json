@@ -1,0 +1,1063 @@
+{
+ "GET /": "NEVER CALLED",
+ "GET /api/assets": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/assets/ingest/polyhaven": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/assets/upload": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/assets/{asset_id}": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/assets/{asset_id}/renormalize": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/auth/login": {
+  "ok_samples": 6,
+  "status": {
+   "200": 6,
+   "401": 7,
+   "429": 4
+  },
+  "kinds": {
+   "envelope": 6
+  },
+  "keys": {
+   "user": "6/6 object",
+   "token": "6/6 \"str\"",
+   "expires_in_days": "6/6 \"int\""
+  }
+ },
+ "POST /api/auth/logout": {
+  "ok_samples": 3,
+  "status": {
+   "200": 3
+  },
+  "kinds": {
+   "envelope": 3
+  },
+  "keys": {
+   "ended": "3/3 \"bool\""
+  }
+ },
+ "POST /api/auth/logout-everywhere": {
+  "ok_samples": 1,
+  "status": {
+   "200": 1
+  },
+  "kinds": {
+   "envelope": 1
+  },
+  "keys": {
+   "revoked": "1/1 \"int\""
+  }
+ },
+ "GET /api/auth/me": {
+  "ok_samples": 6,
+  "status": {
+   "200": 6,
+   "401": 11
+  },
+  "kinds": {
+   "envelope": 6
+  },
+  "keys": {
+   "user": "6/6 object"
+  }
+ },
+ "POST /api/auth/register": {
+  "ok_samples": 367,
+  "status": {
+   "200": 367,
+   "409": 2,
+   "400": 2,
+   "403": 1
+  },
+  "kinds": {
+   "envelope": 367
+  },
+  "keys": {
+   "user": "367/367 object",
+   "token": "367/367 \"str\"",
+   "expires_in_days": "367/367 \"int\"",
+   "bootstrapped": "367/367 \"bool\"",
+   "claimed": "367/367 \"int\""
+  }
+ },
+ "GET /api/auth/session": {
+  "ok_samples": 6,
+  "status": {
+   "200": 6
+  },
+  "kinds": {
+   "envelope": 6
+  },
+  "keys": {
+   "authenticated": "6/6 \"bool\"",
+   "user": "6/6 \"null\" | object"
+  }
+ },
+ "GET /api/catalog": {
+  "ok_samples": 3,
+  "status": {
+   "401": 2,
+   "200": 3
+  },
+  "kinds": {
+   "envelope": 3
+  },
+  "keys": {
+   "<non-dict data>": "3/3 [\"list\", {\"asset_id\": \"str\", \"semantic_type\": \"str\", \"name\":"
+  }
+ },
+ "GET /api/catalog/{asset_id}": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/credits": {
+  "ok_samples": 3,
+  "status": {
+   "401": 2,
+   "200": 3
+  },
+  "kinds": {
+   "envelope": 3
+  },
+  "keys": {
+   "available": "3/3 \"bool\"",
+   "reason": "3/3 \"str\"",
+   "credits_per_piece": "3/3 \"int\""
+  }
+ },
+ "GET /api/health": {
+  "ok_samples": 8,
+  "status": {
+   "200": 8
+  },
+  "kinds": {
+   "flat": 8
+  },
+  "keys": {
+   "status": "8/8 \"str\"",
+   "service": "8/8 \"str\"",
+   "version": "8/8 \"str\"",
+   "runtime": "8/8 object",
+   "providers": "8/8 object",
+   "timestamp": "8/8 \"str\""
+  }
+ },
+ "GET /api/jobs/types": {
+  "ok_samples": 1,
+  "status": {
+   "401": 2,
+   "200": 1
+  },
+  "kinds": {
+   "envelope": 1
+  },
+  "keys": {
+   "<non-dict data>": "1/1 [\"list\", {\"type\": \"str\", \"lane\": \"str\", \"max_attempts\": \"int"
+  }
+ },
+ "GET /api/jobs/{job_id}": {
+  "ok_samples": 89,
+  "status": {
+   "401": 1,
+   "200": 89,
+   "404": 1
+  },
+  "kinds": {
+   "envelope": 89
+  },
+  "keys": {
+   "job": "89/89 object",
+   "events": "89/89 [\"list\", \"object\"]"
+  }
+ },
+ "GET /api/materials": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/materials/ingest/polyhaven": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/materials/{material_id}": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/projects": {
+  "ok_samples": 21,
+  "status": {
+   "401": 3,
+   "200": 21
+  },
+  "kinds": {
+   "envelope": 21
+  },
+  "keys": {
+   "<non-dict data>": "21/21 [\"list\", null] | [\"list\", {\"project_id\": \"str\", \"name\": \"str\", \"description\":"
+  }
+ },
+ "POST /api/projects": {
+  "ok_samples": 354,
+  "status": {
+   "200": 354,
+   "401": 2,
+   "422": 46,
+   "429": 9
+  },
+  "kinds": {
+   "flat": 354
+  },
+  "keys": {
+   "success": "354/354 \"bool\"",
+   "project": "354/354 object"
+  }
+ },
+ "DELETE /api/projects/{project_id}": {
+  "ok_samples": 5,
+  "status": {
+   "401": 1,
+   "200": 5,
+   "404": 1
+  },
+  "kinds": {
+   "envelope": 5
+  },
+  "keys": {
+   "deleted": "5/5 \"str\"",
+   "kept": "5/5 object"
+  }
+ },
+ "GET /api/projects/{project_id}": {
+  "ok_samples": 37,
+  "status": {
+   "401": 4,
+   "200": 37,
+   "403": 4,
+   "404": 3
+  },
+  "kinds": {
+   "envelope": 37
+  },
+  "keys": {
+   "project": "37/37 object",
+   "inputs": "37/37 [\"list\", \"object\"] | [\"list\", null]",
+   "jobs": "37/37 [\"list\", \"object\"] | [\"list\", null]",
+   "checkpoints": "37/37 object",
+   "outputs": "37/37 [\"list\", \"object\"] | [\"list\", null]"
+  }
+ },
+ "PATCH /api/projects/{project_id}": {
+  "ok_samples": 46,
+  "status": {
+   "401": 1,
+   "200": 46,
+   "409": 3,
+   "422": 29,
+   "404": 1
+  },
+  "kinds": {
+   "flat": 46
+  },
+  "keys": {
+   "success": "46/46 \"bool\"",
+   "project": "46/46 object"
+  }
+ },
+ "GET /api/projects/{project_id}/analysis": {
+  "ok_samples": 10,
+  "status": {
+   "401": 2,
+   "200": 10,
+   "404": 2
+  },
+  "kinds": {
+   "envelope": 10
+  },
+  "keys": {
+   "analysis": "10/10 object",
+   "style": "10/10 object",
+   "moodboard": "10/10 object",
+   "versions": "10/10 [\"list\", \"object\"]",
+   "provider": "10/10 object"
+  }
+ },
+ "PATCH /api/projects/{project_id}/analysis": {
+  "ok_samples": 2,
+  "status": {
+   "401": 1,
+   "200": 2,
+   "404": 1
+  },
+  "kinds": {
+   "flat": 2
+  },
+  "keys": {
+   "success": "2/2 \"bool\"",
+   "analysis": "2/2 object",
+   "style": "2/2 object"
+  }
+ },
+ "POST /api/projects/{project_id}/analyze": {
+  "ok_samples": 109,
+  "status": {
+   "200": 109,
+   "403": 1,
+   "401": 3,
+   "422": 3,
+   "404": 1
+  },
+  "kinds": {
+   "flat": 109
+  },
+  "keys": {
+   "success": "109/109 \"bool\"",
+   "job": "109/109 object"
+  }
+ },
+ "POST /api/projects/{project_id}/assets/resolve": {
+  "ok_samples": 1,
+  "status": {
+   "401": 1,
+   "409": 1,
+   "200": 1
+  },
+  "kinds": {
+   "flat": 1
+  },
+  "keys": {
+   "success": "1/1 \"bool\"",
+   "job": "1/1 object"
+  }
+ },
+ "GET /api/projects/{project_id}/build": {
+  "ok_samples": 1,
+  "status": {
+   "401": 1,
+   "200": 1
+  },
+  "kinds": {
+   "envelope": 1
+  },
+  "keys": {
+   "report": "1/1 object",
+   "manifest_summary": "1/1 object",
+   "files": "1/1 object"
+  }
+ },
+ "POST /api/projects/{project_id}/build": {
+  "ok_samples": 6,
+  "status": {
+   "401": 1,
+   "503": 1,
+   "200": 6
+  },
+  "kinds": {
+   "flat": 6
+  },
+  "keys": {
+   "success": "6/6 \"bool\"",
+   "job": "6/6 object"
+  }
+ },
+ "GET /api/projects/{project_id}/element-images": {
+  "ok_samples": 4,
+  "status": {
+   "401": 2,
+   "200": 4
+  },
+  "kinds": {
+   "envelope": 4
+  },
+  "keys": {
+   "schema_version": "4/4 \"str\"",
+   "version": "4/4 \"int\"",
+   "definitions": "4/4 [\"list\", \"object\"]",
+   "instances": "4/4 [\"list\", \"object\"]",
+   "images": "4/4 [\"list\", null]",
+   "provider": "4/4 \"str\"",
+   "warnings": "4/4 [\"list\", \"str\"]",
+   "created_at": "4/4 \"str\""
+  }
+ },
+ "PATCH /api/projects/{project_id}/element-images": {
+  "ok_samples": 2,
+  "status": {
+   "401": 1,
+   "404": 1,
+   "409": 1,
+   "200": 2
+  },
+  "kinds": {
+   "envelope": 2
+  },
+  "keys": {
+   "schema_version": "2/2 \"str\"",
+   "version": "2/2 \"int\"",
+   "definitions": "2/2 [\"list\", \"object\"]",
+   "instances": "2/2 [\"list\", \"object\"]",
+   "images": "2/2 [\"list\", null]",
+   "provider": "2/2 \"str\"",
+   "warnings": "2/2 [\"list\", \"str\"]",
+   "created_at": "2/2 \"str\""
+  }
+ },
+ "POST /api/projects/{project_id}/element-images": {
+  "ok_samples": 6,
+  "status": {
+   "401": 1,
+   "409": 1,
+   "200": 6
+  },
+  "kinds": {
+   "flat": 6
+  },
+  "keys": {
+   "success": "6/6 \"bool\"",
+   "job": "6/6 object"
+  }
+ },
+ "POST /api/projects/{project_id}/elements/generate": {
+  "ok_samples": 0,
+  "status": {
+   "403": 3,
+   "401": 5
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/projects/{project_id}/events": {
+  "ok_samples": 12,
+  "status": {
+   "403": 1,
+   "401": 3,
+   "200": 12
+  },
+  "kinds": {
+   "envelope": 12
+  },
+  "keys": {
+   "events": "12/12 [\"list\", \"object\"] | [\"list\", null]",
+   "last_id": "12/12 \"int\""
+  }
+ },
+ "POST /api/projects/{project_id}/film": {
+  "ok_samples": 1,
+  "status": {
+   "401": 1,
+   "200": 1
+  },
+  "kinds": {
+   "flat": 1
+  },
+  "keys": {
+   "success": "1/1 \"bool\"",
+   "job": "1/1 object"
+  }
+ },
+ "GET /api/projects/{project_id}/inputs": {
+  "ok_samples": 14,
+  "status": {
+   "401": 2,
+   "200": 14,
+   "404": 1
+  },
+  "kinds": {
+   "envelope": 14
+  },
+  "keys": {
+   "<non-dict data>": "14/14 [\"list\", {\"input_id\": \"str\", \"project_id\": \"str\", \"kind\": \"s"
+  }
+ },
+ "POST /api/projects/{project_id}/inputs": {
+  "ok_samples": 166,
+  "status": {
+   "200": 166,
+   "401": 1,
+   "422": 26,
+   "404": 1
+  },
+  "kinds": {
+   "flat": 166
+  },
+  "keys": {
+   "success": "166/166 \"bool\"",
+   "project": "166/166 object",
+   "inputs": "166/166 [\"list\", null] | [\"list\", {\"input_id\": \"str\", \"project_id\": \"str\", \"kind\": \"s",
+   "rejected": "166/166 [\"list\", null] | [\"list\", {\"filename\": \"str\", \"reason\": \"str\"}]"
+  }
+ },
+ "DELETE /api/projects/{project_id}/inputs/{input_id}": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/projects/{project_id}/jobs": {
+  "ok_samples": 14,
+  "status": {
+   "403": 1,
+   "401": 3,
+   "200": 14
+  },
+  "kinds": {
+   "envelope": 14
+  },
+  "keys": {
+   "<non-dict data>": "14/14 [\"list\", null] | [\"list\", {\"job_id\": \"str\", \"project_id\": \"str\", \"type\": \"str"
+  }
+ },
+ "POST /api/projects/{project_id}/jobs": {
+  "ok_samples": 8,
+  "status": {
+   "403": 2,
+   "401": 4,
+   "200": 8,
+   "422": 1
+  },
+  "kinds": {
+   "flat": 8
+  },
+  "keys": {
+   "success": "8/8 \"bool\"",
+   "job": "8/8 object"
+  }
+ },
+ "POST /api/projects/{project_id}/moodboard/rooms/{room_id}/repaint": {
+  "ok_samples": 2,
+  "status": {
+   "401": 1,
+   "200": 2,
+   "404": 2
+  },
+  "kinds": {
+   "flat": 2
+  },
+  "keys": {
+   "success": "2/2 \"bool\"",
+   "job": "2/2 object"
+  }
+ },
+ "GET /api/projects/{project_id}/outputs": {
+  "ok_samples": 0,
+  "status": {
+   "403": 1,
+   "401": 3
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/projects/{project_id}/preview": {
+  "ok_samples": 3,
+  "status": {
+   "401": 1,
+   "200": 3,
+   "409": 2
+  },
+  "kinds": {
+   "flat": 3
+  },
+  "keys": {
+   "success": "3/3 \"bool\"",
+   "job": "3/3 object"
+  }
+ },
+ "GET /api/projects/{project_id}/provenance": {
+  "ok_samples": 4,
+  "status": {
+   "401": 2,
+   "200": 4
+  },
+  "kinds": {
+   "envelope": 4
+  },
+  "keys": {
+   "objects": "4/4 \"int\"",
+   "origins": "4/4 object",
+   "terminus": "4/4 object",
+   "traced_to_element": "4/4 \"int\"",
+   "traced_to_scene_element": "4/4 \"int\"",
+   "reached_moodboard": "4/4 \"int\"",
+   "reached_source_image_exact": "4/4 \"int\"",
+   "reached_source_image_via_moodboard": "4/4 \"int\"",
+   "complete": "4/4 \"int\"",
+   "gaps": "4/4 object"
+  }
+ },
+ "GET /api/projects/{project_id}/provenance/{scene_object_id}": {
+  "ok_samples": 14,
+  "status": {
+   "200": 14,
+   "404": 1,
+   "401": 1
+  },
+  "kinds": {
+   "envelope": 14
+  },
+  "keys": {
+   "project_id": "14/14 \"str\"",
+   "scene_object_id": "14/14 \"str\"",
+   "origin": "14/14 \"str\"",
+   "complete": "14/14 \"bool\"",
+   "gaps": "14/14 [\"list\", \"str\"] | [\"list\", null]",
+   "terminus": "14/14 \"str\"",
+   "hops": "14/14 [\"list\", \"object\"]",
+   "source_images": "14/14 [\"list\", \"object\"] | [\"list\", null]"
+  }
+ },
+ "GET /api/projects/{project_id}/repairs": {
+  "ok_samples": 1,
+  "status": {
+   "401": 1,
+   "200": 1
+  },
+  "kinds": {
+   "envelope": 1
+  },
+  "keys": {
+   "rounds": "1/1 [\"list\", \"object\"]"
+  }
+ },
+ "GET /api/projects/{project_id}/reviews": {
+  "ok_samples": 1,
+  "status": {
+   "401": 1,
+   "200": 1
+  },
+  "kinds": {
+   "envelope": 1
+  },
+  "keys": {
+   "items": "1/1 [\"list\", \"object\"]"
+  }
+ },
+ "POST /api/projects/{project_id}/reviews/{item_id}/decision": {
+  "ok_samples": 3,
+  "status": {
+   "422": 1,
+   "200": 3,
+   "409": 1
+  },
+  "kinds": {
+   "envelope": 3
+  },
+  "keys": {
+   "decision": "3/3 object"
+  }
+ },
+ "POST /api/projects/{project_id}/scene-plan": {
+  "ok_samples": 70,
+  "status": {
+   "403": 1,
+   "401": 2,
+   "200": 70,
+   "409": 2,
+   "404": 1
+  },
+  "kinds": {
+   "flat": 70
+  },
+  "keys": {
+   "success": "70/70 \"bool\"",
+   "job": "70/70 object"
+  }
+ },
+ "GET /api/projects/{project_id}/scene-reading": {
+  "ok_samples": 4,
+  "status": {
+   "401": 2,
+   "200": 4
+  },
+  "kinds": {
+   "envelope": 4
+  },
+  "keys": {
+   "reading": "4/4 object",
+   "summary": "4/4 object"
+  }
+ },
+ "PATCH /api/projects/{project_id}/scene-reading": {
+  "ok_samples": 3,
+  "status": {
+   "401": 1,
+   "200": 3,
+   "409": 1
+  },
+  "kinds": {
+   "envelope": 3
+  },
+  "keys": {
+   "reading": "3/3 object",
+   "summary": "3/3 object"
+  }
+ },
+ "GET /api/projects/{project_id}/scene-spec": {
+  "ok_samples": 15,
+  "status": {
+   "401": 2,
+   "200": 15,
+   "404": 1
+  },
+  "kinds": {
+   "envelope": 15
+  },
+  "keys": {
+   "scene": "15/15 object",
+   "history": "15/15 object",
+   "violations": "15/15 [\"list\", null]",
+   "object_plan": "15/15 object",
+   "asset_plan": "15/15 object",
+   "spatial_check": "15/15 object",
+   "design_intent": "15/15 \"null\" | object",
+   "visual_intent_fidelity": "15/15 object",
+   "scene_specs": "15/15 [\"list\", \"object\"]"
+  }
+ },
+ "GET /api/projects/{project_id}/share": {
+  "ok_samples": 1,
+  "status": {
+   "401": 2,
+   "200": 1
+  },
+  "kinds": {
+   "envelope": 1
+  },
+  "keys": {
+   "links": "1/1 [\"list\", \"object\"]"
+  }
+ },
+ "POST /api/projects/{project_id}/share": {
+  "ok_samples": 36,
+  "status": {
+   "401": 3,
+   "200": 36,
+   "403": 1
+  },
+  "kinds": {
+   "envelope": 36
+  },
+  "keys": {
+   "token_id": "36/36 \"str\"",
+   "url": "36/36 \"str\"",
+   "token": "36/36 \"str\"",
+   "label": "36/36 \"str\"",
+   "expires_in_days": "36/36 \"int\" | \"null\"",
+   "note": "36/36 \"str\""
+  }
+ },
+ "DELETE /api/projects/{project_id}/share/{token_id}": {
+  "ok_samples": 6,
+  "status": {
+   "200": 6
+  },
+  "kinds": {
+   "envelope": 6
+  },
+  "keys": {
+   "revoked": "6/6 \"bool\""
+  }
+ },
+ "GET /api/projects/{project_id}/tour": {
+  "ok_samples": 9,
+  "status": {
+   "401": 12,
+   "404": 1,
+   "200": 9
+  },
+  "kinds": {
+   "envelope": 9
+  },
+  "keys": {
+   "tour": "3/9 object",
+   "nodes": "6/9 [\"list\", \"object\"]",
+   "schema_version": "2/9 \"str\"",
+   "project_id": "2/9 \"str\"",
+   "project_name": "2/9 \"str\"",
+   "scene_id": "2/9 \"str\"",
+   "scene_version": "2/9 \"int\"",
+   "quality": "2/9 \"str\"",
+   "modes": "2/9 [\"list\", \"str\"]",
+   "explore": "2/9 object",
+   "style": "2/9 object",
+   "rooms": "2/9 [\"list\", \"object\"]",
+   "generated_at": "2/9 \"str\""
+  }
+ },
+ "GET /api/projects/{project_id}/tradeoffs": {
+  "ok_samples": 2,
+  "status": {
+   "401": 1,
+   "200": 2
+  },
+  "kinds": {
+   "envelope": 2
+  },
+  "keys": {
+   "tradeoffs": "2/2 [\"list\", \"object\"]"
+  }
+ },
+ "POST /api/projects/{project_id}/walkthrough": {
+  "ok_samples": 1,
+  "status": {
+   "401": 1,
+   "200": 1
+  },
+  "kinds": {
+   "flat": 1
+  },
+  "keys": {
+   "success": "1/1 \"bool\"",
+   "job": "1/1 object"
+  }
+ },
+ "GET /api/scenes": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes": {
+  "ok_samples": 1,
+  "status": {
+   "401": 1,
+   "200": 1
+  },
+  "kinds": {
+   "flat": 1
+  },
+  "keys": {
+   "success": "1/1 \"bool\"",
+   "scene": "1/1 object"
+  }
+ },
+ "GET /api/scenes/{scene_id}": {
+  "ok_samples": 4,
+  "status": {
+   "401": 1,
+   "200": 4
+  },
+  "kinds": {
+   "envelope": 4
+  },
+  "keys": {
+   "scene": "4/4 object",
+   "history": "4/4 object"
+  }
+ },
+ "POST /api/scenes/{scene_id}/assets/upgrade": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/design/proposals": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/design/proposals/{proposal_id}/apply": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/design/proposals/{proposal_id}/reject": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/patches": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/patches/preview": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/redo": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/undo": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/scenes/{scene_id}/validate": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/walkthrough/check-position": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/scenes/{scene_id}/walkthrough/spawn": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /api/scenes/{scene_id}/walkthrough/tour": {
+  "ok_samples": 1,
+  "status": {
+   "401": 1,
+   "200": 1
+  },
+  "kinds": {
+   "envelope": 1
+  },
+  "keys": {
+   "scene_id": "1/1 \"str\"",
+   "keyframes": "1/1 [\"list\", \"object\"]",
+   "total_duration": "1/1 \"float\"",
+   "room_order": "1/1 [\"list\", \"str\"]"
+  }
+ },
+ "GET /api/scenes/{scene_id}/walkthrough/views": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "POST /api/scenes/{scene_id}/walkthrough/views": {
+  "ok_samples": 0,
+  "status": {
+   "401": 1
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /files/assets-web/{path}": {
+  "ok_samples": 3,
+  "status": {
+   "200": 3,
+   "404": 3,
+   "401": 1
+  },
+  "kinds": {
+   "nonjson:application/octet-st": 3
+  },
+  "keys": {}
+ },
+ "GET /files/assets/{path}": {
+  "ok_samples": 0,
+  "status": {
+   "404": 3
+  },
+  "kinds": {},
+  "keys": {}
+ },
+ "GET /files/materials/{path}": {
+  "ok_samples": 1,
+  "status": {
+   "200": 1,
+   "404": 3
+  },
+  "kinds": {
+   "nonjson:image/jpeg": 1
+  },
+  "keys": {}
+ },
+ "GET /files/projects/{project_id}/{path}": {
+  "ok_samples": 54,
+  "status": {
+   "200": 54,
+   "401": 8,
+   "403": 1,
+   "404": 1
+  },
+  "kinds": {
+   "nonjson:image/png": 9,
+   "nonjson:image/jpeg": 44,
+   "nonjson:video/mp4": 1
+  },
+  "keys": {}
+ }
+}

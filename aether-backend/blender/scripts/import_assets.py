@@ -200,16 +200,22 @@ def build_objects(manifest: dict, cols: dict, materials, warnings: list[str]) ->
         root.location = spec["location"]
         rot = list(spec["rotation_rad"])
         if kind == "glb":
-            # Correct for the model's OWN facing before applying the planner's.
-            # Nothing upstream knows which way a mesh faces: the registry has no
-            # forward axis at all, and a generated mesh arrives in whatever
-            # orientation the vendor produced. Without this, the yaw the solver
-            # worked out is applied on top of an unknown starting angle - which
-            # is why armchairs ended up facing the wall.
-            native = _native_forward_yaw(children, spec.get("semantic_type", ""))
-            if native:
-                rot[2] -= native
-                root["aether_forward_correction"] = round(native, 4)
+            # P1-ASSET-005: the ingest pipeline measures (or the operator
+            # declares) the forward axis and bakes it into the normalized
+            # file, so a measured asset arrives already facing canonical
+            # forward and the planner's yaw applies cleanly. Only records that
+            # predate the measurement ("unmeasured") still need the model's
+            # own facing read here - without it, the yaw the solver worked
+            # out is applied on top of an unknown starting angle, which is
+            # why armchairs used to end up facing the wall.
+            forward = asset.get("forward") or {}
+            forward_source = forward.get("source", "unmeasured")
+            if forward_source == "unmeasured":
+                native = _native_forward_yaw(children, spec.get("semantic_type", ""))
+                if native:
+                    rot[2] -= native
+                    root["aether_forward_correction"] = round(native, 4)
+            root["aether_forward_source"] = forward_source
         root.rotation_euler = rot
         root.scale = spec["scale"]
         root["aether_object"] = spec["id"]

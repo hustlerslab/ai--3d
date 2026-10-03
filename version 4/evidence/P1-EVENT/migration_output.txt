@@ -1,0 +1,6 @@
+run 1: schema_version=10 columns=18 triggers=['events_append_only_update', 'events_append_only_delete']
+  old row: {"event_id": 1, "project_id": "proj_old", "job_id": "job_old", "stage": "analyze", "status": "succeeded", "message": "pre-envelope row", "duration_ms": 12, "ts": "2026-09-01T00:00:00+00:00", "schema_version": "", "event_type": "", "severity": "", "confidence": null, "correlation_id": "", "parent_event_id": null, "producer": "", "entity_ids": "[]", "evidence_refs": "[]", "payload": "{}"}
+  UPDATE refused: events are append-only: correct with a new event
+run 2: schema_version=10 columns=18 triggers=['events_append_only_update', 'events_append_only_delete']
+  old row: {"event_id": 1, "project_id": "proj_old", "job_id": "job_old", "stage": "analyze", "status": "succeeded", "message": "pre-envelope row", "duration_ms": 12, "ts": "2026-09-01T00:00:00+00:00", "schema_version": "", "event_type": "", "severity": "", "confidence": null, "correlation_id": "", "parent_event_id": null, "producer": "", "entity_ids": "[]", "evidence_refs": "[]", "payload": "{}"}
+  UPDATE refused: events are append-only: correct with a new event

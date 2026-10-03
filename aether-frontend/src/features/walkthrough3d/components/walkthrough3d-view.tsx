@@ -50,6 +50,9 @@ import { buildWalkWorld } from "../utils/collision";
 import { FirstPersonRig, TourRig } from "./camera-rigs";
 import { SceneEnvironment } from "./canvas-environment";
 import { SceneMeshes } from "./scene-meshes";
+import { IdentityPanel } from "./identity-panel";
+import { CONTEXT_LOST_MESSAGE, NO_WEBGL_MESSAGE, canRender3D } from "../utils/webgl";
+import type { ProvenanceChain } from "@/generated/api-types";
 
 const DEFAULT_SCENE_ID = "scene_seed_apartment";
 
@@ -171,6 +174,22 @@ export function Walkthrough3DView({
   /* ── Object edits (nudge / rotate / delete) ──────────────────────────── */
 
   const selectedObject = scene?.objects.find((o) => o.object_id === selectedId) ?? null;
+
+  // P2-VIEWER-001: where the selected piece came from, asked of the backend.
+  const [chain, setChain] = useState<ProvenanceChain | null>(null);
+  useEffect(() => {
+    setChain(null);
+    if (!scene || !selectedObject) return;
+    const ctrl = new AbortController();
+    api.getProvenance(scene.project_id, selectedObject.object_id, ctrl.signal)
+      .then(setChain)
+      .catch(() => setChain({ project_id: scene.project_id, scene_object_id: selectedObject.object_id, hops: [] }));
+    return () => ctrl.abort();
+  }, [scene, selectedObject]);
+
+  // P2-VIEWER-001: say why there is no 3D view, instead of a blank box.
+  const [webglOk] = useState(() => canRender3D());
+  const [contextLost, setContextLost] = useState(false);
 
   const nudge = useCallback(
     (dx: number, dz: number) => {
@@ -474,7 +493,18 @@ export function Walkthrough3DView({
             if (mode === "first_person") setWalkHintDismissed(true);
           }}
         >
+          {!webglOk || contextLost ? (
+            <div role="alert" className="absolute inset-0 flex items-center justify-center p-6 text-center body-sm text-cream">
+              {webglOk ? CONTEXT_LOST_MESSAGE : NO_WEBGL_MESSAGE}
+            </div>
+          ) : (
           <Canvas
+            onCreated={({ gl }) => {
+              gl.domElement.addEventListener("webglcontextlost", (e) => {
+                e.preventDefault();
+                setContextLost(true);
+              });
+            }}
             // "percentage" = PCFShadowMap; three r185 deprecated PCFSoftShadowMap
             // (what shadows={true} selects) and silently falls back to this anyway.
             shadows="percentage"
@@ -517,6 +547,7 @@ export function Walkthrough3DView({
               />
             ) : null}
           </Canvas>
+          )}
 
           {/* Overlays */}
           {mode === "first_person" && !pointerLocked && !walkHintDismissed ? (
@@ -636,17 +667,17 @@ export function Walkthrough3DView({
                   <p className="body-sm text-ink-soft">
                     {selectedObject.semantic_type.replace(/_/g, " ")}
                   </p>
+                  {selectedObject.client_owned ? (
+                    // P1-ELEM-004: the client's own piece - kept, never generated.
+                    <span className="rounded-full border border-gold bg-gold/10 px-2 py-0.5 caption text-ink">
+                      Yours
+                    </span>
+                  ) : null}
                   {selectedObject.locked ? (
                     <Lock className="size-3.5 text-ink-muted" />
                   ) : null}
                 </div>
-                <p className="caption tabular text-ink-muted">
-                  {selectedObject.dimensions[0].toFixed(2)} ×{" "}
-                  {selectedObject.dimensions[1].toFixed(2)} ×{" "}
-                  {selectedObject.dimensions[2].toFixed(2)} m · pos{" "}
-                  {selectedObject.position[0].toFixed(2)},{" "}
-                  {selectedObject.position[2].toFixed(2)}
-                </p>
+                <IdentityPanel obj={selectedObject} chain={chain} />
                 {!selectedObject.locked ? (
                   <>
                     <div className="grid grid-cols-3 gap-1.5">

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -48,6 +48,9 @@ class Job(BaseModel):
     #: runner can bind log context without a project lookup - a lookup that
     #: itself fails is exactly when the ids matter.
     correlation_id: str = ""
+    #: P1-REPAIR-001. Set by the RUNNER when it dispatches an automatic
+    #: repair (1, 2, ...); 0 for every ordinary job. Never taken from params.
+    repair_round: int = 0
     created_at: str
     started_at: str = ""
     finished_at: str = ""
@@ -66,3 +69,20 @@ class JobEvent(BaseModel):
     message: str = ""
     duration_ms: int = 0
     ts: str
+    # P1-EVENT-001: the typed envelope (design.md "Event envelope"). All
+    # optional: a row written before the envelope existed reads back with
+    # these empty, and an emitter that says nothing about them is not lying.
+    schema_version: str = ""
+    event_type: str = ""
+    #: Set by the EMITTER, never inferred downstream: the emitter knows
+    #: whether a missing texture is fatal; a consumer would guess.
+    severity: str = ""
+    confidence: Optional[float] = None
+    correlation_id: str = ""
+    #: The event this one corrects or follows from. Corrections are new rows.
+    parent_event_id: Optional[int] = None
+    producer: str = ""
+    entity_ids: list[str] = []
+    #: PATHS relative to the project dir, never content.
+    evidence_refs: list[str] = []
+    payload: dict[str, Any] = {}

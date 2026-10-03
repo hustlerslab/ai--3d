@@ -1,0 +1,12 @@
+tests/test_spatial_integration.py::test_every_committed_object_has_explicit_identity_and_valid_geometry PASSED [  9%]
+tests/test_spatial_integration.py::test_moodboard_driven_objects_carry_their_element_id PASSED [ 18%]
+tests/test_spatial_integration.py::test_legacy_objects_load_with_an_explicit_identity_source PASSED [ 27%]
+tests/test_spatial_integration.py::test_repair_preserves_identity_dimensions_and_asset_binding PASSED [ 36%]
+tests/test_spatial_integration.py::test_an_unplaceable_item_is_named_with_room_and_priority_never_dropped_silently PASSED [ 45%]
+tests/test_spatial_integration.py::test_the_measured_constants_are_unchanged PASSED [ 54%]
+tests/test_spatial_integration.py::test_a_trade_off_is_a_plain_statement_with_at_least_two_options PASSED [ 63%]
+tests/test_spatial_integration.py::test_warnings_translate_without_leaking_identifiers[living_room.sofa.1: no valid position for grey sofa in Living Room (priority 2)-grey sofa-doesnt_fit] PASSED [ 72%]
+tests/test_spatial_integration.py::test_warnings_translate_without_leaking_identifiers[living_room.sofa.1: no valid position in Living Room (priority 2)-sofa-doesnt_fit] PASSED [ 81%]
+tests/test_spatial_integration.py::test_warnings_translate_without_leaking_identifiers[bedroom.table_lamp.0: no surface in Bedroom to rest brass lamp on; skipped-brass lamp-nothing_to_rest_on] PASSED [ 90%]
+tests/test_spatial_integration.py::test_two_pieces_that_do_not_both_fit_are_named_together PASSED [100%]
+============================= 11 passed in 5.74s ==============================

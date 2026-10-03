@@ -1,0 +1,17 @@
+{
+  "total": 26,
+  "typed": 11,
+  "correlation_ids": [
+    "cid_4feeea970aab"
+  ],
+  "by_type": {
+    "project.created": 1,
+    "input.received": 1,
+    "job.queued": 2,
+    "job.started": 2,
+    "job.succeeded": 2,
+    "spatial.solve.started": 1,
+    "spatial.solve.completed": 1,
+    "scene.committed": 1
+  }
+}

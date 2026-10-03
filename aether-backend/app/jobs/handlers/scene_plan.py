@@ -33,6 +33,7 @@ from ..registry import register
 from ..schema import JobLane
 
 SCENE_READING = "planning/scene_reading.json"
+MOODBOARD_OCCURRENCES = "planning/moodboard_occurrences.json"
 SPATIAL_GRAPH = "planning/spatial_graph.json"
 OBJECT_PLAN = "planning/object_plan.json"
 ASSET_PLAN = "planning/asset_plan.json"
@@ -307,6 +308,11 @@ def _read_scene(ctx: JobContext, analysis, style, provider, *, force: bool):
             return rec is not None and rec.status != "failed"
 
         kept = carry_asset_bindings(previous, reading, valid=_resolves)
+        from ...intelligence.scene_reading import carry_client_owned
+
+        yours = carry_client_owned(previous, reading)
+        if yours:
+            ctx.emit("plan.keep", f"{yours} of the client's own piece(s) carried across the re-read")
         n = kept["carried"] + kept["carried_loose"]
         ctx.emit("plan.assets",
                  f"{n} mesh binding(s) carried across the re-read by canonical key"
@@ -315,6 +321,13 @@ def _read_scene(ctx: JobContext, analysis, style, provider, *, force: bool):
                     if kept["unbound"] else ""),
                  status="warning" if kept["unbound"] else "info")
     reading.definitions, reading.instances = resolve_elements(reading)
+    ctx.emit("plan.identity",
+             f"{len(reading.definitions)} definition(s), {len(reading.instances)} instance(s) resolved",
+             event_type="element.identity.resolved", severity="info",
+             entity_ids=[d.element_id for d in reading.definitions],
+             evidence_refs=[SCENE_READING],
+             payload={"definitions": len(reading.definitions), "instances": len(reading.instances),
+                      "source": "moodboard_reading"})
     multi = [d for d in reading.definitions if d.instance_count > 1]
     if multi:
         ctx.emit("plan.identity",
@@ -324,6 +337,12 @@ def _read_scene(ctx: JobContext, analysis, style, provider, *, force: bool):
 
     reading.version = ctx.projects.next_analysis_version(ctx.project_id, "scene_reading")
     ctx.write_json(SCENE_READING, reading)
+    # P1-ELEM-001: derived beside its source every time the source is written.
+    from ...intelligence.schema import moodboard_occurrences
+
+    ctx.write_json(MOODBOARD_OCCURRENCES, {"frame": "MOODBOARD", "derived_from": SCENE_READING,
+                                          "reading_version": reading.version,
+                                          "occurrences": moodboard_occurrences(reading)})
 
     # Spatial reconciliation: what the picture implies about ARRANGEMENT.
     #
@@ -342,6 +361,20 @@ def _read_scene(ctx: JobContext, analysis, style, provider, *, force: bool):
         f"{len(reading.surfaces)} surface set(s)",
     )
     return reading
+
+
+def _report_failures(ctx: JobContext, findings: list[tuple[str, str]]) -> None:
+    """Emit each finding as a `validation.failed` event carrying its
+    FailureCategory. Classification never fails the plan."""
+    try:
+        from ...supervisor.classify import from_compiler_warning
+    except Exception:                                          # noqa: BLE001
+        return
+    for stage, text in findings:
+        c = from_compiler_warning(text)
+        ctx.emit(stage, text, status="warning", event_type="validation.failed",
+                 severity="warning" if not c.is_code_defect else "error",
+                 entity_ids=list(c.entity_ids), payload={**c.as_payload(), "reason": c.reason})
 
 
 def _load_specs(ctx: JobContext) -> tuple[DesignAnalysis, StyleSpec]:
@@ -489,6 +522,9 @@ def scene_plan(ctx: JobContext) -> dict[str, Any]:
         scene = store.load(snapshot["scene_id"])
         ctx.emit("plan.scene", f"checkpoint present, skipped (scene {scene.scene_id} v{scene.version})")
     else:
+        solve_started = ctx.emit("plan.scene", f"spatial solve for {len(plan.items)} planned item(s)",
+                                 event_type="spatial.solve.started", severity="info",
+                                 payload={"planned_items": len(plan.items)})
         scene, layout_warnings = compile_scene(ctx.project_id, analysis, style,
                                                name=f"{ctx.project.name} · {style.name}", reading=reading)
         warnings += layout_warnings
@@ -497,14 +533,45 @@ def scene_plan(ctx: JobContext) -> dict[str, Any]:
 
         ops, place_warnings = place_objects(scene, plan, assets, reading=reading)
         warnings += place_warnings
+        # P1-VALIDATOR-003: the compiler's findings in the shared taxonomy.
+        _report_failures(ctx, [("plan.compile", w) for w in place_warnings])
+        # P1-SPATIAL-001: what could not be placed, by plan key, for the events.
+        unplaced = sorted({w.split(":", 1)[0] for w in place_warnings
+                           if "no valid position" in w or "no surface in" in w})
         # P4 repair between the solver and the commit gate: only objects in
         # hard violation move, only to positions validate_object accepts.
         ops, repair = repair_placement(scene, ops)
         ctx.emit("plan.repair", f"{repair['terminal_state']} · hard {repair['hard_before']} -> {repair['hard_after']}"
                                 f" · moved {len(repair['moved'])}")
+        from ...supervisor.classify import from_repair
+
+        repair_class = from_repair(repair["terminal_state"], hard_after=repair["hard_after"],
+                                   moved=len(repair["moved"]))
+        solve_completed = ctx.emit(
+            "plan.repair", f"spatial solve finished: {repair['terminal_state']}",
+            event_type="spatial.solve.completed",
+            severity="info" if repair["hard_after"] == 0 else "warning",
+            parent_event_id=solve_started.event_id if solve_started else None,
+            entity_ids=sorted(set(repair["moved"]) | set(unplaced)),
+            payload={"terminal_state": repair["terminal_state"], "hard_before": repair["hard_before"],
+                     "hard_after": repair["hard_after"], "moved": len(repair["moved"]),
+                     "operations": len(ops), "placed": len(ops), "unplaced": len(unplaced),
+                     "unplaced_keys": unplaced, **(repair_class.as_payload() if repair_class else {})})
         committed = _commit_with_retry(store, scene, ops, warnings)
         scene = committed
         ctx.write_json(SCENE_SPEC, scene)
+        # Every placed object, by all three of its ids: the provenance chain
+        # the Supervisor reads is only as complete as this list.
+        ctx.emit("plan.scene", f"scene {scene.scene_id} v{scene.version} committed, "
+                               f"{len(scene.objects)} object(s)",
+                 event_type="scene.committed", severity="info",
+                 parent_event_id=solve_completed.event_id if solve_completed else None,
+                 entity_ids=sorted({i for o in scene.objects
+                                    for i in (o.object_id, o.element_id, o.instance_id, o.asset_id) if i}),
+                 evidence_refs=[SCENE_SPEC],
+                 payload={"scene_id": scene.scene_id, "scene_version": scene.version,
+                          "objects": len(scene.objects),
+                          "with_identity": sum(1 for o in scene.objects if o.element_id)})
         ctx.projects.attach_scene(ctx.project_id, scene.scene_id)
         ctx.projects.add_scene_spec(ctx.project_id, scene.scene_id, scene.version, SCENE_SPEC)
         ctx.mark_checkpoint("scene_spec")

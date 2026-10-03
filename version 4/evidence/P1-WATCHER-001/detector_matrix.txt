@@ -1,0 +1,12 @@
+injected fault                 | fired
+(no fault)                     | -                                             OK
+missing_terminal_event         | missing_terminal_event                        OK
+absent_output_checkpoint       | absent_output_checkpoint                      OK
+schema_parse_failure           | schema_parse_failure                          OK
+element_count_drift            | element_count_drift                           OK
+element_id_discontinuity       | element_id_discontinuity                      OK
+latency_outlier                | latency_outlier                               OK
+cost_above_budget              | cost_above_budget                             OK
+retry_count_above_threshold    | retry_count_above_threshold                   OK
+stage_moved_backwards          | stage_moved_backwards                         OK
+model calls during all rule passes: 0

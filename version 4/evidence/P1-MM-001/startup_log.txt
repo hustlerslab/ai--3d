@@ -1,0 +1,10 @@
+=== default configuration ===
+supervisor role binding: watcher=none:- (rules only) temperature=0.2 allow_fallback=False schema=watcher_narration@1 memory=watcher_memory
+supervisor role binding: validator=none:- (rules only) temperature=0.0 allow_fallback=False schema=validation_result@1 memory=validator_memory
+supervisor role binding: orchestrator=none:- (rules only) temperature=0.0 allow_fallback=False schema=directive@1 memory=orchestrator_memory
+supervisor role bindings: watcher=none:- (rules only) | validator=none:- (rules only) | orchestrator=none:- (rules only)
+=== diverse configuration ===
+supervisor role binding: watcher=ollama:qwen3:8b temperature=0.2 allow_fallback=False schema=watcher_narration@1 memory=watcher_memory
+supervisor role binding: validator=gemini:gemini-3.6-flash temperature=0.0 allow_fallback=False schema=validation_result@1 memory=validator_memory
+supervisor role binding: orchestrator=anthropic:claude-sonnet-5 temperature=0.0 allow_fallback=False schema=directive@1 memory=orchestrator_memory
+supervisor role bindings: watcher=ollama:qwen3:8b | validator=gemini:gemini-3.6-flash | orchestrator=anthropic:claude-sonnet-5

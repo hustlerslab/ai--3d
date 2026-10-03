@@ -1,0 +1,27 @@
+{
+  "baseline": "golden_preview.png + golden_structure.json",
+  "produced_by": "tests/test_visual_3d_regression.py::regenerate_baselines, run with AETHER_REGENERATE_BASELINES=1",
+  "date": "2026-09-26",
+  "blender": "5.2.1 LTS",
+  "scene": "tests.test_blender_build._compiled_scene() (the same fixture test_blender_build.py itself uses) - 4 rooms, 15 walls, 40 objects",
+  "render_profile": "preview (BLENDER_EEVEE, 16 samples, 960x540, raytracing on per P1-RENDER-002)",
+  "determinism_measurement": {
+    "method": "rendered the same scene twice with identical settings, no code change between runs, compared pixel-for-pixel",
+    "date": "2026-09-26",
+    "N": 2,
+    "cycles_16_samples": {"mean_abs_diff_0_255": 0.0000390625, "max_abs_diff_0_255": 1.0, "fraction_pixels_diff_gt_2": 0.0},
+    "eevee_16_samples": {"mean_abs_diff_0_255": 0.00032696759259259257, "max_abs_diff_0_255": 1.0, "fraction_pixels_diff_gt_2": 0.0}
+  },
+  "threshold": {
+    "mean_abs_diff_0_255": 1.0,
+    "fraction_pixels_diff_gt_10_of_255": 0.001,
+    "chosen_because": "the measured same-render noise floor is 0.00004-0.0003 mean / 0 fraction>2 (N=2 above); this threshold sits roughly 3000x-25000x above that floor on the mean and requires essentially zero large-magnitude pixel changes, so it cannot be satisfied by render noise alone, only genuine visual sameness. A real drift this session (P1-RENDER-002's raytracing on/off comparison) measured mean 0.48 with 1.4% of pixels changed >5/255 - comfortably over this threshold on the fraction term even though its mean is still under 1.0, which is why the fraction check exists alongside the mean check rather than instead of it."
+  },
+  "moved_object_measurement": {
+    "method": "nudged one floor-mounted object (a bed) 0.03m along x in the same scene, rebuilt, re-rendered, compared to the baseline render pixel-for-pixel",
+    "date": "2026-09-26",
+    "N": 1,
+    "result": {"mean_abs_diff_0_255": 0.00700488683127572, "max_abs_diff_0_255": 2.0, "fraction_pixels_diff_gt_10": 0.0},
+    "conclusion": "within the visual-regression threshold (looks unchanged - the object was out of the preview camera's frame) while the object genuinely moved 3cm in the committed scene - exactly the case task.md asks 3D regression to catch that visual regression would miss"
+  }
+}

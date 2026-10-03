@@ -1,0 +1,33 @@
+{
+  "matrix": {
+    "(no fault)": [],
+    "missing_terminal_event": [
+      "missing_terminal_event"
+    ],
+    "absent_output_checkpoint": [
+      "absent_output_checkpoint"
+    ],
+    "schema_parse_failure": [
+      "schema_parse_failure"
+    ],
+    "element_count_drift": [
+      "element_count_drift"
+    ],
+    "element_id_discontinuity": [
+      "element_id_discontinuity"
+    ],
+    "latency_outlier": [
+      "latency_outlier"
+    ],
+    "cost_above_budget": [
+      "cost_above_budget"
+    ],
+    "retry_count_above_threshold": [
+      "retry_count_above_threshold"
+    ],
+    "stage_moved_backwards": [
+      "stage_moved_backwards"
+    ]
+  },
+  "model_calls": 0
+}

@@ -106,7 +106,20 @@ class MaterialLibrary:
                 if socket == "Base Color":
                     color_socket_source = tex.outputs["Color"]
                 else:
-                    links.new(tex.outputs["Color"], bsdf.inputs[socket])
+                    # P2-RENDER-001, glTF metallic-roughness semantics: the
+                    # registry's roughness is the FACTOR the map is multiplied
+                    # by, not a value the map silently replaces. Before this,
+                    # a material with a roughness map ignored its registry
+                    # roughness entirely - changing it changed nothing.
+                    value = nodes.new("ShaderNodeRGBToBW")
+                    links.new(tex.outputs["Color"], value.inputs["Color"])
+                    factor = nodes.new("ShaderNodeMath")
+                    factor.operation = "MULTIPLY"
+                    factor.use_clamp = True
+                    factor.label = "roughness factor"
+                    factor.inputs[1].default_value = float(rec.get("roughness", 1.0))
+                    links.new(value.outputs["Val"], factor.inputs[0])
+                    links.new(factor.outputs["Value"], bsdf.inputs[socket])
             normal = maps.get("normal")
             if normal and os.path.exists(normal):
                 tex = nodes.new("ShaderNodeTexImage")

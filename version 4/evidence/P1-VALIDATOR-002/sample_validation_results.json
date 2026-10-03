@@ -1,0 +1,69 @@
+[
+  {
+    "validation_id": "val_6215c2a238f0e4e4",
+    "schema_version": "1.0",
+    "project_id": "proj_2972d3c46c",
+    "scene_id": "scene_1",
+    "scene_version": 1,
+    "status": "FAIL",
+    "severity": "error",
+    "issue_type": "spatial_hard_violations",
+    "failure_category": "repair_failure",
+    "affected_entities": [],
+    "expected": {
+      "hard_after": 0
+    },
+    "observed": {
+      "hard_after": 1,
+      "terminal_state": "ESCALATE"
+    },
+    "evidence": [
+      "planning/spatial_check.json"
+    ],
+    "confidence": 1.0,
+    "recommended_action": "re_solve",
+    "determinism": "deterministic",
+    "rationale": "the committed scene still carries 1 hard violation(s) after repair (ESCALATE)",
+    "validator_version": "validator@1.0",
+    "validated_at": "2026-09-27T09:22:24.796876+00:00"
+  },
+  {
+    "validation_id": "val_50f1d35b3fd35dc4",
+    "schema_version": "1.0",
+    "project_id": "proj_2972d3c46c",
+    "scene_id": "scene_1",
+    "scene_version": 1,
+    "status": "FAIL",
+    "severity": "error",
+    "issue_type": "appearance",
+    "failure_category": "asset_failure",
+    "affected_entities": [
+      {
+        "kind": "report",
+        "id": "previews/build_preview.png"
+      }
+    ],
+    "expected": {
+      "issues": [
+        "linen"
+      ]
+    },
+    "observed": {
+      "issues": [
+        {
+          "issue_type": "material",
+          "observed": "black leather"
+        }
+      ]
+    },
+    "evidence": [
+      "previews/build_preview.png"
+    ],
+    "confidence": 0.8,
+    "recommended_action": "human_review",
+    "determinism": "model_assisted",
+    "rationale": "sofa is leather",
+    "validator_version": "validator@1.0",
+    "validated_at": "2026-09-27T09:22:24.797241+00:00"
+  }
+]

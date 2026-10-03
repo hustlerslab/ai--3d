@@ -27,6 +27,9 @@ class MaterialRecord(BaseModel):
     name: str
     category: MaterialCategory
     base_color: str = "#cccccc"
+    #: glTF metallic-roughness semantics (P2-RENDER-001): the roughness when
+    #: there is no roughness map, and the factor the map is multiplied by when
+    #: there is one.
     roughness: float = 0.8
     metalness: float = 0.0
     maps: MaterialMaps = MaterialMaps()

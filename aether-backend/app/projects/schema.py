@@ -23,6 +23,13 @@ class ProjectStage(str, Enum):
     FINAL_RENDERING = "FINAL_RENDERING"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
+    # P1-HUMAN-001 - ADDED, never renamed: persisted rows carry the strings
+    # above. None of these is in STAGE_ORDER; they are states a project can
+    # be IN, not steps along the build.
+    REPAIRING = "REPAIRING"
+    HUMAN_REVIEW = "HUMAN_REVIEW"
+    VERIFIED = "VERIFIED"
+    CANCELLED = "CANCELLED"
 
 
 # Linear order used to decide whether a transition moves the project forward.

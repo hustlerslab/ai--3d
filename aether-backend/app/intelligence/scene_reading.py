@@ -658,12 +658,29 @@ def resolve_elements(reading: SceneReading) -> tuple[list[ElementDefinition], li
             dimensions_m=lead.dimensions_m,
             identity_method="unresolved" if unresolved else "room_type_dims_material_colour",
             instance_count=len(els), source_element_ids=[e.element_id for e in els],
-            canonical_asset_id=next((e.asset_id for e in els if e.asset_id), "")))
+            canonical_asset_id=next((e.asset_id for e in els if e.asset_id), ""),
+            client_owned=any(e.client_owned for e in els)))
         for n, el in enumerate(els, start=1):
             instances.append(ElementInstance(
                 instance_id=f"{element_id}.{n}", element_id=element_id, room_id=el.room_id,
                 source_element_id=el.element_id, bbox=el.bbox, crop_ref=el.crop_ref))
     return definitions, instances
+
+
+def carry_client_owned(previous: SceneReading, reading: SceneReading) -> int:
+    """P1-ELEM-004: "keep my TV unit" is a statement about the PIECE, so it
+    follows the piece across a re-read, matched by the same position-free
+    canonical key that carries mesh bindings. Unlike approvals it is safe to
+    carry: it can only REDUCE spend (a kept piece is never generated). A kept
+    piece is also approved - it is in the room by the client's own word."""
+    kept = {canonical_key(el) for el in previous.elements if el.client_owned and "|?" not in canonical_key(el)}
+    n = 0
+    for el in reading.elements:
+        if not el.client_owned and canonical_key(el) in kept:
+            el.client_owned = True
+            el.approved = True
+            n += 1
+    return n
 
 
 def carry_asset_bindings(previous: SceneReading, reading: SceneReading,
@@ -769,6 +786,8 @@ def element_inventory(reading: SceneReading) -> list[ElementInventory]:
         row.read += 1
         if trustworthy(el):
             row.usable += 1
+            if el.client_owned:
+                row.yours += 1
         else:
             reason = el.check if el.check != "unchecked" else "unapproved"
             row.lost_to[reason] = row.lost_to.get(reason, 0) + 1
@@ -854,6 +873,7 @@ def merge_reading_into_plan(plan: ObjectPlan, reading: SceneReading) -> tuple[Ob
                     # procedural stand-ins too - not only generated meshes.
                     approx_dimensions=el.dimensions_m,
                     from_photo=True,
+                    client_owned=el.client_owned,
                 )
             )
         notes.append(f"{room_id}: {was} planned item(s) replaced by {len(els)} from the approved render")
@@ -955,6 +975,11 @@ def approved_for_generation(reading: SceneReading) -> tuple[list, list[str]]:
     for el in reading.elements:
         if not el.crop_ref:
             continue                                  # no crop, nothing to generate from
+        if el.client_owned:
+            # P1-ELEM-004: the client already owns it. Zero generations - there
+            # is nothing to buy - whatever its approval says.
+            held.append(f"{el.room_id}/{el.name}: the client's own piece - kept, not generated")
+            continue
         if el.approved is True:
             ready.append(el)
         elif el.approved is False:

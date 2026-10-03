@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,6 +12,8 @@ from ..core.logging import new_correlation_id
 from ..db import Database, get_db
 from .layout import ensure_layout
 from .schema import InputKind, InputRecord, ProjectRecord, ProjectStage, RoomHint, Vertical
+
+log = logging.getLogger("aether.projects")
 
 
 class ProjectNotFound(Exception):
@@ -128,10 +131,23 @@ class ProjectStore:
         return [_row_to_project(r) for r in rows]
 
     def set_stage(self, project_id: str, stage: ProjectStage) -> ProjectRecord:
+        before = self.get(project_id).stage
         self._db.execute(
             "UPDATE projects SET stage = ?, updated_at = ? WHERE project_id = ?",
             (stage.value, _now(), project_id),
         )
+        if before != stage:
+            # The Watcher's state-regression detector reads transitions from the
+            # event stream; this is the one place a stage changes. Never fatal.
+            try:
+                from ..jobs.store import JobStore
+
+                JobStore(self._db).add_event(
+                    project_id, "project", "stage_changed", f"{before.value} -> {stage.value}",
+                    event_type="project.stage.changed", severity="info", producer="projects.store",
+                    payload={"from": before.value, "to": stage.value})
+            except Exception:                              # noqa: BLE001
+                log.warning("stage change not recorded as an event: %s -> %s", before, stage)
         return self.get(project_id)
 
     def update(
@@ -229,7 +245,8 @@ class ProjectStore:
         """Forget the project, keeping what it produced.
 
         Everything keyed on the project goes: its inputs, analyses, scene specs,
-        jobs, events and outputs, then the row itself. Raises ProjectNotFound if
+        jobs and outputs, then the row itself. Its events stay - they are an
+        append-only audit record. Raises ProjectNotFound if
         there is nothing to delete, so the route answers 404 rather than
         reporting a success that removed nothing.
 
@@ -243,7 +260,10 @@ class ProjectStore:
         # record: they are rebuilt from the project's files by index_project().
         # They are dropped here so a deleted project leaves no stale rows behind
         # to be matched by the cross-project asset lookup.
-        for table in ("events", "jobs", "outputs", "scene_specs", "analyses", "inputs",
+        # `events` are deliberately NOT in this list (P1-EVENT-003): the table is
+        # append-only and the database refuses a DELETE. The record of what was
+        # run and spent on a project outlives the project.
+        for table in ("jobs", "outputs", "scene_specs", "analyses", "inputs",
                       "elements", "element_instances"):
             self._db.execute(f"DELETE FROM {table} WHERE project_id = ?", (project_id,))
         self._db.execute("DELETE FROM projects WHERE project_id = ?", (project_id,))

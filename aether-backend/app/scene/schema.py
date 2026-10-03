@@ -14,7 +14,7 @@ import uuid
 from enum import Enum
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 def new_id(prefix: str) -> str:
@@ -187,6 +187,23 @@ class SceneObject(BaseModel):
     # required would strand every scene already on disk.
     element_id: Optional[str] = None
     instance_id: Optional[str] = None
+    #: P1-ELEM-004: the client's own piece, kept - labelled "yours" in the
+    #: inventory and the viewer, never a generated mesh.
+    client_owned: bool = False
+    #: P1-SPATIAL-001: WHY this object has the identity it has. "element" - it
+    #: is an occurrence of an element the client approved, and carries its
+    #: element_id; "planner" - the planner added it (a catalog piece nobody
+    #: pictured), so element_id is deliberately empty rather than invented
+    #: (P1-IDENTITY-003). Never ambiguous: filled on validation.
+    identity_source: str = ""
+
+    @model_validator(mode="after")
+    def _identity_is_explicit(self) -> "SceneObject":
+        if not self.identity_source:
+            self.identity_source = "element" if self.element_id else "planner"
+        elif self.identity_source == "element" and not self.element_id:
+            raise ValueError("identity_source 'element' requires an element_id")
+        return self
     # surfaces (spec 1.1): the object this one rests on (mount "surface")
     parent_id: Optional[str] = None
     # project-relative image that textures the object's face (art, rugs)

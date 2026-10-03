@@ -1,0 +1,33 @@
+tests/test_asset_forward_axis.py::test_a_rotated_chair_records_the_yaw_that_turns_it_to_face_minus_z[-z-0.0] PASSED [  7%]
+tests/test_asset_forward_axis.py::test_a_rotated_chair_records_the_yaw_that_turns_it_to_face_minus_z[+z-3.141592653589793] PASSED [ 14%]
+tests/test_asset_forward_axis.py::test_a_rotated_chair_records_the_yaw_that_turns_it_to_face_minus_z[+x-1.5707963267948966] PASSED [ 21%]
+tests/test_asset_forward_axis.py::test_a_rotated_chair_records_the_yaw_that_turns_it_to_face_minus_z[-x--1.5707963267948966] PASSED [ 28%]
+tests/test_asset_forward_axis.py::test_a_symmetric_piece_measures_zero_and_is_still_marked_measured PASSED [ 35%]
+tests/test_asset_forward_axis.py::test_a_type_without_a_facing_rule_is_left_alone PASSED [ 42%]
+tests/test_asset_forward_axis.py::test_a_thin_piece_faces_along_its_thin_axis PASSED [ 50%]
+tests/test_asset_forward_axis.py::test_a_declared_yaw_beats_the_measurement_even_when_it_is_zero PASSED [ 57%]
+tests/test_asset_forward_axis.py::test_renormalize_re_measures_unless_the_yaw_was_declared PASSED [ 64%]
+tests/test_asset_forward_axis.py::test_records_that_predate_the_measurement_load_unmeasured_and_keep_identity PASSED [ 71%]
+tests/test_asset_forward_axis.py::test_a_measured_yaw_becomes_a_real_rotation_on_the_asset_edge PASSED [ 78%]
+tests/test_asset_forward_axis.py::test_the_frame_graph_rotation_is_the_one_normalization_bakes_into_the_file PASSED [ 85%]
+tests/test_asset_forward_axis.py::test_the_manifest_carries_the_forward_axis_to_the_importer PASSED [ 92%]
+tests/test_asset_forward_axis.py::test_the_importer_only_guesses_for_unmeasured_records PASSED [100%]
+
+============================= 14 passed in 0.87s ==============================
+
+--- mutation run (scratch script; each source restored byte-identical, sha1-verified) ---
+M1 measurement disabled: CAUGHT - 7 failed, 7 passed in 1.19s
+M2 importer gate removed: CAUGHT - 1 failed, 13 passed in 1.17s
+M3 frame graph always identity: CAUGHT - 2 failed, 12 passed in 1.71s
+M4 renormalize re-declares a measured yaw: CAUGHT - 1 failed, 13 passed in 1.13s
+M5 manifest hides the source: CAUGHT - 1 failed, 13 passed in 1.14s
+
+--- targeted regression (assets_pipeline, asset_persistence, asset_rebind, generation_idempotency,
+    meshy, meshy_rate_limits, p18_canonical_identity, spatial_architecture_coordinates,
+    spatial_architecture_bridge, blender_build, p22_render_frame, scene_plan, manifest_identity,
+    projects_api) ---
+180 passed, 2 skipped in 23.81s
+
+--- full backend suite (pytest tests -q) ---
+FAILED tests/test_room_prompt.py::test_the_budget_is_measured_with_clip_not_guessed   (pre-existing, unrelated: CLIP template 79 > 77 tokens on this machine)
+1 failed, 1254 passed, 12 skipped, 30 xfailed in 173.29s (0:02:53)

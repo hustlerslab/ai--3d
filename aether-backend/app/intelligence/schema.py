@@ -338,6 +338,11 @@ class SceneElement(BaseModel):
     check_note: str = ""           # what the second look actually saw
     # The human's call, which is the one that gates spend. None = not yet asked.
     approved: Optional[bool] = None
+    #: P1-ELEM-004: the client's OWN piece ("keep my TV unit"). Kept pieces are
+    #: designed around and appear in the scene, but are never generated - there
+    #: is nothing to buy, the client already has it. Set on the review screen,
+    #: never inferred from phrasing.
+    client_owned: bool = False
     # Set once this element's crop has been turned into a mesh. Elements that
     # share a `shape_key` share one asset: three identical bar stools are one
     # generation and three placements, not three generations.
@@ -419,6 +424,8 @@ class ElementInventory(BaseModel):
     usable: int = 0
     #: Rows lost, by the check that lost them, so a shortfall can be explained.
     lost_to: dict[str, int] = {}
+    #: P1-ELEM-004: how many of the usable rows are the client's own pieces.
+    yours: int = 0
 
     @property
     def discrepant(self) -> bool:
@@ -453,6 +460,8 @@ class ElementDefinition(BaseModel):
     #: The reading rows that fold into this definition, biggest crop first.
     source_element_ids: list[str] = []
     canonical_asset_id: str = ""
+    #: P1-ELEM-004: any instance of this piece is the client's own - kept, not generated.
+    client_owned: bool = False
     #: The client's decision on the pictured piece: None until they look, then
     #: true (build it) or false (leave it out). Decided BEFORE the room is
     #: painted, and carried onto the matching moodboard reading rows so the
@@ -510,6 +519,71 @@ class ElementImageSet(BaseModel):
     provider: str = ""
     warnings: list[str] = []
     created_at: str = Field(default_factory=_now)
+
+
+class MoodboardOccurrence(BaseModel):
+    """P1-ELEM-001: where a piece APPEARS in the approved moodboard - pinned
+    to the MOODBOARD frame so it can never be read as metres (TDR-015).
+
+    Derived, never authored: `from_element()` is the only constructor the
+    pipeline uses, so `SceneElement` stays the one source of truth and this
+    is a second VIEW of it with the frame made explicit. The value is not the
+    fields; it is the pin. A moodboard is a generated image with no camera
+    pose, so a bbox from it is a fraction of the picture and nothing else -
+    and the type refuses anything that is not (`extra="forbid"` keeps
+    metric fields out; the validators keep every coordinate in [0, 1]).
+    """
+
+    model_config = {"frozen": True, "extra": "forbid"}
+
+    frame: Literal["MOODBOARD"] = "MOODBOARD"
+    element_id: str
+    room_id: str
+    semantic_type: str = "other"
+    name: str = ""
+    #: [x0, y0, x1, y1] as FRACTIONS of the moodboard image, x0 < x1, y0 < y1.
+    bbox: tuple[float, float, float, float]
+    #: The crop's NATIVE size in moodboard pixels, before the crop was
+    #: enlarged for image-to-3D - how much of the piece was really seen.
+    crop_px: tuple[int, int] = (0, 0)
+    crop_ref: str = ""
+    #: What the reader said about the piece's place, in the RENDER's terms
+    #: (back / left / right / front). Arrangement evidence, never metres.
+    wall: str = ""
+    derived_from: Literal["SceneElement"] = "SceneElement"
+
+    @field_validator("bbox")
+    @classmethod
+    def _fractions_only(cls, v: tuple[float, float, float, float]) -> tuple[float, float, float, float]:
+        if any(not (0.0 <= c <= 1.0) for c in v):
+            raise ValueError(f"a moodboard occurrence is in fractions of the image, got {v}: "
+                             "a value outside [0, 1] is not a moodboard coordinate (metres?)")
+        if not (v[0] < v[2] and v[1] < v[3]):
+            raise ValueError(f"bbox must be [x0, y0, x1, y1] with x0 < x1 and y0 < y1, got {v}")
+        return v
+
+    @field_validator("crop_px")
+    @classmethod
+    def _pixels(cls, v: tuple[int, int]) -> tuple[int, int]:
+        if any(int(c) != c or c < 0 for c in v):
+            raise ValueError(f"crop_px is a whole, non-negative pixel count, got {v}")
+        return v
+
+    @classmethod
+    def from_element(cls, element: "SceneElement") -> Optional["MoodboardOccurrence"]:
+        """The one way to make one. None when the element has no box: an
+        element nobody located in the picture has no occurrence to record."""
+        if element.bbox is None:
+            return None
+        return cls(element_id=element.element_id, room_id=element.room_id, semantic_type=element.semantic_type,
+                   name=element.name, bbox=tuple(float(c) for c in element.bbox),  # type: ignore[arg-type]
+                   crop_px=tuple(int(c) for c in element.crop_px), crop_ref=element.crop_ref,  # type: ignore[arg-type]
+                   wall=element.wall)
+
+
+def moodboard_occurrences(reading: "SceneReading") -> list[MoodboardOccurrence]:
+    """Every located element of a reading, as its frame-pinned occurrence."""
+    return [o for o in (MoodboardOccurrence.from_element(e) for e in reading.elements) if o is not None]
 
 
 class SceneReading(BaseModel):
@@ -615,13 +689,22 @@ class SpatialRelation(BaseModel):
     object_id: str = ""                 # empty for AGAINST_WALL
     confidence: SpatialConfidence = "LOW"
     source: SpatialSource = "semantic"
-    #: "floor_plan" survives any camera; "camera" does not. LEFT_OF from two
+    #: "room_plan" survives any camera; "camera" does not. LEFT_OF from two
     #: bounding boxes says the pieces are side by side FROM WHERE THE CAMERA
     #: STOOD - useful as ordering, never as a direction in the room. Phase 0a
     #: removed exactly this confusion from the placement hints ("left wall" is
     #: discarded), so it is marked here rather than smuggled back in unlabelled.
-    frame: Literal["floor_plan", "camera"] = "floor_plan"
+    frame: Literal["room_plan", "camera"] = "room_plan"
     note: str = ""
+
+    @field_validator("frame", mode="before")
+    @classmethod
+    def _legacy_frame(cls, v):
+        """P1-ELEM-003: a spatial graph written before the rename says
+        "floor_plan"; it means the room's plan view and loads as such."""
+        from ..spatial.coordinate_frames import relation_frame
+
+        return relation_frame(v)
 
 
 class SpatialGroup(BaseModel):
@@ -702,6 +785,8 @@ class ObjectPlanItem(BaseModel):
     # the link that lets the asset ladder pick the mesh generated from THIS
     # piece's crop instead of guessing a catalog match by size.
     element_id: str = ""
+    #: P1-ELEM-004: the client's own piece - placed and designed around, never generated.
+    client_owned: bool = False
     # Arrangement intent carried over from the approved render, in its own
     # words ("window wall", "beside the sofa"). Preferences for the placement
     # engine, never instructions: a hint no valid spot satisfies is dropped,

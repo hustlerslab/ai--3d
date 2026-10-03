@@ -59,7 +59,8 @@ class AssetRegistry:
         return self.root / "normalized" / f"{asset_id}.glb"
 
     def web_path(self, asset_id: str) -> Path:
-        """The viewer's copy: same geometry, textures sized to a GPU budget.
+        """The viewer's copy: the same triangles Draco-compressed (P2-VIEWER-002),
+        textures sized to a GPU budget.
 
         Beside the full-size model rather than replacing it. Blender renders
         once and wants every pixel; the browser holds fifteen of these at a

@@ -107,7 +107,7 @@ def test_left_and_right_are_derived_but_marked_camera_frame():
     assert found[0].frame == "camera"
     assert all(r.frame == "camera" for r in graph.relations
                if r.predicate in CAMERA_FRAME_PREDICATES)
-    assert all(r.frame == "floor_plan" for r in graph.relations
+    assert all(r.frame == "room_plan" for r in graph.relations
                if r.predicate not in CAMERA_FRAME_PREDICATES)
 
 

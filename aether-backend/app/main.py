@@ -31,6 +31,7 @@ from .projects import ProjectNotFound, get_project_store
 from .scene.patches import PatchError
 from .scene.store import SceneNotFound, VersionConflict, get_store
 from .seed import ensure_seed
+from .api import contracts as C
 
 # P0-OBSERVABILITY-001. `basicConfig(level=INFO)` was the ENTIRE logging
 # configuration; this replaces it with one JSON line per record, each carrying
@@ -48,6 +49,16 @@ async def lifespan(app: FastAPI):
     if migrated:
         log.info("Migrated %d project(s) from projects.json into SQLite", migrated)
     ensure_seed(get_store())
+    # P1-MEMORY-002: agent memory does not grow without bound. Once per boot,
+    # and never fatal - the Supervisor is advisory (design.md §21.6). A
+    # long-running deployment also schedules scripts/run_memory_retention.py.
+    try:
+        from .supervisor.memory import apply_retention
+
+        for entry in apply_retention():
+            log.info("memory.retention", extra={k: entry[k] for k in ("table_name", "reason", "deleted")})
+    except Exception:                                      # noqa: BLE001
+        log.exception("memory retention failed; memory kept, pipeline unaffected")
     runner = get_runner()
     runner.start()
     # Resolve the reasoning provider HERE, at boot, not lazily on the first job.
@@ -56,6 +67,13 @@ async def lifespan(app: FastAPI):
     from .intelligence import get_provider
 
     provider = get_provider()
+    # P1-MM-001: the three Supervisor roles, named at boot like the pipeline's.
+    try:
+        from .supervisor.providers import log_role_bindings
+
+        log_role_bindings(settings)
+    except Exception:                                      # noqa: BLE001
+        log.exception("supervisor role bindings are invalid; the Supervisor will run rules-only")
     log.info(
         "Aether backend up. data_dir=%s provider=%s model=%s mode=%s meshy=%s blender=%s",
         settings.data_dir,
@@ -231,6 +249,6 @@ async def patch_error_handler(request: Request, exc: PatchError):
     return payload
 
 
-@app.get("/")
+@app.get("/", response_model=C.ServiceRoot)
 def root():
     return {"service": "aether-walkthrough-backend", "docs": "/docs", "api": "/api"}

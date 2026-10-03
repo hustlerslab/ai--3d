@@ -534,10 +534,18 @@ function BoxShape({ obj }: { obj: SceneObject }) {
 
 /* ── Real GLB assets ───────────────────────────────────────────────────── */
 
+/**
+ * P2-VIEWER-002: the viewer's copy of each model is Draco-compressed. drei's
+ * useGLTF would fetch the decoder from Google's CDN (gstatic.com) - a third
+ * party on every first 3D load, and no 3D at all where it is blocked. This is
+ * three.js's own decoder, copied into public/draco/ and served by the app.
+ */
+export const DRACO_DECODER_PATH = "/draco/";
+
 const FABRIC_TYPES = new Set(["sofa", "loveseat", "armchair", "ottoman", "chair", "bed", "bar_stool", "pillows", "rug", "curtains"]);
 
 function GlbModel({ url, obj, ownMaterials }: { url: string; obj: SceneObject; ownMaterials: boolean }) {
-  const gltf = useGLTF(url, undefined, undefined, withSessionCredentials);
+  const gltf = useGLTF(url, DRACO_DECODER_PATH, undefined, withSessionCredentials);
   const normalized = useMemo(() => {
     const clone = gltf.scene.clone(true);
     const box = new THREE.Box3().setFromObject(clone);
@@ -614,13 +622,25 @@ function useModelUrl(assetId: string | null, projectId = ""): { url: string | nu
   return { url, ownMaterials };
 }
 
-/** Ceiling-mounted objects hang from the ceiling; wall art sits at eye line. */
-function mountOffsetY(obj: SceneObject, ceilingHeight: number): number {
-  if (obj.mount === "surface") return 0; // the planner already put it on the host's top face
-  const height = obj.dimensions[1] * obj.scale[1];
-  if (obj.mount === "ceiling") return Math.max(0, ceilingHeight - height - 0.05) - obj.position[1];
-  if (obj.mount === "wall" && obj.position[1] < 0.2) return 1.45 - height / 2;
-  return 0;
+/**
+ * P2-VIEWER-001: where a piece is drawn is exactly where the scene says it is.
+ * The viewer never re-lays-out. It used to lift ceiling pieces to
+ * `ceiling - height - 0.05` and move any wall piece stored below 0.2 m to eye
+ * level - so floor-standing curtains (y = 0 in every compiled scene) floated
+ * 15 cm up here while Blender rendered them on the floor, and the viewer, the
+ * render and the verifier disagreed about the same room. Heights are the
+ * compiler's job; this only draws them.
+ */
+export function objectTransform(obj: SceneObject): {
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+} {
+  return {
+    position: [obj.position[0], obj.position[1], obj.position[2]],
+    rotation: [0, obj.rotation_y, 0],
+    scale: [obj.scale[0], obj.scale[1], obj.scale[2]],
+  };
 }
 
 /* ── Object dispatch ───────────────────────────────────────────────────── */
@@ -686,7 +706,6 @@ export function FurnitureMesh({
   projectId = "",
   selected,
   onSelect,
-  ceilingHeight = 2.8,
 }: {
   obj: SceneObject;
   /** Scopes the model lookup: pieces generated for this project are only in
@@ -694,17 +713,16 @@ export function FurnitureMesh({
   projectId?: string;
   selected: boolean;
   onSelect?: (id: string) => void;
-  ceilingHeight?: number;
 }) {
   const { url: modelUrl, ownMaterials } = useModelUrl(obj.asset_id, projectId);
   const [w, h, d] = obj.dimensions;
-  const liftY = mountOffsetY(obj, ceilingHeight);
+  const t = objectTransform(obj);
 
   return (
     <group
-      position={[obj.position[0], obj.position[1] + liftY, obj.position[2]]}
-      rotation={[0, obj.rotation_y, 0]}
-      scale={obj.scale}
+      position={t.position}
+      rotation={t.rotation}
+      scale={t.scale}
       onClick={(event) => {
         event.stopPropagation();
         onSelect?.(obj.object_id);
@@ -783,9 +801,6 @@ export function SceneMeshes({
           projectId={scene.project_id}
           selected={obj.object_id === selectedId}
           onSelect={(id) => onSelect?.(id)}
-          ceilingHeight={
-            scene.rooms.find((r) => r.room_id === obj.room_id)?.ceiling_height ?? 2.8
-          }
         />
       ))}
       {(ghostObjects ?? []).map((obj) => (

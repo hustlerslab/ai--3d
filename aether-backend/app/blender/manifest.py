@@ -211,6 +211,14 @@ def _asset_entry(asset_id: Optional[str], semantic_type: str, *, shape_hint: Opt
                 # away - which is the whole thing the generation was paid for.
                 # A catalog piece is generic and still gets re-skinned.
                 "own_materials": bool(record and record.project_id),
+                # P1-ASSET-005: the forward axis as measured or declared at
+                # ingest and already baked into the normalized file. The
+                # importer's build-time guess runs only for "unmeasured"
+                # records, which predate the measurement.
+                "forward": {
+                    "yaw_offset": record.normalization.yaw_offset if record else 0.0,
+                    "source": record.normalization.yaw_source if record else "unmeasured",
+                },
             }
         item = get_item(asset_id)
         if item is not None and item.shape != "model":
@@ -342,6 +350,7 @@ def build_manifest(
                 # into the provenance chain.
                 "element_id": o.element_id,
                 "instance_id": o.instance_id,
+                "client_owned": o.client_owned,
                 "plan_key": o.plan_key,
                 "semantic_type": o.semantic_type,
                 "room_id": o.room_id,

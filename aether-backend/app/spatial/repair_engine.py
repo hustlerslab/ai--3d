@@ -100,6 +100,16 @@ class RepairResult:
     escalation_level_reached: int
     nodes_explored: int
 
+    @property
+    def failure_category(self) -> str:
+        """P1-VALIDATOR-003: the terminal state in the shared taxonomy; ""
+        when repair succeeded or had nothing to do."""
+        from ..supervisor.classify import from_repair
+
+        moved = sum(1 for r in self.records if getattr(r, "outcome", "") == "MOVED")
+        c = from_repair(self.terminal_state, hard_after=self.hard_after, moved=moved)
+        return c.category.value if c else ""
+
 
 @dataclass(frozen=True)
 class _Failure:

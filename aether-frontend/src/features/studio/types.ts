@@ -1,5 +1,7 @@
 /** DTOs mirrored from aether-backend app/projects, app/jobs, app/intelligence. */
 
+import type { Assumption, InventoryCounts, ReadingSummary } from "@/generated/api-types";
+
 export type ProjectStage =
   | "CREATED"
   | "INPUT_RECEIVED"
@@ -395,6 +397,18 @@ export interface SceneElement {
   check_note: string;
   /** null until a human has actually looked. Not the same as false. */
   approved: boolean | null;
+  /** P1-ELEM-004: the client's own piece. Placed and designed around, never
+   *  generated — there is nothing to buy. Shown as "Yours". */
+  client_owned?: boolean;
+}
+
+/** P1-SPATIAL-002: a piece the plan could not fit, in plain words, with choices. */
+export interface TradeoffDto {
+  kind: "doesnt_fit" | "nothing_to_rest_on" | "blocks_door";
+  room: string;
+  pieces: string[];
+  statement: string;
+  options: { id: string; label: string }[];
 }
 
 export interface SceneReadingDto {
@@ -427,6 +441,12 @@ export interface SceneReadingDto {
     inventory_notes?: string[];
     definitions?: ElementDefinition[];
     instances?: ElementInstance[];
+    /** P1-FRONTEND-001, typed from the generated contract: the state of every
+        row, the numbers to print, and every estimate - all decided by the
+        backend. Optional only so a project from an older backend still loads. */
+    element_states?: ReadingSummary["element_states"];
+    counts?: InventoryCounts;
+    assumptions?: Assumption[];
   };
 }
 
@@ -438,6 +458,8 @@ export interface ElementInventoryRow {
   usable: number;
   /** check name -> rows it removed, e.g. { duplicate: 2 }. */
   lost_to: Record<string, number>;
+  /** P1-ELEM-004: how many of the usable rows are the client's own pieces. */
+  yours?: number;
 }
 
 /** The canonical identity of a piece: what it IS, never where it sits. */
@@ -456,6 +478,8 @@ export interface ElementDefinition {
   source_element_ids: string[];
   /** Empty until a mesh exists for this piece. */
   canonical_asset_id: string;
+  /** P1-ELEM-004: the client's own piece - kept, never generated. */
+  client_owned?: boolean;
   /** The client's decision on the pictured piece: true build, false skip, null/absent undecided. */
   approved?: boolean | null;
 }

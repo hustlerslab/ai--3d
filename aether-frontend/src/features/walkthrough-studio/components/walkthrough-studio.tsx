@@ -40,6 +40,9 @@ import * as api from "@/features/studio/api/projects-api";
 import { AnalysisReview } from "@/features/studio/components/analysis-review";
 import { ElementImagesReview } from "@/features/studio/components/element-images-review";
 import { ElementReview } from "@/features/studio/components/element-review";
+import { DesignVersions } from "@/features/studio/components/design-versions";
+import { ReviewSurface } from "@/features/studio/components/review-surface";
+import { TradeoffNotice } from "@/features/studio/components/tradeoff-notice";
 import { SpatialCheckPanel } from "@/features/studio/components/spatial-check";
 import type { BuildDto, CreditsDto, SceneReadingDto, SceneSpecDto } from "@/features/studio/types";
 import { JobProgress } from "@/features/studio/components/job-progress";
@@ -65,7 +68,7 @@ import { Walkthrough3DView } from "@/features/walkthrough3d/components/walkthrou
 
 type StepId =
   | "project" | "describe" | "moodboard" | "refine" | "planspace"
-  | "generate3d" | "experience" | "share" | "designer";
+  | "generate3d" | "review" | "experience" | "share" | "designer";
 
 interface StepDef {
   id: StepId;
@@ -85,6 +88,9 @@ const STEPS: StepDef[] = [
   // labels, Build or Skip — and step 5 is the room that decision produced.
   { id: "planspace", title: "Plan 3D Space", badge: null },
   { id: "generate3d", title: "Generate 3D Space", badge: "paid" },
+  // P1-FRONTEND-002: the one place the person judges the design - render,
+  // 3D, inventory, checks, issues - and approves, edits, regenerates or rejects.
+  { id: "review", title: "Review your design", badge: null },
   { id: "experience", title: "View 3D Experience", badge: null },
   { id: "share", title: "Save / Share", badge: null },
   { id: "designer", title: "Connect with Designer", badge: "free" },
@@ -653,6 +659,19 @@ export function WalkthroughStudio() {
    *  It chains in the browser, the way the confirm-and-plan step it replaces
    *  did. A closed tab stops the chain between jobs - the jobs themselves
    *  keep running on the backend and are picked up again by id. */
+  /** Review -> Regenerate: a forced re-plan, then back to the space it produced. */
+  const runRegenerate = useCallback(async () => {
+    if (!project) return;
+    goToStep("planspace");
+    const done = await planJob.run(() => api.scenePlan(project.project_id, true));
+    if (done?.status !== "SUCCEEDED") return;
+    const spec = await api.getSceneSpec(project.project_id).catch(() => null);
+    if (spec) {
+      setSceneId(spec.scene.scene_id);
+      setSceneSpec(spec);
+    }
+  }, [project, goToStep, planJob]);
+
   const runPlanSpace = useCallback(async () => {
     if (!project) return;
     setBuildPreviewUrl(null);
@@ -708,11 +727,11 @@ export function WalkthroughStudio() {
       refreshCredits, refreshDetail, goToStep]);
 
   const saveElementReview = useCallback(
-    async (decisions: Record<string, boolean>) => {
+    async (decisions: Record<string, boolean>, keep: Record<string, boolean> = {}) => {
       if (!project) return;
       setSavingReview(true);
       try {
-        setSceneReading(await api.reviewSceneReading(project.project_id, decisions));
+        setSceneReading(await api.reviewSceneReading(project.project_id, decisions, keep));
       } finally {
         setSavingReview(false);
       }
@@ -1126,7 +1145,21 @@ export function WalkthroughStudio() {
               {sceneId && !planJob.running && !elementsJob.running ? (
                 <>
                   {sceneSpec ? <SpatialCheckPanel spec={sceneSpec} /> : null}
-                  <Walkthrough3DView key={sceneId} sceneId={sceneId} />
+                  {project ? (
+                    <TradeoffNotice projectId={project.project_id} refreshKey={sceneSpec?.scene.version ?? sceneId} />
+                  ) : null}
+                  {project ? (
+                    <DesignVersions
+                      projectId={project.project_id}
+                      refreshKey={sceneSpec?.scene.version ?? sceneId}
+                      onRestored={() =>
+                        void api.getSceneSpec(project.project_id).then(setSceneSpec).catch(() => undefined)
+                      }
+                    />
+                  ) : null}
+                  {/* Keyed by version too: making a saved version current keeps the
+                      scene id and advances its version, and the viewer must reload. */}
+                  <Walkthrough3DView key={`${sceneId}:${sceneSpec?.scene.version ?? 0}`} sceneId={sceneId} />
                 </>
               ) : null}
               {/* Blender's own assembly of the same scene: the walls and their
@@ -1212,6 +1245,18 @@ export function WalkthroughStudio() {
           </StepShell>
         ) : null}
 
+        {step.id === "review" && project ? (
+          <StepShell title="Review your design" subtitle="Everything that was built and checked, in one place - then your decision.">
+            <ReviewSurface
+              projectId={project.project_id}
+              refreshKey={sceneSpec?.scene.version ?? sceneId ?? 0}
+              reading={sceneReading}
+              scene={sceneId ? <Walkthrough3DView key={`review:${sceneId}:${sceneSpec?.scene.version ?? 0}`} sceneId={sceneId} /> : null}
+              onEdit={() => goToStep("planspace")}
+              onRegenerate={() => void runRegenerate()}
+            />
+          </StepShell>
+        ) : null}
         {step.id === "experience" ? (
           <StepShell title="Walk through your space" subtitle="Explore it live in 3D, or take the rendered 360° tour room by room.">
             <div className="flex flex-wrap items-center justify-between gap-3">

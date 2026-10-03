@@ -1,0 +1,1572 @@
+{
+  "task": "P1-MM-002",
+  "date": "2026-09-27T08:44:49.755680+00:00",
+  "repeat_runs": 3,
+  "temperature": 0.0,
+  "provider": "ollama (local)",
+  "hardware": "NVIDIA RTX 3050 Laptop, 4 GB",
+  "n_cases": {
+    "watcher": 8,
+    "orchestrator": 16,
+    "validator": 8
+  },
+  "vision_capable": {
+    "qwen2.5:0.5b": false,
+    "llama3.2:1b": false,
+    "gemma2:2b": false,
+    "qwen2.5vl:3b": true
+  },
+  "scoring": {
+    "watcher": "no_pattern: no anomaly reported; pattern: an anomaly citing at least one pattern event",
+    "orchestrator": "the model's own decision (by=model, confidence >= 0.6) equals the label",
+    "validator": "PASS label: status PASS; FAIL label: status FAIL or WARNING. REVIEW_REQUIRED is never correct, but never a false PASS either",
+    "majority": "a case counts correct when at least 2 of 3 runs are",
+    "skill": "accuracy minus the best one-fixed-answer accuracy; only models with skill > 0 count as evidence about diversity",
+    "orchestrator_options_defined": "DIAGNOSTIC, not production behaviour: the same decide cases with the policy table's definitions of all four options inserted into the prompt, to separate a prompt defect from a model limit"
+  },
+  "models": {
+    "qwen2.5:0.5b": {
+      "roles": {
+        "watcher": {
+          "accuracy": 0.5,
+          "correct": 4,
+          "cases": 8,
+          "constant_answer_baseline": 0.5,
+          "skill_over_baseline": 0.0,
+          "answer_distribution": {
+            "anomalies=0": 24
+          },
+          "gives_one_answer_to_everything": true,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 0.83
+        },
+        "orchestrator": {
+          "accuracy": 0.25,
+          "correct": 4,
+          "cases": 16,
+          "constant_answer_baseline": 0.25,
+          "skill_over_baseline": 0.0,
+          "answer_distribution": {
+            "decision=RE_SOLVE": 48
+          },
+          "gives_one_answer_to_everything": true,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 0.72
+        },
+        "orchestrator_options_defined": {
+          "accuracy": 0.25,
+          "correct": 4,
+          "cases": 16,
+          "constant_answer_baseline": 0.25,
+          "skill_over_baseline": 0.0,
+          "answer_distribution": {
+            "decision=RE_SOLVE": 47,
+            "decision=ESCALATE": 1
+          },
+          "gives_one_answer_to_everything": false,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 0.73
+        }
+      },
+      "provider_errors": 0,
+      "precision_recall": {
+        "watcher": {
+          "no_pattern": {
+            "recall": 1.0,
+            "support": 4,
+            "precision": 0.5
+          },
+          "pattern": {
+            "recall": 0.0,
+            "support": 4,
+            "precision": null
+          }
+        },
+        "orchestrator": {
+          "ESCALATE": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RETRY": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RE_READ": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RE_SOLVE": {
+            "recall": 1.0,
+            "support": 4
+          }
+        }
+      }
+    },
+    "llama3.2:1b": {
+      "roles": {
+        "watcher": {
+          "accuracy": 0.375,
+          "correct": 3,
+          "cases": 8,
+          "constant_answer_baseline": 0.5,
+          "skill_over_baseline": -0.125,
+          "answer_distribution": {
+            "anomalies>0": 22,
+            "anomalies=0": 2
+          },
+          "gives_one_answer_to_everything": false,
+          "repeat_run_consistency": 0.875,
+          "mean_latency_s": 1.42
+        },
+        "orchestrator": {
+          "accuracy": 0.25,
+          "correct": 4,
+          "cases": 16,
+          "constant_answer_baseline": 0.25,
+          "skill_over_baseline": 0.0,
+          "answer_distribution": {
+            "decision=RE_SOLVE": 48
+          },
+          "gives_one_answer_to_everything": true,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 0.96
+        },
+        "orchestrator_options_defined": {
+          "accuracy": 0.25,
+          "correct": 4,
+          "cases": 16,
+          "constant_answer_baseline": 0.25,
+          "skill_over_baseline": 0.0,
+          "answer_distribution": {
+            "decision=RE_SOLVE": 48
+          },
+          "gives_one_answer_to_everything": true,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 0.8
+        }
+      },
+      "provider_errors": 0,
+      "precision_recall": {
+        "watcher": {
+          "no_pattern": {
+            "recall": 0.0,
+            "support": 4,
+            "precision": 0.0
+          },
+          "pattern": {
+            "recall": 0.75,
+            "support": 4,
+            "precision": 0.4286
+          }
+        },
+        "orchestrator": {
+          "ESCALATE": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RETRY": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RE_READ": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RE_SOLVE": {
+            "recall": 1.0,
+            "support": 4
+          }
+        }
+      }
+    },
+    "gemma2:2b": {
+      "roles": {
+        "watcher": {
+          "accuracy": 0.375,
+          "correct": 3,
+          "cases": 8,
+          "constant_answer_baseline": 0.5,
+          "skill_over_baseline": -0.125,
+          "answer_distribution": {
+            "anomalies=0": 21,
+            "anomalies>0": 3
+          },
+          "gives_one_answer_to_everything": false,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 2.38
+        },
+        "orchestrator": {
+          "accuracy": 0.25,
+          "correct": 4,
+          "cases": 16,
+          "constant_answer_baseline": 0.25,
+          "skill_over_baseline": 0.0,
+          "answer_distribution": {
+            "decision=RE_SOLVE": 48
+          },
+          "gives_one_answer_to_everything": true,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 1.24
+        },
+        "orchestrator_options_defined": {
+          "accuracy": 0.5,
+          "correct": 8,
+          "cases": 16,
+          "constant_answer_baseline": 0.25,
+          "skill_over_baseline": 0.25,
+          "answer_distribution": {
+            "decision=RE_SOLVE": 35,
+            "decision=RE_READ": 12,
+            "decision=ESCALATE": 1
+          },
+          "gives_one_answer_to_everything": false,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 1.75
+        }
+      },
+      "provider_errors": 0,
+      "precision_recall": {
+        "watcher": {
+          "no_pattern": {
+            "recall": 0.75,
+            "support": 4,
+            "precision": 0.4286
+          },
+          "pattern": {
+            "recall": 0.0,
+            "support": 4,
+            "precision": 0.0
+          }
+        },
+        "orchestrator": {
+          "ESCALATE": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RETRY": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RE_READ": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RE_SOLVE": {
+            "recall": 1.0,
+            "support": 4
+          }
+        }
+      }
+    },
+    "qwen2.5vl:3b": {
+      "roles": {
+        "watcher": {
+          "accuracy": 0.375,
+          "correct": 3,
+          "cases": 8,
+          "constant_answer_baseline": 0.5,
+          "skill_over_baseline": -0.125,
+          "answer_distribution": {
+            "anomalies>0": 21,
+            "anomalies=0": 3
+          },
+          "gives_one_answer_to_everything": false,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 7.47
+        },
+        "orchestrator": {
+          "accuracy": 0.25,
+          "correct": 4,
+          "cases": 16,
+          "constant_answer_baseline": 0.25,
+          "skill_over_baseline": 0.0,
+          "answer_distribution": {
+            "decision=RE_SOLVE": 48
+          },
+          "gives_one_answer_to_everything": true,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 5.01
+        },
+        "validator": {
+          "accuracy": 1.0,
+          "correct": 8,
+          "cases": 8,
+          "constant_answer_baseline": 0.5,
+          "skill_over_baseline": 0.5,
+          "answer_distribution": {
+            "status=PASS": 12,
+            "status=FAIL": 12
+          },
+          "gives_one_answer_to_everything": false,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 9.03,
+          "false_pass_runs": 0
+        },
+        "orchestrator_options_defined": {
+          "accuracy": 0.5,
+          "correct": 8,
+          "cases": 16,
+          "constant_answer_baseline": 0.25,
+          "skill_over_baseline": 0.25,
+          "answer_distribution": {
+            "decision=RE_READ": 36,
+            "decision=ESCALATE": 12
+          },
+          "gives_one_answer_to_everything": false,
+          "repeat_run_consistency": 1.0,
+          "mean_latency_s": 5.76
+        }
+      },
+      "provider_errors": 0,
+      "precision_recall": {
+        "watcher": {
+          "no_pattern": {
+            "recall": 0.0,
+            "support": 4,
+            "precision": 0.0
+          },
+          "pattern": {
+            "recall": 0.75,
+            "support": 4,
+            "precision": 0.4286
+          }
+        },
+        "orchestrator": {
+          "ESCALATE": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RETRY": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RE_READ": {
+            "recall": 0.0,
+            "support": 4
+          },
+          "RE_SOLVE": {
+            "recall": 1.0,
+            "support": 4
+          }
+        },
+        "validator": {
+          "FAIL": {
+            "recall": 1.0,
+            "support": 4,
+            "precision": 1.0
+          },
+          "PASS": {
+            "recall": 1.0,
+            "support": 4,
+            "precision": 1.0
+          }
+        }
+      }
+    }
+  },
+  "error_correlation_by_role": {
+    "watcher": {
+      "models": [
+        "qwen2.5:0.5b",
+        "llama3.2:1b",
+        "gemma2:2b",
+        "qwen2.5vl:3b"
+      ],
+      "beat_baseline": [],
+      "pairs": {
+        "qwen2.5:0.5b vs llama3.2:1b": {
+          "error_correlation": -0.7746,
+          "both_wrong": 1,
+          "only_first_wrong": 3,
+          "only_second_wrong": 4,
+          "shared_cases": 8
+        },
+        "qwen2.5:0.5b vs gemma2:2b": {
+          "error_correlation": 0.7746,
+          "both_wrong": 4,
+          "only_first_wrong": 0,
+          "only_second_wrong": 1,
+          "shared_cases": 8
+        },
+        "qwen2.5:0.5b vs qwen2.5vl:3b": {
+          "error_correlation": -0.7746,
+          "both_wrong": 1,
+          "only_first_wrong": 3,
+          "only_second_wrong": 4,
+          "shared_cases": 8
+        },
+        "llama3.2:1b vs gemma2:2b": {
+          "error_correlation": -0.6,
+          "both_wrong": 2,
+          "only_first_wrong": 3,
+          "only_second_wrong": 3,
+          "shared_cases": 8
+        },
+        "llama3.2:1b vs qwen2.5vl:3b": {
+          "error_correlation": 0.4667,
+          "both_wrong": 4,
+          "only_first_wrong": 1,
+          "only_second_wrong": 1,
+          "shared_cases": 8
+        },
+        "gemma2:2b vs qwen2.5vl:3b": {
+          "error_correlation": -0.6,
+          "both_wrong": 2,
+          "only_first_wrong": 3,
+          "only_second_wrong": 3,
+          "shared_cases": 8
+        }
+      },
+      "finding": "NOT MEASURABLE: 0 of 4 model(s) beat the constant-answer baseline (none); correlated error between models with no skill says nothing about diversity"
+    },
+    "orchestrator": {
+      "models": [
+        "qwen2.5:0.5b",
+        "llama3.2:1b",
+        "gemma2:2b",
+        "qwen2.5vl:3b"
+      ],
+      "beat_baseline": [],
+      "pairs": {
+        "qwen2.5:0.5b vs llama3.2:1b": {
+          "error_correlation": 1.0,
+          "both_wrong": 12,
+          "only_first_wrong": 0,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        },
+        "qwen2.5:0.5b vs gemma2:2b": {
+          "error_correlation": 1.0,
+          "both_wrong": 12,
+          "only_first_wrong": 0,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        },
+        "qwen2.5:0.5b vs qwen2.5vl:3b": {
+          "error_correlation": 1.0,
+          "both_wrong": 12,
+          "only_first_wrong": 0,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        },
+        "llama3.2:1b vs gemma2:2b": {
+          "error_correlation": 1.0,
+          "both_wrong": 12,
+          "only_first_wrong": 0,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        },
+        "llama3.2:1b vs qwen2.5vl:3b": {
+          "error_correlation": 1.0,
+          "both_wrong": 12,
+          "only_first_wrong": 0,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        },
+        "gemma2:2b vs qwen2.5vl:3b": {
+          "error_correlation": 1.0,
+          "both_wrong": 12,
+          "only_first_wrong": 0,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        }
+      },
+      "finding": "NOT MEASURABLE: 0 of 4 model(s) beat the constant-answer baseline (none); correlated error between models with no skill says nothing about diversity"
+    },
+    "validator": {
+      "models": [
+        "qwen2.5vl:3b"
+      ],
+      "beat_baseline": [
+        "qwen2.5vl:3b"
+      ],
+      "pairs": {},
+      "finding": "NOT MEASURED: fewer than two models took this role's cases"
+    },
+    "orchestrator_options_defined": {
+      "models": [
+        "qwen2.5:0.5b",
+        "llama3.2:1b",
+        "gemma2:2b",
+        "qwen2.5vl:3b"
+      ],
+      "beat_baseline": [
+        "gemma2:2b",
+        "qwen2.5vl:3b"
+      ],
+      "pairs": {
+        "qwen2.5:0.5b vs llama3.2:1b": {
+          "error_correlation": 1.0,
+          "both_wrong": 12,
+          "only_first_wrong": 0,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        },
+        "qwen2.5:0.5b vs gemma2:2b": {
+          "error_correlation": 0.5774,
+          "both_wrong": 8,
+          "only_first_wrong": 4,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        },
+        "qwen2.5:0.5b vs qwen2.5vl:3b": {
+          "error_correlation": -0.5774,
+          "both_wrong": 4,
+          "only_first_wrong": 8,
+          "only_second_wrong": 4,
+          "shared_cases": 16
+        },
+        "llama3.2:1b vs gemma2:2b": {
+          "error_correlation": 0.5774,
+          "both_wrong": 8,
+          "only_first_wrong": 4,
+          "only_second_wrong": 0,
+          "shared_cases": 16
+        },
+        "llama3.2:1b vs qwen2.5vl:3b": {
+          "error_correlation": -0.5774,
+          "both_wrong": 4,
+          "only_first_wrong": 8,
+          "only_second_wrong": 4,
+          "shared_cases": 16
+        },
+        "gemma2:2b vs qwen2.5vl:3b": {
+          "error_correlation": 0.0,
+          "both_wrong": 4,
+          "only_first_wrong": 4,
+          "only_second_wrong": 4,
+          "shared_cases": 16
+        }
+      },
+      "finding": "diversity HELPS: mean pairwise error correlation 0.00 (models mostly fail different cases)"
+    }
+  },
+  "per_case_runs": {
+    "qwen2.5:0.5b": {
+      "watcher/pat_01_same_asset_three_stages": [
+        false,
+        false,
+        false
+      ],
+      "watcher/pat_02_repeated_network_reset": [
+        false,
+        false,
+        false
+      ],
+      "watcher/pat_03_one_room_keeps_failing_repair": [
+        false,
+        false,
+        false
+      ],
+      "watcher/pat_04_one_client_photo_reread_thrice": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_01_four_unrelated_one_offs": [
+        true,
+        true,
+        true
+      ],
+      "watcher/nop_02_single_isolated_warning": [
+        true,
+        true,
+        true
+      ],
+      "watcher/nop_03_four_different_rooms_different_causes": [
+        true,
+        true,
+        true
+      ],
+      "watcher/nop_04_two_events_same_stage_different_entities": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/retry_01_worker_process_killed": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_02_provider_connection_reset": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_03_timeout_no_content_issue": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_04_disk_io_error": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/resolve_01_unclassified_overlap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_02_orphaned_clearance_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_03_unhandled_rotation_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_04_frame_graph_gap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/reread_01_wrong_region_cropped": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_02_photo_mismatch_material": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_03_dimension_photo_conflict": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_04_count_mismatch_photo": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_01_third_round_same_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_02_conflicting_reports_no_path": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_03_budget_and_repeated_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_04_no_plausible_automatic_step": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_01_worker_process_killed": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_02_provider_connection_reset": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_03_timeout_no_content_issue": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_04_disk_io_error": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/resolve_01_unclassified_overlap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_02_orphaned_clearance_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_03_unhandled_rotation_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_04_frame_graph_gap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_01_wrong_region_cropped": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/reread_02_photo_mismatch_material": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/reread_03_dimension_photo_conflict": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/reread_04_count_mismatch_photo": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_01_third_round_same_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_02_conflicting_reports_no_path": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_03_budget_and_repeated_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_04_no_plausible_automatic_step": [
+        false,
+        false,
+        false
+      ]
+    },
+    "llama3.2:1b": {
+      "watcher/pat_01_same_asset_three_stages": [
+        true,
+        true,
+        true
+      ],
+      "watcher/pat_02_repeated_network_reset": [
+        true,
+        true,
+        true
+      ],
+      "watcher/pat_03_one_room_keeps_failing_repair": [
+        true,
+        false,
+        false
+      ],
+      "watcher/pat_04_one_client_photo_reread_thrice": [
+        true,
+        true,
+        true
+      ],
+      "watcher/nop_01_four_unrelated_one_offs": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_02_single_isolated_warning": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_03_four_different_rooms_different_causes": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_04_two_events_same_stage_different_entities": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_01_worker_process_killed": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_02_provider_connection_reset": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_03_timeout_no_content_issue": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_04_disk_io_error": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/resolve_01_unclassified_overlap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_02_orphaned_clearance_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_03_unhandled_rotation_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_04_frame_graph_gap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/reread_01_wrong_region_cropped": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_02_photo_mismatch_material": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_03_dimension_photo_conflict": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_04_count_mismatch_photo": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_01_third_round_same_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_02_conflicting_reports_no_path": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_03_budget_and_repeated_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_04_no_plausible_automatic_step": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_01_worker_process_killed": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_02_provider_connection_reset": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_03_timeout_no_content_issue": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_04_disk_io_error": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/resolve_01_unclassified_overlap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_02_orphaned_clearance_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_03_unhandled_rotation_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_04_frame_graph_gap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_01_wrong_region_cropped": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/reread_02_photo_mismatch_material": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/reread_03_dimension_photo_conflict": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/reread_04_count_mismatch_photo": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_01_third_round_same_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_02_conflicting_reports_no_path": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_03_budget_and_repeated_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_04_no_plausible_automatic_step": [
+        false,
+        false,
+        false
+      ]
+    },
+    "gemma2:2b": {
+      "watcher/pat_01_same_asset_three_stages": [
+        false,
+        false,
+        false
+      ],
+      "watcher/pat_02_repeated_network_reset": [
+        false,
+        false,
+        false
+      ],
+      "watcher/pat_03_one_room_keeps_failing_repair": [
+        false,
+        false,
+        false
+      ],
+      "watcher/pat_04_one_client_photo_reread_thrice": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_01_four_unrelated_one_offs": [
+        true,
+        true,
+        true
+      ],
+      "watcher/nop_02_single_isolated_warning": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_03_four_different_rooms_different_causes": [
+        true,
+        true,
+        true
+      ],
+      "watcher/nop_04_two_events_same_stage_different_entities": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/retry_01_worker_process_killed": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_02_provider_connection_reset": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_03_timeout_no_content_issue": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_04_disk_io_error": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/resolve_01_unclassified_overlap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_02_orphaned_clearance_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_03_unhandled_rotation_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_04_frame_graph_gap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/reread_01_wrong_region_cropped": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_02_photo_mismatch_material": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_03_dimension_photo_conflict": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_04_count_mismatch_photo": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_01_third_round_same_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_02_conflicting_reports_no_path": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_03_budget_and_repeated_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_04_no_plausible_automatic_step": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_01_worker_process_killed": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_02_provider_connection_reset": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_03_timeout_no_content_issue": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_04_disk_io_error": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/resolve_01_unclassified_overlap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_02_orphaned_clearance_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_03_unhandled_rotation_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/resolve_04_frame_graph_gap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_01_wrong_region_cropped": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_02_photo_mismatch_material": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_03_dimension_photo_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_04_count_mismatch_photo": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/escalate_01_third_round_same_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_02_conflicting_reports_no_path": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_03_budget_and_repeated_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/escalate_04_no_plausible_automatic_step": [
+        false,
+        false,
+        false
+      ]
+    },
+    "qwen2.5vl:3b": {
+      "watcher/pat_01_same_asset_three_stages": [
+        true,
+        true,
+        true
+      ],
+      "watcher/pat_02_repeated_network_reset": [
+        false,
+        false,
+        false
+      ],
+      "watcher/pat_03_one_room_keeps_failing_repair": [
+        true,
+        true,
+        true
+      ],
+      "watcher/pat_04_one_client_photo_reread_thrice": [
+        true,
+        true,
+        true
+      ],
+      "watcher/nop_01_four_unrelated_one_offs": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_02_single_isolated_warning": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_03_four_different_rooms_different_causes": [
+        false,
+        false,
+        false
+      ],
+      "watcher/nop_04_two_events_same_stage_different_entities": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_01_worker_process_killed": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_02_provider_connection_reset": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_03_timeout_no_content_issue": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/retry_04_disk_io_error": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/resolve_01_unclassified_overlap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_02_orphaned_clearance_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_03_unhandled_rotation_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/resolve_04_frame_graph_gap": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator/reread_01_wrong_region_cropped": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_02_photo_mismatch_material": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_03_dimension_photo_conflict": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/reread_04_count_mismatch_photo": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_01_third_round_same_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_02_conflicting_reports_no_path": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_03_budget_and_repeated_failure": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator/escalate_04_no_plausible_automatic_step": [
+        false,
+        false,
+        false
+      ],
+      "validator/pass_01_dining_has_table_and_chairs": [
+        true,
+        true,
+        true
+      ],
+      "validator/pass_02_light_neutral_palette": [
+        true,
+        true,
+        true
+      ],
+      "validator/pass_03_floor_length_curtains": [
+        true,
+        true,
+        true
+      ],
+      "validator/pass_04_empty_room_asked_for_empty": [
+        true,
+        true,
+        true
+      ],
+      "validator/fail_01_empty_but_dining_asked": [
+        true,
+        true,
+        true
+      ],
+      "validator/fail_02_empty_but_sofa_asked": [
+        true,
+        true,
+        true
+      ],
+      "validator/fail_03_red_walls_asked": [
+        true,
+        true,
+        true
+      ],
+      "validator/fail_04_bedroom_asked": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/retry_01_worker_process_killed": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_02_provider_connection_reset": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_03_timeout_no_content_issue": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/retry_04_disk_io_error": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/resolve_01_unclassified_overlap": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/resolve_02_orphaned_clearance_conflict": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/resolve_03_unhandled_rotation_conflict": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/resolve_04_frame_graph_gap": [
+        false,
+        false,
+        false
+      ],
+      "orchestrator_options_defined/reread_01_wrong_region_cropped": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_02_photo_mismatch_material": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_03_dimension_photo_conflict": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/reread_04_count_mismatch_photo": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/escalate_01_third_round_same_failure": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/escalate_02_conflicting_reports_no_path": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/escalate_03_budget_and_repeated_failure": [
+        true,
+        true,
+        true
+      ],
+      "orchestrator_options_defined/escalate_04_no_plausible_automatic_step": [
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "per_case_first_note": {
+    "qwen2.5:0.5b": {
+      "watcher/pat_01_same_asset_three_stages": "anomalies=0 cited=[]",
+      "watcher/pat_02_repeated_network_reset": "anomalies=0 cited=[]",
+      "watcher/pat_03_one_room_keeps_failing_repair": "anomalies=0 cited=[]",
+      "watcher/pat_04_one_client_photo_reread_thrice": "anomalies=0 cited=[]",
+      "watcher/nop_01_four_unrelated_one_offs": "anomalies=0",
+      "watcher/nop_02_single_isolated_warning": "anomalies=0",
+      "watcher/nop_03_four_different_rooms_different_causes": "anomalies=0",
+      "watcher/nop_04_two_events_same_stage_different_entities": "anomalies=0",
+      "orchestrator/retry_01_worker_process_killed": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_02_provider_connection_reset": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_03_timeout_no_content_issue": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_04_disk_io_error": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_01_unclassified_overlap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_02_orphaned_clearance_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_03_unhandled_rotation_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_04_frame_graph_gap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_01_wrong_region_cropped": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_02_photo_mismatch_material": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_03_dimension_photo_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_04_count_mismatch_photo": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_01_third_round_same_failure": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/escalate_02_conflicting_reports_no_path": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_03_budget_and_repeated_failure": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_04_no_plausible_automatic_step": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/retry_01_worker_process_killed": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/retry_02_provider_connection_reset": "decision=ESCALATE by=policy conf=1.00",
+      "orchestrator_options_defined/retry_03_timeout_no_content_issue": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/retry_04_disk_io_error": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_01_unclassified_overlap": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/resolve_02_orphaned_clearance_conflict": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/resolve_03_unhandled_rotation_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_04_frame_graph_gap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/reread_01_wrong_region_cropped": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/reread_02_photo_mismatch_material": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/reread_03_dimension_photo_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/reread_04_count_mismatch_photo": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/escalate_01_third_round_same_failure": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/escalate_02_conflicting_reports_no_path": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/escalate_03_budget_and_repeated_failure": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/escalate_04_no_plausible_automatic_step": "decision=RE_SOLVE by=model conf=0.80"
+    },
+    "llama3.2:1b": {
+      "watcher/pat_01_same_asset_three_stages": "anomalies=1 cited=[101, 102, 103]",
+      "watcher/pat_02_repeated_network_reset": "anomalies=1 cited=[201, 202, 203]",
+      "watcher/pat_03_one_room_keeps_failing_repair": "anomalies=1 cited=[301, 302, 303]",
+      "watcher/pat_04_one_client_photo_reread_thrice": "anomalies=1 cited=[401, 402, 403, 404]",
+      "watcher/nop_01_four_unrelated_one_offs": "anomalies=3",
+      "watcher/nop_02_single_isolated_warning": "anomalies=1",
+      "watcher/nop_03_four_different_rooms_different_causes": "anomalies=1",
+      "watcher/nop_04_two_events_same_stage_different_entities": "anomalies=1",
+      "orchestrator/retry_01_worker_process_killed": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_02_provider_connection_reset": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_03_timeout_no_content_issue": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_04_disk_io_error": "decision=RE_SOLVE by=model conf=0.70",
+      "orchestrator/resolve_01_unclassified_overlap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_02_orphaned_clearance_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_03_unhandled_rotation_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_04_frame_graph_gap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_01_wrong_region_cropped": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_02_photo_mismatch_material": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_03_dimension_photo_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_04_count_mismatch_photo": "decision=RE_SOLVE by=model conf=0.90",
+      "orchestrator/escalate_01_third_round_same_failure": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_02_conflicting_reports_no_path": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_03_budget_and_repeated_failure": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_04_no_plausible_automatic_step": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/retry_01_worker_process_killed": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/retry_02_provider_connection_reset": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/retry_03_timeout_no_content_issue": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/retry_04_disk_io_error": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_01_unclassified_overlap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_02_orphaned_clearance_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_03_unhandled_rotation_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_04_frame_graph_gap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/reread_01_wrong_region_cropped": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/reread_02_photo_mismatch_material": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/reread_03_dimension_photo_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/reread_04_count_mismatch_photo": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/escalate_01_third_round_same_failure": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/escalate_02_conflicting_reports_no_path": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/escalate_03_budget_and_repeated_failure": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/escalate_04_no_plausible_automatic_step": "decision=RE_SOLVE by=model conf=0.80"
+    },
+    "gemma2:2b": {
+      "watcher/pat_01_same_asset_three_stages": "anomalies=0 cited=[]",
+      "watcher/pat_02_repeated_network_reset": "anomalies=0 cited=[]",
+      "watcher/pat_03_one_room_keeps_failing_repair": "anomalies=0 cited=[]",
+      "watcher/pat_04_one_client_photo_reread_thrice": "anomalies=0 cited=[]",
+      "watcher/nop_01_four_unrelated_one_offs": "anomalies=0",
+      "watcher/nop_02_single_isolated_warning": "anomalies=1",
+      "watcher/nop_03_four_different_rooms_different_causes": "anomalies=0",
+      "watcher/nop_04_two_events_same_stage_different_entities": "anomalies=0",
+      "orchestrator/retry_01_worker_process_killed": "decision=RE_SOLVE by=model conf=0.90",
+      "orchestrator/retry_02_provider_connection_reset": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/retry_03_timeout_no_content_issue": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/retry_04_disk_io_error": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/resolve_01_unclassified_overlap": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/resolve_02_orphaned_clearance_conflict": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/resolve_03_unhandled_rotation_conflict": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/resolve_04_frame_graph_gap": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/reread_01_wrong_region_cropped": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/reread_02_photo_mismatch_material": "decision=RE_SOLVE by=model conf=0.90",
+      "orchestrator/reread_03_dimension_photo_conflict": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/reread_04_count_mismatch_photo": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/escalate_01_third_round_same_failure": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/escalate_02_conflicting_reports_no_path": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/escalate_03_budget_and_repeated_failure": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator/escalate_04_no_plausible_automatic_step": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/retry_01_worker_process_killed": "decision=RE_SOLVE by=model conf=0.90",
+      "orchestrator_options_defined/retry_02_provider_connection_reset": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/retry_03_timeout_no_content_issue": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/retry_04_disk_io_error": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_01_unclassified_overlap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_02_orphaned_clearance_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/resolve_03_unhandled_rotation_conflict": "decision=RE_SOLVE by=model conf=0.90",
+      "orchestrator_options_defined/resolve_04_frame_graph_gap": "decision=RE_SOLVE by=model conf=0.90",
+      "orchestrator_options_defined/reread_01_wrong_region_cropped": "decision=RE_READ by=model conf=0.70",
+      "orchestrator_options_defined/reread_02_photo_mismatch_material": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/reread_03_dimension_photo_conflict": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/reread_04_count_mismatch_photo": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/escalate_01_third_round_same_failure": "decision=RE_SOLVE by=model conf=1.00",
+      "orchestrator_options_defined/escalate_02_conflicting_reports_no_path": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator_options_defined/escalate_03_budget_and_repeated_failure": "decision=ESCALATE by=policy conf=1.00",
+      "orchestrator_options_defined/escalate_04_no_plausible_automatic_step": "decision=RE_SOLVE by=model conf=0.90"
+    },
+    "qwen2.5vl:3b": {
+      "watcher/pat_01_same_asset_three_stages": "anomalies=1 cited=[101, 102, 103]",
+      "watcher/pat_02_repeated_network_reset": "anomalies=0 cited=[]",
+      "watcher/pat_03_one_room_keeps_failing_repair": "anomalies=1 cited=[301, 302, 303]",
+      "watcher/pat_04_one_client_photo_reread_thrice": "anomalies=2 cited=[401, 402, 403, 404]",
+      "watcher/nop_01_four_unrelated_one_offs": "anomalies=1",
+      "watcher/nop_02_single_isolated_warning": "anomalies=1",
+      "watcher/nop_03_four_different_rooms_different_causes": "anomalies=1",
+      "watcher/nop_04_two_events_same_stage_different_entities": "anomalies=1",
+      "orchestrator/retry_01_worker_process_killed": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_02_provider_connection_reset": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_03_timeout_no_content_issue": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/retry_04_disk_io_error": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_01_unclassified_overlap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_02_orphaned_clearance_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_03_unhandled_rotation_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/resolve_04_frame_graph_gap": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_01_wrong_region_cropped": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_02_photo_mismatch_material": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_03_dimension_photo_conflict": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/reread_04_count_mismatch_photo": "decision=RE_SOLVE by=model conf=0.90",
+      "orchestrator/escalate_01_third_round_same_failure": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_02_conflicting_reports_no_path": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_03_budget_and_repeated_failure": "decision=RE_SOLVE by=model conf=0.80",
+      "orchestrator/escalate_04_no_plausible_automatic_step": "decision=RE_SOLVE by=model conf=0.80",
+      "validator/pass_01_dining_has_table_and_chairs": "status=PASS conf=1.00",
+      "validator/pass_02_light_neutral_palette": "status=PASS conf=1.00",
+      "validator/pass_03_floor_length_curtains": "status=PASS conf=1.00",
+      "validator/pass_04_empty_room_asked_for_empty": "status=PASS conf=1.00",
+      "validator/fail_01_empty_but_dining_asked": "status=FAIL conf=0.00",
+      "validator/fail_02_empty_but_sofa_asked": "status=FAIL conf=0.70",
+      "validator/fail_03_red_walls_asked": "status=FAIL conf=0.80",
+      "validator/fail_04_bedroom_asked": "status=FAIL conf=0.70",
+      "orchestrator_options_defined/retry_01_worker_process_killed": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/retry_02_provider_connection_reset": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/retry_03_timeout_no_content_issue": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/retry_04_disk_io_error": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/resolve_01_unclassified_overlap": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/resolve_02_orphaned_clearance_conflict": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/resolve_03_unhandled_rotation_conflict": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/resolve_04_frame_graph_gap": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/reread_01_wrong_region_cropped": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/reread_02_photo_mismatch_material": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/reread_03_dimension_photo_conflict": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/reread_04_count_mismatch_photo": "decision=RE_READ by=model conf=0.80",
+      "orchestrator_options_defined/escalate_01_third_round_same_failure": "decision=ESCALATE by=model conf=0.90",
+      "orchestrator_options_defined/escalate_02_conflicting_reports_no_path": "decision=ESCALATE by=model conf=0.80",
+      "orchestrator_options_defined/escalate_03_budget_and_repeated_failure": "decision=ESCALATE by=model conf=0.80",
+      "orchestrator_options_defined/escalate_04_no_plausible_automatic_step": "decision=ESCALATE by=model conf=0.80"
+    }
+  }
+}

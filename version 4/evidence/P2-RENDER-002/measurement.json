@@ -1,0 +1,17 @@
+{
+  "cool_daylight": {
+    "lights_specified": 4,
+    "lights_built": 4,
+    "exposure": -0.20000000298023224,
+    "r_over_b": 1.0167,
+    "mean_luminance": 193.96
+  },
+  "evening": {
+    "lights_specified": 4,
+    "lights_built": 4,
+    "exposure": 0.4000000059604645,
+    "r_over_b": 1.1352,
+    "mean_luminance": 184.45
+  },
+  "pixels_changed_gt_10_of_255": 0.9841
+}

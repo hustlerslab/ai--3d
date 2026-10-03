@@ -1,0 +1,12 @@
+== Orchestrator prompt fix ==
+CAUGHT | prompt defines only RE_SOLVE again | restored sha1-identical = True ['FAILED tests/test_orchestrator.py::test_the_model_is_told_what_every_option_means']
+CAUGHT | one option given no meaning | restored sha1-identical = True ['FAILED tests/test_orchestrator.py::test_a_model_is_consulted_only_where_the_table_abstains']
+CAUGHT | one option left out of the prompt | restored sha1-identical = True ['FAILED tests/test_orchestrator.py::test_the_model_is_told_what_every_option_means']
+3/3 caught
+
+== Benchmark harness ==
+CAUGHT | a policy-default answer credited to the model | restored sha1-identical = True ['FAILED tests/test_mm002_benchmark_harness.py::test_the_agents_guards_still_apply_inside_the_benchmark']
+CAUGHT | no error variance reported as 0, not undefined | restored sha1-identical = True ['FAILED tests/test_mm002_benchmark_harness.py::test_error_correlation_and_the_skill_gate']
+CAUGHT | the skill gate ignored | restored sha1-identical = True ['FAILED tests/test_mm002_benchmark_harness.py::test_error_correlation_and_the_skill_gate']
+CAUGHT | a REVIEW_REQUIRED counted as catching a bad room | restored sha1-identical = True ['FAILED tests/test_mm002_benchmark_harness.py::test_the_agents_guards_still_apply_inside_the_benchmark']
+4/4 caught

@@ -1,0 +1,64 @@
+# Allure nightly — class=REAL-PROVIDER (P1-QA-001 / P1-QA-002)
+#
+# One live call per provider, cost-capped (Meshy: balance only, 0 credits).
+# Keys come from repository secrets and exist ONLY in this workflow; the
+# per-commit CI job still refuses to run if any key is set.
+
+name: Nightly real-provider smoke
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-provider:
+    name: Backend (class=REAL-PROVIDER)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ALLURE_TEST_CLASS: REAL-PROVIDER
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      MESHY_API_KEY: ${{ secrets.MESHY_API_KEY }}
+      # Spend cap: the smoke suite never submits a generation; these make any
+      # accidental submission refuse at the ledger as well.
+      MESHY_MAX_CREDITS_PER_PROJECT: "0"
+      MESHY_MAX_CREDITS_PER_USER: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: aether-backend/requirements.txt
+      - name: Install dependencies
+        working-directory: aether-backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run the REAL-PROVIDER smoke suite
+        working-directory: aether-backend
+        run: |
+          ALLURE_TEST_REPORT=test-class-REAL-PROVIDER.json ALLURE_SMOKE_REPORT=smoke-report.jsonl \
+            python -m pytest -m real_provider -q -rs --tb=short | tee pytest-output.txt
+      - name: Label the result
+        if: always()
+        working-directory: aether-backend
+        run: |
+          line="$(grep -E '^class=REAL-PROVIDER ' pytest-output.txt | tail -n 1 || true)"
+          echo "::notice title=class=REAL-PROVIDER::${line:-no summary line}"
+          { echo "### ${line:-class=REAL-PROVIDER - no summary line}"; echo ""; echo '```'; cat smoke-report.jsonl 2>/dev/null || echo "no provider ran"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-pytest-class-REAL-PROVIDER
+          path: |
+            aether-backend/pytest-output.txt
+            aether-backend/test-class-REAL-PROVIDER.json
+            aether-backend/smoke-report.jsonl
+          retention-days: 30

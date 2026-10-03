@@ -15,7 +15,7 @@ from typing import Any, Callable, Iterator, Optional
 
 from ..core.config import get_settings
 
-SCHEMA_VERSION = 9
+SCHEMA_VERSION = 13
 
 SCHEMA = [
     """
@@ -415,6 +415,207 @@ def _v9_generation_tasks(c: sqlite3.Connection) -> None:
     c.execute("CREATE INDEX IF NOT EXISTS idx_gentask_project ON generation_tasks(project_id, status)")
 
 
+def _v10_event_envelope(c: sqlite3.Connection) -> None:
+    """The typed event bus - P1-EVENT-001/003.
+
+    ADDITIVE on the existing `events` table: every new column has a default,
+    so the rows already there stay readable and every existing `ctx.emit()`
+    call keeps working untouched. `entity_ids`, `evidence_refs` and `payload`
+    are JSON text; `evidence_refs` hold PATHS, never content - the store
+    refuses anything else, so a large model answer can never become a row.
+
+    APPEND-ONLY, enforced by the database rather than by convention: the two
+    triggers abort any UPDATE or DELETE on `events`. A wrong event is corrected
+    by a NEW event that names it in `parent_event_id`. Events are evidence,
+    and evidence that can be edited to agree with a conclusion is worthless.
+    This also means a deleted project's events OUTLIVE the project - the
+    record of what was done and spent is kept; only the project's own rows go.
+
+    `event_consumers` is the idempotency ledger: a consumer records the
+    event_ids it has acted on, so replaying a batch produces no second side
+    effect. Keyed per consumer, because two consumers of one event are two
+    different obligations.
+    """
+    _add_column(c, "events", "schema_version", "TEXT NOT NULL DEFAULT ''")
+    _add_column(c, "events", "event_type", "TEXT NOT NULL DEFAULT ''")
+    _add_column(c, "events", "severity", "TEXT NOT NULL DEFAULT ''")
+    _add_column(c, "events", "confidence", "REAL")
+    _add_column(c, "events", "correlation_id", "TEXT NOT NULL DEFAULT ''")
+    _add_column(c, "events", "parent_event_id", "INTEGER")
+    _add_column(c, "events", "producer", "TEXT NOT NULL DEFAULT ''")
+    _add_column(c, "events", "entity_ids", "TEXT NOT NULL DEFAULT '[]'")
+    _add_column(c, "events", "evidence_refs", "TEXT NOT NULL DEFAULT '[]'")
+    _add_column(c, "events", "payload", "TEXT NOT NULL DEFAULT '{}'")
+    # "the whole run" and "every event of this kind" are the two questions the
+    # Supervisor asks; without these both are scans of every event ever.
+    c.execute("CREATE INDEX IF NOT EXISTS idx_events_correlation ON events(correlation_id, event_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type, event_id)")
+    c.execute(
+        "CREATE TRIGGER IF NOT EXISTS events_append_only_update BEFORE UPDATE ON events "
+        "BEGIN SELECT RAISE(ABORT, 'events are append-only: correct with a new event'); END"
+    )
+    c.execute(
+        "CREATE TRIGGER IF NOT EXISTS events_append_only_delete BEFORE DELETE ON events "
+        "BEGIN SELECT RAISE(ABORT, 'events are append-only: nothing deletes evidence'); END"
+    )
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS event_consumers (
+            consumer   TEXT NOT NULL,
+            event_id   INTEGER NOT NULL,
+            consumed_at TEXT NOT NULL,
+            PRIMARY KEY (consumer, event_id)
+        )"""
+    )
+
+
+def _v11_agent_memory(c: sqlite3.Connection) -> None:
+    """watcher_memory, validator_memory, orchestrator_memory - P1-MEMORY-001.
+
+    Three tables, not one with an `agent` column: isolation is enforced by
+    SQLite's authorizer per table (app/supervisor/memory.py), and a shared
+    table would make "the Watcher cannot read Validator rows" a WHERE clause
+    somebody could omit. Append-only by trigger; the retention job is the one
+    deletion path and it logs every row it removes.
+    """
+    from ..supervisor.memory import create_memory_schema
+
+    create_memory_schema(c)
+
+
+def _v12_repair_and_review(c: sqlite3.Connection) -> None:
+    """jobs.repair_round, repair_rounds, review_items, review_decisions -
+    P1-REPAIR-001, P1-ORCHESTRATOR-002, P1-HUMAN-001.
+
+    `jobs.repair_round` is written by the RUNNER when it dispatches a repair
+    and never by the component that asked for it: the bound on automatic
+    repair is held by the one component with no interest in exceeding it.
+    0 = an ordinary, user-initiated job.
+
+    `repair_rounds` is the decision audit trail: one row per round, filled as
+    the round progresses (failure -> verdict -> directive -> action ->
+    resulting scene version -> second validation -> outcome), so "why does
+    this room look like this" has an answer in the data.
+
+    `review_items` / `review_decisions`: escalation as a piece of work with
+    evidence, not an error path. Decisions are append-only - a changed mind is
+    a new decision.
+    """
+    _add_column(c, "jobs", "repair_round", "INTEGER NOT NULL DEFAULT 0")
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS repair_rounds (
+            round_id            TEXT PRIMARY KEY,
+            project_id          TEXT NOT NULL,
+            correlation_id      TEXT NOT NULL DEFAULT '',
+            round               INTEGER NOT NULL,
+            failure_category    TEXT NOT NULL DEFAULT '',
+            failure_evidence    TEXT NOT NULL DEFAULT '[]',
+            validation_ids      TEXT NOT NULL DEFAULT '[]',
+            validator_status    TEXT NOT NULL DEFAULT '',
+            directive_id        TEXT NOT NULL DEFAULT '',
+            decision            TEXT NOT NULL DEFAULT '',
+            rationale           TEXT NOT NULL DEFAULT '',
+            decided_by          TEXT NOT NULL DEFAULT '',
+            action_job_id       TEXT NOT NULL DEFAULT '',
+            action_job_type     TEXT NOT NULL DEFAULT '',
+            scene_version_before INTEGER NOT NULL DEFAULT 0,
+            scene_version_after INTEGER,
+            second_validation   TEXT NOT NULL DEFAULT '',
+            outcome             TEXT NOT NULL DEFAULT 'in_progress',
+            created_at          TEXT NOT NULL,
+            updated_at          TEXT NOT NULL
+        )"""
+    )
+    c.execute("CREATE INDEX IF NOT EXISTS idx_repair_rounds_project ON repair_rounds(project_id, created_at)")
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS review_items (
+            item_id        TEXT PRIMARY KEY,
+            project_id     TEXT NOT NULL,
+            status         TEXT NOT NULL DEFAULT 'open',
+            audience       TEXT NOT NULL,
+            issue          TEXT NOT NULL,
+            failure_category TEXT NOT NULL DEFAULT '',
+            affected       TEXT NOT NULL DEFAULT '[]',
+            evidence_refs  TEXT NOT NULL DEFAULT '[]',
+            expected       TEXT NOT NULL DEFAULT '{}',
+            observed       TEXT NOT NULL DEFAULT '{}',
+            attempts       TEXT NOT NULL DEFAULT '[]',
+            recommendation TEXT NOT NULL,
+            actions        TEXT NOT NULL DEFAULT '[]',
+            directive_id   TEXT NOT NULL DEFAULT '',
+            stage_before   TEXT NOT NULL DEFAULT '',
+            created_at     TEXT NOT NULL,
+            resolved_at    TEXT
+        )"""
+    )
+    c.execute("CREATE INDEX IF NOT EXISTS idx_review_project ON review_items(project_id, status)")
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS review_decisions (
+            decision_id  TEXT PRIMARY KEY,
+            item_id      TEXT NOT NULL,
+            project_id   TEXT NOT NULL,
+            user_id      TEXT NOT NULL,
+            user_email   TEXT NOT NULL DEFAULT '',
+            action       TEXT NOT NULL,
+            is_override  INTEGER NOT NULL DEFAULT 0,
+            reason       TEXT NOT NULL DEFAULT '',
+            result       TEXT NOT NULL DEFAULT '{}',
+            created_at   TEXT NOT NULL
+        )"""
+    )
+    c.execute("CREATE INDEX IF NOT EXISTS idx_review_decisions_item ON review_decisions(item_id, created_at)")
+    c.execute(
+        "CREATE TRIGGER IF NOT EXISTS review_decisions_no_update BEFORE UPDATE ON review_decisions "
+        "BEGIN SELECT RAISE(ABORT, 'review decisions are append-only: a changed mind is a new decision'); END"
+    )
+    c.execute(
+        "CREATE TRIGGER IF NOT EXISTS review_decisions_no_delete BEFORE DELETE ON review_decisions "
+        "BEGIN SELECT RAISE(ABORT, 'review decisions are append-only'); END"
+    )
+
+
+def _v13_design_versions(c: sqlite3.Connection) -> None:
+    """design_versions - P1-FRONTEND-004.
+
+    A saved design is a full, immutable copy of the committed scene, NOT a
+    pointer into the scene store's history. That history is an undo stack: a
+    commit after an undo truncates everything after the cursor, and it keeps
+    only the last MAX_HISTORY snapshots - so an accepted design pointed to
+    there can be destroyed by ordinary editing. Here it cannot: no UPDATE, no
+    DELETE, and like `events` the rows outlive a deleted project, because they
+    are the client's work.
+    """
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS design_versions (
+            version_id     TEXT PRIMARY KEY,
+            project_id     TEXT NOT NULL,
+            number         INTEGER NOT NULL,
+            label          TEXT NOT NULL DEFAULT '',
+            accepted       INTEGER NOT NULL DEFAULT 0,
+            scene_id       TEXT NOT NULL,
+            scene_version  INTEGER NOT NULL,
+            content_sha256 TEXT NOT NULL,
+            snapshot       TEXT NOT NULL,
+            created_by     TEXT NOT NULL DEFAULT '',
+            created_at     TEXT NOT NULL,
+            UNIQUE(project_id, number)
+        )"""
+    )
+    c.execute("CREATE INDEX IF NOT EXISTS idx_design_versions_project ON design_versions(project_id, number)")
+    c.execute(
+        "CREATE TRIGGER IF NOT EXISTS design_versions_no_update BEFORE UPDATE ON design_versions "
+        "BEGIN SELECT RAISE(ABORT, 'design versions are immutable: save a new version instead'); END"
+    )
+    c.execute(
+        "CREATE TRIGGER IF NOT EXISTS design_versions_no_delete BEFORE DELETE ON design_versions "
+        "BEGIN SELECT RAISE(ABORT, 'design versions are never deleted'); END"
+    )
+
+
 MIGRATIONS: list[tuple[int, Callable[[sqlite3.Connection], None]]] = [
     (2, _v2_project_vertical),
     (3, _v3_identity),
@@ -424,6 +625,10 @@ MIGRATIONS: list[tuple[int, Callable[[sqlite3.Connection], None]]] = [
     (7, _v7_correlation_ids),
     (8, _v8_element_index),
     (9, _v9_generation_tasks),
+    (10, _v10_event_envelope),
+    (11, _v11_agent_memory),
+    (12, _v12_repair_and_review),
+    (13, _v13_design_versions),
 ]
 
 

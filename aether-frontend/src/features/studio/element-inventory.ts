@@ -1,16 +1,20 @@
+import type { Assumption, InventoryCounts } from "@/generated/api-types";
+
 import type { ElementDefinition, ElementInstance, SceneElement, SceneReadingDto } from "./types";
 
 /**
- * P19: the review screen's view of the element inventory.
+ * P19 / P1-FRONTEND-001: the review screen's view of the element inventory.
  *
  * This file JOINS backend records by the ids the backend put on them. It does
- * not count, group, merge, split or infer anything - the backend already did
- * that (app/intelligence/scene_reading.py resolve_elements), and the whole
- * point of the screen is to show that answer, not to second-guess it.
- *
- * Three stools are three instances of one canonical piece because the backend
- * says so in `summary.instances`; a kitchen island is "rejected: mismatch"
- * because `check` on its reading row says so. Nothing here is a heuristic.
+ * not count, group, merge, split, judge or infer anything:
+ *   - the pieces and their instances are `summary.definitions` / `instances`
+ *     (app/intelligence/scene_reading.py resolve_elements);
+ *   - each row's state is `summary.element_states`, and the numbers printed are
+ *     `summary.counts` (app/intelligence/element_states.py) - this file used to
+ *     recount them (`groups.filter(...).length`), a second copy of the rule
+ *     that could disagree with the first;
+ *   - every estimate is `summary.assumptions`.
+ * A backend too old to send counts gets no counts shown, never a recount.
  */
 
 export type AssetState = "resolved" | "unresolved";
@@ -22,6 +26,10 @@ export interface InventoryInstance {
   crop_url: string;
   room_id: string;
   bbox: [number, number, number, number] | null;
+  /** The backend's state for this instance's reading row. */
+  state: ElementState | null;
+  /** The backend listed this piece's position as an estimate. */
+  estimated_position: boolean;
 }
 
 export interface InventoryGroup {
@@ -35,9 +43,9 @@ export interface InventoryGroup {
   asset_id: string;
   /** From the backend's identity_method; never computed here. */
   identity: string;
-  /** "validated" for a resolved piece; "unresolved" when the backend kept it
-      apart for lack of evidence. */
-  state: ElementState;
+  /** The backend's state for this piece (its rows share one decision). */
+  state: ElementState | null;
+  yours: boolean;
 }
 
 export interface RejectedElement {
@@ -50,12 +58,12 @@ export interface RejectedElement {
 export interface ElementInventoryView {
   /** Canonical pieces, one per backend definition, in backend order. */
   groups: InventoryGroup[];
-  /** Reading rows that belong to no instance: the checks removed them. */
+  /** Reading rows the backend marked rejected. */
   rejected: RejectedElement[];
-  detected_rows: number;
-  canonical_count: number;
-  instance_count: number;
-  asset_count: number;
+  /** The backend's counts, verbatim. Null when the backend sent none. */
+  counts: InventoryCounts | null;
+  /** Every estimate the design rests on, in the backend's words. */
+  assumptions: Assumption[];
   /** True when the backend sent no inventory at all (pre-P17 reading). */
   unavailable: boolean;
 }
@@ -81,13 +89,15 @@ export function buildElementInventory(data: SceneReadingDto): ElementInventoryVi
   const definitions: ElementDefinition[] = data.summary.definitions ?? [];
   const instances: ElementInstance[] = data.summary.instances ?? [];
   const elements = data.reading.elements ?? [];
+  const states = data.summary.element_states ?? {};
+  const assumptions = data.summary.assumptions ?? [];
   const byId = new Map(elements.map((e) => [e.element_id, e] as const));
+  const estimated = new Set(assumptions.filter((a) => a.kind === "position").map((a) => a.ref));
 
   const unavailable = data.summary.definitions === undefined && data.summary.instances === undefined;
 
   const groups: InventoryGroup[] = definitions.map((def) => {
     const own = instances.filter((i) => i.element_id === def.element_id);
-    const asset: AssetState = def.canonical_asset_id ? "resolved" : "unresolved";
     return {
       element_id: def.element_id,
       label: def.canonical_name || humanType(def.semantic_type),
@@ -102,35 +112,21 @@ export function buildElementInventory(data: SceneReadingDto): ElementInventoryVi
           crop_url: element?.crop_url ?? "",
           room_id: i.room_id,
           bbox: i.bbox,
+          state: states[i.source_element_id] ?? null,
+          estimated_position: estimated.has(i.source_element_id),
         };
       }),
-      asset,
+      asset: def.canonical_asset_id ? "resolved" : "unresolved",
       asset_id: def.canonical_asset_id,
       identity: def.identity_method,
-      state: def.identity_method === "unresolved" ? "unresolved" : "validated",
+      state: own.length ? (states[own[0].source_element_id] ?? null) : null,
+      yours: !!def.client_owned,
     };
   });
 
-  // A row the backend attached to no instance was removed by a check, or
-  // turned down by a human. The reason is the backend's own `check`.
-  const claimed = new Set(instances.map((i) => i.source_element_id));
-  const rejected: RejectedElement[] = unavailable
-    ? []
-    : elements
-        .filter((e) => !claimed.has(e.element_id))
-        .map((e) => ({
-          element: e,
-          reason: e.approved === false ? "unapproved" : e.check,
-          note: e.check_note,
-        }));
+  const rejected: RejectedElement[] = elements
+    .filter((e) => states[e.element_id] === "rejected")
+    .map((e) => ({ element: e, reason: e.approved === false ? "unapproved" : e.check, note: e.check_note }));
 
-  return {
-    groups,
-    rejected,
-    detected_rows: elements.length,
-    canonical_count: groups.length,
-    instance_count: instances.length,
-    asset_count: groups.filter((g) => g.asset === "resolved").length,
-    unavailable,
-  };
+  return { groups, rejected, counts: data.summary.counts ?? null, assumptions, unavailable };
 }

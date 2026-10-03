@@ -1,0 +1,8 @@
+{
+  "name": "aether-backend-tools",
+  "private": true,
+  "description": "Node tools the backend calls as subprocesses. P2-VIEWER-002: gltf-transform Draco-compresses the viewer's copy of each model. Install with `npm ci` in this folder.",
+  "dependencies": {
+    "@gltf-transform/cli": "4.5.0"
+  }
+}

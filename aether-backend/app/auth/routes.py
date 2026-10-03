@@ -21,8 +21,9 @@ from .service import (
     revoke_all_sessions,
     revoke_session,
 )
+from ..api import contracts as C
 
-router = APIRouter(prefix="/api/auth", tags=["auth"])
+router = APIRouter(prefix="/api/auth", tags=["auth"], route_class=C.ContractRoute)
 
 
 class RegisterBody(BaseModel):
@@ -63,7 +64,7 @@ def _set_cookie(response: Response, token: str) -> None:
     )
 
 
-@router.post("/register")
+@router.post("/register", response_model=C.Envelope[C.AuthRegistered])
 def register(body: RegisterBody, response: Response):
     """Create an account and sign in with it in one step.
 
@@ -96,7 +97,7 @@ def register(body: RegisterBody, response: Response):
                "expires_in_days": SESSION_TTL.days, **boot})
 
 
-@router.post("/login")
+@router.post("/login", response_model=C.Envelope[C.AuthSignedIn])
 def sign_in(body: LoginBody, response: Response):
     try:
         token, principal = login(body.email, body.password)
@@ -107,7 +108,7 @@ def sign_in(body: LoginBody, response: Response):
                "expires_in_days": SESSION_TTL.days})
 
 
-@router.post("/logout")
+@router.post("/logout", response_model=C.Envelope[C.AuthSignedOut])
 def sign_out(request: Request, response: Response):
     """Idempotent, and never 401.
 
@@ -120,7 +121,7 @@ def sign_out(request: Request, response: Response):
     return ok({"ended": ended})
 
 
-@router.post("/logout-everywhere")
+@router.post("/logout-everywhere", response_model=C.Envelope[C.AuthSignedOutEverywhere])
 def sign_out_everywhere(request: Request, response: Response):
     """Kill every session for this user. The control you reach for when a laptop
     goes missing — and the reason these are opaque revocable tokens, not JWTs."""
@@ -130,13 +131,13 @@ def sign_out_everywhere(request: Request, response: Response):
     return ok({"revoked": count})
 
 
-@router.get("/me")
+@router.get("/me", response_model=C.Envelope[C.AuthMe])
 def me(request: Request):
     """The dependency's own behaviour, exposed: a principal, or 401."""
     return ok({"user": _principal_payload(require_principal(request))})
 
 
-@router.get("/session")
+@router.get("/session", response_model=C.Envelope[C.AuthSession])
 def session_status(request: Request):
     """Anonymous-safe companion to /me: 200 with `authenticated: false` rather
     than a 401. A frontend deciding whether to show a sign-in button should not

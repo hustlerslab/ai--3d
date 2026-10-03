@@ -9,6 +9,7 @@ from PIL import Image
 
 from app.walkthrough.tour_nodes import LARGE_ROOM_M2, MAX_NODES_PER_ROOM, plan_nodes, yaw_from
 from tests.test_blender_build import BRIEF, _compiled_scene
+from tests.conftest import sign_in_admin
 
 
 def test_yaw_from_matches_scene_convention():
@@ -68,6 +69,7 @@ def test_preview_job_renders_panoramas_and_tour(env, blender_path, monkeypatch, 
     from app.projects.layout import project_dir
 
     with TestClient(app) as client:
+        sign_in_admin(client)
         pid = client.post("/api/projects", json={"name": "Tour test"}).json()["project"]["project_id"]
         img = tmp_path / "ref.png"
         Image.new("RGB", (32, 32), (180, 150, 120)).save(img)
@@ -122,6 +124,7 @@ def test_film_job_renders_mp4(env, blender_path, monkeypatch, tmp_path):
     from app.projects.layout import project_dir
 
     with TestClient(app) as client:
+        sign_in_admin(client)
         pid = client.post("/api/projects", json={"name": "Film test"}).json()["project"]["project_id"]
         client.post(f"/api/projects/{pid}/inputs", data={"description": BRIEF})
         client.post(f"/api/projects/{pid}/analyze", json={})

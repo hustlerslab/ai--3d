@@ -1,0 +1,412 @@
+{
+ "GET /": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/assets": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/assets/ingest/polyhaven": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/assets/upload": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/assets/{asset_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/assets/{asset_id}/renormalize": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/auth/login": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/auth/logout": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/auth/logout-everywhere": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/auth/me": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/auth/register": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/auth/session": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/catalog": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/catalog/{asset_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/credits": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/health": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/jobs/types": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/jobs/{job_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/materials": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/materials/ingest/polyhaven": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/materials/{material_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "DELETE /api/projects/{project_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "PATCH /api/projects/{project_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/analysis": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "PATCH /api/projects/{project_id}/analysis": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/analyze": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/assets/resolve": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/build": {
+  "status": 404,
+  "expected": 404,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/build": {
+  "status": 503,
+  "expected": 503,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/element-images": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "PATCH /api/projects/{project_id}/element-images": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/element-images": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/elements/generate": {
+  "status": 409,
+  "expected": 409,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/events": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/film": {
+  "status": 409,
+  "expected": 409,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/inputs": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/inputs": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "DELETE /api/projects/{project_id}/inputs/{input_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/jobs": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/jobs": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/moodboard/rooms/{room_id}/repaint": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/outputs": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/preview": {
+  "status": 409,
+  "expected": 409,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/provenance": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/provenance/{scene_object_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/repairs": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/reviews": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/reviews/{item_id}/decision": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/scene-plan": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/scene-reading": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "PATCH /api/projects/{project_id}/scene-reading": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/scene-spec": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/share": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/share": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "DELETE /api/projects/{project_id}/share/{token_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/tour": {
+  "status": 404,
+  "expected": 404,
+  "problems": []
+ },
+ "GET /api/projects/{project_id}/tradeoffs": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/projects/{project_id}/walkthrough": {
+  "status": 409,
+  "expected": 409,
+  "problems": []
+ },
+ "GET /api/scenes": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/scenes/{scene_id}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/assets/upgrade": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/design/proposals": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/design/proposals/{proposal_id}/apply": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/design/proposals/{proposal_id}/reject": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/patches": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/patches/preview": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/redo": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/undo": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/scenes/{scene_id}/validate": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/walkthrough/check-position": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/scenes/{scene_id}/walkthrough/spawn": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/scenes/{scene_id}/walkthrough/tour": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /api/scenes/{scene_id}/walkthrough/views": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "POST /api/scenes/{scene_id}/walkthrough/views": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /files/assets-web/{path}": {
+  "status": 404,
+  "expected": 404,
+  "problems": []
+ },
+ "GET /files/assets/{path}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /files/materials/{path}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ },
+ "GET /files/projects/{project_id}/{path}": {
+  "status": 200,
+  "expected": 200,
+  "problems": []
+ }
+}

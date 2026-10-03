@@ -19,6 +19,7 @@ from app.intelligence import InputBundle
 from app.intelligence.mock_provider import MockProvider
 from app.planning import compile_scene, place_objects, resolve_plan
 from app.projects.layout import project_dir
+from tests.conftest import sign_in_admin
 
 BRIEF = "2BHK in Pune. Warm modern minimal with oak floors, a big sofa, a dining table for six and plants."
 
@@ -75,6 +76,7 @@ def test_build_job_end_to_end(env, blender_path, monkeypatch, tmp_path):
     from app.main import app
 
     with TestClient(app) as client:
+        sign_in_admin(client)
         pid = client.post("/api/projects", json={"name": "Build test"}).json()["project"]["project_id"]
         img = tmp_path / "ref.png"
         Image.new("RGB", (32, 32), (180, 150, 120)).save(img)

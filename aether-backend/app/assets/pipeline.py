@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from ..core.config import get_settings
-from . import gltf, normalization, validation, web_variant
+from . import gltf, normalization, orientation, validation, web_variant
 from .registry import get_registry
 from .schema import AssetFiles, AssetRecord, IngestMeta
 
@@ -73,7 +73,14 @@ def ingest_file(source_path: Path, meta: IngestMeta) -> AssetRecord:
     doc = gltf.load(source_path)
     measurement = gltf.measure(doc)
     textures = gltf.texture_summary(doc)
-    plan = normalization.plan(measurement, meta.expected_dimensions, meta.yaw_offset)
+    # P1-ASSET-005: the forward axis is measured here, once, and baked into
+    # the normalized file - unless the caller declared it, in which case a
+    # declaration (even of zero) beats the heuristic.
+    if meta.yaw_offset is None:
+        yaw, yaw_source = orientation.measure_forward_yaw(doc, meta.semantic_type), "measured"
+    else:
+        yaw, yaw_source = meta.yaw_offset, "declared"
+    plan = normalization.plan(measurement, meta.expected_dimensions, yaw, yaw_source)
     issues = validation.validate(doc, measurement, textures, plan.dimensions)
 
     record = AssetRecord(
@@ -118,18 +125,20 @@ def ingest_file(source_path: Path, meta: IngestMeta) -> AssetRecord:
     try:
         web_out = registry.web_path(asset_id)
         stats = web_variant.build(out_path, web_out)
-        if stats["images_resized"]:
+        if web_variant.worth_keeping(stats):
             record.files.web = _relative(web_out)
-            log.info("Web variant for %s: %.1f MB -> %.1f MB, VRAM %.0f MB -> %.0f MB",
+            log.info("Web variant for %s: %.1f MB -> %.1f MB, VRAM %.0f MB -> %.0f MB, geometry %s",
                      asset_id, stats["source_bytes"] / 2**20, stats["dest_bytes"] / 2**20,
-                     stats["vram_before"] / 2**20, stats["vram_after"] / 2**20)
+                     stats["vram_before"] / 2**20, stats["vram_after"] / 2**20,
+                     "draco" if stats["geometry_compressed"] else stats["geometry_note"])
         else:
             web_out.unlink(missing_ok=True)      # nothing to gain; do not keep a copy
     except Exception:                            # noqa: BLE001
         log.exception("%s: web variant failed; the viewer will load the full model", asset_id)
     log.info(
-        "Ingested %s: %.2fx%.2fx%.2f m, %s tris, unit=%s scale=%.4g",
+        "Ingested %s: %.2fx%.2fx%.2f m, %s tris, unit=%s scale=%.4g yaw=%.4f (%s)",
         asset_id, *plan.dimensions, f"{measurement.triangles:,}", plan.info.detected_unit, plan.info.unit_scale,
+        plan.info.yaw_offset, plan.info.yaw_source,
     )
     return registry.upsert(record)
 
@@ -141,12 +150,17 @@ def renormalize(asset_id: str, expected_dimensions=None, yaw_offset: float | Non
     if record is None:
         raise KeyError(asset_id)
     original = get_settings().data_dir / record.files.original
+    # A declared yaw survives a renormalize; a measured (or never-measured)
+    # one is measured again from the original, which is what "re-run
+    # normalization" means for it.
+    if yaw_offset is None and record.normalization.yaw_source == "declared":
+        yaw_offset = record.normalization.yaw_offset
     meta = IngestMeta(
         asset_id=asset_id,
         name=record.name,
         semantic_type=record.semantic_type,
         expected_dimensions=expected_dimensions,
-        yaw_offset=record.normalization.yaw_offset if yaw_offset is None else yaw_offset,
+        yaw_offset=yaw_offset,
         mount=record.mount,
         style_tags=record.style_tags,
         material_tags=record.material_tags,

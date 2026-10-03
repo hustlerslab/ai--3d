@@ -4,6 +4,10 @@
 .claude-flow/
 graphify-out/
 
+# Machine-local venv, package caches and a portable Ollama, kept on E: rather
+# than C: (C: had 17.5 GB free; this can run to several GB of model weights).
+.tools/
+
 # Reference 3D models: six .glb files at ~89 MB each, 535 MB in total. The
 # jpegs beside them ARE committed — the tests and the reference-scale work in
 # docs/ADR-002 use them — but the models are not: git keeps binaries in history

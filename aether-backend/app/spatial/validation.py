@@ -30,6 +30,14 @@ class Violation(BaseModel):
     object_id: str | None = None
     related_id: str | None = None
 
+    @property
+    def failure_category(self) -> str:
+        """P1-VALIDATOR-003: this violation in the one shared taxonomy
+        (`app/spatial/failures.py`), via the Supervisor's classifier."""
+        from ..supervisor.classify import from_violation
+
+        return from_violation(self).category.value
+
 
 def object_footprint(obj: SceneObject) -> list[geo.Vec2]:
     width = obj.dimensions[0] * obj.scale[0]

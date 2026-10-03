@@ -15,6 +15,8 @@ it and adds the relation layer + a single top-level sort so the WHOLE
 """
 from __future__ import annotations
 
+from app.spatial.coordinate_frames import relation_frame  # P1-ELEM-003
+
 import json
 
 
@@ -44,7 +46,7 @@ def _relation_from_dict(d: dict) -> GeometricRelation:
     return GeometricRelation(
         relation_id=d["relation_id"], subject_id=d["subject_id"], predicate=d["predicate"],
         object_id=d["object_id"], kind=RelationKind(d["kind"]), status=RelationStatus(d["status"]),
-        confidence=d["confidence"], source=d["source"], frame=d.get("frame", "floor_plan"),
+        confidence=d["confidence"], source=d["source"], frame=relation_frame(d.get("frame", "room_plan")),
         note=d.get("note", ""), provenance=d.get("provenance", ""),
         verified_at_position=tuple(pos) if pos is not None else None,
         evidence_refs=tuple(d.get("evidence_refs", ())))

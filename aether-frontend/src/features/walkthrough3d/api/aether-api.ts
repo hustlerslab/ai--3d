@@ -8,6 +8,7 @@
  * Meshy keys live in the backend's own .env.
  */
 
+import type { ProvenanceChain } from "@/generated/api-types";
 import { withShareToken } from "@/features/tour/share-token";
 
 import {
@@ -141,6 +142,16 @@ export async function getScene(
   signal?: AbortSignal,
 ): Promise<{ scene: AetherScene; history: HistoryInfo }> {
   return request(`/scenes/${encodeURIComponent(sceneId)}`, { signal });
+}
+
+/** P2-VIEWER-001: where a placed piece came from - the chain from the object
+ *  back to the client's own photograph (P1-IDENTITY-005). */
+export async function getProvenance(
+  projectId: string,
+  objectId: string,
+  signal?: AbortSignal,
+): Promise<ProvenanceChain> {
+  return request(`/projects/${encodeURIComponent(projectId)}/provenance/${encodeURIComponent(objectId)}`, { signal });
 }
 
 /* ── Patches / undo / redo ─────────────────────────────────────────────── */

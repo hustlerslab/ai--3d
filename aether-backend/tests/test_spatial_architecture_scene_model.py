@@ -70,6 +70,7 @@ def test_from_bridge_dict_matches_photo_bridge_shape():
         "confidence": "HIGH", "source": "geometry", "frame": "floor_plan",
         "note": "wall gap 0.05 m"}
     rel = GeometricRelation.from_bridge_dict(d)
+    assert rel.frame == "room_plan", "the pre-rename spelling loads as the new frame (P1-ELEM-003)"
     assert rel.subject_id == "o1" and rel.object_id == "w1"
     assert rel.kind == RelationKind.DERIVED_GEOMETRY
     assert rel.relation_id == relation_id("o1", "AGAINST_WALL", "w1")

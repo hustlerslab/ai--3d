@@ -1,0 +1,18 @@
+{
+  "scalar_wood_oak_0.9_vs_0.05_pixels_changed": 0.0222,
+  "mapped_factor_1.0_node_graph": {
+    "scan_floor||1.0": {
+      "linked_from": "ShaderNodeMath",
+      "factor": 1.0,
+      "scalar": 1.0
+    }
+  },
+  "mapped_factor_0.1_node_graph": {
+    "scan_floor||1.0": {
+      "linked_from": "ShaderNodeMath",
+      "factor": 0.10000000149011612,
+      "scalar": 0.10000000149011612
+    }
+  },
+  "mapped_1.0_vs_0.1_pixels_changed": 0.063
+}

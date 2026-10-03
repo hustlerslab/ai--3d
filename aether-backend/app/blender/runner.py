@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -61,6 +62,7 @@ class BlenderRunner:
         self.blender_path = blender_path or settings.blender_path
         self.scripts_dir = Path(scripts_dir or settings.blender_scripts_dir)
         self.timeout = timeout or settings.blender_timeout_seconds
+        self.require_gpu = settings.blender_require_gpu
 
     @property
     def configured(self) -> bool:
@@ -111,6 +113,8 @@ class BlenderRunner:
         tail: list[str] = []
         result_line: list[str] = []
         t0 = time.monotonic()
+        env = dict(os.environ)
+        env["AETHER_REQUIRE_GPU"] = "1" if self.require_gpu else "0"
         proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -119,6 +123,7 @@ class BlenderRunner:
             encoding="utf-8",
             errors="replace",
             bufsize=1,
+            env=env,
         )
 
         def pump() -> None:

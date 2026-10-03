@@ -30,11 +30,17 @@ def attach_maps(
 ) -> MaterialRecord:
     """Register/refresh a material with downloaded maps. Unknown ids are created."""
     registry = get_material_registry()
-    record = registry.get(material_id) or MaterialRecord(
+    existing = registry.get(material_id)
+    record = existing or MaterialRecord(
         material_id=material_id,
         name=name or material_id,
         category=category or "paint",  # type: ignore[arg-type]
     )
+    if existing is None and "roughness" in files and roughness is None:
+        # P2-RENDER-001: with a map, `roughness` is the glTF factor the map is
+        # multiplied by. A new scan renders exactly as scanned (factor 1.0);
+        # the scalar default (0.8) is for materials that have no map.
+        record.roughness = 1.0
     record.maps = MaterialMaps(
         color=_relative(files["color"]) if "color" in files else None,
         normal=_relative(files["normal"]) if "normal" in files else None,

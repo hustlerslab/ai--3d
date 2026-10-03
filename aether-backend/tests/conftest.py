@@ -4,6 +4,32 @@ import os
 
 import pytest
 
+from tests import support_classes as _classes
+
+_TALLY = _classes.Tally()
+
+
+def pytest_itemcollected(item):
+    """P1-QA-001: every test gets exactly one class marker, before -m filters."""
+    _classes.tag(item)
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_collection_modifyitems(config, items):
+    """P1-QA-001: after -m has filtered, a run holds exactly one class."""
+    _classes.assign(config, items)
+
+
+def pytest_runtest_logreport(report):
+    _TALLY.record(report)
+
+
+def pytest_terminal_summary(terminalreporter):
+    terminalreporter.section("test classes (P1-QA-001) - each counted on its own, never summed")
+    for line in _TALLY.lines():
+        terminalreporter.write_line(line)
+    _TALLY.write()
+
 
 def _reset_singletons() -> None:
     from app.core import config
@@ -74,7 +100,7 @@ def _fresh_rate_limits():
 
 
 @pytest.fixture(autouse=True)
-def _no_real_keys(monkeypatch):
+def _no_real_keys(monkeypatch, request):
     """No test may reach a real provider by accident. Every test, not some.
 
     Settings read `.env`, so a developer's real GEMINI_API_KEY is visible to
@@ -87,7 +113,18 @@ def _no_real_keys(monkeypatch):
     this fixture and so still wins. That makes reaching a real provider a
     deliberate, visible act - which is the whole point of the MOCK /
     REAL-PROVIDER test split.
+
+    The one exception is a REAL-PROVIDER test (tests/real/): its whole purpose
+    is the live call, and the class separation (P1-QA-001) guarantees it never
+    runs inside a MOCK run.
     """
+    if request.node.get_closest_marker("real_provider"):
+        from app.core import config
+
+        config.get_settings.cache_clear()
+        yield
+        config.get_settings.cache_clear()
+        return
     for key in ("GEMINI_API_KEY", "ANTHROPIC_API_KEY", "MESHY_API_KEY"):
         monkeypatch.setenv(key, "")
     from app.core import config

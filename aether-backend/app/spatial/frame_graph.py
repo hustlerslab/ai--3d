@@ -20,10 +20,13 @@ underlying math differently from the production/research code it wraps.
     OBJECT  (object_frame_transform(obj), per-SceneObject)
       |
       v
-    ASSET  (identity today - no per-asset forward-axis correction data
-             exists; Phase 10's asset audit found none of the 58 registry
-             assets needed one, so identity is the measured-correct default,
-             not an unfilled placeholder)
+    ASSET  (the yaw the ingest pipeline baked into the normalized file so
+             the model's front faces -Z - P1-ASSET-005. Identity when that
+             yaw is 0, which it is for every record that predates the
+             measurement. NOTE: Phase 10's asset audit checked dimensions and
+             pivot; its own results file marks forward_axis "UNVERIFIED" for
+             all 58 assets, so identity there was an assumption, not a
+             measurement - TRACK_RECORD.md correction C12)
 
 IMAGE -> CAMERA is deliberately NOT a `Rigid3`: a pixel is a ray, not a rigid
 transform of a point (this needs the camera's intrinsics/depth, a
@@ -90,14 +93,35 @@ def object_frame_transform(obj: SceneObject) -> Rigid3:
                  f"(object_id={obj.object_id}, rotation_y={obj.rotation_y})", confidence=1.0)
 
 
-def asset_to_object_transform(asset_id: Optional[str] = None) -> Rigid3:
-    """ASSET -> OBJECT: identity today. Phase 10's asset audit (58/58
-    registry assets) found no asset needing a forward-axis correction - this
-    is the measured-correct default, not an unfilled placeholder. Confidence
-    is 1.0 only because it is measured-empty, not because a correction was
-    verified per-asset; coordinate_frames.md names this as the one
-    remaining open item if a future asset ever needs a real correction."""
-    return Rigid3.identity(FrameId.OBJECT, provenance=f"identity (Phase 10 audit, asset_id={asset_id})")
+def asset_to_object_transform(asset_id: Optional[str] = None, yaw_offset: Optional[float] = None,
+                              yaw_source: Optional[str] = None) -> Rigid3:
+    """ASSET -> OBJECT: the yaw normalization baked into the asset's file at
+    ingest (`NormalizationInfo.yaw_offset`, P1-ASSET-005), as the same
+    rotation about +Y that `normalization._rotate_y` applies. Looked up from
+    the registry by `asset_id` unless the caller passes the values.
+
+    Identity when the yaw is 0 - which it is for every record ingested before
+    the forward axis was measured (`yaw_source == "unmeasured"`), so nothing
+    already in the library moves. A measured yaw carries confidence 0.9: it
+    is a geometric heuristic, not a declaration."""
+    if yaw_offset is None and asset_id:
+        from app.assets.registry import get_registry
+
+        record = get_registry().get(asset_id)
+        if record is not None:
+            yaw_offset = record.normalization.yaw_offset
+            yaw_source = record.normalization.yaw_source
+    yaw_offset = yaw_offset or 0.0
+    yaw_source = yaw_source or "unmeasured"
+    if abs(yaw_offset) < 1e-9:
+        return Rigid3.identity(FrameId.OBJECT,
+                               provenance=f"identity (yaw_offset 0, {yaw_source}, asset_id={asset_id})")
+    c, s = math.cos(yaw_offset), math.sin(yaw_offset)
+    rotation = ((c, 0.0, s), (0.0, 1.0, 0.0), (-s, 0.0, c))
+    return Rigid3(source=FrameId.ASSET, target=FrameId.OBJECT, rotation=rotation,
+                 translation=(0.0, 0.0, 0.0),
+                 provenance=f"normalization.yaw_offset={yaw_offset:.6f} ({yaw_source}, asset_id={asset_id})",
+                 confidence=0.9 if yaw_source == "measured" else 1.0)
 
 
 def camera_to_blender(wall: Optional[TiltedWall] = None) -> Rigid3:
@@ -112,7 +136,7 @@ def describe_graph() -> str:
         "CAMERA -> ROOM       : opencv_to_room()\n"
         "ROOM -> WALL         : wall_frame_transform(wall)   [per-wall]\n"
         "ROOM -> OBJECT       : object_frame_transform(obj).inverse()   [per-object]\n"
-        "OBJECT -> ASSET      : asset_to_object_transform().inverse()\n"
+        "OBJECT -> ASSET      : asset_to_object_transform(asset_id).inverse()   [per-asset; identity when yaw_offset is 0]\n"
         "ROOM -> BLENDER_WORLD: room_to_blender()"
     )
 

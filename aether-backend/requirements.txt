@@ -7,4 +7,6 @@ httpx>=0.27
 python-multipart>=0.0.9
 pytest>=8.0
 Pillow>=10.4
+# Tests only: decodes the viewer's Draco geometry independently of the encoder (P2-VIEWER-002).
+DracoPy>=1.4
 anthropic>=1.0

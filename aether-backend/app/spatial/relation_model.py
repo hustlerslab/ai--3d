@@ -23,6 +23,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Literal, Optional
 
+from app.spatial.coordinate_frames import ROOM_PLAN, relation_frame  # noqa: E402
+
 Vec3 = tuple[float, float, float]
 
 # Re-exported literal shapes, matching app/intelligence/schema.py exactly so
@@ -30,7 +32,10 @@ Vec3 = tuple[float, float, float]
 # frame without translation.
 SpatialConfidence = Literal["HIGH", "MEDIUM", "LOW", "UNKNOWN"]
 SpatialSource = Literal["semantic", "geometry", "semantic+geometry", "placement"]
-Frame = Literal["floor_plan", "camera"]
+# P1-ELEM-003: "room_plan" (ROOM projected to XZ) - formerly "floor_plan",
+# which is also the uploaded-document kind InputKind.floor_plan. Stored
+# relations saying "floor_plan" still load: see `relation_frame()`.
+Frame = Literal["room_plan", "camera"]
 
 
 class RelationKind(str, Enum):
@@ -186,7 +191,7 @@ class GeometricRelation:
     status: RelationStatus
     confidence: SpatialConfidence
     source: SpatialSource
-    frame: Frame = "floor_plan"
+    frame: Frame = "room_plan"
     note: str = ""
     #: Free-form provenance string: which system/function produced this claim
     #: and from what evidence - never empty, per the evidence-restriction
@@ -213,7 +218,7 @@ class GeometricRelation:
         return cls(relation_id=relation_id(subject, predicate, obj), subject_id=subject,
                   predicate=predicate, object_id=obj, kind=classify(predicate, source),
                   status=status, confidence=d.get("confidence", "LOW"), source=source,
-                  frame=d.get("frame", "floor_plan"), note=d.get("note", ""),
+                  frame=relation_frame(d.get("frame", ROOM_PLAN)), note=d.get("note", ""),
                   provenance=provenance, verified_at_position=verified_at_position,
                   evidence_refs=(d.get("note", ""),) if d.get("note") else ())
 

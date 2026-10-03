@@ -87,6 +87,10 @@ def element_images(ctx: JobContext) -> dict[str, Any]:
         ctx.emit("elements.plan", f"{len(plan.items)} piece(s) planned from photos and brief")
 
     definitions, instances = definitions_from_plan(plan)
+    ctx.emit("elements.identity", f"{len(definitions)} definition(s), {len(instances)} instance(s) resolved",
+             event_type="element.identity.resolved", severity="info",
+             entity_ids=[d.element_id for d in definitions],
+             payload={"definitions": len(definitions), "instances": len(instances), "source": "object_plan"})
     multi = [d for d in definitions if d.instance_count > 1]
     ctx.emit("elements.identity",
              f"{len(definitions)} canonical piece(s), {len(instances)} instance(s)"

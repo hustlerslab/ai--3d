@@ -1,0 +1,12 @@
+tests/real/test_provider_smoke.py::test_gemini_answers_one_structured_call SKIPPED [ 20%]
+tests/real/test_provider_smoke.py::test_anthropic_answers_one_structured_call SKIPPED [ 40%]
+tests/real/test_provider_smoke.py::test_qwen_via_ollama_answers_one_structured_call PASSED [ 60%]
+tests/real/test_provider_smoke.py::test_meshy_balance_costs_nothing_and_answers SKIPPED [ 80%]
+tests/real/test_provider_smoke.py::test_blender_renders_the_smoke_cube PASSED [100%]
+class=MOCK did not run
+class=REAL-PROVIDER passed=2 failed=0 error=0 skipped=3
+class=PRODUCTION-PATH did not run
+SKIPPED [1] tests\real\test_provider_smoke.py:47: gemini: GEMINI_API_KEY not set - REAL-PROVIDER smoke did not run for gemini
+SKIPPED [1] tests\real\test_provider_smoke.py:47: anthropic: ANTHROPIC_API_KEY not set - REAL-PROVIDER smoke did not run for anthropic
+SKIPPED [1] tests\real\test_provider_smoke.py:47: meshy: MESHY_API_KEY not set - REAL-PROVIDER smoke did not run for meshy
+=================== 2 passed, 3 skipped in 65.80s (0:01:05) ===================

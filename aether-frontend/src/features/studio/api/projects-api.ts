@@ -19,7 +19,18 @@ import {
   type CreditsDto,
   type ElementImageSetDto,
   type SceneReadingDto,
+  type TradeoffDto,
 } from "../types";
+import type {
+  DesignVersion,
+  DesignVersionRestored,
+  DesignVersions,
+  Envelope_DesignVersionRestored_,
+  Envelope_DesignVersionSaved_,
+  Envelope_DesignVersions_,
+  Envelope_ReviewView_,
+  ReviewView,
+} from "@/generated/api-types";
 
 export const AETHER_BASE_URL = (
   process.env.NEXT_PUBLIC_AETHER_API_URL ?? "http://localhost:8000"
@@ -220,6 +231,12 @@ export async function getSceneSpec(projectId: string, signal?: AbortSignal): Pro
   return body.data;
 }
 
+/** P1-SPATIAL-002: what the latest plan could not fit, as plain statements. */
+export async function getTradeoffs(projectId: string, signal?: AbortSignal): Promise<TradeoffDto[]> {
+  const body = await request<{ data: { tradeoffs: TradeoffDto[] } }>(`/projects/${projectId}/tradeoffs`, { signal });
+  return body.data.tradeoffs;
+}
+
 export async function getBuild(projectId: string, signal?: AbortSignal): Promise<BuildDto> {
   const body = await request<{ data: BuildDto }>(`/projects/${projectId}/build`, { signal });
   return body.data;
@@ -245,12 +262,17 @@ export async function getSceneReading(projectId: string, signal?: AbortSignal): 
   return body.data;
 }
 
-/** Record confirm/reject per element. Keyed by element_id, never by position:
- *  the list is re-read and re-ordered between the render and the click. */
-export async function reviewSceneReading(projectId: string, decisions: Record<string, boolean>) {
+/** Record confirm/reject per element, and which pieces are the client's own.
+ *  Keyed by element_id, never by position: the list is re-read and re-ordered
+ *  between the render and the click. */
+export async function reviewSceneReading(
+  projectId: string,
+  decisions: Record<string, boolean>,
+  keep: Record<string, boolean> = {},
+) {
   const body = await request<{ data: SceneReadingDto }>(
     `/projects/${projectId}/scene-reading`,
-    { ...json({ decisions }), method: "PATCH" },
+    { ...json({ decisions, keep }), method: "PATCH" },
   );
   return body.data;
 }
@@ -271,3 +293,34 @@ export async function getCredits(signal?: AbortSignal): Promise<CreditsDto> {
  *  not the quote the button happened to be pressed on. */
 export const generateElements = (projectId: string, limit?: number) =>
   enqueue(`/projects/${projectId}/elements/generate`, limit === undefined ? {} : { limit });
+
+// ── design versions (P1-FRONTEND-004) ─────────────────────────────────────
+// Typed from the generated contract (src/generated/api-types.ts), not
+// re-declared: the backend's response models are the source of truth.
+
+export async function listVersions(projectId: string, signal?: AbortSignal): Promise<DesignVersions> {
+  const body = await request<Envelope_DesignVersions_>(`/projects/${projectId}/versions`, { signal });
+  return body.data;
+}
+
+export async function saveVersion(projectId: string, input: { label?: string; accept?: boolean } = {}): Promise<DesignVersion> {
+  const body = await request<Envelope_DesignVersionSaved_>(`/projects/${projectId}/versions`, json(input));
+  return body.data.version;
+}
+
+/** Make a saved version the live design. Nothing is deleted: the design left
+ *  behind stays in the history and, if it was saved, stays a version. */
+export async function restoreVersion(projectId: string, versionId: string): Promise<DesignVersionRestored> {
+  const body = await request<Envelope_DesignVersionRestored_>(
+    `/projects/${projectId}/versions/${versionId}/restore`, json({}));
+  return body.data;
+}
+
+// ── review surface (P1-FRONTEND-002) ──────────────────────────────────────
+
+/** Everything the review screen says, already in plain words (backend
+ *  app/review_surface.py). The screen renders it and never rephrases. */
+export async function getReview(projectId: string, signal?: AbortSignal): Promise<ReviewView> {
+  const body = await request<Envelope_ReviewView_>(`/projects/${projectId}/review`, { signal });
+  return body.data;
+}

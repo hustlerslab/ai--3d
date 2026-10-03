@@ -108,7 +108,7 @@ async def run(models, materials) -> None:
                 name=item["name"],
                 semantic_type=item["semantic_type"],
                 expected_dimensions=tuple(item["expected_dimensions"]) if item.get("expected_dimensions") else None,
-                yaw_offset=item.get("yaw_offset", 0.0),
+                yaw_offset=item.get("yaw_offset"),        # absent -> measured at ingest
                 mount=item.get("mount", "floor"),
                 style_tags=item.get("style_tags", []),
                 material_tags=item.get("material_tags", []),

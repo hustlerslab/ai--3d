@@ -1,0 +1,14 @@
+{
+  "perception_failure": "repair_scene(duplicate) -> UPSTREAM_REQUIRED",
+  "geometry_failure": "validate_scene: INVALID_ROOM_POLYGON",
+  "representation_failure": "validate_scene: ROOM_NOT_FOUND",
+  "constraint_failure": "constraint names a subject the plan lacks",
+  "candidate_vocabulary_failure": "repair_scene(impossible) -> UNREPAIRABLE",
+  "solver_failure": "validate_scene: COLLIDES_OBJECT",
+  "repair_failure": "repair_scene(collision + duplicate) -> ESCALATE",
+  "validation_failure": "build: no validation report",
+  "asset_failure": "place_objects: living_room.sofa.1: no asset decision",
+  "blender_execution_failure": "BlenderRunner: BlenderNotConfigured",
+  "hardware_failure": "repair_scene(max_iterations=1) -> TIMEOUT",
+  "unknown": "job.failed: KeyError"
+}

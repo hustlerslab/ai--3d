@@ -1,0 +1,50 @@
+[
+  [
+    "job.queued",
+    ""
+  ],
+  [
+    "project.stage.changed",
+    "INPUT_RECEIVED -> ANALYZING"
+  ],
+  [
+    "project.stage.changed",
+    "ANALYZING -> DESIGN_SPEC_READY"
+  ],
+  [
+    "job.queued",
+    ""
+  ],
+  [
+    "project.stage.changed",
+    "DESIGN_SPEC_READY -> ASSET_PLANNING"
+  ],
+  [
+    "project.stage.changed",
+    "ASSET_PLANNING -> ASSETS_READY"
+  ],
+  [
+    "job.queued",
+    ""
+  ],
+  [
+    "validation.failed",
+    "2 hard violation(s) in the committed scene v2"
+  ],
+  [
+    "job.queued",
+    "repair round 1 of 2"
+  ],
+  [
+    "project.stage.changed",
+    "ASSETS_READY -> REPAIRING"
+  ],
+  [
+    "repair.completed",
+    "repaired: 1 object(s) moved, scene v3"
+  ],
+  [
+    "project.stage.changed",
+    "REPAIRING -> SCENE_VALIDATING"
+  ]
+]

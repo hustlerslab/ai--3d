@@ -1,0 +1,5 @@
+ ✓ src/features/walkthrough3d/viewer-compression.test.ts > the Draco decoder is the app's own > is served from the app, never a CDN 1ms
+ ✓ src/features/walkthrough3d/viewer-compression.test.ts > the Draco decoder is the app's own > is three.js's own decoder, byte for byte, so it matches the loader that calls it 2ms
+ ✓ src/features/walkthrough3d/viewer-compression.test.ts > the Draco decoder is the app's own > is the path the model loader is given 1ms
+ ✓ src/features/walkthrough3d/viewer-compression.test.ts > the served decoder decodes the backend's compressed model > gets back every triangle and the true size 50ms
+      Tests  4 passed (4)

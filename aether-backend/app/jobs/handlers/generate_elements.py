@@ -167,7 +167,10 @@ async def _generate_one(client: httpx.AsyncClient, ctx: JobContext, key: str,
         task_id = prior["task_id"]
         ctx.emit("elements.resume",
                  f"{element.name}: task {task_id} already submitted ({prior['status']}, "
-                 f"job {prior['job_id'] or '?'}); polling it, not re-submitting")
+                 f"job {prior['job_id'] or '?'}); polling it, not re-submitting",
+                 event_type="asset.requested", severity="info",
+                 entity_ids=[i for i in (key, element.element_id) if i], evidence_refs=[source_rel],
+                 payload={"task_id": task_id, "request_id": request_id, "resumed": True, "credits": 0})
     else:
         task_id = await meshy.submit_image_to_3d(
             client, crop,
@@ -180,7 +183,11 @@ async def _generate_one(client: httpx.AsyncClient, ctx: JobContext, key: str,
                           item_key=key, element_id=element.element_id or "",
                           image_sha256=image_sha256, params=params, task_id=task_id,
                           endpoint=meshy.IMAGE_TO_3D)
-        ctx.emit("elements.submit", f"{element.name}: task {task_id}")
+        ctx.emit("elements.submit", f"{element.name}: task {task_id}",
+                 event_type="asset.requested", severity="info",
+                 entity_ids=[i for i in (key, element.element_id) if i], evidence_refs=[source_rel],
+                 payload={"task_id": task_id, "request_id": request_id, "resumed": False,
+                          "credits_quoted": CREDITS_PER_PIECE})
 
     try:
         model = await meshy.wait_for(
@@ -406,7 +413,9 @@ async def _run(ctx: JobContext, todo: dict[str, SceneElement], settings: Setting
                 # nobody anything about why a paid-for mesh went missing.
                 ctx.emit("elements.failed",
                          f"{name}: {type(exc).__name__}: {exc or 'no detail'}; keeping the catalog match",
-                         status="warning")
+                         status="warning", event_type="asset.failed", severity="warning",
+                         entity_ids=[i for i in (key, todo[key].element_id) if i],
+                         payload={"error_type": type(exc).__name__, "error": str(exc)[:300]})
                 continue
             asset_id, spent = result                      # type: ignore[misc]
             made[key] = asset_id
@@ -422,7 +431,11 @@ async def _run(ctx: JobContext, todo: dict[str, SceneElement], settings: Setting
                 job_id=ctx.job.job_id,
                 item_key=key,
             )
-            ctx.emit("elements.done", f"{name} -> {asset_id} ({spent} credit(s))")
+            ctx.emit("elements.done", f"{name} -> {asset_id} ({spent} credit(s))",
+                     event_type="asset.generated", severity="info",
+                     entity_ids=[i for i in (key, todo[key].element_id, asset_id) if i],
+                     evidence_refs=[_glb_rel(key)],
+                     payload={"asset_id": asset_id, "credits": spent})
     return {"made": made, "warnings": warnings, "credits": credits}
 
 
@@ -453,16 +466,25 @@ def generate_elements(ctx: JobContext) -> dict[str, Any]:
     reused = 0
     on_disk: dict[str, str] = {}
     bound: dict[str, str] = {}
+    def _reused(key: str, els: list[SceneElement], how: str, asset_id: str = "", ref: str = "") -> None:
+        ctx.emit("elements.reuse", f"{els[0].name}: reused ({how}), 0 credits",
+                 event_type="asset.reused", severity="info",
+                 entity_ids=[i for i in (key, els[0].element_id, asset_id) if i],
+                 evidence_refs=[ref] if ref else None,
+                 payload={"how": how, "asset_id": asset_id, "instances": len(els), "credits": 0})
+
     for key, els in groups.items():
         already = _bound_asset(els)
         if already:
             bound[key] = already
             reused += 1                                   # paid for; the binding is the receipt
+            _reused(key, els, "binding", asset_id=already)
             continue
         disk = storage_key(ctx.has_checkpoint, key, els)
         on_disk[key] = disk
         if ctx.has_checkpoint(_glb_rel(disk)):
             reused += 1                                   # already bought; never bought twice
+            _reused(key, els, "file_on_disk", ref=_glb_rel(disk))
             continue
         todo[key] = els[0]                                # the biggest crop of the group
     over = max(0, len(todo) - limit)

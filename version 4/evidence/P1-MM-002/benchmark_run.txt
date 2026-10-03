@@ -1,0 +1,133 @@
+4 model(s); vision-capable: ['qwen2.5vl:3b']
+cases: watcher 8, orchestrator 16, validator 8 - each run 3x at temperature 0
+
+  qwen2.5:0.5b  roles=['watcher', 'orchestrator']
+    watcher/pat_01_same_asset_three_stages: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/pat_02_repeated_network_reset: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/pat_03_one_room_keeps_failing_repair: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/pat_04_one_client_photo_reread_thrice: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/nop_01_four_unrelated_one_offs: ['ok', 'ok', 'ok']  anomalies=0
+    watcher/nop_02_single_isolated_warning: ['ok', 'ok', 'ok']  anomalies=0
+    watcher/nop_03_four_different_rooms_different_causes: ['ok', 'ok', 'ok']  anomalies=0
+    watcher/nop_04_two_events_same_stage_different_entities: ['ok', 'ok', 'ok']  anomalies=0
+    orchestrator/retry_01_worker_process_killed: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/retry_02_provider_connection_reset: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/retry_03_timeout_no_content_issue: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/retry_04_disk_io_error: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/resolve_01_unclassified_overlap: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/resolve_02_orphaned_clearance_conflict: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/resolve_03_unhandled_rotation_conflict: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/resolve_04_frame_graph_gap: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/reread_01_wrong_region_cropped: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/reread_02_photo_mismatch_material: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/reread_03_dimension_photo_conflict: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/reread_04_count_mismatch_photo: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/escalate_01_third_round_same_failure: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/escalate_02_conflicting_reports_no_path: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/escalate_03_budget_and_repeated_failure: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/escalate_04_no_plausible_automatic_step: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    watcher: accuracy 0.50 (4/8, baseline 0.5), consistency 1.00, 0.84s/call, answers {'anomalies=0': 24}
+    orchestrator: accuracy 0.25 (4/16, baseline 0.25), consistency 1.00, 0.81s/call, answers {'decision=RE_SOLVE': 46, 'decision=ESCALATE': 2}
+    (59s)
+
+  llama3.2:1b  roles=['watcher', 'orchestrator']
+    watcher/pat_01_same_asset_three_stages: ['ok', 'ok', 'ok']  anomalies=1 cited=[101, 102, 103]
+    watcher/pat_02_repeated_network_reset: ['ok', 'ok', 'ok']  anomalies=1 cited=[201, 202, 203]
+    watcher/pat_03_one_room_keeps_failing_repair: ['ok', '--', '--']  anomalies=1 cited=[301, 302, 303]
+    watcher/pat_04_one_client_photo_reread_thrice: ['ok', 'ok', 'ok']  anomalies=1 cited=[401, 402, 403, 404]
+    watcher/nop_01_four_unrelated_one_offs: ['--', '--', '--']  anomalies=3
+    watcher/nop_02_single_isolated_warning: ['--', '--', '--']  anomalies=1
+    watcher/nop_03_four_different_rooms_different_causes: ['--', '--', '--']  anomalies=1
+    watcher/nop_04_two_events_same_stage_different_entities: ['--', '--', '--']  anomalies=1
+    orchestrator/retry_01_worker_process_killed: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/retry_02_provider_connection_reset: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/retry_03_timeout_no_content_issue: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/retry_04_disk_io_error: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/resolve_01_unclassified_overlap: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/resolve_02_orphaned_clearance_conflict: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/resolve_03_unhandled_rotation_conflict: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/resolve_04_frame_graph_gap: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/reread_01_wrong_region_cropped: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/reread_02_photo_mismatch_material: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/reread_03_dimension_photo_conflict: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/reread_04_count_mismatch_photo: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/escalate_01_third_round_same_failure: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/escalate_02_conflicting_reports_no_path: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/escalate_03_budget_and_repeated_failure: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/escalate_04_no_plausible_automatic_step: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    watcher: accuracy 0.38 (3/8, baseline 0.5), consistency 0.88, 1.42s/call, answers {'anomalies>0': 22, 'anomalies=0': 2}
+    orchestrator: accuracy 0.25 (4/16, baseline 0.25), consistency 1.00, 0.81s/call, answers {'decision=RE_SOLVE': 48}
+    (73s)
+
+  gemma2:2b  roles=['watcher', 'orchestrator']
+    watcher/pat_01_same_asset_three_stages: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/pat_02_repeated_network_reset: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/pat_03_one_room_keeps_failing_repair: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/pat_04_one_client_photo_reread_thrice: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/nop_01_four_unrelated_one_offs: ['ok', 'ok', 'ok']  anomalies=0
+    watcher/nop_02_single_isolated_warning: ['--', '--', '--']  anomalies=1
+    watcher/nop_03_four_different_rooms_different_causes: ['ok', 'ok', 'ok']  anomalies=0
+    watcher/nop_04_two_events_same_stage_different_entities: ['ok', 'ok', 'ok']  anomalies=0
+    orchestrator/retry_01_worker_process_killed: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/retry_02_provider_connection_reset: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/retry_03_timeout_no_content_issue: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/retry_04_disk_io_error: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.90
+    orchestrator/resolve_01_unclassified_overlap: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/resolve_02_orphaned_clearance_conflict: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/resolve_03_unhandled_rotation_conflict: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=0.90
+    orchestrator/resolve_04_frame_graph_gap: ['ok', 'ok', 'ok']  decision=RE_SOLVE by=model conf=0.90
+    orchestrator/reread_01_wrong_region_cropped: ['ok', 'ok', 'ok']  decision=RE_READ by=model conf=0.70
+    orchestrator/reread_02_photo_mismatch_material: ['ok', 'ok', 'ok']  decision=RE_READ by=model conf=0.80
+    orchestrator/reread_03_dimension_photo_conflict: ['ok', 'ok', 'ok']  decision=RE_READ by=model conf=0.80
+    orchestrator/reread_04_count_mismatch_photo: ['ok', 'ok', 'ok']  decision=RE_READ by=model conf=0.80
+    orchestrator/escalate_01_third_round_same_failure: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/escalate_02_conflicting_reports_no_path: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    orchestrator/escalate_03_budget_and_repeated_failure: ['--', '--', '--']  decision=RE_SOLVE by=model conf=1.00
+    orchestrator/escalate_04_no_plausible_automatic_step: ['--', '--', '--']  decision=RE_SOLVE by=model conf=0.80
+    watcher: accuracy 0.38 (3/8, baseline 0.5), consistency 1.00, 2.32s/call, answers {'anomalies=0': 21, 'anomalies>0': 3}
+    orchestrator: accuracy 0.50 (8/16, baseline 0.25), consistency 1.00, 1.43s/call, answers {'decision=RE_SOLVE': 36, 'decision=RE_READ': 12}
+    (124s)
+
+  qwen2.5vl:3b  roles=['watcher', 'orchestrator', 'validator']
+    watcher/pat_01_same_asset_three_stages: ['ok', 'ok', 'ok']  anomalies=1 cited=[101, 102, 103]
+    watcher/pat_02_repeated_network_reset: ['--', '--', '--']  anomalies=0 cited=[]
+    watcher/pat_03_one_room_keeps_failing_repair: ['ok', 'ok', 'ok']  anomalies=1 cited=[301, 302, 303]
+    watcher/pat_04_one_client_photo_reread_thrice: ['ok', 'ok', 'ok']  anomalies=2 cited=[401, 402, 403, 404]
+    watcher/nop_01_four_unrelated_one_offs: ['--', '--', '--']  anomalies=1
+    watcher/nop_02_single_isolated_warning: ['--', '--', '--']  anomalies=1
+    watcher/nop_03_four_different_rooms_different_causes: ['--', '--', '--']  anomalies=1
+    watcher/nop_04_two_events_same_stage_different_entities: ['--', '--', '--']  anomalies=1
+    orchestrator/retry_01_worker_process_killed: ['--', '--', '--']  decision=RE_READ by=model conf=0.80
+    orchestrator/retry_02_provider_connection_reset: ['--', '--', '--']  decision=RE_READ by=model conf=0.80
+    orchestrator/retry_03_timeout_no_content_issue: ['--', '--', '--']  decision=RE_READ by=model conf=0.80
+    orchestrator/retry_04_disk_io_error: ['--', '--', '--']  decision=RE_READ by=model conf=0.80
+    orchestrator/resolve_01_unclassified_overlap: ['--', '--', '--']  decision=RE_READ by=model conf=0.80
+    orchestrator/resolve_02_orphaned_clearance_conflict: ['--', '--', '--']  decision=RE_READ by=model conf=0.80
+    orchestrator/resolve_03_unhandled_rotation_conflict: ['--', '--', '--']  decision=RE_READ by=model conf=0.80
+    orchestrator/resolve_04_frame_graph_gap: ['--', '--', '--']  decision=RE_READ by=model conf=0.80
+    orchestrator/reread_01_wrong_region_cropped: ['ok', 'ok', 'ok']  decision=RE_READ by=model conf=0.80
+    orchestrator/reread_02_photo_mismatch_material: ['ok', 'ok', 'ok']  decision=RE_READ by=model conf=0.80
+    orchestrator/reread_03_dimension_photo_conflict: ['ok', 'ok', 'ok']  decision=RE_READ by=model conf=0.80
+    orchestrator/reread_04_count_mismatch_photo: ['ok', 'ok', 'ok']  decision=RE_READ by=model conf=0.80
+    orchestrator/escalate_01_third_round_same_failure: ['ok', 'ok', 'ok']  decision=ESCALATE by=model conf=0.90
+    orchestrator/escalate_02_conflicting_reports_no_path: ['ok', 'ok', 'ok']  decision=ESCALATE by=model conf=0.80
+    orchestrator/escalate_03_budget_and_repeated_failure: ['ok', 'ok', 'ok']  decision=ESCALATE by=model conf=0.80
+    orchestrator/escalate_04_no_plausible_automatic_step: ['ok', 'ok', 'ok']  decision=ESCALATE by=model conf=0.80
+    validator/pass_01_dining_has_table_and_chairs: ['ok', 'ok', 'ok']  status=PASS conf=1.00
+    validator/pass_02_light_neutral_palette: ['ok', 'ok', 'ok']  status=PASS conf=1.00
+    validator/pass_03_floor_length_curtains: ['ok', 'ok', 'ok']  status=PASS conf=1.00
+    validator/pass_04_empty_room_asked_for_empty: ['ok', 'ok', 'ok']  status=PASS conf=1.00
+    validator/fail_01_empty_but_dining_asked: ['ok', 'ok', 'ok']  status=FAIL conf=0.00
+    validator/fail_02_empty_but_sofa_asked: ['ok', 'ok', 'ok']  status=FAIL conf=0.70
+    validator/fail_03_red_walls_asked: ['ok', 'ok', 'ok']  status=FAIL conf=0.80
+    validator/fail_04_bedroom_asked: ['ok', 'ok', 'ok']  status=FAIL conf=0.70
+    watcher: accuracy 0.38 (3/8, baseline 0.5), consistency 1.00, 7.64s/call, answers {'anomalies>0': 21, 'anomalies=0': 3}
+    orchestrator: accuracy 0.50 (8/16, baseline 0.25), consistency 1.00, 5.65s/call, answers {'decision=RE_READ': 36, 'decision=ESCALATE': 12}
+    validator: accuracy 1.00 (8/8, baseline 0.5), consistency 1.00, 8.02s/call, answers {'status=PASS': 12, 'status=FAIL': 12}, false PASS runs 0
+    (647s)
+
+watcher: NOT MEASURABLE: 0 of 4 model(s) beat the constant-answer baseline (none); correlated error between models with no skill says nothing about diversity
+orchestrator: diversity HELPS: mean pairwise error correlation 0.00 (models mostly fail different cases)
+validator: NOT MEASURED: fewer than two models took this role's cases
+
+Written: E:\Allura Interrior\Allura3D\ai--3d\docs\benchmarks\p1_mm002_model_diversity.json

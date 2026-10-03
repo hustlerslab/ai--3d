@@ -1,0 +1,12 @@
+tests/test_design_versions.py::test_journey_9_the_accepted_design_survives_an_experiment_byte_identical PASSED [ 10%]
+tests/test_design_versions.py::test_two_versions_coexist_and_either_can_be_made_current PASSED [ 20%]
+tests/test_design_versions.py::test_an_edit_after_saving_shows_as_unsaved_changes PASSED [ 30%]
+tests/test_design_versions.py::test_restoring_the_current_version_commits_nothing PASSED [ 40%]
+tests/test_design_versions.py::test_the_undo_history_alone_would_have_lost_the_accepted_design PASSED [ 50%]
+tests/test_design_versions.py::test_versions_are_immutable_and_outlive_the_project PASSED [ 60%]
+tests/test_design_versions.py::test_saving_before_there_is_a_design_is_refused PASSED [ 70%]
+tests/test_design_versions.py::test_saving_and_restoring_are_recorded_as_events PASSED [ 80%]
+tests/test_design_versions.py::test_re_running_after_an_edit_generates_nothing_new_for_unchanged_pieces PASSED [ 90%]
+tests/test_design_versions.py::test_a_restored_version_becomes_the_baseline_check_scene_compares_against PASSED [100%]
+class=MOCK passed=10 failed=0 error=0 skipped=0
+============================= 10 passed in 8.63s ==============================

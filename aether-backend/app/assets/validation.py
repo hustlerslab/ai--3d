@@ -45,6 +45,8 @@ def validate(
     if textures.get("count", 0) == 0:
         issues.append(ValidationIssue(code="NO_TEXTURES", severity="info", message="Model has no textures (flat materials only)."))
 
+    issues += material_workflow(doc)
+
     if any(d <= 0 for d in dimensions):
         issues.append(ValidationIssue(code="ZERO_SIZE", severity="hard", message="Normalized bounding box has a zero extent."))
     else:
@@ -53,4 +55,36 @@ def validate(
         if max(dimensions) > MAX_DIMENSION_M:
             issues.append(ValidationIssue(code="TOO_LARGE", severity="hard", message=f"Normalized object is {max(dimensions):.1f} m — check units."))
 
+    return issues
+
+
+#: The archived glTF extension for the specular-glossiness workflow - not the
+#: metallic-roughness model every asset must use (P2-RENDER-001).
+SPEC_GLOSS = "KHR_materials_pbrSpecularGlossiness"
+
+
+def material_workflow(doc: GltfDocument) -> list[ValidationIssue]:
+    """glTF 2.0's core material model IS metallic-roughness. Two ways an asset
+    breaks it:
+
+    - it declares the specular-glossiness extension: a different workflow,
+      which the registry's roughness/metalness cannot drive -> hard;
+    - a material has no `pbrMetallicRoughness` block: glTF's defaults then
+      apply, and they are metallicFactor 1.0 and roughnessFactor 1.0 - the
+      piece renders as rough bare metal -> warn, named.
+    """
+    j = doc.json
+    issues: list[ValidationIssue] = []
+    if SPEC_GLOSS in (j.get("extensionsUsed") or []) or any(
+            SPEC_GLOSS in (m.get("extensions") or {}) for m in j.get("materials") or []):
+        issues.append(ValidationIssue(
+            code="NOT_METALLIC_ROUGHNESS", severity="hard",
+            message="Uses the specular-glossiness workflow; every asset must use glTF metallic-roughness."))
+    bare = [m.get("name") or f"material {i}" for i, m in enumerate(j.get("materials") or [])
+            if "pbrMetallicRoughness" not in m and SPEC_GLOSS not in (m.get("extensions") or {})]
+    if bare:
+        issues.append(ValidationIssue(
+            code="MATERIAL_DEFAULTS_TO_METAL", severity="warn",
+            message="No metallic-roughness values on " + ", ".join(bare[:5])
+                    + " - glTF defaults would render it as bare metal."))
     return issues

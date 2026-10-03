@@ -1,0 +1,20 @@
+{
+  "event_id": 21,
+  "project_id": "proj_157bac416e",
+  "job_id": "job_d64819ecea",
+  "stage": "plan.scene",
+  "status": "progress",
+  "message": "scene scene_323ca240a1 v1 committed, 44 object(s)",
+  "duration_ms": 23,
+  "ts": "2026-09-25T16:10:30.990163+00:00",
+  "schema_version": "1.0",
+  "event_type": "scene.committed",
+  "severity": "info",
+  "confidence": null,
+  "correlation_id": "cid_4feeea970aab",
+  "parent_event_id": 20,
+  "producer": "job.scene_plan",
+  "entity_ids": "[\"cat_armchair\", \"cat_bed_queen\", \"cat_bedside\", \"cat_chair\", \"cat_coffee_table\", \"cat_dining_table\", \"cat_floor_lamp\", \"cat_plant\", \"cat_rug\", \"cat_sofa_3s\", \"cat_tv_unit\", \"cat_wardrobe\", \"obj_0107b0bc01\", \"obj_0edfdb2739\", \"obj_0f29ecdf33\", \"obj_1043c1d8b5\", \"obj_182c635cfd\", \"obj_1ef8444bf7\", \"obj_215a8248f7\", \"obj_21f277b7fc\", \"obj_2a6492c1d0\", \"obj_350c08a5ed\", \"obj_3ad2b70b5b\", \"obj_44589a20da\", \"obj_4777a0a5b1\", \"obj_4d88254bf0\", \"obj_4ff870c53e\", \"obj_53435318cf\", \"obj_57d44c8325\", \"obj_5d529bc731\", \"obj_61c0ac3725\", \"obj_6dbed6045c\", \"obj_70c715c8bd\", \"obj_73825bf8c4\", \"obj_7e15405e46\", \"obj_816b07c719\", \"obj_822af20a14\", \"obj_833f23c72f\", \"obj_84c6659510\", \"obj_8c7024a3ed\", \"obj_93ee01262f\", \"obj_b1c8d8532c\", \"obj_b3aed567bf\", \"obj_b7addc2bcb\", \"obj_be29f82170\", \"obj_c7710f0620\", \"obj_d3791688e4\", \"obj_d7c4fd338c\", \"obj_e08ecbba6f\", \"obj_e38c973fc0\", \"obj_eeab9542cf\", \"obj_f265495e03\", \"obj_f43aff20cd\", \"obj_f54c5f8770\", \"obj_f5ad10fa7e\", \"obj_fc9bbbece5\"]",
+  "evidence_refs": "[\"planning/scene_spec.json\"]",
+  "payload": "{\"scene_id\": \"scene_323ca240a1\", \"scene_version\": 1, \"objects\": 44, \"with_identity\": 0}"
+}

@@ -1,4 +1,8 @@
-"""Build the viewer copy for models ingested before the variant existed."""
+"""Build the viewer copy for models ingested before the variant existed.
+
+Also rebuilds a copy made before P2-VIEWER-002, whose geometry is not yet
+Draco-compressed; a copy that already is gets skipped.
+"""
 import sys, time
 from pathlib import Path
 
@@ -17,7 +21,8 @@ for rec in reg.list():
     src = settings.data_dir / rec.files.normalized
     if not src.is_file():
         continue
-    if rec.files.web and (settings.data_dir / rec.files.web).is_file():
+    web = settings.data_dir / rec.files.web if rec.files.web else None
+    if web and web.is_file() and (web_variant.is_draco(web) or not web_variant.gltf_transform_command()):
         skipped += 1
         continue
     dest = reg.web_path(rec.asset_id)
@@ -25,7 +30,7 @@ for rec in reg.list():
         st = web_variant.build(src, dest)
     except Exception as exc:                              # noqa: BLE001
         print(f"  FAILED {rec.asset_id}: {exc}"); failed += 1; continue
-    if st["images_resized"]:
+    if web_variant.worth_keeping(st):
         rec.files.web = str(dest.relative_to(settings.data_dir)).replace("\\", "/")
         reg.upsert(rec)
         done += 1

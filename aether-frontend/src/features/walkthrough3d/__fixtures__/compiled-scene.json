@@ -1,0 +1,2683 @@
+{
+ "scene_id": "scene_bc4bcc51ba",
+ "project_id": "proj_x",
+ "version": 0,
+ "units": "meter",
+ "coordinate_system": {
+  "up": "Y",
+  "right": "X",
+  "forward": "-Z"
+ },
+ "name": "test",
+ "rooms": [
+  {
+   "room_id": "living_room",
+   "name": "Living Room",
+   "type": "living_room",
+   "boundary": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     6.0,
+     0.0
+    ],
+    [
+     6.0,
+     4.6
+    ],
+    [
+     0.0,
+     4.6
+    ]
+   ],
+   "floor_height": 0.0,
+   "ceiling_height": 3.0,
+   "floor_material": "wood_oak",
+   "confidence": {
+    "value": 0.6,
+    "source": "mock"
+   },
+   "features": []
+  },
+  {
+   "room_id": "bedroom_1",
+   "name": "Bedroom 1",
+   "type": "bedroom",
+   "boundary": [
+    [
+     6.0,
+     0.0
+    ],
+    [
+     10.0,
+     0.0
+    ],
+    [
+     10.0,
+     3.6
+    ],
+    [
+     6.0,
+     3.6
+    ]
+   ],
+   "floor_height": 0.0,
+   "ceiling_height": 3.0,
+   "floor_material": "wood_oak",
+   "confidence": {
+    "value": 0.6,
+    "source": "mock"
+   },
+   "features": []
+  },
+  {
+   "room_id": "bedroom_2",
+   "name": "Bedroom 2",
+   "type": "bedroom",
+   "boundary": [
+    [
+     6.0,
+     3.6
+    ],
+    [
+     10.0,
+     3.6
+    ],
+    [
+     10.0,
+     7.2
+    ],
+    [
+     6.0,
+     7.2
+    ]
+   ],
+   "floor_height": 0.0,
+   "ceiling_height": 3.0,
+   "floor_material": "wood_oak",
+   "confidence": {
+    "value": 0.6,
+    "source": "mock"
+   },
+   "features": []
+  },
+  {
+   "room_id": "kitchen",
+   "name": "Kitchen",
+   "type": "kitchen",
+   "boundary": [
+    [
+     0.0,
+     -3.0
+    ],
+    [
+     3.8,
+     -3.0
+    ],
+    [
+     3.8,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ]
+   ],
+   "floor_height": 0.0,
+   "ceiling_height": 3.0,
+   "floor_material": "tile_ivory",
+   "confidence": {
+    "value": 0.6,
+    "source": "mock"
+   },
+   "features": []
+  }
+ ],
+ "walls": [
+  {
+   "wall_id": "wall_01",
+   "start": [
+    0.0,
+    -3.0
+   ],
+   "end": [
+    3.8,
+    -3.0
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_02",
+   "start": [
+    0.0,
+    0.0
+   ],
+   "end": [
+    3.8,
+    0.0
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_03",
+   "start": [
+    3.8,
+    0.0
+   ],
+   "end": [
+    6.0,
+    0.0
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_04",
+   "start": [
+    6.0,
+    0.0
+   ],
+   "end": [
+    10.0,
+    0.0
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_05",
+   "start": [
+    6.0,
+    3.6
+   ],
+   "end": [
+    10.0,
+    3.6
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_06",
+   "start": [
+    0.0,
+    4.6
+   ],
+   "end": [
+    6.0,
+    4.6
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_07",
+   "start": [
+    6.0,
+    7.2
+   ],
+   "end": [
+    10.0,
+    7.2
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_08",
+   "start": [
+    0.0,
+    -3.0
+   ],
+   "end": [
+    0.0,
+    0.0
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_09",
+   "start": [
+    0.0,
+    0.0
+   ],
+   "end": [
+    0.0,
+    4.6
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_10",
+   "start": [
+    3.8,
+    -3.0
+   ],
+   "end": [
+    3.8,
+    0.0
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_11",
+   "start": [
+    6.0,
+    0.0
+   ],
+   "end": [
+    6.0,
+    3.6
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_12",
+   "start": [
+    6.0,
+    3.6
+   ],
+   "end": [
+    6.0,
+    4.6
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_13",
+   "start": [
+    6.0,
+    4.6
+   ],
+   "end": [
+    6.0,
+    7.2
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_14",
+   "start": [
+    10.0,
+    0.0
+   ],
+   "end": [
+    10.0,
+    3.6
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  },
+  {
+   "wall_id": "wall_15",
+   "start": [
+    10.0,
+    3.6
+   ],
+   "end": [
+    10.0,
+    7.2
+   ],
+   "thickness": 0.15,
+   "height": 3.0,
+   "material": "paint_white",
+   "extrusion_direction": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "finishes": []
+  }
+ ],
+ "openings": [
+  {
+   "opening_id": "open_door_bedroom_1",
+   "type": "door",
+   "wall_id": "wall_11",
+   "position": 1.8,
+   "width": 0.9,
+   "height": 2.1,
+   "sill_height": 0.0
+  },
+  {
+   "opening_id": "open_door_bedroom_2",
+   "type": "door",
+   "wall_id": "wall_05",
+   "position": 2.0,
+   "width": 0.9,
+   "height": 2.1,
+   "sill_height": 0.0
+  },
+  {
+   "opening_id": "open_door_kitchen",
+   "type": "door",
+   "wall_id": "wall_02",
+   "position": 1.9,
+   "width": 0.9,
+   "height": 2.1,
+   "sill_height": 0.0
+  },
+  {
+   "opening_id": "open_entry",
+   "type": "door",
+   "wall_id": "wall_06",
+   "position": 3.0,
+   "width": 1.0,
+   "height": 2.1,
+   "sill_height": 0.0
+  },
+  {
+   "opening_id": "open_win_living_room",
+   "type": "window",
+   "wall_id": "wall_06",
+   "position": 1.325,
+   "width": 1.8,
+   "height": 1.3,
+   "sill_height": 0.9
+  },
+  {
+   "opening_id": "open_win_bedroom_1",
+   "type": "window",
+   "wall_id": "wall_04",
+   "position": 2.0,
+   "width": 1.8,
+   "height": 1.3,
+   "sill_height": 0.9
+  },
+  {
+   "opening_id": "open_win_bedroom_2",
+   "type": "window",
+   "wall_id": "wall_07",
+   "position": 2.0,
+   "width": 1.8,
+   "height": 1.3,
+   "sill_height": 0.9
+  },
+  {
+   "opening_id": "open_win_kitchen",
+   "type": "window",
+   "wall_id": "wall_01",
+   "position": 1.9,
+   "width": 1.8,
+   "height": 1.3,
+   "sill_height": 0.9
+  }
+ ],
+ "objects": [
+  {
+   "object_id": "obj_bdad8281d0",
+   "semantic_type": "bed",
+   "asset_id": "cat_bed_queen",
+   "room_id": "bedroom_1",
+   "position": [
+    8.0,
+    0.0,
+    1.145
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    1.6,
+    0.55,
+    2.05
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "bedroom_1.bed.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "bed",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_64b40478d4",
+   "semantic_type": "bed",
+   "asset_id": "cat_bed_queen",
+   "room_id": "bedroom_2",
+   "position": [
+    8.855,
+    0.0,
+    5.4
+   ],
+   "rotation_y": 1.5708,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    1.6,
+    0.55,
+    2.05
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "bedroom_2.bed.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "bed",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_1ee214cc26",
+   "semantic_type": "kitchen_counter",
+   "asset_id": null,
+   "room_id": "kitchen",
+   "position": [
+    1.9,
+    0.0,
+    -2.58
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    2.4,
+    2.2,
+    0.6
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "kitchen.kitchen_counter.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "counter",
+   "name": "kitchen counter",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_f32eac99f0",
+   "semantic_type": "sofa",
+   "asset_id": "cat_sofa_3s",
+   "room_id": "living_room",
+   "position": [
+    4.2,
+    0.0,
+    0.57
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    2.1,
+    0.85,
+    0.9
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.sofa.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "seat",
+   "name": "sofa",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_422fc40f5f",
+   "semantic_type": "wardrobe",
+   "asset_id": "cat_wardrobe",
+   "room_id": "bedroom_1",
+   "position": [
+    9.58,
+    0.0,
+    1.8
+   ],
+   "rotation_y": 1.5708,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    1.5,
+    2.1,
+    0.6
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "bedroom_1.wardrobe.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "tall",
+   "name": "wardrobe",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_4e064941f1",
+   "semantic_type": "wardrobe",
+   "asset_id": "cat_wardrobe",
+   "room_id": "bedroom_2",
+   "position": [
+    8.0,
+    0.0,
+    6.78
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    1.5,
+    2.1,
+    0.6
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "bedroom_2.wardrobe.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "tall",
+   "name": "wardrobe",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_752968f1bd",
+   "semantic_type": "fridge",
+   "asset_id": null,
+   "room_id": "kitchen",
+   "position": [
+    3.33,
+    0.0,
+    -1.5
+   ],
+   "rotation_y": 1.5708,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.7,
+    1.75,
+    0.7
+   ],
+   "color": "#8a7862",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "kitchen.fridge.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "fridge",
+   "name": "fridge",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_b175ee71e7",
+   "semantic_type": "tv_unit",
+   "asset_id": "cat_tv_unit",
+   "room_id": "living_room",
+   "position": [
+    4.8,
+    0.0,
+    4.255
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    1.8,
+    0.5,
+    0.45
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "living_room.tv_unit.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "tv",
+   "name": "tv unit",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_f7d9574f9b",
+   "semantic_type": "bedside_table",
+   "asset_id": "cat_bedside",
+   "room_id": "bedroom_1",
+   "position": [
+    6.895,
+    0.0,
+    1.145
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.55,
+    0.4
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "bedroom_1.bedside_table.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "bedside table",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_4b82ce7f14",
+   "semantic_type": "bedside_table",
+   "asset_id": "cat_bedside",
+   "room_id": "bedroom_1",
+   "position": [
+    6.8,
+    0.0,
+    0.32
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.55,
+    0.4
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "bedroom_1.bedside_table.1#2",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "bedside table",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_d6e9a86f90",
+   "semantic_type": "bedside_table",
+   "asset_id": "cat_bedside",
+   "room_id": "bedroom_2",
+   "position": [
+    8.855,
+    0.0,
+    4.295
+   ],
+   "rotation_y": 1.5708,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.55,
+    0.4
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "bedroom_2.bedside_table.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "bedside table",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_69f658a298",
+   "semantic_type": "bedside_table",
+   "asset_id": "cat_bedside",
+   "room_id": "bedroom_2",
+   "position": [
+    7.2,
+    0.0,
+    3.92
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.55,
+    0.4
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "bedroom_2.bedside_table.1#2",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "bedside table",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_e579630a2e",
+   "semantic_type": "coffee_table",
+   "asset_id": "cat_coffee_table",
+   "room_id": "living_room",
+   "position": [
+    4.2,
+    0.0,
+    1.77
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    1.1,
+    0.42,
+    0.6
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "living_room.coffee_table.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "table",
+   "name": "coffee table",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_c6723cf7a6",
+   "semantic_type": "dining_table",
+   "asset_id": "cat_dining_table",
+   "room_id": "living_room",
+   "position": [
+    1.32,
+    0.0,
+    3.68
+   ],
+   "rotation_y": 4.7124,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    1.6,
+    0.75,
+    0.9
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "living_room.dining_table.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "table",
+   "name": "dining table",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_7a344ac6b5",
+   "semantic_type": "plant",
+   "asset_id": "cat_plant",
+   "room_id": "living_room",
+   "position": [
+    1.2,
+    0.0,
+    0.345
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    1.2,
+    0.45
+   ],
+   "color": "#5f7a4f",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "living_room.plant.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "tall",
+   "name": "plant",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_92bfff312b",
+   "semantic_type": "rug",
+   "asset_id": "cat_rug",
+   "room_id": "bedroom_2",
+   "position": [
+    8.0,
+    0.0,
+    6.23
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    2.4,
+    0.02,
+    1.7
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "bedroom_2.rug.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "rug",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_ca645e50d9",
+   "semantic_type": "rug",
+   "asset_id": "cat_rug",
+   "room_id": "living_room",
+   "position": [
+    0.97,
+    0.0,
+    2.3
+   ],
+   "rotation_y": 4.7124,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    2.4,
+    0.02,
+    1.7
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.rug.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "rug",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_ed9e6cc8cc",
+   "semantic_type": "chair",
+   "asset_id": "cat_chair",
+   "room_id": "living_room",
+   "position": [
+    2.07,
+    0.0,
+    3.04
+   ],
+   "rotation_y": 1.5708,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.9,
+    0.5
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.chair.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "seat",
+   "name": "chair",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_d602489c23",
+   "semantic_type": "chair",
+   "asset_id": "cat_chair",
+   "room_id": "living_room",
+   "position": [
+    0.72,
+    0.0,
+    0.37
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.9,
+    0.5
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.chair.1#2",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "seat",
+   "name": "chair",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_3c640a0787",
+   "semantic_type": "chair",
+   "asset_id": "cat_chair",
+   "room_id": "living_room",
+   "position": [
+    0.57,
+    0.0,
+    3.04
+   ],
+   "rotation_y": 4.7124,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.9,
+    0.5
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.chair.1#3",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "seat",
+   "name": "chair",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_719a98b98d",
+   "semantic_type": "chair",
+   "asset_id": "cat_chair",
+   "room_id": "living_room",
+   "position": [
+    1.32,
+    0.0,
+    2.58
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.9,
+    0.5
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.chair.1#4",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "seat",
+   "name": "chair",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_3fb7e8c665",
+   "semantic_type": "armchair",
+   "asset_id": "cat_armchair",
+   "room_id": "living_room",
+   "position": [
+    5.455,
+    0.0,
+    3.22
+   ],
+   "rotation_y": 1.5708,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.8,
+    0.8,
+    0.85
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.armchair.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "seat",
+   "name": "armchair",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_73d89237c2",
+   "semantic_type": "floor_lamp",
+   "asset_id": "cat_floor_lamp",
+   "room_id": "living_room",
+   "position": [
+    2.895,
+    0.0,
+    0.57
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.35,
+    1.6,
+    0.35
+   ],
+   "color": "#7A5C43",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "living_room.floor_lamp.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "tall",
+   "name": "floor lamp",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_db3999bf55",
+   "semantic_type": "table_lamp",
+   "asset_id": null,
+   "room_id": "bedroom_1",
+   "position": [
+    6.895,
+    0.55,
+    1.145
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.35,
+    0.6,
+    0.35
+   ],
+   "color": "#7A5C43",
+   "source": "catalog",
+   "locked": false,
+   "mount": "surface",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "bedroom_1.table_lamp.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": "obj_f7d9574f9b",
+   "texture_ref": null,
+   "shape": "lamp",
+   "name": "table lamp",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_52d59af97a",
+   "semantic_type": "table_lamp",
+   "asset_id": null,
+   "room_id": "bedroom_1",
+   "position": [
+    6.8,
+    0.55,
+    0.32
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.35,
+    0.6,
+    0.35
+   ],
+   "color": "#7A5C43",
+   "source": "catalog",
+   "locked": false,
+   "mount": "surface",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "bedroom_1.table_lamp.1#2",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": "obj_4b82ce7f14",
+   "texture_ref": null,
+   "shape": "lamp",
+   "name": "table lamp",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_519ab9d847",
+   "semantic_type": "table_lamp",
+   "asset_id": null,
+   "room_id": "bedroom_2",
+   "position": [
+    8.855,
+    0.55,
+    4.295
+   ],
+   "rotation_y": 1.5708,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.35,
+    0.6,
+    0.35
+   ],
+   "color": "#7A5C43",
+   "source": "catalog",
+   "locked": false,
+   "mount": "surface",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "bedroom_2.table_lamp.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": "obj_d6e9a86f90",
+   "texture_ref": null,
+   "shape": "lamp",
+   "name": "table lamp",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_824e590f1d",
+   "semantic_type": "table_lamp",
+   "asset_id": null,
+   "room_id": "bedroom_2",
+   "position": [
+    7.2,
+    0.55,
+    3.92
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.35,
+    0.6,
+    0.35
+   ],
+   "color": "#7A5C43",
+   "source": "catalog",
+   "locked": false,
+   "mount": "surface",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "bedroom_2.table_lamp.1#2",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": "obj_69f658a298",
+   "texture_ref": null,
+   "shape": "lamp",
+   "name": "table lamp",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_629a932bc5",
+   "semantic_type": "curtains",
+   "asset_id": null,
+   "room_id": "bedroom_1",
+   "position": [
+    8.0,
+    0.0,
+    0.18
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    2.0,
+    2.6,
+    0.12
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "wall",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "bedroom_1.curtains.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "curtains",
+   "name": "curtains",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_9b00ccb434",
+   "semantic_type": "curtains",
+   "asset_id": null,
+   "room_id": "bedroom_2",
+   "position": [
+    8.0,
+    0.0,
+    7.02
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    2.0,
+    2.6,
+    0.12
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "wall",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "bedroom_2.curtains.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "curtains",
+   "name": "curtains",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_145fa7b833",
+   "semantic_type": "curtains",
+   "asset_id": null,
+   "room_id": "living_room",
+   "position": [
+    1.2,
+    0.0,
+    4.42
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    2.0,
+    2.6,
+    0.12
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "wall",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.curtains.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "curtains",
+   "name": "curtains",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_cd3d392dec",
+   "semantic_type": "side_table",
+   "asset_id": null,
+   "room_id": "living_room",
+   "position": [
+    5.58,
+    0.0,
+    0.57
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.5,
+    0.55,
+    0.5
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "living_room.side_table.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "side table",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_9051a8c15e",
+   "semantic_type": "plant",
+   "asset_id": "cat_plant",
+   "room_id": "bedroom_1",
+   "position": [
+    9.2,
+    0.0,
+    0.345
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    1.2,
+    0.45
+   ],
+   "color": "#5f7a4f",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "bedroom_1.plant.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "tall",
+   "name": "plant",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_71e6499577",
+   "semantic_type": "plant",
+   "asset_id": "cat_plant",
+   "room_id": "bedroom_2",
+   "position": [
+    6.48,
+    0.0,
+    3.945
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    1.2,
+    0.45
+   ],
+   "color": "#5f7a4f",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "bedroom_2.plant.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "tall",
+   "name": "plant",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_c23686a9d5",
+   "semantic_type": "wall_art",
+   "asset_id": null,
+   "room_id": "living_room",
+   "position": [
+    4.2,
+    1.15,
+    0.125
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.9,
+    0.7,
+    0.05
+   ],
+   "color": "#3F3129",
+   "source": "catalog",
+   "locked": false,
+   "mount": "wall",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "living_room.wall_art.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "photo",
+   "name": "wall art",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_b166215127",
+   "semantic_type": "books",
+   "asset_id": null,
+   "room_id": "living_room",
+   "position": [
+    4.2,
+    0.42,
+    1.77
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.3,
+    0.12,
+    0.22
+   ],
+   "color": "#3F3129",
+   "source": "catalog",
+   "locked": false,
+   "mount": "surface",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {},
+   "plan_key": "living_room.books.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": "obj_e579630a2e",
+   "texture_ref": null,
+   "shape": "books",
+   "name": "books",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_af25ade154",
+   "semantic_type": "pillows",
+   "asset_id": null,
+   "room_id": "living_room",
+   "position": [
+    3.425,
+    0.45,
+    0.245
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.45,
+    0.15
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "surface",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.pillows.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": "obj_f32eac99f0",
+   "texture_ref": null,
+   "shape": "pillow",
+   "name": "pillows",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_c099b38a3a",
+   "semantic_type": "pillows",
+   "asset_id": null,
+   "room_id": "living_room",
+   "position": [
+    4.975,
+    0.45,
+    0.245
+   ],
+   "rotation_y": 3.1416,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.45,
+    0.45,
+    0.15
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "surface",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "living_room.pillows.1#2",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": "obj_f32eac99f0",
+   "texture_ref": null,
+   "shape": "pillow",
+   "name": "pillows",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_4a919c550b",
+   "semantic_type": "kitchen_island",
+   "asset_id": null,
+   "room_id": "kitchen",
+   "position": [
+    1.9,
+    0.0,
+    -1.5
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    1.8,
+    0.9,
+    0.9
+   ],
+   "color": "#D9C2A3",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "veneer_oak"
+   },
+   "plan_key": "kitchen.kitchen_island.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "kitchen island",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_6576e1c91e",
+   "semantic_type": "bar_stool",
+   "asset_id": null,
+   "room_id": "kitchen",
+   "position": [
+    0.72,
+    0.0,
+    -1.5
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.4,
+    0.75,
+    0.4
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "kitchen.bar_stool.1",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "bar stool",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  },
+  {
+   "object_id": "obj_28baa88a66",
+   "semantic_type": "bar_stool",
+   "asset_id": null,
+   "room_id": "kitchen",
+   "position": [
+    0.3,
+    0.0,
+    -1.5
+   ],
+   "rotation_y": 0.0,
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "dimensions": [
+    0.4,
+    0.75,
+    0.4
+   ],
+   "color": "#B08968",
+   "source": "catalog",
+   "locked": false,
+   "mount": "floor",
+   "confidence": {
+    "value": 0.7,
+    "source": "mock"
+   },
+   "source_strategy": "procedural",
+   "material_overrides": {
+    "primary": "fabric_linen"
+   },
+   "plan_key": "kitchen.bar_stool.1#2",
+   "element_id": null,
+   "instance_id": null,
+   "client_owned": false,
+   "identity_source": "planner",
+   "parent_id": null,
+   "texture_ref": null,
+   "shape": "box",
+   "name": "bar stool",
+   "visual": {
+    "color_words": [],
+    "material": "",
+    "upholstery": "",
+    "pattern": "",
+    "frame_finish": "",
+    "descriptors": [],
+    "source_intent_ids": []
+   }
+  }
+ ],
+ "materials": [],
+ "saved_views": [],
+ "calibration": {
+  "meters_per_unit": 1.0,
+  "source": "seed",
+  "confidence": 1.0
+ },
+ "metadata": {
+  "compiled_from": {
+   "analysis_version": 1,
+   "style_version": 1
+  }
+ },
+ "spec_version": "1.1",
+ "style": {
+  "name": "warm_modern_minimal",
+  "tags": [
+   "warm",
+   "modern",
+   "minimal",
+   "natural"
+  ],
+  "palette": [
+   "#F3E9DA",
+   "#D9C2A3",
+   "#B08968",
+   "#7A5C43",
+   "#3F3129"
+  ],
+  "materials": [
+   "wood_oak",
+   "paint_white",
+   "veneer_oak",
+   "fabric_linen",
+   "glass_clear",
+   "tile_ivory",
+   "paint_terracotta"
+  ],
+  "lighting_mood": "warm_daylight"
+ },
+ "lighting": {
+  "mood": "warm_daylight",
+  "sun_azimuth_deg": 135.0,
+  "sun_elevation_deg": 40.0,
+  "sun_strength": 3.0,
+  "sky_turbidity": 2.5,
+  "exposure_ev": 0.0,
+  "interior_lights": [
+   {
+    "light_id": "light_ad738bc45d",
+    "room_id": "living_room",
+    "type": "area",
+    "position": [
+     3.0,
+     2.95,
+     2.3
+    ],
+    "power_w": 165.6,
+    "color_temp_k": 3200,
+    "size_m": 1.58
+   },
+   {
+    "light_id": "light_cb395f7b97",
+    "room_id": "bedroom_1",
+    "type": "area",
+    "position": [
+     8.0,
+     2.95,
+     1.8
+    ],
+    "power_w": 86.4,
+    "color_temp_k": 3200,
+    "size_m": 1.14
+   },
+   {
+    "light_id": "light_f875392d17",
+    "room_id": "bedroom_2",
+    "type": "area",
+    "position": [
+     8.0,
+     2.95,
+     5.4
+    ],
+    "power_w": 86.4,
+    "color_temp_k": 3200,
+    "size_m": 1.14
+   },
+   {
+    "light_id": "light_9d408a55d6",
+    "room_id": "kitchen",
+    "type": "area",
+    "position": [
+     1.9,
+     2.95,
+     -1.5
+    ],
+    "power_w": 68.4,
+    "color_temp_k": 3200,
+    "size_m": 1.01
+   }
+  ]
+ },
+ "camera_plan": {
+  "type": "walkthrough",
+  "duration_seconds": 45,
+  "seconds_per_room": 8.0,
+  "keyframes": [],
+  "hero_shots": []
+ }
+}

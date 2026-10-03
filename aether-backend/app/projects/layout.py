@@ -42,6 +42,9 @@ CHECKPOINTS = {
     # Listed here so the Studio can show the review panel for a project it is
     # merely opening, not only for one whose plan it just ran.
     "scene_reading": "planning/scene_reading.json",
+    # P1-ELEM-001: the same reading as frame-pinned MoodboardOccurrence rows -
+    # derived from it, never edited, so it cannot drift from its source.
+    "moodboard_occurrences": "planning/moodboard_occurrences.json",
     "object_plan": "planning/object_plan.json",
     "asset_plan": "planning/asset_plan.json",
     # The client's own reference photos, classified into typed design intent.
@@ -55,6 +58,10 @@ CHECKPOINTS = {
     "scene_blend": "blender/scene.blend",
     "validation_report": "blender/validation_report.json",
     "camera_path": "blender/camera_path.json",
+    # P1-BLENDER-002: the `viewpoints` job's default-subdir output.
+    "viewpoints": "renders/viewpoints/default/manifest.json",
+    # P1-VALIDATOR-001: VerificationEvidence (design.md §16).
+    "render_verification": "planning/render_verification.json",
     "preview": "previews/preview.mp4",
     "walkthrough": "renders/walkthrough.mp4",
     "outputs": "outputs/manifest.json",

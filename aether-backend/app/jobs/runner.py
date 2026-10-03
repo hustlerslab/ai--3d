@@ -29,6 +29,19 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+#: P1-EVENT-002: every job transition, typed. `_execute` is the single choke
+#: point all 13 job types pass through, so this table instruments all of them.
+#: Severity is set HERE, by the emitter that knows what the transition means.
+_TRANSITIONS: dict[str, tuple[str, str]] = {
+    "queued":    ("job.queued",    "info"),
+    "started":   ("job.started",   "info"),
+    "succeeded": ("job.succeeded", "info"),
+    "retrying":  ("job.retrying",  "warning"),
+    "failed":    ("job.failed",    "error"),
+    "resumed":   ("job.resumed",   "warning"),
+}
+
+
 class JobRunner:
     def __init__(
         self,
@@ -57,6 +70,25 @@ class JobRunner:
         self._stopping = threading.Event()
         self._started = False
 
+    # ── events ───────────────────────────────────────────────────
+    def _publish(self, job: Job, transition: str, message: str = "", *, duration_ms: int = 0,
+                 payload: Optional[dict[str, Any]] = None) -> None:
+        """One typed event per job transition, from the one place every
+        transition passes through. A failure to write it is logged and
+        swallowed: the event is the record of the work, and losing the record
+        must never lose - or fail - the work."""
+        event_type, severity = _TRANSITIONS[transition]
+        try:
+            self.jobs.add_event(
+                job.project_id, job.type, transition, message, job_id=job.job_id, duration_ms=duration_ms,
+                event_type=event_type, severity=severity, correlation_id=job.correlation_id,
+                producer="jobs.runner", payload={"attempt": job.attempt, "max_attempts": job.max_attempts,
+                                                  **(payload or {})},
+            )
+        except Exception as exc:                          # noqa: BLE001 - never fail the job
+            log.warning("event.dropped", extra={"transition": transition, "type": job.type,
+                                                "reason": f"{type(exc).__name__}: {exc}"})
+
     # ── lifecycle ────────────────────────────────────────────────
     def start(self) -> int:
         """Resume every job that was in flight when the process last stopped."""
@@ -64,10 +96,10 @@ class JobRunner:
         resumed = 0
         for job in self.jobs.unfinished():
             if job.status == JobStatus.RUNNING:
-                self.jobs.add_event(
-                    job.project_id, job.type, "resumed",
+                self._publish(
+                    job, "resumed",
                     f"process restarted during attempt {job.attempt}; resuming from checkpoint "
-                    f"'{job.checkpoint or 'none'}'", job_id=job.job_id,
+                    f"'{job.checkpoint or 'none'}'", payload={"checkpoint": job.checkpoint},
                 )
                 self.jobs.update(job.job_id, status=JobStatus.RETRYING)
             self._submit(job.job_id, job.lane)
@@ -124,7 +156,55 @@ class JobRunner:
             # is exactly when the ids matter.
             correlation_id=getattr(project, "correlation_id", "") or "",
         )
-        self.jobs.add_event(project_id, type, "queued", job_id=job.job_id)
+        self._publish(job, "queued", payload={"lane": str(job.lane.value), "created_by": created_by})
+        self._submit(job.job_id, job.lane)
+        return job
+
+    # -- P1-REPAIR-001: the outer loop's bound lives HERE ---------------------
+    def repair_rounds_used(self, project_id: str) -> int:
+        """Automatic repair rounds since the project's last ordinary job. A
+        user action (any job with repair_round 0) starts a fresh budget; no
+        amount of automatic activity can."""
+        from ..db import get_db
+
+        db = get_db()
+        last_user = db.scalar(
+            "SELECT MAX(rowid) FROM jobs WHERE project_id = ? AND COALESCE(repair_round, 0) = 0",
+            (project_id,)) or 0
+        used = db.scalar(
+            "SELECT MAX(repair_round) FROM jobs WHERE project_id = ? AND repair_round > 0 AND rowid > ?",
+            (project_id, last_user))
+        return int(used or 0)
+
+    def request_repair(self, project_id: str, type: str, params: Optional[dict[str, Any]] = None,
+                       *, requested_by: str = "orchestrator") -> Optional[Job]:
+        """Dispatch an automatic repair job, or refuse. The RUNNER numbers the
+        round - whatever the caller put in `params` is discarded - and refuses
+        once `repair_max_rounds` is reached, however often it is asked. A
+        refusal is recorded; the caller must escalate."""
+        cap = get_settings().repair_max_rounds
+        spec = get_spec(type)
+        project = self.projects.get(project_id)
+        clean = {k: v for k, v in (params or {}).items() if k not in ("repair_round", "max_rounds")}
+        next_round = self.repair_rounds_used(project_id) + 1
+        if next_round > cap:
+            try:
+                self.jobs.add_event(project_id, type, "refused",
+                                    f"automatic repair refused: {cap} of {cap} round(s) already used",
+                                    event_type="repair.limit_reached", severity="warning", producer="jobs.runner",
+                                    correlation_id=getattr(project, "correlation_id", "") or "",
+                                    payload={"requested_by": requested_by, "cap": cap, "job_type": type})
+            except Exception:                              # noqa: BLE001
+                log.warning("repair.limit_reached event not recorded")
+            return None
+        job = self.jobs.create(
+            project_id=project_id, type=type, lane=self._lane_for(spec), params=clean,
+            max_attempts=spec.max_attempts, created_by=requested_by,
+            correlation_id=getattr(project, "correlation_id", "") or "", repair_round=next_round)
+        self._publish(job, "queued", f"repair round {next_round} of {cap}",
+                      payload={"lane": str(job.lane.value), "created_by": requested_by,
+                               "repair_round": next_round, "max_rounds": cap})
+        self.projects.set_stage(project_id, ProjectStage.REPAIRING)
         self._submit(job.job_id, job.lane)
         return job
 
@@ -233,7 +313,8 @@ class JobRunner:
         )
         ctx = JobContext(job, project, self.jobs, self.projects)
         self.jobs.update(job_id, log_path=str(ctx.log_path))
-        ctx.emit(job.type, f"attempt {attempt}/{job.max_attempts}", status="started")
+        self._publish(job, "started", f"attempt {attempt}/{job.max_attempts}",
+                      payload={"checkpoint": job.checkpoint})
         if spec.stage_running is not None:
             self.projects.set_stage(job.project_id, spec.stage_running)
 
@@ -261,35 +342,77 @@ class JobRunner:
                    if isinstance(result, dict) and k in result},
             })
             self.jobs.update(job_id, status=JobStatus.SUCCEEDED, result=result, finished_at=_now())
-            self.jobs.add_event(
-                job.project_id, job.type, "succeeded", job_id=job_id, duration_ms=duration_ms
-            )
+            self._publish(job, "succeeded", duration_ms=duration_ms, payload={
+                k: result[k] for k in ("scene_id", "scene_version")
+                if isinstance(result, dict) and k in result})
             if spec.stage_done is not None:
                 self.projects.set_stage(job.project_id, spec.stage_done)
         except Exception as exc:
             duration_ms = int((time.monotonic() - t0) * 1000)
             error = f"{type(exc).__name__}: {exc}"
+            # P1-VALIDATOR-003: every job failure names its category.
+            try:
+                from ..supervisor.classify import from_exception
+
+                failure = from_exception(exc, job_type=job.type).as_payload()
+            except Exception:                              # noqa: BLE001
+                failure = {}
             ctx.log.error("attempt %d failed: %s\n%s", attempt, error, traceback.format_exc())
             log.error("job.failed project=%s job=%s type=%s attempt=%d/%d ms=%d reason=%s",
                       job.project_id, job_id, job.type, attempt, job.max_attempts,
                       duration_ms, error)
             if attempt < job.max_attempts and not self._stopping.is_set():
                 self.jobs.update(job_id, status=JobStatus.RETRYING, error=error)
-                self.jobs.add_event(
-                    job.project_id, job.type, "retrying",
+                self._publish(
+                    job, "retrying",
                     f"{error} — retry {attempt + 1}/{job.max_attempts} from checkpoint "
                     f"'{ctx.job.checkpoint or 'none'}'",
-                    job_id=job_id, duration_ms=duration_ms,
+                    duration_ms=duration_ms,
+                    payload={"error": error, "checkpoint": ctx.job.checkpoint, "next_attempt": attempt + 1, **failure},
                 )
                 self._schedule_retry(job_id, job.lane, self.retry_delay * attempt)
             else:
                 self.jobs.update(job_id, status=JobStatus.FAILED, error=error, finished_at=_now())
-                self.jobs.add_event(
-                    job.project_id, job.type, "failed", error, job_id=job_id, duration_ms=duration_ms
-                )
+                self._publish(job, "failed", error, duration_ms=duration_ms,
+                              payload={"error": error, "project_stage": ProjectStage.FAILED.value, **failure})
                 self.projects.set_stage(job.project_id, ProjectStage.FAILED)
         finally:
             ctx.close()
+            job_now = self.jobs.get(job_id)
+            if job_now.is_terminal:
+                self._supervise(job_now.project_id, job_now.type, job_now.status, job_now)
+
+    def _supervise(self, project_id: str, job_type: str = "", status: Any = None, job: Optional[Job] = None) -> None:
+        """P1-WATCHER-001: the Watcher looks at the stream after a job ends.
+        Advisory (design.md §21.6): it cannot fail, delay-fail or alter the job
+        it follows, and SUPERVISOR_ENABLED=false removes it entirely."""
+        if not get_settings().supervisor_enabled:
+            return
+        try:
+            from ..supervisor.watcher import watch_project
+
+            found = watch_project(project_id, new_only=True)
+            # P1-VALIDATOR-002: after a plan or a build has produced something
+            # to verify. Independent of the Watcher: it reads artifacts, not events.
+            if job_type in ("scene_plan", "build", "repair_scene", "check_scene", "verify") and status == JobStatus.SUCCEEDED:
+                from ..supervisor.validator import validate_project
+
+                verdicts = validate_project(project_id)
+                if verdicts:
+                    log.info("supervisor.validator", extra={"verdicts": sorted({v.status for v in verdicts})})
+                # P1-ORCHESTRATOR-001: decide on the verdicts; the runner's own
+                # `request_repair` holds the bound on what it may dispatch.
+                if job is not None:
+                    from ..supervisor.orchestrator import orchestrate_project
+
+                    decided = orchestrate_project(project_id, job, verdicts, found)
+                    if decided and decided.get("decision") != "CONTINUE":
+                        log.info("supervisor.orchestrator", extra={"decision": decided.get("decision")})
+            if found:
+                log.info("supervisor.watcher", extra={"observations": len(found),
+                                                      "anomalies": sorted({o.anomaly_type for o in found})})
+        except Exception:                                  # noqa: BLE001
+            log.exception("supervisor failed; the job it followed is unaffected")
 
 
 _runner: Optional[JobRunner] = None

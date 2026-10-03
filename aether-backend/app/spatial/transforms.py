@@ -126,6 +126,16 @@ class Rigid3:
     confidence: Optional[float] = None
 
     def __post_init__(self) -> None:
+        # P1-ELEM-002: a rigid transform is a METRIC statement. A non-metric
+        # frame - a moodboard's fractions of a generated picture, a photo's
+        # pixels - has no rigid transform to anything, so one cannot be
+        # constructed (IMAGE -> CAMERA is a projection, never a Rigid3).
+        from app.spatial.coordinate_frames import FRAME_REGISTRY
+
+        for f in (self.source, self.target):
+            spec = FRAME_REGISTRY.get(f)
+            if spec is not None and not spec.metric:
+                raise FrameMismatchError(f"no rigid transform involves {f.value}: the frame is not metric")
         if not is_orthonormal(self.rotation, tol=1e-5):
             raise ValueError(f"Rigid3({self.source}->{self.target}) rotation is not a proper "
                              f"orthonormal matrix (det={determinant3(self.rotation):.6f}) - "

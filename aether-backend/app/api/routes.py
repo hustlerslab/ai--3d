@@ -39,7 +39,9 @@ from ..seed import build_seed_scene
 from ..spatial.validation import validate_scene
 from ..walkthrough import service as walkthrough_service
 
-router = APIRouter(prefix="/api")
+from . import contracts as C
+
+router = APIRouter(prefix="/api", route_class=C.ContractRoute)
 
 
 from .envelope import error_response, ok  # noqa: E402  (shared envelope)
@@ -97,7 +99,7 @@ def _runtime_status() -> dict:
     }
 
 
-@router.get("/health")
+@router.get("/health", response_model=C.Health)
 def health() -> dict:
     settings = get_settings()
     return {
@@ -139,7 +141,7 @@ class CreateSceneBody(BaseModel):
     from_seed: bool = True
 
 
-@router.get("/scenes")
+@router.get("/scenes", response_model=C.Envelope[list[C.SceneSummary]])
 def list_scenes() -> dict:
     store = get_store()
     summaries = []
@@ -161,7 +163,7 @@ def list_scenes() -> dict:
     return ok(summaries)
 
 
-@router.post("/scenes")
+@router.post("/scenes", response_model=C.SceneCreated)
 def create_scene(body: CreateSceneBody) -> dict:
     store = get_store()
     scene = build_seed_scene(body.project_id)
@@ -174,14 +176,14 @@ def create_scene(body: CreateSceneBody) -> dict:
     return {"success": True, "scene": scene.model_dump()}
 
 
-@router.get("/scenes/{scene_id}")
+@router.get("/scenes/{scene_id}", response_model=C.Envelope[C.SceneWithHistory])
 def get_scene(scene_id: str) -> dict:
     scene = get_store().load(scene_id)
     history = get_store().history_info(scene_id)
     return ok({"scene": scene.model_dump(), "history": history})
 
 
-@router.get("/scenes/{scene_id}/validate")
+@router.get("/scenes/{scene_id}/validate", response_model=C.Envelope[C.SceneValidation])
 def validate(scene_id: str) -> dict:
     scene = get_store().load(scene_id)
     violations = validate_scene(scene)
@@ -202,7 +204,7 @@ class PatchBody(BaseModel):
     source: str = "user"
 
 
-@router.post("/scenes/{scene_id}/patches")
+@router.post("/scenes/{scene_id}/patches", response_model=C.SceneCommitted)
 def post_patch(scene_id: str, body: PatchBody) -> dict:
     patch = Patch(
         scene_id=scene_id,
@@ -219,7 +221,7 @@ def post_patch(scene_id: str, body: PatchBody) -> dict:
     }
 
 
-@router.post("/scenes/{scene_id}/patches/preview")
+@router.post("/scenes/{scene_id}/patches/preview", response_model=C.PatchPreview)
 def post_patch_preview(scene_id: str, body: PatchBody) -> dict:
     patch = Patch(
         scene_id=scene_id,
@@ -235,7 +237,7 @@ def post_patch_preview(scene_id: str, body: PatchBody) -> dict:
     }
 
 
-@router.post("/scenes/{scene_id}/undo")
+@router.post("/scenes/{scene_id}/undo", response_model=C.SceneReverted)
 def undo(scene_id: str) -> dict:
     scene = get_store().undo(scene_id)
     return {
@@ -245,7 +247,7 @@ def undo(scene_id: str) -> dict:
     }
 
 
-@router.post("/scenes/{scene_id}/redo")
+@router.post("/scenes/{scene_id}/redo", response_model=C.SceneReverted)
 def redo(scene_id: str) -> dict:
     scene = get_store().redo(scene_id)
     return {
@@ -258,7 +260,7 @@ def redo(scene_id: str) -> dict:
 # ── Asset upgrade ───────────────────────────────────────────────────────
 
 
-@router.post("/scenes/{scene_id}/assets/upgrade")
+@router.post("/scenes/{scene_id}/assets/upgrade", response_model=C.AssetsUpgraded)
 def upgrade_scene_assets(scene_id: str) -> dict:
     """Swap every parametric object for the best real model of its type.
 
@@ -318,14 +320,14 @@ def upgrade_scene_assets(scene_id: str) -> dict:
 # ── Walkthrough ─────────────────────────────────────────────────────────
 
 
-@router.get("/scenes/{scene_id}/walkthrough/tour")
+@router.get("/scenes/{scene_id}/walkthrough/tour", response_model=C.Envelope[C.TourPath])
 def tour(scene_id: str, seconds_per_room: float = 6.0) -> dict:
     scene = get_store().load(scene_id)
     path = walkthrough_service.generate_tour(scene, seconds_per_room)
     return ok(path.model_dump())
 
 
-@router.get("/scenes/{scene_id}/walkthrough/spawn")
+@router.get("/scenes/{scene_id}/walkthrough/spawn", response_model=C.Envelope[C.Spawn])
 def spawn(scene_id: str) -> dict:
     scene = get_store().load(scene_id)
     position, look_at = walkthrough_service.spawn_point(scene)
@@ -337,7 +339,7 @@ class CheckPositionBody(BaseModel):
     z: float
 
 
-@router.post("/scenes/{scene_id}/walkthrough/check-position")
+@router.post("/scenes/{scene_id}/walkthrough/check-position", response_model=C.Envelope[C.PositionCheck])
 def check_position(scene_id: str, body: CheckPositionBody) -> dict:
     scene = get_store().load(scene_id)
     result = walkthrough_service.check_position(scene, body.x, body.z)
@@ -351,13 +353,13 @@ class SavedViewBody(BaseModel):
     mode: str = "orbit"
 
 
-@router.get("/scenes/{scene_id}/walkthrough/views")
+@router.get("/scenes/{scene_id}/walkthrough/views", response_model=C.Envelope[list[C.SavedView]])
 def list_views(scene_id: str) -> dict:
     scene = get_store().load(scene_id)
     return ok([v.model_dump() for v in scene.saved_views])
 
 
-@router.post("/scenes/{scene_id}/walkthrough/views")
+@router.post("/scenes/{scene_id}/walkthrough/views", response_model=C.ViewSaved)
 def save_view(scene_id: str, body: SavedViewBody) -> dict:
     store = get_store()
     scene = store.load(scene_id)
@@ -379,7 +381,7 @@ class ProposalBody(BaseModel):
     instruction: str
 
 
-@router.post("/scenes/{scene_id}/design/proposals")
+@router.post("/scenes/{scene_id}/design/proposals", response_model=C.ProposalCreated)
 async def create_proposal(scene_id: str, body: ProposalBody) -> dict:
     scene = get_store().load(scene_id)
     proposal = await design_service.create_proposal(scene, body.instruction)
@@ -387,7 +389,7 @@ async def create_proposal(scene_id: str, body: ProposalBody) -> dict:
     return {"success": True, **preview}
 
 
-@router.post("/scenes/{scene_id}/design/proposals/{proposal_id}/apply")
+@router.post("/scenes/{scene_id}/design/proposals/{proposal_id}/apply", response_model=C.SceneCommitted)
 def apply_proposal(scene_id: str, proposal_id: str) -> dict:
     proposal = design_service.get_proposal(proposal_id)
     if proposal is None or proposal.scene_id != scene_id:
@@ -411,7 +413,7 @@ def apply_proposal(scene_id: str, proposal_id: str) -> dict:
     }
 
 
-@router.post("/scenes/{scene_id}/design/proposals/{proposal_id}/reject")
+@router.post("/scenes/{scene_id}/design/proposals/{proposal_id}/reject", response_model=C.ProposalRejected)
 def reject_proposal(scene_id: str, proposal_id: str) -> dict:
     proposal = design_service.get_proposal(proposal_id)
     if proposal is None or proposal.scene_id != scene_id:
@@ -424,7 +426,7 @@ def reject_proposal(scene_id: str, proposal_id: str) -> dict:
 # ── Catalog ─────────────────────────────────────────────────────────────
 
 
-@router.get("/catalog")
+@router.get("/catalog", response_model=C.Envelope[list[C.CatalogItem]])
 def catalog(
     q: str = "",
     room_type: Optional[str] = None,
@@ -445,7 +447,7 @@ def catalog(
     return ok([i.model_dump() for i in items])
 
 
-@router.get("/catalog/{asset_id}")
+@router.get("/catalog/{asset_id}", response_model=C.Envelope[C.CatalogItem])
 def catalog_item(asset_id: str) -> dict:
     item = get_item(asset_id)
     if item is None:
@@ -456,12 +458,12 @@ def catalog_item(asset_id: str) -> dict:
 # ── Assets (plan §14–16) ────────────────────────────────────────────────
 
 
-@router.get("/assets")
+@router.get("/assets", response_model=C.Envelope[list[C.AssetRecord]])
 def list_assets() -> dict:
     return ok([r.model_dump() for r in get_registry().list()])
 
 
-@router.get("/assets/{asset_id}")
+@router.get("/assets/{asset_id}", response_model=C.Envelope[C.AssetRecord])
 def get_asset(asset_id: str) -> dict:
     record = get_registry().get(asset_id)
     if record is None:
@@ -469,7 +471,7 @@ def get_asset(asset_id: str) -> dict:
     return ok(record.model_dump())
 
 
-@router.post("/assets/upload")
+@router.post("/assets/upload", response_model=C.AssetWritten)
 async def upload_asset(
     file: UploadFile = File(...),
     name: str = Form(...),
@@ -478,7 +480,7 @@ async def upload_asset(
     expected_width: Optional[float] = Form(None),
     expected_height: Optional[float] = Form(None),
     expected_depth: Optional[float] = Form(None),
-    yaw_offset: float = Form(0.0),
+    yaw_offset: Optional[float] = Form(None),
     mount: str = Form("floor"),
     style_tags: str = Form(""),
     room_types: str = Form(""),
@@ -529,7 +531,7 @@ class PolyhavenIngestBody(BaseModel):
     asset_id: Optional[str] = None
     resolution: str = "1k"
     expected_dimensions: Optional[Vec3] = None
-    yaw_offset: float = 0.0
+    yaw_offset: Optional[float] = None
     mount: str = "floor"
     style_tags: list[str] = []
     material_tags: list[str] = []
@@ -538,7 +540,7 @@ class PolyhavenIngestBody(BaseModel):
     color: str = "#8a7862"
 
 
-@router.post("/assets/ingest/polyhaven")
+@router.post("/assets/ingest/polyhaven", response_model=C.AssetWritten)
 async def ingest_polyhaven(body: PolyhavenIngestBody) -> dict:
     """Download a CC0 model from Poly Haven and run it through the pipeline."""
     slug = body.asset_id or f"ph_{body.source_id.lower()}"
@@ -578,7 +580,7 @@ class RenormalizeBody(BaseModel):
     yaw_offset: Optional[float] = None
 
 
-@router.post("/assets/{asset_id}/renormalize")
+@router.post("/assets/{asset_id}/renormalize", response_model=C.AssetWritten)
 def renormalize_asset(asset_id: str, body: RenormalizeBody) -> dict:
     try:
         record = asset_pipeline.renormalize(asset_id, body.expected_dimensions, body.yaw_offset)
@@ -590,12 +592,12 @@ def renormalize_asset(asset_id: str, body: RenormalizeBody) -> dict:
 # ── Materials (plan §34) ────────────────────────────────────────────────
 
 
-@router.get("/materials")
+@router.get("/materials", response_model=C.Envelope[list[C.MaterialRecord]])
 def list_materials() -> dict:
     return ok([m.model_dump() for m in get_material_registry().list()])
 
 
-@router.get("/materials/{material_id}")
+@router.get("/materials/{material_id}", response_model=C.Envelope[C.MaterialRecord])
 def get_material(material_id: str) -> dict:
     record = get_material_registry().get(material_id)
     if record is None:
@@ -616,7 +618,7 @@ class PolyhavenMaterialBody(BaseModel):
     applies_to: Optional[list[str]] = None
 
 
-@router.post("/materials/ingest/polyhaven")
+@router.post("/materials/ingest/polyhaven", response_model=C.MaterialWritten)
 async def ingest_polyhaven_material(body: PolyhavenMaterialBody) -> dict:
     dest = get_material_registry().material_dir(body.material_id)
     async with polyhaven.make_client() as client:

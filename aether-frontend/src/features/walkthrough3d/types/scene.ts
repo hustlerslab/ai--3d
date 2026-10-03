@@ -50,6 +50,9 @@ export interface SceneObject {
   /** Hybrid pipeline: how the model is sourced and which style material dresses it. */
   source_strategy?: "local_asset" | "local_modified" | "procedural" | "generated";
   material_overrides?: Record<string, string>;
+  /** What the client's own reference said this piece looks like (backend
+   *  `ObjectVisual`). `material` is the reader's word, e.g. "linen". */
+  visual?: { material?: string; upholstery?: string; color_words?: string[] };
   dimensions: Vec3;
   color: string;
   source: string;
@@ -60,6 +63,10 @@ export interface SceneObject {
   name?: string;
   shape?: string | null;
   texture_ref?: string | null;
+  /** P1-ELEM-004: the client's own piece, kept - labelled "Yours". */
+  client_owned?: boolean;
+  element_id?: string | null;
+  instance_id?: string | null;
 }
 
 export interface SavedView {

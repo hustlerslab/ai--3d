@@ -2,7 +2,10 @@
 of these frames. Production code, migrated from research/spatial_architecture/ once the phase that built it PASSED its gate - see docs/production/research_to_production.md. See docs/spatial_architecture/coordinate_frames.md
 for the full audit and research behind this list.
 
-EIGHT FRAMES, NOT TWELVE. The brief's own list names four more (SCREEN,
+EIGHT FRAMES, NOT TWELVE: IMAGE, CAMERA, ROOM, WALL, OBJECT, ASSET,
+BLENDER_WORLD, MOODBOARD. (Until P1-ELEM-002 this said eight while the enum
+held seven; MOODBOARD is the eighth, and the only non-metric frame besides
+IMAGE.) The brief's own list names four more (SCREEN,
 DEPTH, FLOORPLAN, BUILDING) - none has a concrete reason to exist in this
 codebase: no code path produces or consumes a screen-space quantity distinct
 from IMAGE, no depth-frame quantity outlives the one function
@@ -32,6 +35,22 @@ class FrameId(str, Enum):
     OBJECT = "OBJECT"                  # 3D, per-SceneObject local
     ASSET = "ASSET"                    # 3D, per-catalog-mesh local
     BLENDER_WORLD = "BLENDER_WORLD"    # 3D, Blender's own world
+    MOODBOARD = "MOODBOARD"            # 2D, fractions of a GENERATED image - never metric
+
+
+#: The relation-frame name for "the room seen from above" (ROOM projected to
+#: XZ) - P1-ELEM-003. It used to be "floor_plan", the same string as the
+#: uploaded-document kind `InputKind.floor_plan`: one word, two unrelated
+#: meanings. Files written before the rename still say "floor_plan";
+#: `relation_frame()` reads them.
+ROOM_PLAN = "room_plan"
+LEGACY_RELATION_FRAMES: dict[str, str] = {"floor_plan": ROOM_PLAN}
+
+
+def relation_frame(value: object) -> object:
+    """Normalise a stored relation frame: the legacy name becomes the new
+    one; anything else passes through for the type to validate."""
+    return LEGACY_RELATION_FRAMES.get(value, value) if isinstance(value, str) else value
 
 
 @dataclass(frozen=True)
@@ -87,9 +106,10 @@ FRAME_REGISTRY: dict[FrameId, FrameSpec] = {
         frame_id=FrameId.ASSET, purpose="per-catalog-mesh local frame, as authored",
         parent=FrameId.OBJECT, units="m", handedness="right", up="+Y", right="+X", forward="-Z",
         metric=True, persistent=False, serializable=False,
-        transform_source="app/catalog/catalog.py + asset registry metadata "
-                         "(dimensions, no per-asset forward-axis correction field exists today "
-                         "- coordinate_frames.md's audit names this the one real open gap)"),
+        transform_source="asset registry NormalizationInfo.yaw_offset / yaw_source (P1-ASSET-005: "
+                         "measured or declared at ingest and baked into the normalized file; "
+                         "frame_graph.asset_to_object_transform turns it into the ASSET->OBJECT "
+                         "Rigid3, identity for records that predate the measurement)"),
     FrameId.BLENDER_WORLD: FrameSpec(
         frame_id=FrameId.BLENDER_WORLD, purpose="Blender's own world, Z-up",
         parent=FrameId.ROOM, units="m", handedness="right", up="+Z", right="+X", forward="+Y",
@@ -97,6 +117,18 @@ FRAME_REGISTRY: dict[FrameId, FrameSpec] = {
         transform_source="app/blender/manifest.py:to_blender_xyz/yaw_to_blender_rz "
                          "(already explicit, already documented, already round-trip tested "
                          "- confirmed by reading, not assumed)"),
+    # P1-ELEM-002. The approved moodboard is a GENERATED image: no camera
+    # took it, so it has no pose, no intrinsics and no depth, and there is no
+    # projection to invert. A bbox or position read from it is a fraction of
+    # the picture - ordering evidence, never metres. `parent=None` and NO
+    # edge in frame_graph.py: nothing can transform a moodboard value into
+    # ROOM, and `Rigid3` refuses to be built on a non-metric frame.
+    FrameId.MOODBOARD: FrameSpec(
+        frame_id=FrameId.MOODBOARD, purpose="fractions [0,1] of the approved (generated) moodboard image",
+        parent=None, units="fraction", handedness=None, up=None, right="+u", forward=None,
+        metric=False, persistent=True, serializable=True,
+        transform_source="none - a generated image has no camera pose; see MoodboardOccurrence "
+                         "(app/intelligence/schema.py), whose frame is pinned to MOODBOARD"),
 }
 
 
@@ -104,4 +136,5 @@ def frame_spec(frame_id: FrameId) -> FrameSpec:
     return FRAME_REGISTRY[frame_id]
 
 
-__all__ = ["FrameId", "FrameSpec", "FRAME_REGISTRY", "frame_spec"]
+__all__ = ["FrameId", "FrameSpec", "FRAME_REGISTRY", "frame_spec", "ROOM_PLAN", "LEGACY_RELATION_FRAMES",
+           "relation_frame"]

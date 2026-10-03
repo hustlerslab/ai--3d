@@ -1,0 +1,452 @@
+{
+  "project_id": "proj_12774fdadc",
+  "scene_version": 1,
+  "objects": 44,
+  "identity_source": {
+    "element": 0,
+    "planner": 44
+  },
+  "hard_violations": 0,
+  "rows": [
+    {
+      "object_id": "obj_b982da88e6",
+      "name": "bed",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_bed_queen",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_3dc2343b97",
+      "name": "kitchen counter",
+      "room_id": "kitchen",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_2dcb72046e",
+      "name": "sofa",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_sofa_3s",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_4852b101b8",
+      "name": "bed",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_bed_queen",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_79363f30d3",
+      "name": "wardrobe",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_wardrobe",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_85ee357b68",
+      "name": "fridge",
+      "room_id": "kitchen",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_6629d3b2aa",
+      "name": "tv unit",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_tv_unit",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_4c60117fca",
+      "name": "wardrobe",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_wardrobe",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_ce8c9ffad3",
+      "name": "bedside table",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_bedside",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_f7f08a9797",
+      "name": "bedside table",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_bedside",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_58b2e952b5",
+      "name": "coffee table",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_coffee_table",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_2e702d82c9",
+      "name": "bedside table",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_bedside",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_dc3eada149",
+      "name": "bedside table",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_bedside",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_c27fc845e5",
+      "name": "dining table",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_dining_table",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_086cfd2f21",
+      "name": "plant",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_plant",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_d474cda456",
+      "name": "rug",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_rug",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_46bda26f60",
+      "name": "rug",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_rug",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_de6cd4d3f5",
+      "name": "rug",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_rug",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_5607b850b4",
+      "name": "chair",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_chair",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_4699854851",
+      "name": "chair",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_chair",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_fad56f88a4",
+      "name": "chair",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_chair",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_73cb269c3e",
+      "name": "chair",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_chair",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_83199067ab",
+      "name": "dresser",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_9c8816625d",
+      "name": "armchair",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_armchair",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_a9c3af5920",
+      "name": "floor lamp",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_floor_lamp",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_72be2caa87",
+      "name": "table lamp",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_80ea19900d",
+      "name": "table lamp",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_6c371ed400",
+      "name": "table lamp",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_289d5224be",
+      "name": "table lamp",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_dde744cd32",
+      "name": "curtains",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_2d65cc13cb",
+      "name": "curtains",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_a9375e91c1",
+      "name": "curtains",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_5d5822eb82",
+      "name": "armchair",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_armchair",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_ca5ef2e548",
+      "name": "side table",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_577511bde9",
+      "name": "plant",
+      "room_id": "bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_plant",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_33989d592e",
+      "name": "plant",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": "cat_plant",
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_f7267bfb7d",
+      "name": "wall art",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_43764e4aa7",
+      "name": "wall art",
+      "room_id": "master_bedroom",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_c0d5ed97b2",
+      "name": "books",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_24080d0fcb",
+      "name": "pillows",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_b41d1c7980",
+      "name": "pillows",
+      "room_id": "living_room",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_1fba403222",
+      "name": "kitchen island",
+      "room_id": "kitchen",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_7d02c9d6d6",
+      "name": "bar stool",
+      "room_id": "kitchen",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    },
+    {
+      "object_id": "obj_2c125c7b93",
+      "name": "bar stool",
+      "room_id": "kitchen",
+      "identity_source": "planner",
+      "element_id": null,
+      "instance_id": null,
+      "asset_id": null,
+      "hard_violations": []
+    }
+  ]
+}

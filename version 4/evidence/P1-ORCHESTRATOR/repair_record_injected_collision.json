@@ -1,0 +1,35 @@
+{
+  "project_id": "proj_8d5e76e2b5",
+  "injected": {
+    "moved_onto": "obj_ba3a244ea5",
+    "moved": "obj_78c133c406"
+  },
+  "rounds": [
+    {
+      "round_id": "rr_0912b5700ad2",
+      "project_id": "proj_8d5e76e2b5",
+      "correlation_id": "cid_b211b8ada74b",
+      "round": 1,
+      "failure_category": "solver_failure",
+      "failure_evidence": [
+        "planning/spatial_check.json"
+      ],
+      "validation_ids": [
+        "val_c74537a07a596162"
+      ],
+      "validator_status": "FAIL",
+      "directive_id": "dir_d536270fe26e",
+      "decision": "RE_SOLVE",
+      "rationale": "the solver chose wrong among valid candidates: re-solve",
+      "decided_by": "policy",
+      "action_job_id": "job_158047d0ff",
+      "action_job_type": "repair_scene",
+      "scene_version_before": 2,
+      "scene_version_after": 3,
+      "second_validation": "appearance_unverified:REVIEW_REQUIRED, placement_intent_violated:WARNING",
+      "outcome": "resolved",
+      "created_at": "2026-09-25T17:03:30.838969+00:00",
+      "updated_at": "2026-09-25T17:03:30.985484+00:00"
+    }
+  ]
+}

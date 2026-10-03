@@ -1,0 +1,60 @@
+
+ RUN  v3.2.7 E:/Allura Interrior/Allura3D/ai--3d/aether-frontend
+
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.createProject calls POST /api/projects 5ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.listProjects calls GET /api/projects 1ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getProject calls GET /api/projects/{project_id} 1ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.updateProject calls PATCH /api/projects/{project_id} 1ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.listInputs calls GET /api/projects/{project_id}/inputs 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.deleteInput calls DELETE /api/projects/{project_id}/inputs/{input_id} 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.deleteProject calls DELETE /api/projects/{project_id} 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.uploadInputs calls POST /api/projects/{project_id}/inputs 1ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.analyze calls POST /api/projects/{project_id}/analyze 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.elementImages calls POST /api/projects/{project_id}/element-images 1ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.reviewElementImages calls PATCH /api/projects/{project_id}/element-images 1ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getElementImages calls GET /api/projects/{project_id}/element-images 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.repaintRoom calls POST /api/projects/{project_id}/moodboard/rooms/{room_id}/repaint 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.scenePlan calls POST /api/projects/{project_id}/scene-plan 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.resolveAssets calls POST /api/projects/{project_id}/assets/resolve 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.build calls POST /api/projects/{project_id}/build 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.preview calls POST /api/projects/{project_id}/preview 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.walkthrough calls POST /api/projects/{project_id}/walkthrough 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.film calls POST /api/projects/{project_id}/film 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getAnalysis calls GET /api/projects/{project_id}/analysis 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.patchAnalysis calls PATCH /api/projects/{project_id}/analysis 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getSceneSpec calls GET /api/projects/{project_id}/scene-spec 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getTradeoffs calls GET /api/projects/{project_id}/tradeoffs 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getBuild calls GET /api/projects/{project_id}/build 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getJob calls GET /api/jobs/{job_id} 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getEvents calls GET /api/projects/{project_id}/events 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getSceneReading calls GET /api/projects/{project_id}/scene-reading 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.reviewSceneReading calls PATCH /api/projects/{project_id}/scene-reading 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.getCredits calls GET /api/credits 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > projects.generateElements calls POST /api/projects/{project_id}/elements/generate 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.getHealth calls GET /api/health 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.listScenes calls GET /api/scenes 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.createScene calls POST /api/scenes 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.getScene calls GET /api/scenes/{scene_id} 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.commitPatch calls POST /api/scenes/{scene_id}/patches 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.undo calls POST /api/scenes/{scene_id}/undo 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.redo calls POST /api/scenes/{scene_id}/redo 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.getTour calls GET /api/scenes/{scene_id}/walkthrough/tour 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.getSpawn calls GET /api/scenes/{scene_id}/walkthrough/spawn 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.createProposal calls POST /api/scenes/{scene_id}/design/proposals 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.applyProposal calls POST /api/scenes/{scene_id}/design/proposals/{proposal_id}/apply 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.rejectProposal calls POST /api/scenes/{scene_id}/design/proposals/{proposal_id}/reject 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.getCatalog calls GET /api/catalog 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.upgradeSceneAssets calls POST /api/scenes/{scene_id}/assets/upgrade 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > viewer.getMaterials calls GET /api/materials 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > auth.signIn calls POST /api/auth/login 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > auth.register calls POST /api/auth/register 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > auth.currentUser calls GET /api/auth/session 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > auth.signOut calls POST /api/auth/logout 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > tour.getTour calls GET /api/projects/{project_id}/tour 0ms
+ ✓ src/generated/api-contract.test.ts > API contract (generated from the backend's OpenAPI) > covers every exported API function 1ms
+
+ Test Files  1 passed (1)
+      Tests  51 passed (51)
+   Start at  01:44:48
+   Duration  522ms (transform 79ms, setup 0ms, collect 123ms, tests 24ms, environment 0ms, prepare 141ms)
+

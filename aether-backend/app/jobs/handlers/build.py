@@ -89,13 +89,31 @@ def build(ctx: JobContext) -> dict[str, Any]:
         f"{'ok' if report.get('ok') else 'issues'} · {len(report.get('errors', []))} error(s), {len(report.get('warnings', []))} warning(s)",
         status="progress" if report.get("ok") else "warning",
     )
+    # P1-VALIDATOR-003: a failed or missing report, in the shared taxonomy.
+    from ...supervisor.classify import from_build_report
+
+    report_class = from_build_report(report)
+    if report_class is not None:
+        ctx.emit("build.validate", report_class.reason, status="warning", event_type="validation.failed",
+                 severity="error", evidence_refs=[REPORT] if report_path.exists() else None,
+                 payload=report_class.as_payload())
 
     outputs = {"blend": ctx.url(BLEND), "report": ctx.url(REPORT)}
     ctx.add_output("scene_blend", BLEND, {"scene_id": scene.scene_id, "scene_version": scene.version})
     ctx.add_output("validation_report", REPORT, {"ok": report.get("ok")})
+    objects = [o for o in manifest.get("objects", [])]
+    entity_ids = sorted({i for o in objects for i in (o.get("id"), o.get("element_id"), o.get("instance_id"),
+                                                       (o.get("asset") or {}).get("asset_id")) if i})
     if ctx.path(PREVIEW).exists():
         outputs["preview"] = ctx.url(PREVIEW)
         ctx.add_output("build_preview", PREVIEW, {"profile": profile})
+        # Severity is the emitter's call: a render the build's own validation
+        # flagged is still a render, but not one to show a client unexamined.
+        ctx.emit("build.render", f"preview rendered ({profile}) · scene v{scene.version}",
+                 event_type="render.generated", severity="info" if report.get("ok") else "warning",
+                 entity_ids=entity_ids, evidence_refs=[PREVIEW, REPORT, MANIFEST],
+                 payload={"scene_id": scene.scene_id, "scene_version": scene.version, "profile": profile,
+                          "validation_ok": bool(report.get("ok")), "reused": bool(result.get("reused"))})
 
     return {
         "scene_id": scene.scene_id,

@@ -179,11 +179,23 @@ class Settings(BaseSettings):
 
     provider_fallback_to_mock: bool = True
 
+    # ── Web model compression (P2-VIEWER-002) ───────────────────
+    # The gltf-transform CLI that Draco-compresses the viewer's copy of each
+    # model. Empty = the pinned copy in aether-backend/tools (`npm ci` there),
+    # then PATH. Not found = the web copy ships uncompressed, never an error.
+    gltf_transform_path: str = ""
+
     # ── Blender (hybrid local pipeline) ─────────────────────────
     # Path to the blender executable (portable build). Empty = not configured;
     # render-lane jobs then fail fast with BLENDER_NOT_CONFIGURED.
     blender_path: str = ""
     blender_timeout_seconds: int = 1800
+    # P1-BLENDER-001: when True, a Cycles render that cannot find a GPU backend
+    # fails the job instead of silently rendering on CPU. Off by default so a
+    # machine without a discrete GPU keeps rendering (slower, but working);
+    # a render fleet sets this to catch a misconfigured node instead of just
+    # quietly running slow forever.
+    blender_require_gpu: bool = False
 
     # ── Job runner ──────────────────────────────────────────────
     # Two lanes: "ai" (network-bound agents) and "render" (owns the GPU).
@@ -191,6 +203,66 @@ class Settings(BaseSettings):
     jobs_render_workers: int = 1
     jobs_retry_delay_seconds: float = 2.0
     jobs_default_max_attempts: int = 3
+
+    # ── Supervisor (design.md §21) ──────────────────────────────
+    # Advisory and outside the data path: false switches the Watcher off and the
+    # pipeline behaves exactly as without it (the Phase 4 gate).
+    supervisor_enabled: bool = True
+    # design.md §10: 90 d of Watcher detail, then aggregates. [UNKNOWN] in the
+    # design ("set from storage cost"); 90 is its stated starting point.
+    watcher_retention_days: int = 90
+    # A job with more retries than this inside one run is a retry storm.
+    watcher_retry_threshold: int = 2
+    # A job started this long ago with no terminal event is missing one.
+    watcher_stale_job_seconds: int = 3600
+    # Latency outlier: beyond mean + k*sd of the stage's history, once the
+    # history holds at least n samples. Below n it is not a statistic.
+    watcher_latency_sigma: float = 3.0
+    watcher_latency_min_samples: int = 5
+    # P1-ORCHESTRATOR-001 / P1-REPAIR-001. The Orchestrator acts on FAIL
+    # verdicts; the RUNNER holds the bound on how many automatic repair rounds
+    # one user action can trigger. 0 = no automatic repair; escalation still
+    # works (the documented rollback).
+    orchestrator_enabled: bool = True
+    repair_max_rounds: int = 2
+
+    # ── Supervisor model roles (P1-MM-001, design.md §21.4) ─────
+    # One block per role, independent of INTELLIGENCE_PROVIDER and of each
+    # other. provider = anthropic | gemini | ollama | mock | none. "none" (the
+    # default) means the role runs rules-only: no model is called and nothing
+    # is spent until a deployment chooses a model for it. model "" = that
+    # provider's configured default (ANTHROPIC_MODEL, GEMINI_MODEL, ...).
+    # ALLOW_FALLBACK defaults to FALSE for every role: a verifier that quietly
+    # falls back to a mock produces fabricated evidence (§21.2).
+    watcher_provider: str = "none"
+    watcher_model: str = ""
+    watcher_temperature: float = 0.2
+    watcher_max_tokens: int = 2000
+    watcher_timeout_seconds: int = 60
+    watcher_max_attempts: int = 2
+    watcher_allow_fallback: bool = False
+    watcher_output_schema: str = "watcher_narration@1"
+    watcher_memory_scope: str = "watcher_memory"
+
+    validator_provider: str = "none"
+    validator_model: str = ""
+    validator_temperature: float = 0.0
+    validator_max_tokens: int = 4000
+    validator_timeout_seconds: int = 120
+    validator_max_attempts: int = 2
+    validator_allow_fallback: bool = False
+    validator_output_schema: str = "validation_result@1"
+    validator_memory_scope: str = "validator_memory"
+
+    orchestrator_provider: str = "none"
+    orchestrator_model: str = ""
+    orchestrator_temperature: float = 0.0
+    orchestrator_max_tokens: int = 2000
+    orchestrator_timeout_seconds: int = 60
+    orchestrator_max_attempts: int = 2
+    orchestrator_allow_fallback: bool = False
+    orchestrator_output_schema: str = "directive@1"
+    orchestrator_memory_scope: str = "orchestrator_memory"
 
     @property
     def cors_origins(self) -> list[str]:

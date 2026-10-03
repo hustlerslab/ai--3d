@@ -16,14 +16,28 @@ Geometry is left exactly as it is: 30 k triangles is about 1 MB and was never
 the problem. Only the images are resized, and only in this copy. The full-size
 model stays untouched for the Blender walkthrough, which renders once on the
 GPU and does not care.
+
+P2-VIEWER-002 then Draco-compresses this copy's geometry (KHR_draco_mesh_
+compression) with the pinned gltf-transform CLI. That shrinks the download,
+not the GPU memory: the browser decodes it back to the same triangles. The
+viewer decodes with three.js's own decoder, served from /draco/ by the app
+itself. Blender still reads only the uncompressed normalized copy, so none of
+this can reach a render. Compression is lossy by quantization - positions to
+14 bits, which is 0.12 mm across a 2 m sofa - and never fatal: without the
+tool, or when it fails, or when it would make the file bigger, the copy
+ships uncompressed and says why.
 """
 from __future__ import annotations
 
 import io
 import logging
+import os
+import shutil
+import subprocess
 from pathlib import Path
 from typing import Optional
 
+from ..core.config import get_settings
 from . import gltf
 
 try:
@@ -41,6 +55,17 @@ MIPMAP_OVERHEAD = 4 / 3
 
 WEB_MAX_TEXTURE_PX = 1024
 JPEG_QUALITY = 88
+
+DRACO_EXTENSION = "KHR_draco_mesh_compression"
+# Bits per attribute. 14 for position keeps a 2 m piece within 0.12 mm; the
+# rest are gltf-transform's (and Draco's) defaults, written out so a tool
+# upgrade cannot quietly change what the viewer is sent.
+DRACO_ARGS = ("--method", "edgebreaker", "--quantize-position", "14",
+              "--quantize-normal", "10", "--quantize-texcoord", "12",
+              "--quantize-color", "8", "--quantize-generic", "12")
+DRACO_TIMEOUT_SECONDS = 120
+
+_TOOLS_BIN = Path(__file__).resolve().parents[2] / "tools" / "node_modules" / ".bin"
 
 
 def vram_bytes(width: int, height: int, maps: int = 1) -> int:
@@ -147,8 +172,62 @@ def _prune_buffer_views(j: dict) -> int:
     return len(views) - len(keep)
 
 
+def gltf_transform_command() -> Optional[str]:
+    """The gltf-transform executable: configured, else pinned in tools/, else PATH."""
+    configured = get_settings().gltf_transform_path
+    if configured:
+        return configured if Path(configured).is_file() else None
+    pinned = _TOOLS_BIN / ("gltf-transform.cmd" if os.name == "nt" else "gltf-transform")
+    if pinned.is_file():
+        return str(pinned)
+    return shutil.which("gltf-transform")
+
+
+def is_draco(path: Path) -> bool:
+    """Whether this model's geometry is already Draco-compressed."""
+    try:
+        return DRACO_EXTENSION in gltf.load(path).json.get("extensionsUsed", [])
+    except Exception:                                      # noqa: BLE001
+        return False
+
+
+def compress_geometry(path: Path) -> tuple[bool, str]:
+    """Draco-compress `path` in place. (compressed, why-not).
+
+    The file is replaced only by a result that loads, declares the extension,
+    and is smaller - a tiny model can grow, and a bigger copy is never kept.
+    """
+    tool = gltf_transform_command()
+    if not tool:
+        return False, "gltf-transform not installed (npm ci in aether-backend/tools)"
+    tmp = path.with_name(path.stem + ".draco.tmp.glb")
+    try:
+        run = subprocess.run([tool, "draco", str(path), str(tmp), *DRACO_ARGS],
+                             capture_output=True, text=True, encoding="utf-8", errors="replace",
+                             timeout=DRACO_TIMEOUT_SECONDS,
+                             shell=False)
+        if run.returncode != 0 or not tmp.is_file():
+            tail = (run.stderr or run.stdout).strip().splitlines()[-1:] or ["no output"]
+            return False, f"gltf-transform failed: {tail[0][:200]}"
+        if not is_draco(tmp):
+            return False, "no triangle mesh to compress"
+        if tmp.stat().st_size >= path.stat().st_size:
+            return False, "compression would not make it smaller"
+        os.replace(tmp, path)
+        return True, ""
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return False, f"gltf-transform could not run: {exc}"[:240]
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
+def worth_keeping(stats: dict) -> bool:
+    """A web copy is kept when it differs from the full model in any way that helps."""
+    return bool(stats.get("images_resized") or stats.get("geometry_compressed"))
+
+
 def build(source: Path, dest: Path, *, max_px: int = WEB_MAX_TEXTURE_PX,
-          quality: int = JPEG_QUALITY) -> dict:
+          quality: int = JPEG_QUALITY, compress: bool = True) -> dict:
     """Write a viewer-sized copy of `source` to `dest`. Returns what it cost.
 
     Never raises on a texture it cannot read: that image is copied through
@@ -192,9 +271,16 @@ def build(source: Path, dest: Path, *, max_px: int = WEB_MAX_TEXTURE_PX,
     pruned = _prune_buffer_views(j)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(gltf.pack_glb(doc))
+    resized_bytes = dest.stat().st_size
+    compressed, why_not = compress_geometry(dest) if compress else (False, "not requested")
+    if not compressed:
+        log.info("%s: geometry left uncompressed - %s", dest.name, why_not)
     return {
         "views_pruned": pruned,
         "source_bytes": source.stat().st_size,
+        "resized_bytes": resized_bytes,
+        "geometry_compressed": compressed,
+        "geometry_note": why_not,
         "dest_bytes": dest.stat().st_size,
         "images_resized": resized,
         "images_kept": kept,
@@ -204,4 +290,5 @@ def build(source: Path, dest: Path, *, max_px: int = WEB_MAX_TEXTURE_PX,
     }
 
 
-__all__ = ["build", "vram_bytes", "WEB_MAX_TEXTURE_PX"]
+__all__ = ["build", "compress_geometry", "gltf_transform_command", "is_draco",
+           "vram_bytes", "worth_keeping", "WEB_MAX_TEXTURE_PX"]

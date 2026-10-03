@@ -29,9 +29,10 @@ from ..projects import (
 from ..projects.layout import CHECKPOINTS, ensure_layout, file_url, project_dir
 from ..projects.store import VerticalLocked
 from .envelope import ok
+from . import contracts as C
 
-router = APIRouter(prefix="/api", tags=["projects"])
-files_router = APIRouter(tags=["files"])
+router = APIRouter(prefix="/api", tags=["projects"], route_class=C.ContractRoute)
+files_router = APIRouter(tags=["files"], route_class=C.ContractRoute)
 
 IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"}
 MAX_IMAGE_BYTES = 25 * 1024 * 1024
@@ -92,7 +93,7 @@ class EnqueueJobBody(BaseModel):
 # ── Projects ────────────────────────────────────────────────────────────
 
 
-@router.get("/projects")
+@router.get("/projects", response_model=C.Envelope[list[C.ProjectRecord]])
 def list_projects(request: Request) -> dict:
     """Only what this caller may see.
 
@@ -111,7 +112,7 @@ def list_projects(request: Request) -> dict:
     return ok([p.model_dump(mode="json") for p in projects])
 
 
-@router.post("/projects")
+@router.post("/projects", response_model=C.ProjectWritten)
 def create_project(body: CreateProjectBody, request: Request) -> dict:
     refusal = _brief_refusal(body.description)
     if refusal is not None:
@@ -130,13 +131,14 @@ def create_project(body: CreateProjectBody, request: Request) -> dict:
     from ..auth.deps import require_principal
 
     set_owner(project.project_id, require_principal(request).user_id)
-    get_job_store().add_event(project.project_id, "project", "created", f"project '{project.name}' created")
+    get_job_store().add_event(project.project_id, "project", "created", f"project '{project.name}' created",
+                              event_type="project.created", severity="info", producer="api.projects")
     if body.description:
         _write_description(project.project_id, body.description)
     return {"success": True, "project": project.model_dump(mode="json")}
 
 
-@router.get("/projects/{project_id}")
+@router.get("/projects/{project_id}", response_model=C.Envelope[C.ProjectDetail])
 def get_project(project_id: str) -> dict:
     store = get_project_store()
     project = store.get(project_id)
@@ -152,7 +154,7 @@ def get_project(project_id: str) -> dict:
     )
 
 
-@router.patch("/projects/{project_id}")
+@router.patch("/projects/{project_id}", response_model=C.ProjectWritten)
 def update_project(project_id: str, body: UpdateProjectBody) -> dict:
     store = get_project_store()
     refusal = _brief_refusal(body.description)
@@ -184,14 +186,14 @@ def update_project(project_id: str, body: UpdateProjectBody) -> dict:
 # ── Inputs ──────────────────────────────────────────────────────────────
 
 
-@router.get("/projects/{project_id}/inputs")
+@router.get("/projects/{project_id}/inputs", response_model=C.Envelope[list[C.InputRecord]])
 def list_inputs(project_id: str) -> dict:
     store = get_project_store()
     store.get(project_id)
     return ok([i.model_dump(mode="json") for i in store.list_inputs(project_id)])
 
 
-@router.delete("/projects/{project_id}")
+@router.delete("/projects/{project_id}", response_model=C.Envelope[C.ProjectDeleted])
 def delete_project(project_id: str) -> dict:
     """Delete a project, keeping the moodboard renders and generated meshes.
 
@@ -218,7 +220,7 @@ def delete_project(project_id: str) -> dict:
     return ok({"deleted": project_id, "kept": manifest["kept"]})
 
 
-@router.delete("/projects/{project_id}/inputs/{input_id}")
+@router.delete("/projects/{project_id}/inputs/{input_id}", response_model=C.Envelope[C.InputDeleted])
 def delete_input(project_id: str, input_id: str) -> dict:
     """Remove one uploaded file. Without this the 12-reference cap is a dead
     end: a user who uploads the wrong photos has no way to make room."""
@@ -248,7 +250,7 @@ def delete_input(project_id: str, input_id: str) -> dict:
     return ok({"input_id": input_id, "kind": record.kind.value, "file_removed": removed})
 
 
-@router.post("/projects/{project_id}/inputs")
+@router.post("/projects/{project_id}/inputs", response_model=C.InputsAdded)
 async def add_inputs(
     project_id: str,
     description: Optional[str] = Form(None),
@@ -334,9 +336,13 @@ async def add_inputs(
 
     if created and project.stage == ProjectStage.CREATED:
         project = store.set_stage(project_id, ProjectStage.INPUT_RECEIVED)
-        get_job_store().add_event(project_id, "inputs", "received", f"{len(created)} input(s) stored")
+        get_job_store().add_event(project_id, "inputs", "received", f"{len(created)} input(s) stored",
+                                  event_type="input.received", severity="info", producer="api.projects",
+                                  entity_ids=[i.input_id for i in created], payload={"count": len(created)})
     elif created:
-        get_job_store().add_event(project_id, "inputs", "updated", f"{len(created)} input(s) added")
+        get_job_store().add_event(project_id, "inputs", "updated", f"{len(created)} input(s) added",
+                                  event_type="input.received", severity="info", producer="api.projects",
+                                  entity_ids=[i.input_id for i in created], payload={"count": len(created)})
 
     return {
         "success": True,
@@ -388,7 +394,7 @@ class AnalysisPatchBody(BaseModel):
     item_roles: dict[str, str] = {}
 
 
-@router.post("/projects/{project_id}/analyze")
+@router.post("/projects/{project_id}/analyze", response_model=C.JobAccepted)
 def analyze_project(project_id: str, body: AnalyzeBody = AnalyzeBody()) -> dict:
     from ..intelligence import build_input_bundle
 
@@ -405,7 +411,7 @@ class ElementImagesBody(BaseModel):
     force: bool = False
 
 
-@router.post("/projects/{project_id}/element-images")
+@router.post("/projects/{project_id}/element-images", response_model=C.JobAccepted)
 def element_images_project(project_id: str, body: ElementImagesBody = ElementImagesBody()) -> dict:
     """One isolated picture per canonical piece, decided from the photos and
     the brief before any room is painted. Local GPU, no per-image cost."""
@@ -417,7 +423,7 @@ def element_images_project(project_id: str, body: ElementImagesBody = ElementIma
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
-@router.get("/projects/{project_id}/element-images")
+@router.get("/projects/{project_id}/element-images", response_model=C.Envelope[C.ElementImages])
 def get_element_images(project_id: str) -> dict:
     get_project_store().get(project_id)
     root = project_dir(project_id)
@@ -440,7 +446,7 @@ class ElementDecisionsBody(BaseModel):
     decisions: dict[str, bool]
 
 
-@router.patch("/projects/{project_id}/element-images")
+@router.patch("/projects/{project_id}/element-images", response_model=C.Envelope[C.ElementImages])
 def review_element_images(project_id: str, body: ElementDecisionsBody) -> dict:
     from ..intelligence.schema import ElementImageSet
 
@@ -476,7 +482,7 @@ def _element_images_payload(project_id: str, data: dict) -> dict:
     return data
 
 
-@router.post("/projects/{project_id}/moodboard/rooms/{room_id}/repaint")
+@router.post("/projects/{project_id}/moodboard/rooms/{room_id}/repaint", response_model=C.JobAccepted)
 def repaint_room(project_id: str, room_id: str) -> dict:
     """Redraw one room's moodboard image on a fresh seed.
 
@@ -501,7 +507,7 @@ def repaint_room(project_id: str, room_id: str) -> dict:
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
-@router.get("/projects/{project_id}/analysis")
+@router.get("/projects/{project_id}/analysis", response_model=C.Envelope[C.Analysis])
 def get_analysis(project_id: str) -> dict:
     store = get_project_store()
     store.get(project_id)
@@ -525,7 +531,7 @@ def get_analysis(project_id: str) -> dict:
     )
 
 
-@router.patch("/projects/{project_id}/analysis")
+@router.patch("/projects/{project_id}/analysis", response_model=C.AnalysisWritten)
 def patch_analysis(project_id: str, body: AnalysisPatchBody) -> dict:
     """User corrections from the Analysis Review screen: room sizes, intent,
     constraints, style. Writes a new version; the original stays in history."""
@@ -652,9 +658,13 @@ class ElementReviewBody(BaseModel):
     """
 
     decisions: dict[str, bool] = {}
+    #: P1-ELEM-004 - {element_id: true|false}: "this is my own piece, keep it".
+    #: A structured control, not brief phrasing: a kept piece is placed, never
+    #: generated, and labelled "yours".
+    keep: dict[str, bool] = {}
 
 
-@router.get("/projects/{project_id}/scene-reading")
+@router.get("/projects/{project_id}/scene-reading", response_model=C.Envelope[C.SceneReadingView])
 def get_scene_reading(project_id: str) -> dict:
     """The elements read out of the approved moodboard, for human review.
 
@@ -676,7 +686,7 @@ def get_scene_reading(project_id: str) -> dict:
     return ok(_reading_payload(project_id, data))
 
 
-@router.patch("/projects/{project_id}/scene-reading")
+@router.patch("/projects/{project_id}/scene-reading", response_model=C.Envelope[C.SceneReadingView])
 def review_scene_reading(project_id: str, body: ElementReviewBody) -> dict:
     """Record the human's confirm/reject per element, and re-resolve identity.
 
@@ -705,7 +715,7 @@ def review_scene_reading(project_id: str, body: ElementReviewBody) -> dict:
         return _error("SCENE_READING_NOT_READY", "Nothing to review yet.", 404)
     reading = SceneReading.model_validate(data)
     known = {e.element_id for e in reading.elements}
-    unknown = sorted(set(body.decisions) - known)
+    unknown = sorted((set(body.decisions) | set(body.keep)) - known)
     if unknown:
         # Loudly, not quietly: a decision landing on nothing means the client is
         # looking at a reading that has since been re-read, and silently
@@ -716,6 +726,13 @@ def review_scene_reading(project_id: str, body: ElementReviewBody) -> dict:
     for el in reading.elements:
         if el.element_id in body.decisions:
             el.approved = bool(body.decisions[el.element_id])
+        # P1-ELEM-004: "keep this one - it's mine". Keeping implies approval:
+        # the piece is in the room by the client's own word; generation skips
+        # it because there is nothing to buy.
+        if el.element_id in body.keep:
+            el.client_owned = bool(body.keep[el.element_id])
+            if el.client_owned:
+                el.approved = True
 
     # Only when the reading already carried resolved identity. A reading written
     # before `resolve_elements()` existed has no definitions, and minting a set
@@ -770,9 +787,12 @@ def _review_summary(data: dict, project_id: str = "") -> dict:
     # Recomputed, not read from the stored field: a reading written before the
     # field existed still gets a count, and a reading the human has just edited
     # gets the count that reflects the edit rather than the one from the read.
+    from ..intelligence.element_states import assumptions, element_states, inventory_counts
+
     parsed = SceneReading.model_validate(data)
     inventory = element_inventory(parsed)
     definitions, instances = resolve_elements(parsed)
+    states = element_states(parsed, definitions, instances)
 
     els = [e for e in data.get("elements", []) if e.get("crop_ref")]
     approved = [e for e in els if e.get("approved") is True]
@@ -813,10 +833,18 @@ def _review_summary(data: dict, project_id: str = "") -> dict:
         # stools as three instances of one piece because these say so; it
         # never counts or groups anything itself.
         "instances": [i.model_dump() for i in instances],
+        # P1-FRONTEND-001: the state of every row, the numbers the screen
+        # prints, and every estimate the design rests on - decided here so the
+        # screen displays them and never works them out.
+        "element_states": states,
+        "counts": inventory_counts(parsed, definitions, instances, states),
+        "assumptions": assumptions(parsed, states, definitions,
+                                   _read(project_dir(project_id) / "analysis" / "design_analysis.json")
+                                   if project_id else None),
     }
 
 
-@router.post("/projects/{project_id}/scene-plan")
+@router.post("/projects/{project_id}/scene-plan", response_model=C.JobAccepted)
 def scene_plan_project(project_id: str, body: ScenePlanBody = ScenePlanBody()) -> dict:
     get_project_store().get(project_id)
     root = project_dir(project_id)
@@ -833,7 +861,7 @@ class GenerateElementsBody(BaseModel):
     limit: Optional[int] = None
 
 
-@router.post("/projects/{project_id}/elements/generate")
+@router.post("/projects/{project_id}/elements/generate", response_model=C.ElementsGenerateAccepted)
 def generate_project_elements(project_id: str, body: GenerateElementsBody = GenerateElementsBody()) -> dict:
     """Turn the crops a human approved into meshes. This is the paid step.
 
@@ -859,7 +887,7 @@ def generate_project_elements(project_id: str, body: GenerateElementsBody = Gene
     return {"success": True, "job": job.model_dump(mode="json"), "summary": summary}
 
 
-@router.get("/credits")
+@router.get("/credits", response_model=C.Envelope[C.Credits])
 def get_credits() -> dict:
     """Remaining Meshy credits, for the screen that is about to spend them.
 
@@ -888,7 +916,7 @@ def get_credits() -> dict:
                    "credits_per_piece": _CREDITS_PER_PIECE})
 
 
-@router.post("/projects/{project_id}/assets/resolve")
+@router.post("/projects/{project_id}/assets/resolve", response_model=C.JobAccepted)
 def resolve_project_assets(project_id: str) -> dict:
     project = get_project_store().get(project_id)
     if not project.scene_ids:
@@ -897,7 +925,7 @@ def resolve_project_assets(project_id: str) -> dict:
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
-@router.get("/projects/{project_id}/scene-spec")
+@router.get("/projects/{project_id}/scene-spec", response_model=C.Envelope[C.SceneSpec])
 def get_scene_spec(project_id: str) -> dict:
     from ..scene.store import SceneNotFound, get_store
     from ..spatial.validation import validate_scene
@@ -938,7 +966,7 @@ def get_scene_spec(project_id: str) -> dict:
 # ── Provenance (P1-IDENTITY-005) ────────────────────────────────────────
 
 
-@router.get("/projects/{project_id}/provenance")
+@router.get("/projects/{project_id}/provenance", response_model=C.Envelope[C.ProvenanceCoverage])
 def get_provenance_coverage(project_id: str) -> dict:
     """How much of the committed scene traces back to a source photograph.
 
@@ -953,7 +981,7 @@ def get_provenance_coverage(project_id: str) -> dict:
     return ok(coverage(project_id))
 
 
-@router.get("/projects/{project_id}/provenance/{scene_object_id}")
+@router.get("/projects/{project_id}/provenance/{scene_object_id}", response_model=C.Envelope[C.ProvenanceChain])
 def get_provenance(project_id: str, scene_object_id: str) -> dict:
     """What caused this rendered object to exist — the whole chain, by query.
 
@@ -981,7 +1009,7 @@ class BuildBody(BaseModel):
     preview_profile: str = "preview"
 
 
-@router.post("/projects/{project_id}/build")
+@router.post("/projects/{project_id}/build", response_model=C.JobAccepted)
 def build_project(project_id: str, body: BuildBody = BuildBody()) -> dict:
     project = get_project_store().get(project_id)
     if not project.scene_ids:
@@ -994,7 +1022,7 @@ def build_project(project_id: str, body: BuildBody = BuildBody()) -> dict:
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
-@router.get("/projects/{project_id}/build")
+@router.get("/projects/{project_id}/build", response_model=C.Envelope[C.BuildView])
 def get_build(project_id: str) -> dict:
     get_project_store().get(project_id)
     root = project_dir(project_id)
@@ -1047,7 +1075,7 @@ def _render_ready(project_id: str):
     return None
 
 
-@router.post("/projects/{project_id}/preview")
+@router.post("/projects/{project_id}/preview", response_model=C.JobAccepted)
 def preview_project(project_id: str, body: PreviewBody = PreviewBody()) -> dict:
     err = _render_ready(project_id)
     if err is not None:
@@ -1056,7 +1084,7 @@ def preview_project(project_id: str, body: PreviewBody = PreviewBody()) -> dict:
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
-@router.post("/projects/{project_id}/walkthrough")
+@router.post("/projects/{project_id}/walkthrough", response_model=C.JobAccepted)
 def walkthrough_project(project_id: str, body: WalkthroughBody = WalkthroughBody()) -> dict:
     err = _render_ready(project_id)
     if err is not None:
@@ -1072,7 +1100,7 @@ class FilmBody(BaseModel):
     profile: str = "preview"
 
 
-@router.post("/projects/{project_id}/film")
+@router.post("/projects/{project_id}/film", response_model=C.JobAccepted)
 def film_project(project_id: str, body: FilmBody = FilmBody()) -> dict:
     err = _render_ready(project_id)
     if err is not None:
@@ -1081,7 +1109,7 @@ def film_project(project_id: str, body: FilmBody = FilmBody()) -> dict:
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
-@router.get("/projects/{project_id}/tour")
+@router.get("/projects/{project_id}/tour", response_model=C.Envelope[C.TourPackage])
 def get_tour(project_id: str) -> dict:
     """Read-only web package for the share page (/w/{projectId})."""
     get_project_store().get(project_id)
@@ -1111,7 +1139,7 @@ class ShareLinkBody(BaseModel):
     expires_in_days: Optional[int] = None
 
 
-@router.post("/projects/{project_id}/share")
+@router.post("/projects/{project_id}/share", response_model=C.Envelope[C.ShareLinkCreated])
 def create_share_link(project_id: str, body: ShareLinkBody, request: Request) -> dict:
     """Mint a link that shows this project's tour and nothing else.
 
@@ -1140,7 +1168,7 @@ def create_share_link(project_id: str, body: ShareLinkBody, request: Request) ->
     })
 
 
-@router.get("/projects/{project_id}/share")
+@router.get("/projects/{project_id}/share", response_model=C.Envelope[C.ShareLinks])
 def list_share_links(project_id: str) -> dict:
     """Every link ever minted for this project, including revoked ones.
 
@@ -1153,7 +1181,7 @@ def list_share_links(project_id: str) -> dict:
     return ok({"links": list_for_project(project_id)})
 
 
-@router.delete("/projects/{project_id}/share/{token_id}")
+@router.delete("/projects/{project_id}/share/{token_id}", response_model=C.Envelope[C.ShareLinkRevoked])
 def revoke_share_link(project_id: str, token_id: str) -> dict:
     """Break one link. Idempotent - revoking an already-dead link is not an
     error, because the caller's intent is already satisfied."""
@@ -1166,42 +1194,202 @@ def revoke_share_link(project_id: str, token_id: str) -> dict:
 # ── Jobs and events ─────────────────────────────────────────────────────
 
 
-@router.get("/jobs/types")
+@router.get("/jobs/types", response_model=C.Envelope[list[C.JobType]])
 def job_types() -> dict:
     return ok(known_types())
 
 
-@router.get("/jobs/{job_id}")
+@router.get("/jobs/{job_id}", response_model=C.Envelope[C.JobDetail])
 def get_job(job_id: str) -> dict:
     store = get_job_store()
     job = store.get(job_id)
     return ok({"job": job.model_dump(mode="json"), "events": [e.model_dump() for e in store.list_job_events(job_id)]})
 
 
-@router.get("/projects/{project_id}/jobs")
+@router.get("/projects/{project_id}/jobs", response_model=C.Envelope[list[C.Job]])
 def list_jobs(project_id: str) -> dict:
     get_project_store().get(project_id)
     return ok([j.model_dump(mode="json") for j in get_job_store().list_for_project(project_id)])
 
 
-@router.post("/projects/{project_id}/jobs")
+@router.post("/projects/{project_id}/jobs", response_model=C.JobAccepted)
 def enqueue_job(project_id: str, body: EnqueueJobBody) -> dict:
     job = get_runner().enqueue(project_id, body.type, body.params)
     return {"success": True, "job": job.model_dump(mode="json")}
 
 
-@router.get("/projects/{project_id}/events")
+@router.get("/projects/{project_id}/events", response_model=C.Envelope[C.EventPage])
 def list_events(project_id: str, after: int = 0, limit: int = 200) -> dict:
     get_project_store().get(project_id)
     events = get_job_store().list_events(project_id, after=after, limit=min(limit, 500))
     return ok({"events": [e.model_dump() for e in events], "last_id": events[-1].event_id if events else after})
 
 
-@router.get("/projects/{project_id}/outputs")
+# ── P1-SPATIAL-002: spatial trade-offs in plain language ───────────────────
+
+
+@router.get("/projects/{project_id}/tradeoffs", response_model=C.Envelope[C.Tradeoffs])
+def list_tradeoffs(project_id: str) -> dict:
+    """What the latest plan could not fit, as statements a person can act on,
+    each with at least two options. Built from the plan's own warnings; no
+    internal key or code appears in the words."""
+    return ok({"tradeoffs": tradeoff_statements(project_id)})
+
+
+def tradeoff_statements(project_id: str) -> list[dict]:
+    """The trade-offs as the route returns them - also read by the review
+    screen (app/review_surface.py), so both say the same thing."""
+    from ..planning.tradeoffs import explain, explain_violations
+
+    project = get_project_store().get(project_id)
+    job = get_job_store().latest_of_type(project_id, "scene_plan")
+    warnings = list((job.result or {}).get("warnings", [])) if job is not None else []
+    found = explain(warnings)
+    if project.scene_ids:
+        try:
+            from ..scene.store import get_store
+
+            found += explain_violations(get_store().load(project.scene_ids[-1]))
+        except Exception:                                      # noqa: BLE001
+            pass
+    return [t.public() for t in found]
+
+
+# ── Review surface (P1-FRONTEND-002) ────────────────────────────────────
+
+
+@router.get("/projects/{project_id}/review", response_model=C.Envelope[C.ReviewView])
+def get_review(project_id: str, request: Request) -> dict:
+    """Everything the review screen says, in plain words (app/review_surface.py)."""
+    from ..auth.deps import require_principal
+    from ..review_surface import review_view
+
+    get_project_store().get(project_id)
+    return ok(review_view(project_id, role=require_principal(request).role))
+
+
+# ── P1-HUMAN-001 / P1-ORCHESTRATOR-002: review queue and repair history ────
+
+
+@router.get("/projects/{project_id}/reviews", response_model=C.Envelope[C.ReviewItems])
+def list_reviews(project_id: str, request: Request, status: Optional[str] = None) -> dict:
+    """Review items routed to the caller's audience: a homeowner never sees
+    an operations item (a rendering defect is not theirs to fix)."""
+    from ..auth.deps import require_principal
+    from ..supervisor.review import ReviewQueue
+
+    get_project_store().get(project_id)
+    principal = require_principal(request)
+    return ok({"items": ReviewQueue().items(project_id, role=principal.role, status=status)})
+
+
+@router.post("/projects/{project_id}/reviews/{item_id}/decision", response_model=C.Envelope[C.ReviewDecided])
+def decide_review(project_id: str, item_id: str, request: Request, body: dict) -> Any:
+    from ..auth.deps import require_principal
+    from ..supervisor.review import ReviewDecisionIn, ReviewError, ReviewQueue
+    from .envelope import error_response
+
+    get_project_store().get(project_id)
+    principal = require_principal(request)
+    try:
+        decision = ReviewQueue().decide(project_id, item_id, principal, ReviewDecisionIn.model_validate(body))
+    except ValidationError as exc:
+        return error_response("INVALID_DECISION", str(exc.errors()[0].get("msg", exc)), 422)
+    except ReviewError as exc:
+        return error_response("REVIEW_REFUSED", str(exc), 409)
+    return ok({"decision": decision})
+
+
+@router.get("/projects/{project_id}/repairs", response_model=C.Envelope[C.RepairRounds])
+def list_repairs(project_id: str) -> dict:
+    """Every automatic repair round: the failure, the verdict, the decision
+    and why, the action, the scene version it produced, the second
+    validation, and the outcome."""
+    from ..supervisor.orchestrator import AuditTrail
+
+    get_project_store().get(project_id)
+    return ok({"rounds": AuditTrail(project_id).rounds()})
+
+
+@router.get("/projects/{project_id}/outputs", response_model=C.Envelope[C.Outputs])
 def list_outputs(project_id: str) -> dict:
     store = get_project_store()
     store.get(project_id)
     return ok({"outputs": store.list_outputs(project_id), "checkpoints": _checkpoints(project_id)})
+
+
+# ── Design versions (P1-FRONTEND-004) ───────────────────────────────────
+
+
+class SaveVersionBody(BaseModel):
+    label: str = ""
+    #: The person accepted this design. Recorded with the version; a version
+    #: is immutable, so acceptance is too.
+    accept: bool = False
+
+
+@router.get("/projects/{project_id}/versions", response_model=C.Envelope[C.DesignVersions])
+def list_design_versions(project_id: str) -> dict:
+    from ..projects import versions
+
+    get_project_store().get(project_id)
+    found, unsaved = versions.list_versions(project_id)
+    return ok({"versions": [v.model_dump() for v in found], "unsaved_changes": unsaved})
+
+
+@router.post("/projects/{project_id}/versions", response_model=C.Envelope[C.DesignVersionSaved])
+def save_design_version(project_id: str, body: SaveVersionBody, request: Request) -> dict:
+    from ..auth.deps import require_principal
+    from ..projects import versions
+
+    get_project_store().get(project_id)
+    try:
+        version = versions.save(project_id, label=body.label, accept=body.accept,
+                                created_by=require_principal(request).user_id)
+    except versions.NoScene:
+        return _error("SCENE_REQUIRED", "There is no design to save yet: plan the space first.", 409)
+    get_job_store().add_event(project_id, "versions", "saved",
+                              f"design version {version.number} saved" + (" (accepted)" if version.accepted else ""),
+                              event_type="design.version_saved", severity="info", producer="api.projects",
+                              entity_ids=[version.version_id],
+                              payload={"number": version.number, "accepted": version.accepted,
+                                       "content_sha256": version.content_sha256})
+    return ok({"version": version.model_dump()})
+
+
+@router.get("/projects/{project_id}/versions/{version_id}", response_model=C.Envelope[C.DesignVersionDetail])
+def get_design_version(project_id: str, version_id: str) -> dict:
+    from ..projects import versions
+
+    get_project_store().get(project_id)
+    try:
+        version, text = versions.get(project_id, version_id)
+    except versions.VersionNotFound:
+        return _error("VERSION_NOT_FOUND", "No such design version.", 404)
+    return ok({"version": version.model_dump(), "snapshot": json.loads(text)})
+
+
+@router.post("/projects/{project_id}/versions/{version_id}/restore",
+             response_model=C.Envelope[C.DesignVersionRestored])
+def restore_design_version(project_id: str, version_id: str) -> dict:
+    """Make a saved version the live design. Nothing is deleted: the design
+    being left behind stays in the undo history, and stays a version if it
+    was saved."""
+    from ..projects import versions
+
+    get_project_store().get(project_id)
+    try:
+        version, scene = versions.restore(project_id, version_id)
+    except versions.VersionNotFound:
+        return _error("VERSION_NOT_FOUND", "No such design version.", 404)
+    except versions.NoScene:
+        return _error("SCENE_REQUIRED", "There is no design to restore into yet.", 409)
+    get_job_store().add_event(project_id, "versions", "restored", f"design version {version.number} restored",
+                              event_type="design.version_restored", severity="info", producer="api.projects",
+                              entity_ids=[version.version_id],
+                              payload={"number": version.number, "scene_version": scene.version,
+                                       "content_sha256": version.content_sha256})
+    return ok({"version": version.model_dump(), "scene_version": scene.version})
 
 
 # ── Project files ───────────────────────────────────────────────────────

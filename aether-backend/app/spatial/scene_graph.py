@@ -198,7 +198,7 @@ def build_demonstration_scene() -> SpatialScene:
 
     raw_relations = [
         {"subject_id": "obj_chair_1", "predicate": "AGAINST_WALL", "object_id": "wall_a",
-         "confidence": "HIGH", "source": "geometry", "frame": "floor_plan",
+         "confidence": "HIGH", "source": "geometry", "frame": "room_plan",
          "note": "measured gap 0.075 m"},
     ]
     spatial = from_bridge_result(scene, raw_relations)

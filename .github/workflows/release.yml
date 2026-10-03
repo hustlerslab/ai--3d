@@ -1,0 +1,73 @@
+# Allure release gate (P1-QA-001): a release may not ship on MOCK evidence.
+#
+# Runs class=MOCK and class=REAL-PROVIDER as separate jobs, then the gate
+# (aether-backend/scripts/release_gate.py) fails unless MOCK is green AND at
+# least one live REAL-PROVIDER test passed - a run where every provider was
+# skipped "did not run". Results are printed per class and never summed.
+
+name: Release gate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mock:
+    name: class=MOCK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: ""
+      ANTHROPIC_API_KEY: ""
+      MESHY_API_KEY: ""
+      SCENE_IMAGE_ENABLED: "false"
+      INTELLIGENCE_PROVIDER: "mock"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip, cache-dependency-path: aether-backend/requirements.txt }
+      - working-directory: aether-backend
+        run: pip install -r requirements.txt
+      - working-directory: aether-backend
+        run: ALLURE_TEST_REPORT=test-class-MOCK.json python -m pytest -m mock -q --tb=short
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: class-MOCK, path: aether-backend/test-class-MOCK.json }
+
+  real-provider:
+    name: class=REAL-PROVIDER
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      MESHY_API_KEY: ${{ secrets.MESHY_API_KEY }}
+      MESHY_MAX_CREDITS_PER_PROJECT: "0"
+      MESHY_MAX_CREDITS_PER_USER: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip, cache-dependency-path: aether-backend/requirements.txt }
+      - working-directory: aether-backend
+        run: pip install -r requirements.txt
+      - working-directory: aether-backend
+        run: ALLURE_TEST_REPORT=test-class-REAL-PROVIDER.json python -m pytest -m real_provider -q -rs --tb=short
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: class-REAL-PROVIDER, path: aether-backend/test-class-REAL-PROVIDER.json }
+
+  gate:
+    name: Release gate
+    needs: [mock, real-provider]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/download-artifact@v4
+        with: { path: reports }
+      - name: No release on MOCK evidence alone
+        run: python aether-backend/scripts/release_gate.py reports/class-MOCK/test-class-MOCK.json reports/class-REAL-PROVIDER/test-class-REAL-PROVIDER.json

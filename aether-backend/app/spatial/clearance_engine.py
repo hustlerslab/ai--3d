@@ -69,7 +69,7 @@ class ClearanceViolation:
     actual_m: float
     deficit_m: float
     severity: str         # "hard" | "soft"
-    coordinate_frame: str = "floor_plan"
+    coordinate_frame: str = "room_plan"
 
 
 def _polygon_distance(a: list[Vec2], b: list[Vec2]) -> float:

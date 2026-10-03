@@ -1,0 +1,29 @@
+ ✓ src/features/studio/element-inventory.test.ts > element inventory renders from backend truth > shows three stools as 3 instances of 1 canonical piece with 1 asset 3ms
+ ✓ src/features/studio/element-inventory.test.ts > element inventory renders from backend truth > keeps the three instances distinct - three crops, three ids, three boxes 0ms
+ ✓ src/features/studio/element-inventory.test.ts > element inventory renders from backend truth > takes the instance count from the backend, not from counting rows itself 0ms
+ ✓ src/features/studio/element-inventory.test.ts > element inventory renders from backend truth > never claims an asset the backend did not confirm 0ms
+ ✓ src/features/studio/element-inventory.test.ts > canonical elements stay separate > two definitions are two groups even for the same type 1ms
+ ✓ src/features/studio/element-inventory.test.ts > canonical elements stay separate > does not group by type on its own when the backend sent no grouping 0ms
+ ✓ src/features/studio/element-inventory.test.ts > rejected and unresolved states > shows a row the checks removed as rejected, with the backend's reason 0ms
+ ✓ src/features/studio/element-inventory.test.ts > rejected and unresolved states > shows a human rejection as unapproved, not as a check 0ms
+ ✓ src/features/studio/element-inventory.test.ts > rejected and unresolved states > shows a piece the backend kept apart for lack of evidence as unresolved 0ms
+ ✓ src/features/studio/element-inventory.test.ts > rejected and unresolved states > explains a merge in plain words from the backend's identity method 0ms
+ ✓ src/features/studio/element-inventory.test.ts > compatibility > an empty inventory does not crash 0ms
+ ✓ src/features/studio/element-inventory.test.ts > compatibility > a legacy payload without inventory fields does not crash and says so 0ms
+ ✓ src/features/studio/element-inventory.test.ts > compatibility > an instance whose reading row is missing still renders without a crop 0ms
+ ✓ src/features/studio/element-inventory.test.ts > compatibility > humanises a semantic type without changing its identity 0ms
+ ✓ src/features/studio/element-inventory.test.ts > P1-FRONTEND-001: the screen displays backend numbers and states, and computes none > prints the backend's counts even where recounting the lists would disagree 0ms
+ ✓ src/features/studio/element-inventory.test.ts > P1-FRONTEND-001: the screen displays backend numbers and states, and computes none > shows no counts rather than recounting when the backend sent none 0ms
+ ✓ src/features/studio/element-inventory.test.ts > P1-FRONTEND-001: the screen displays backend numbers and states, and computes none > takes every row's state from the backend, including detected and validated 0ms
+ ✓ src/features/studio/element-inventory.test.ts > P1-FRONTEND-001: the screen displays backend numbers and states, and computes none > does not call a row rejected unless the backend did 0ms
+ ✓ src/features/studio/element-inventory.test.ts > P1-FRONTEND-001: the screen displays backend numbers and states, and computes none > marks an estimated position from the backend's assumptions, and passes every assumption through 0ms
+ ✓ src/features/studio/element-inventory.test.ts > P1-FRONTEND-001: the screen displays backend numbers and states, and computes none > labels kept furniture as yours 0ms
+ ✓ src/features/studio/inventory-screen.test.ts > element inventory, rendered > shows each of the four states in plain words 12ms
+ ✓ src/features/studio/inventory-screen.test.ts > element inventory, rendered > prints the backend's counts 3ms
+ ✓ src/features/studio/inventory-screen.test.ts > element inventory, rendered > marks the estimated position on the piece it belongs to 3ms
+ ✓ src/features/studio/inventory-screen.test.ts > element inventory, rendered > lists every assumption with where to change it 2ms
+ ✓ src/features/studio/inventory-screen.test.ts > element inventory, rendered > labels kept furniture as yours 4ms
+ ✓ src/features/studio/inventory-screen.test.ts > element inventory, rendered > says why a piece was not used in words, not a check code 4ms
+ ✓ src/features/studio/inventory-screen.test.ts > element inventory, rendered > puts no internal identifier on the page 2ms
+ ✓ src/features/studio/inventory-screen.test.ts > element inventory, rendered > an empty assumptions list renders nothing 0ms
+      Tests  28 passed (28)

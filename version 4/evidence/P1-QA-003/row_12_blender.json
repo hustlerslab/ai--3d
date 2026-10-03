@@ -1,0 +1,12 @@
+{
+  "row": 12,
+  "status": "PASS",
+  "detection": "render verifier: render_matches_committed_scene=fail (1 piece changed after the render)",
+  "category": "validation_failure",
+  "response": "HUMAN_REVIEW (review item opened)",
+  "user_experience": "One thing to look at",
+  "evidence": "render_verification.json + render_mismatch verdict + review item + human_review.required event",
+  "fingerprint": "7b85a91f7b3c83f61ccc8567451dea30288e81b5afd4fea3ca304cec0e415111",
+  "recorded_at": "2026-09-26T08:39:49Z",
+  "class": "PRODUCTION-PATH"
+}

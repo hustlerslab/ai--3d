@@ -15,7 +15,12 @@ class MaterialRegistry:
         self.root = root
         self.root.mkdir(parents=True, exist_ok=True)
         self.path = self.root / "registry.json"
-        self._records: dict[str, MaterialRecord] = {m.material_id: m for m in BUILTIN_MATERIALS}
+        # Copies, never the seed objects themselves: `get()` hands records out
+        # and callers mutate them (attach_maps, a roughness edit). Sharing the
+        # module-level seed leaked every such edit into every registry built
+        # later in the process, persisted or not.
+        self._records: dict[str, MaterialRecord] = {m.material_id: m.model_copy(deep=True)
+                                                     for m in BUILTIN_MATERIALS}
         self._load()
 
     def _load(self) -> None:

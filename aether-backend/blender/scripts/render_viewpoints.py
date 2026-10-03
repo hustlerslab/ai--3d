@@ -56,19 +56,19 @@ def main() -> None:
 
     timer = Timer()
     cam = _camera()
+    scene = bpy.context.scene
+    scene.camera = cam
+    device = configure_engine(scene, prof["engine"], prof["samples"])
     rendered = []
     for view in views:
         cam.location = tuple(view["position"])
         look_at(cam, tuple(view["look_at"]))
         path = os.path.join(out_dir, f"{view['name']}.png")
-        scene = bpy.context.scene
-        scene.camera = cam
-        configure_engine(scene, prof["engine"], prof["samples"])
         set_output(scene, path, prof["size"][0], prof["size"][1])
         bpy.ops.render.render(write_still=True)
         rendered.append({"name": view["name"], "path": path})
 
-    emit_result({"ok": True, "rendered": rendered, "seconds": round(timer.seconds, 2)})
+    emit_result({"ok": True, "rendered": rendered, "device": device, "seconds": round(timer.seconds, 2)})
 
 
 if __name__ == "__main__":

@@ -11,8 +11,8 @@ from ..core.logging import bind
 from ..projects.layout import CHECKPOINTS, ensure_layout, file_url
 from ..projects.schema import ProjectRecord
 from ..projects.store import ProjectStore
-from .schema import Job
-from .store import JobStore
+from .schema import Job, JobEvent
+from .store import EventContractError, JobStore
 
 
 class JobContext:
@@ -55,7 +55,19 @@ class JobContext:
             h.close()
 
     # ── events ───────────────────────────────────────────────────
-    def emit(self, stage: str, message: str = "", status: str = "progress") -> None:
+    def emit(self, stage: str, message: str = "", status: str = "progress", *,
+             event_type: str = "", severity: str = "", entity_ids: Optional[list[str]] = None,
+             evidence_refs: Optional[list[str]] = None, payload: Optional[dict[str, Any]] = None,
+             confidence: Optional[float] = None, parent_event_id: Optional[int] = None) -> Optional[JobEvent]:
+        """Record a stage event. The three positional arguments are the pre-V4
+        call, unchanged; the keyword arguments are the P1-EVENT-001 envelope.
+
+        A failure to WRITE the event is logged and swallowed: an event is a
+        record of work, and losing the record must never lose the work
+        (P1-EVENT-002). A contract violation (`EventContractError`) is a bug
+        in the emitter and is raised, because a silently dropped event whose
+        evidence was a blob is exactly what the contract forbids.
+        """
         now = time.monotonic()
         duration_ms = int((now - self._stage_started) * 1000)
         self._stage_started = now
@@ -66,9 +78,24 @@ class JobContext:
         with bind(stage=stage):
             self.log.info(message or status, extra={"status": status,
                                                     "duration_ms": duration_ms})
-        self.jobs.add_event(
-            self.project_id, stage, status, message, job_id=self.job.job_id, duration_ms=duration_ms
-        )
+        try:
+            return self.jobs.add_event(
+                self.project_id, stage, status, message, job_id=self.job.job_id, duration_ms=duration_ms,
+                event_type=event_type, severity=severity, confidence=confidence,
+                correlation_id=self.job.correlation_id, parent_event_id=parent_event_id,
+                producer=f"job.{self.job.type}", entity_ids=entity_ids, evidence_refs=evidence_refs,
+                payload=payload,
+            )
+        except EventContractError:
+            raise
+        except Exception as exc:                          # noqa: BLE001 - never fail the job
+            self.log.warning("event not recorded (%s %s): %s", stage, status, exc)
+            # `event_stage`, not `stage`: the log context already binds
+            # `stage`, and a colliding `extra` key makes logging RAISE - which
+            # turned a dropped event back into a failed job.
+            logging.getLogger("aether.events").warning(
+                "event.dropped", extra={"event_stage": stage, "event_status": status, "reason": str(exc)})
+            return None
 
     # ── checkpoints ──────────────────────────────────────────────
     def path(self, relative: str) -> Path:

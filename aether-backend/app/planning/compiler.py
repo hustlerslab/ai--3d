@@ -724,6 +724,11 @@ def _ordered(plan: ObjectPlan) -> list[ObjectPlanItem]:
     return ordered
 
 
+def _label(item) -> str:
+    """The piece as a person names it, for messages."""
+    return (getattr(item, "name", "") or item.semantic_type.replace("_", " ")).strip()
+
+
 def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan, *,
                   reading=None) -> tuple[list[AddObjectOp], list[str]]:
     """Place every planned item, carrying element identity onto each object.
@@ -791,7 +796,8 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan, *,
                     if item.semantic_type in ("plant", "lantern", "basket", "sculpture", "vase"):
                         placement, mount = "floor", "floor"   # a floor-standing version is fine
                     else:
-                        warnings.append(f"{item.object_key}: no surface in {room.name} to rest on; skipped")
+                        warnings.append(f"{item.object_key}: no surface in {room.name} to rest "
+                                        f"{_label(item)} on; skipped")
                         break
             if placement == "wall":
                 mount = "wall"
@@ -859,6 +865,7 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan, *,
                         # produce identical ids, with no uuid and no clock.
                         element_id=item.element_id or None,
                         instance_id=f"{item.element_id}#{n}" if item.element_id else None,
+                        client_owned=bool(getattr(item, "client_owned", False)),
                         parent_id=parent.object_id if parent else None,
                         texture_ref=decision.texture_ref or None,
                         shape=decision.shape or None,
@@ -871,7 +878,10 @@ def place_objects(scene: Scene, plan: ObjectPlan, assets: AssetPlan, *,
                         break
                     working.objects.pop()
             if placed is None:
-                warnings.append(f"{item.object_key}: no valid position in {room.name} (priority {item.priority})")
+                # P1-SPATIAL-001: named - key, piece, room and priority - so
+                # an unplaceable item is never silently missing.
+                warnings.append(f"{item.object_key}: no valid position for {_label(item)} in {room.name} "
+                                f"(priority {item.priority})")
                 break
             ops.append(AddObjectOp(object=placed))
             if n == 0:

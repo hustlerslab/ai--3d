@@ -1,0 +1,6 @@
+ ✓ src/features/studio/design-versions.test.ts > design versions panel > shows which version is accepted and which is current 24ms
+ ✓ src/features/studio/design-versions.test.ts > design versions panel > offers Make current only on versions that are not already current 2ms
+ ✓ src/features/studio/design-versions.test.ts > design versions panel > says when the design has changes no saved version holds 2ms
+ ✓ src/features/studio/design-versions.test.ts > design versions panel > invites saving before an experiment when nothing is saved 1ms
+ ✓ src/features/studio/design-versions.test.ts > design versions panel > never puts an internal identifier on the page 1ms
+      Tests  5 passed (5)

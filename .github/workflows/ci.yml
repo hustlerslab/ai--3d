@@ -58,6 +58,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # P2-VIEWER-002: the pinned gltf-transform that Draco-compresses the
+      # viewer's models. Without it the compression tests fail, not skip.
+      - name: Install the model compression tool
+        working-directory: aether-backend/tools
+        run: npm ci --no-audit --no-fund
+
       - name: Assert this run cannot spend money
         working-directory: aether-backend
         run: |
@@ -76,17 +82,27 @@ jobs:
           print("class=MOCK: no provider key is set; this run cannot spend a credit.")
           PY
 
+      - name: Generated frontend API types are current (P1-FRONTEND-003)
+        working-directory: aether-backend
+        run: |
+          # The frontend's API types are generated from this backend's OpenAPI
+          # document. A response-model change without regenerating them fails
+          # here, by name, rather than as a type error somewhere in the UI.
+          python scripts/gen_api_types.py --check
+
       - name: Run the MOCK suite
         working-directory: aether-backend
         run: |
           echo "::notice title=Test class::class=MOCK - structural suite, zero real provider calls"
-          python -m pytest -q --tb=short --junitxml=pytest-results.xml | tee pytest-output.txt
+          # -m mock: ONE class per run (P1-QA-001) - a mixed selection is refused
+          # by conftest, so this total can only ever be a MOCK total.
+          ALLURE_TEST_REPORT=test-class-MOCK.json             python -m pytest -m mock -q --tb=short --junitxml=pytest-results.xml | tee pytest-output.txt
 
       - name: Label the result
         if: always()
         working-directory: aether-backend
         run: |
-          line="$(grep -E '[0-9]+ (passed|failed)' pytest-output.txt | tail -n 1 || true)"
+          line="$(grep -E '^class=MOCK ' pytest-output.txt | tail -n 1 || true)"
           echo "::notice title=class=MOCK::${line:-no summary line}"
           {
             echo "### class=MOCK — ${line:-no summary line}"
@@ -103,10 +119,11 @@ jobs:
           path: |
             aether-backend/pytest-output.txt
             aether-backend/pytest-results.xml
+            aether-backend/test-class-MOCK.json
           retention-days: 14
 
   frontend:
-    name: Frontend (typecheck + lint)
+    name: Frontend (typecheck + lint + tests)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -125,6 +142,12 @@ jobs:
       - name: Lint
         working-directory: aether-frontend
         run: npx next lint
+      - name: Unit + API contract tests
+        working-directory: aether-frontend
+        # Includes src/generated/api-contract.test.ts: every API function must
+        # call exactly the endpoint it names, and that endpoint must exist in the
+        # types generated from the backend (P1-FRONTEND-003).
+        run: npm test
 
   image:
     name: Container builds and serves /api/health

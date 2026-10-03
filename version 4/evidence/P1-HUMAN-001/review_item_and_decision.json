@@ -1,0 +1,94 @@
+{
+  "item": {
+    "item_id": "rev_f3a29119d6a4",
+    "project_id": "proj_7efdf3cbd0",
+    "status": "resolved",
+    "audience": "operations",
+    "issue": "The Blender build reported errors on the preview render.",
+    "failure_category": "blender_execution_failure",
+    "affected": [
+      {
+        "name": "the validation report",
+        "id": "blender/validation_report.json"
+      }
+    ],
+    "evidence_refs": [
+      "blender/validation_report.json"
+    ],
+    "expected": {
+      "ok": true
+    },
+    "observed": {
+      "errors": [
+        "material 'oak_floor' missing"
+      ]
+    },
+    "attempts": [],
+    "recommendation": "retry_repair",
+    "actions": [
+      "accept_as_is",
+      "retry_repair",
+      "replan",
+      "cancel"
+    ],
+    "directive_id": "",
+    "stage_before": "ASSETS_READY",
+    "created_at": "2026-09-25T17:03:31.839323+00:00",
+    "resolved_at": "2026-09-25T17:03:31.849207+00:00",
+    "action_labels": {
+      "accept_as_is": "Accept the design as it is",
+      "retry_repair": "Try the automatic repair again",
+      "replan": "Re-plan the room from the approved moodboard",
+      "cancel": "Stop work on this project"
+    },
+    "decisions": [
+      {
+        "decision_id": "dec_b45464849e41",
+        "item_id": "rev_f3a29119d6a4",
+        "project_id": "proj_7efdf3cbd0",
+        "user_id": "usr_e6ee9532b5a8",
+        "user_email": "test-admin@example.com",
+        "action": "accept_as_is",
+        "is_override": true,
+        "reason": "The missing floor material falls back to a neutral oak; acceptable for the preview.",
+        "result": {
+          "stage": "VERIFIED"
+        },
+        "created_at": "2026-09-25T17:03:31.849207+00:00"
+      }
+    ]
+  },
+  "override_without_reason": {
+    "status": 422,
+    "body": {
+      "success": false,
+      "error": {
+        "code": "INVALID_DECISION",
+        "message": "Value error, overriding the recommendation requires a reason (at least a sentence)",
+        "retryable": false
+      }
+    }
+  },
+  "override_with_reason": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "decision": {
+          "decision_id": "dec_b45464849e41",
+          "item_id": "rev_f3a29119d6a4",
+          "user_id": "usr_e6ee9532b5a8",
+          "user_email": "test-admin@example.com",
+          "action": "accept_as_is",
+          "is_override": true,
+          "reason": "The missing floor material falls back to a neutral oak; acceptable for the preview.",
+          "result": {
+            "stage": "VERIFIED"
+          },
+          "created_at": "2026-09-25T17:03:31.849207+00:00"
+        }
+      }
+    }
+  },
+  "visible_to_homeowner": []
+}

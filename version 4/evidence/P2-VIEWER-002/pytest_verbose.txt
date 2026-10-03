@@ -1,0 +1,14 @@
+tests/test_web_compression.py::test_the_pinned_tool_is_installed PASSED  [ 10%]
+tests/test_web_compression.py::test_the_web_copy_is_draco_compressed_and_measurably_smaller PASSED [ 20%]
+tests/test_web_compression.py::test_decoded_geometry_is_the_same_mesh PASSED [ 30%]
+tests/test_web_compression.py::test_textures_pass_through_compression_untouched PASSED [ 40%]
+tests/test_web_compression.py::test_the_khronos_validator_finds_no_errors PASSED [ 50%]
+tests/test_web_compression.py::test_ingest_compresses_the_viewer_copy_and_leaves_blenders_alone PASSED [ 60%]
+tests/test_web_compression.py::test_a_model_with_small_textures_still_gets_a_compressed_copy PASSED [ 70%]
+tests/test_web_compression.py::test_without_the_tool_the_copy_ships_uncompressed_and_says_why PASSED [ 80%]
+tests/test_web_compression.py::test_a_failing_tool_leaves_a_valid_uncompressed_copy PASSED [ 90%]
+tests/test_web_compression.py::test_compression_that_would_grow_the_file_is_not_kept PASSED [100%]
+class=MOCK passed=10 failed=0 error=0 skipped=0
+class=REAL-PROVIDER did not run
+class=PRODUCTION-PATH did not run
+============================= 10 passed in 9.52s ==============================

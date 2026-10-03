@@ -1,0 +1,12 @@
+{
+  "row": 5,
+  "status": "PASS",
+  "detection": "Blender validator +-25% -> verify scale check: 1 piece(s) flagged",
+  "category": "asset_failure",
+  "response": "REGENERATE (generate_elements dispatched)",
+  "user_experience": "Rebuilding a piece that didn't come out right",
+  "evidence": "render_verification.json scale=fail + asset_dimensions verdict + repair.requested event",
+  "fingerprint": "7b85a91f7b3c83f61ccc8567451dea30288e81b5afd4fea3ca304cec0e415111",
+  "recorded_at": "2026-09-26T08:39:40Z",
+  "class": "PRODUCTION-PATH"
+}
